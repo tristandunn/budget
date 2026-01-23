@@ -10,9 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_23_013519) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_23_014038) do
   create_table "budgets", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  create_table "categories", force: :cascade do |t|
+    t.integer "budget_id", null: false
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.integer "parent_id"
+    t.integer "position", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["budget_id", "name"], name: "index_categories_on_budget_id_and_name", unique: true
+    t.index ["parent_id"], name: "index_categories_on_parent_id"
+  end
+
+  add_foreign_key "categories", "budgets"
 end

@@ -8,6 +8,6 @@ class BudgetsController < ApplicationController
 
   # Render a budget.
   def show
-    @budget = Budget.find(params[:id])
+    @budget = Budget.includes(categories: :subcategories).find(params[:id])
   end
 end
