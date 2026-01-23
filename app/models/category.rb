@@ -6,8 +6,9 @@ class Category < ApplicationRecord
 
   has_many :snapshots, class_name: "CategorySnapshot", dependent: :destroy
   has_many :subcategories, class_name: "Category", foreign_key: :parent_id, inverse_of: :parent, dependent: :destroy
+  has_many :transactions, dependent: :nullify
 
   validates :name, presence:   true,
                    uniqueness: { case_sensitive: false, scope: :budget_id }
-  validates :position, numericality: { only_integer: true }
+  validates :position, presence: true, numericality: { only_integer: true }
 end

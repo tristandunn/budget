@@ -30,22 +30,40 @@ describe "budgets/show.html.erb" do
   end
 
   it "renders the parent category amount assigned" do
-    expect(html).to have_css("thead th", text: number_to_currency(category_snapshot.amount_assigned))
+    expect(html).to have_css(
+      "thead th", text: number_to_currency(Money.from_cents(category_snapshot.amount_assigned))
+    )
   end
 
   it "renders the parent category amount remaining" do
-    expect(html).to have_css("thead th", text: number_to_currency(category_snapshot.amount_remaining))
+    expect(html).to have_css(
+      "thead th",
+      text: number_to_currency(Money.from_cents(category_snapshot.amount_remaining))
+    )
   end
 
   it "renders the subcategory name" do
     expect(html).to have_css("tbody th", text: subcategory.name)
   end
 
+  it "links the subcategory to the new transaction page" do
+    expect(html).to have_link(
+      subcategory.name,
+      href: new_budget_transaction_path(category.budget, subcategory_id: subcategory.id)
+    )
+  end
+
   it "renders the subcategory amount assigned" do
-    expect(html).to have_css("tbody td", text: number_to_currency(subcategory_snapshot.amount_assigned))
+    expect(html).to have_css(
+      "tbody td",
+      text: number_to_currency(Money.from_cents(subcategory_snapshot.amount_assigned))
+    )
   end
 
   it "renders the subcategory amount remaining" do
-    expect(html).to have_css("tbody td", text: number_to_currency(subcategory_snapshot.amount_remaining))
+    expect(html).to have_css(
+      "tbody td",
+      text: number_to_currency(Money.from_cents(subcategory_snapshot.amount_remaining))
+    )
   end
 end

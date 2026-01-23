@@ -16,10 +16,7 @@ FactoryBot.define do
 
     after(:create) do |category, context|
       if context.with_snapshot
-        category.snapshots.find_or_create_by(
-          budget: category.budget,
-          date:   Date.current.beginning_of_month
-        )
+        create(:category_snapshot, category: category, budget: category.budget)
       end
     end
   end

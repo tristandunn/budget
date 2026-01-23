@@ -1,7 +1,5 @@
-<header class="overflow-hidden bg-white">
-  <h1 class="inline-block float-left p-4 text-lg font-semibold w-45">
-    <%= @date.strftime("%B %Y") %>
-  </h1>
+<header class="overflow-hidden text-center bg-white">
+  <h1 class="p-4 text-lg font-semibold"><%= @date.strftime("%B %Y") %></h1>
 </header>
 
 <section>
@@ -23,12 +21,12 @@
           <% @snapshots[category.id].tap do |snapshot| %>
             <th scope="col" class="py-2 px-4 w-1/4 text-right">
               <div class="text-sm font-normal">Assigned</div>
-              <div><%= number_to_currency snapshot.amount_assigned %></div>
+              <div><%= number_to_currency Money.from_cents(snapshot.amount_assigned) %></div>
             </th>
 
             <th scope="col" class="py-2 px-4 w-1/4 text-right">
               <div class="text-sm font-normal">Available</div>
-              <div><%= number_to_currency snapshot.amount_remaining %></div>
+              <div><%= number_to_currency Money.from_cents(snapshot.amount_remaining) %></div>
             </th>
           <% end %>
         </tr>
@@ -38,17 +36,17 @@
         <% category.subcategories.sort_by(&:position).each do |subcategory| %>
           <tr class="bg-white border-b border-slate-200">
             <th scope="row" class="py-3 px-4 font-normal whitespace-nowrap">
-              <%= subcategory.name %>
+              <%= link_to subcategory.name, new_budget_transaction_path(@budget, subcategory_id: subcategory.id) %>
             </th>
 
             <% @snapshots[subcategory.id].tap do |snapshot| %>
               <td class="py-3 px-4 font-semibold text-right">
-                <%= number_to_currency snapshot.amount_assigned %>
+                <%= number_to_currency Money.from_cents(snapshot.amount_assigned) %>
               </td>
 
               <td class="py-3 px-4 font-semibold text-right">
-                <div class="inline-block py-0.5 px-2 -my-0.5 -mx-2 rounded-full <%= snapshot_color(snapshot) %>">
-                  <%= number_to_currency snapshot.amount_remaining %>
+                <div class="inline-block py-0.5 px-2 -my-0.5 -mx-2 rounded-full <%= amount_color(snapshot.amount_remaining) %>">
+                  <%= number_to_currency Money.from_cents(snapshot.amount_remaining) %>
                 </div>
               </td>
             <% end %>

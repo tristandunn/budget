@@ -11,6 +11,7 @@ describe Category do
 
     it { is_expected.to have_many(:snapshots).class_name("CategorySnapshot").dependent(:destroy) }
     it { is_expected.to have_many(:subcategories).class_name("Category").inverse_of(:parent).dependent(:destroy) }
+    it { is_expected.to have_many(:transactions).dependent(:nullify) }
   end
 
   describe "validations" do
@@ -19,6 +20,7 @@ describe Category do
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_uniqueness_of(:name).scoped_to(:budget_id).case_insensitive }
 
+    it { is_expected.to validate_presence_of(:position) }
     it { is_expected.to validate_numericality_of(:position).only_integer }
   end
 end

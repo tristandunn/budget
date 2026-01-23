@@ -3,26 +3,23 @@
 require "rails_helper"
 
 describe BudgetHelper do
-  describe "#snapshot_color" do
-    subject { helper.snapshot_color(snapshot) }
+  describe "#amount_color" do
+    subject { helper.amount_color(amount) }
 
-    let(:amount)   { 100 }
-    let(:snapshot) { build(:category_snapshot, amount_assigned: amount, amount_used: amount_used) }
-
-    context "when the amount remaining is zero" do
-      let(:amount_used) { amount }
+    context "when the amount is zero" do
+      let(:amount) { 0 }
 
       it { is_expected.to eq("bg-stone-200 text-stone-950") }
     end
 
-    context "when the amount remaining is negative" do
-      let(:amount_used) { amount * 2 }
+    context "when the amount is negative" do
+      let(:amount) { -1 }
 
       it { is_expected.to eq("bg-red-200 text-red-950") }
     end
 
-    context "when the amount remaining is positive" do
-      let(:amount_used) { amount / 2 }
+    context "when the amount is positive" do
+      let(:amount) { 1 }
 
       it { is_expected.to eq("bg-lime-400 text-lime-950") }
     end

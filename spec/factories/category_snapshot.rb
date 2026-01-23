@@ -8,5 +8,9 @@ FactoryBot.define do
     amount_assigned { Faker::Number.number }
     amount_used     { Faker::Number.number }
     date            { Date.current.beginning_of_month }
+
+    trait :for_subcategory do
+      category { association(:category, :subcategory, with_snapshot: false) }
+    end
   end
 end
