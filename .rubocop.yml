@@ -1,0 +1,98 @@
+plugins:
+  - rubocop-capybara
+  - rubocop-factory_bot
+  - rubocop-performance
+  - rubocop-rails
+  - rubocop-rake
+  - rubocop-rspec
+  - rubocop-rspec_rails
+  - rubocop-vibe
+
+AllCops:
+  CacheRootDirectory: "tmp/cache"
+  Exclude:
+    - "bin/bundle"
+    - "bin/kamal"
+    - "db/*schema.rb"
+    - "node_modules/**/*"
+    - "vendor/**/*"
+    - "tmp/**/*"
+  NewCops: enable
+
+Layout/HashAlignment:
+  EnforcedColonStyle: table
+  EnforcedHashRocketStyle: table
+
+Metrics/BlockLength:
+  Enabled: true
+  Exclude:
+    - config/environments/*.rb
+
+Metrics/MethodLength:
+  Enabled: true
+  Exclude:
+    - db/migrate/*
+
+Naming/RescuedExceptionsVariableName:
+  Enabled: true
+  PreferredName: error
+
+Rails:
+  Enabled: true
+
+Rails/ApplicationController:
+  Enabled: true
+  Exclude:
+    - app/controllers/health_controller.rb
+
+RSpec/ImplicitSubject:
+  EnforcedStyle: single_line_only
+
+RSpec/MultipleDescribes:
+  Enabled: false
+
+RSpec/SpecFilePathFormat:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/DocumentationMethod:
+  Enabled: true
+  Exclude:
+    - "db/**/*"
+    - "spec/**/*"
+  RequireForNonPublicMethods: true
+
+Style/ExpandPathArguments:
+  Enabled: true
+  Exclude:
+    - bin/*
+
+Style/HashSyntax:
+  Enabled: true
+  EnforcedShorthandSyntax: never
+
+Style/IfUnlessModifier:
+  Enabled: false
+
+Style/GuardClause:
+  Enabled: false
+
+Style/PercentLiteralDelimiters:
+  PreferredDelimiters:
+    "%i": "()"
+    "%w": "()"
+
+Style/RaiseArgs:
+  EnforcedStyle: compact
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/StringLiteralsInInterpolation:
+  EnforcedStyle: double_quotes
+
+Vibe/NoRubocopDisable:
+  AllowedCops:
+    - "Rails/RakeEnvironment"

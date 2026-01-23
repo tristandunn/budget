@@ -1,0 +1,6 @@
+en:
+  title: "Budget"
+
+  pages:
+    index:
+      description: "A budgeting application."
