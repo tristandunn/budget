@@ -7,5 +7,6 @@ describe Budget do
 
   describe "associations" do
     it { is_expected.to have_many(:categories).conditions(parent_id: nil).inverse_of(:budget).dependent(:destroy) }
+    it { is_expected.to have_many(:category_snapshots).dependent(:destroy) }
   end
 end

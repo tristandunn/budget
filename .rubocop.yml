@@ -27,6 +27,7 @@ Metrics/BlockLength:
   Enabled: true
   Exclude:
     - config/environments/*.rb
+    - db/seeds.rb
 
 Metrics/MethodLength:
   Enabled: true

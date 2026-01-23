@@ -1,6 +1,6 @@
 <header class="overflow-hidden bg-white">
   <h1 class="inline-block float-left p-4 text-lg font-semibold w-45">
-    <%= Date.current.strftime("%B %Y") %>
+    <%= @date.strftime("%B %Y") %>
   </h1>
 </header>
 
@@ -20,15 +20,17 @@
             <%= category.name %>
           </th>
 
-          <th scope="col" class="py-2 px-4 w-1/4 text-right">
-            <div class="text-sm font-normal">Assigned</div>
-            <div>$4,640.48</div>
-          </th>
+          <% @snapshots[category.id].tap do |snapshot| %>
+            <th scope="col" class="py-2 px-4 w-1/4 text-right">
+              <div class="text-sm font-normal">Assigned</div>
+              <div><%= number_to_currency snapshot.amount_assigned %></div>
+            </th>
 
-          <th scope="col" class="py-2 px-4 w-1/4 text-right">
-            <div class="text-sm font-normal">Available</div>
-            <div>$39.45</div>
-          </th>
+            <th scope="col" class="py-2 px-4 w-1/4 text-right">
+              <div class="text-sm font-normal">Available</div>
+              <div><%= number_to_currency snapshot.amount_remaining %></div>
+            </th>
+          <% end %>
         </tr>
       </thead>
 
@@ -39,15 +41,17 @@
               <%= subcategory.name %>
             </th>
 
-            <td class="py-3 px-4 font-semibold text-right">
-              $3,110.00
-            </td>
+            <% @snapshots[subcategory.id].tap do |snapshot| %>
+              <td class="py-3 px-4 font-semibold text-right">
+                <%= number_to_currency snapshot.amount_assigned %>
+              </td>
 
-            <td class="py-3 px-4 font-semibold text-right">
-              <div class="inline-block py-0.5 px-2 -my-0.5 -mx-2 rounded-full bg-stone-200 text-stone-950">
-                $0.00
-              </div>
-            </td>
+              <td class="py-3 px-4 font-semibold text-right">
+                <div class="inline-block py-0.5 px-2 -my-0.5 -mx-2 rounded-full <%= snapshot_color(snapshot) %>">
+                  <%= number_to_currency snapshot.amount_remaining %>
+                </div>
+              </td>
+            <% end %>
           </tr>
         <% end %>
       </tbody>

@@ -9,6 +9,7 @@ describe Category do
     it { is_expected.to belong_to(:budget) }
     it { is_expected.to belong_to(:parent).class_name("Category").optional(true) }
 
+    it { is_expected.to have_many(:snapshots).class_name("CategorySnapshot").dependent(:destroy) }
     it { is_expected.to have_many(:subcategories).class_name("Category").inverse_of(:parent).dependent(:destroy) }
   end
 

@@ -4,6 +4,7 @@ class Category < ApplicationRecord
   belongs_to :budget
   belongs_to :parent, class_name: "Category", optional: true
 
+  has_many :snapshots, class_name: "CategorySnapshot", dependent: :destroy
   has_many :subcategories, class_name: "Category", foreign_key: :parent_id, inverse_of: :parent, dependent: :destroy
 
   validates :name, presence:   true,

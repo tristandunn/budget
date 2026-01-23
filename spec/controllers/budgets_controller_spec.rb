@@ -23,7 +23,8 @@ describe BudgetsController do
 
   describe "#show" do
     context "with a budget" do
-      let(:budget) { create(:budget) }
+      let(:budget)   { category.budget }
+      let(:category) { create(:category) }
 
       before do
         get :show, params: { id: budget.id }
@@ -32,8 +33,16 @@ describe BudgetsController do
       it { is_expected.to respond_with(200) }
       it { is_expected.to render_template(:show) }
 
+      it "assigns the date" do
+        expect(assigns(:date)).to eq(Date.current.beginning_of_month)
+      end
+
       it "assigns the budget" do
         expect(assigns(:budget)).to eq(budget)
+      end
+
+      it "assigns the category snapshots" do
+        expect(assigns(:snapshots)).to eq(budget.category_snapshots.index_by(&:category_id))
       end
     end
 

@@ -9,23 +9,43 @@ describe "budgets/show.html.erb" do
     rendered
   end
 
-  let(:budget)      { category.budget }
-  let(:category)    { subcategory.parent }
-  let(:subcategory) { create(:category, :subcategory) }
+  let(:category)             { subcategory.parent }
+  let(:category_snapshot)    { category.snapshots.first }
+  let(:date)                 { Date.current.beginning_of_month }
+  let(:subcategory)          { create(:category, :subcategory) }
+  let(:subcategory_snapshot) { subcategory.snapshots.first }
 
   before do
-    assign :budget, budget
+    assign :budget,    category.budget
+    assign :date,      date
+    assign :snapshots, { category.id => category_snapshot, subcategory.id => subcategory_snapshot }
   end
 
   it "renders the header with the current month and year" do
-    expect(html).to have_css("h1", text: Date.current.strftime("%B %Y"))
+    expect(html).to have_css("h1", text: date.strftime("%B %Y"))
   end
 
-  it "renders the parent categories" do
+  it "renders the parent category name" do
     expect(html).to have_css("thead th", text: category.name)
   end
 
-  it "renders the subcategories" do
+  it "renders the parent category amount assigned" do
+    expect(html).to have_css("thead th", text: number_to_currency(category_snapshot.amount_assigned))
+  end
+
+  it "renders the parent category amount remaining" do
+    expect(html).to have_css("thead th", text: number_to_currency(category_snapshot.amount_remaining))
+  end
+
+  it "renders the subcategory name" do
     expect(html).to have_css("tbody th", text: subcategory.name)
+  end
+
+  it "renders the subcategory amount assigned" do
+    expect(html).to have_css("tbody td", text: number_to_currency(subcategory_snapshot.amount_assigned))
+  end
+
+  it "renders the subcategory amount remaining" do
+    expect(html).to have_css("tbody td", text: number_to_currency(subcategory_snapshot.amount_remaining))
   end
 end
