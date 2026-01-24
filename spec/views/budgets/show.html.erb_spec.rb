@@ -46,11 +46,24 @@ describe "budgets/show.html.erb" do
     expect(html).to have_css("tbody th", text: subcategory.name)
   end
 
-  it "links the subcategory to the new transaction page" do
-    expect(html).to have_link(
-      subcategory.name,
-      href: new_budget_transaction_path(category.budget, subcategory_id: subcategory.id)
-    )
+  it "links to the new transaction page" do
+    expect(html).to have_link(href: new_budget_transaction_path(category.budget))
+  end
+
+  it "renders the plan link" do
+    expect(html).to have_link("Plan", href: "#")
+  end
+
+  it "renders the spending link" do
+    expect(html).to have_link("Spending", href: "#")
+  end
+
+  it "renders the accounts link" do
+    expect(html).to have_link("Accounts", href: "#")
+  end
+
+  it "renders the reflect link" do
+    expect(html).to have_link("Reflect", href: "#")
   end
 
   it "renders the subcategory amount assigned" do

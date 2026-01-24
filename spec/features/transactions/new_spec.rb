@@ -12,18 +12,19 @@ describe "Transaction" do
 
   before do
     visit budget_path(budget)
-    click_on subcategory.name
+    click_on "add-transaction"
   end
 
   it "updates the amount remaining" do
-    fill_in_transaction_and_submit(amount: 13.37)
+    fill_in_transaction_and_submit(amount: 13.37, subcategory: subcategory)
 
     expect(page).to have_text("$86.63")
   end
 
   protected
 
-  def fill_in_transaction_and_submit(amount:)
+  def fill_in_transaction_and_submit(amount:, subcategory:)
+    select subcategory.name, from: t("activemodel.attributes.transaction_form.subcategory_id")
     fill_in t("activemodel.attributes.transaction_form.amount"), with: amount
     click_on t("transactions.new.submit")
   end

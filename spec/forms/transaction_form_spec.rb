@@ -81,5 +81,11 @@ describe TransactionForm, type: :form do
     it "sets the category" do
       expect(transaction.category).to eq(category)
     end
+
+    context "when a category is not present" do
+      let(:form) { described_class.new(amount: "15.00", budget: nil, category: nil) }
+
+      it { is_expected.not_to be_valid }
+    end
   end
 end

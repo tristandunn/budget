@@ -26,7 +26,7 @@ class TransactionForm < BaseForm
   #
   # @return [Transaction]
   def transaction
-    @transaction ||= category.transactions.new(amount: amount&.cents, budget: category.budget)
+    @transaction ||= Transaction.new(amount: amount&.cents, budget: budget, category: category)
   end
 
   private
