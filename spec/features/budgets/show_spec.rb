@@ -29,5 +29,27 @@ describe "Budget" do
 
       expect(page).to have_content(subcategory.name)
     end
+
+    context "when toggling a category", :js do
+      let(:subcategory) { create(:category, :subcategory) }
+      let(:budget)      { subcategory.budget }
+      let(:category)    { subcategory.parent }
+
+      before do
+        visit budget_path(budget)
+      end
+
+      it "hides subcategories when clicking the category" do
+        find("th", text: category.name).click
+
+        expect(page).to have_no_content(subcategory.name)
+      end
+
+      it "shows subcategories when clicking a collapsed category" do
+        2.times { find("th", text: category.name).click }
+
+        expect(page).to have_content(subcategory.name)
+      end
+    end
   end
 end

@@ -27,6 +27,27 @@ jobs:
           SE_AVOID_STATS: true
         run: bin/rails db:setup ruby:test
 
+  JavaScript:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v6
+
+      - name: Enable the Corepack tool
+        run: corepack enable
+
+      - name: Install Node
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: ".tool-versions"
+
+      - name: Install the Node dependencies
+        run: yarn install
+
+      - name: Run the JavaScript tests
+        run: yarn test:coverage
+
   Linting:
     runs-on: ubuntu-latest
 
@@ -58,6 +79,9 @@ jobs:
 
       - name: Lint the Ruby
         run: bin/rubocop --format github --parallel
+
+      - name: Lint the JavaScript
+        run: yarn lint:js
 
       - name: Lint the CSS
         run: yarn lint:css
