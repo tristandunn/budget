@@ -1,15 +1,15 @@
 import { Controller } from "@hotwired/stimulus";
 
 const ARROW_CLASSES = ["inset-y-0", "-inset-y-1", "-rotate-45", "rotate-45"],
-      STORAGE_KEY   = "budget:collapsed-categories";
+      STORAGE_KEY   = "budget:collapsed-sections";
 
 export default class extends Controller {
   static targets = ["arrow"];
 
-  static values  = { "subcategoriesId": Number };
+  static values = { "id": String };
 
   connect() {
-    if (this.#toggleStatedIds.has(this.subcategoriesIdValue)) {
+    if (this.#collapsedIds.has(this.idValue)) {
       this.#toggleState();
     }
   }
@@ -19,38 +19,36 @@ export default class extends Controller {
     this.#persistState();
   }
 
-  get subcategories() {
-    return document.querySelector(
-      `[data-category-subcategories="${this.subcategoriesIdValue}"]`
-    );
+  get content() {
+    return document.querySelector(`[data-collapsible-content="collapsible-${this.idValue}"]`);
   }
 
   #persistState() {
-    const ids         = this.#toggleStatedIds,
-          isCollapsed = this.subcategories.classList.contains("hidden");
+    const ids         = this.#collapsedIds,
+          isCollapsed = this.content.classList.contains("hidden");
 
     if (isCollapsed) {
-      ids.add(this.subcategoriesIdValue);
+      ids.add(this.idValue);
     } else {
-      ids.delete(this.subcategoriesIdValue);
+      ids.delete(this.idValue);
     }
 
-    this.#toggleStatedIds = ids;
+    this.#collapsedIds = ids;
   }
 
   #toggleState() {
-    this.subcategories.classList.toggle("hidden");
+    this.content.classList.toggle("hidden");
 
     ARROW_CLASSES.forEach((className) => {
       this.arrowTarget.classList.toggle(className);
     });
   }
 
-  get #toggleStatedIds() {
+  get #collapsedIds() {
     return new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"));
   }
 
-  set #toggleStatedIds(ids) {
+  set #collapsedIds(ids) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify([...ids]));
   }
 }
