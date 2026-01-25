@@ -40,13 +40,13 @@ describe "Budget" do
       end
 
       it "hides subcategories when clicking the category" do
-        find("th", text: category.name).click
+        find("thead th", text: category.name).click
 
         expect(page).to have_no_content(subcategory.name)
       end
 
       it "shows subcategories when clicking a collapsed category" do
-        2.times { find("th", text: category.name).click }
+        2.times { find("thead th", text: category.name).click }
 
         expect(page).to have_content(subcategory.name)
       end

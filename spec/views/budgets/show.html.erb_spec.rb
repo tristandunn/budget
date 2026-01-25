@@ -16,6 +16,8 @@ describe "budgets/show.html.erb" do
   let(:subcategory_snapshot) { subcategory.snapshots.first }
 
   before do
+    stub_template("shared/_toolbar.html.erb" => "TOOLBAR_PARTIAL")
+
     assign :budget,    category.budget
     assign :date,      date
     assign :snapshots, { category.id => category_snapshot, subcategory.id => subcategory_snapshot }
@@ -46,26 +48,6 @@ describe "budgets/show.html.erb" do
     expect(html).to have_css("tbody th", text: subcategory.name)
   end
 
-  it "links to the new transaction page" do
-    expect(html).to have_link(href: new_budget_transaction_path(category.budget))
-  end
-
-  it "renders the plan link" do
-    expect(html).to have_link("Plan", href: "#")
-  end
-
-  it "renders the spending link" do
-    expect(html).to have_link("Spending", href: "#")
-  end
-
-  it "renders the accounts link" do
-    expect(html).to have_link("Accounts", href: "#")
-  end
-
-  it "renders the reflect link" do
-    expect(html).to have_link("Reflect", href: "#")
-  end
-
   it "renders the subcategory amount assigned" do
     expect(html).to have_css(
       "tbody td",
@@ -78,5 +60,9 @@ describe "budgets/show.html.erb" do
       "tbody td",
       text: number_to_currency(Money.from_cents(subcategory_snapshot.amount_remaining))
     )
+  end
+
+  it "renders the toolbar" do
+    expect(html).to include("TOOLBAR_PARTIAL")
   end
 end

@@ -1,6 +1,20 @@
 en:
   title: "Budget"
 
+  toolbar:
+    plan: "Plan"
+    spending: "Spending"
+    accounts: "Accounts"
+    reflect: "Reflect"
+
+  accounts:
+    index:
+      available: "Available"
+      cash: "Cash"
+      credit: "Credit"
+      owed: "Owed"
+      title: "Accounts"
+
   activerecord:
     errors:
       models:

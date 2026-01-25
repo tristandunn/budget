@@ -3,6 +3,17 @@
 date = Date.current.beginning_of_month
 
 Budget.first_or_create!.tap do |budget|
+  budget.accounts.find_or_create_by!(name: "Checking") do |account|
+    account.balance = 250_000
+  end
+  budget.accounts.find_or_create_by!(name: "Savings") do |account|
+    account.balance = 1_000_000
+  end
+  budget.accounts.find_or_create_by!(name: "United Club") do |account|
+    account.balance = -45_000
+    account.credit  = true
+  end
+
   budget.categories.find_or_create_by(name: "Immediate Obligations", position: 0).tap do |parent|
     parent.snapshots.find_or_create_by!(budget: budget, date: date) do |snapshot|
       snapshot.amount_assigned = 112_500
