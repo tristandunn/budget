@@ -3,7 +3,8 @@
 require "rails_helper"
 
 describe "Transaction" do
-  let(:budget)      { subcategory.budget }
+  let(:account)     { create(:account, budget: subcategory.budget) }
+  let(:budget)      { account.budget }
   let(:subcategory) { snapshot.category }
 
   let(:snapshot) do
@@ -16,14 +17,15 @@ describe "Transaction" do
   end
 
   it "updates the amount remaining" do
-    fill_in_transaction_and_submit(amount: 13.37, subcategory: subcategory)
+    fill_in_transaction_and_submit(account: account, amount: 13.37, subcategory: subcategory)
 
     expect(page).to have_text("$86.63")
   end
 
   protected
 
-  def fill_in_transaction_and_submit(amount:, subcategory:)
+  def fill_in_transaction_and_submit(account:, amount:, subcategory:)
+    select account.name, from: t("activemodel.attributes.transaction_form.account_id")
     select subcategory.name, from: t("activemodel.attributes.transaction_form.subcategory_id")
     fill_in t("activemodel.attributes.transaction_form.amount"), with: amount
     click_on t("transactions.new.submit")

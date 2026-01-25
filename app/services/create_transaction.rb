@@ -8,7 +8,7 @@ class CreateTransaction
     @transaction = transaction
   end
 
-  # Create the transaction and update the category snapshots.
+  # Create the transaction, update the account and category snapshots.
   #
   # @param transaction [Transaction] The transaction to create.
   # @return [Boolean]
@@ -16,11 +16,13 @@ class CreateTransaction
     new(transaction: transaction).call
   end
 
-  # Create the transaction and update the category snapshots.
+  # Create the transaction, update the account and category snapshots.
   #
   # @return [Boolean]
   def call
     ActiveRecord::Base.transaction do
+      account.decrement!(:balance, amount) # rubocop:disable Rails/SkipsModelValidations
+
       snapshots.each do |snapshot|
         snapshot.increment!(:amount_used, amount) # rubocop:disable Rails/SkipsModelValidations
       end
@@ -35,7 +37,7 @@ class CreateTransaction
 
   attr_reader :transaction
 
-  delegate :amount, :subcategory, to: :transaction
+  delegate :account, :amount, :subcategory, to: :transaction
 
   # Return the category and subcategory snapshots for the current month.
   #

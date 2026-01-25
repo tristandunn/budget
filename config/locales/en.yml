@@ -1,12 +1,6 @@
 en:
   title: "Budget"
 
-  toolbar:
-    plan: "Plan"
-    spending: "Spending"
-    accounts: "Accounts"
-    reflect: "Reflect"
-
   accounts:
     index:
       available: "Available"
@@ -26,6 +20,7 @@ en:
   activemodel:
     attributes:
       transaction_form:
+        account_id: "Account"
         amount: "Amount"
         subcategory_id: "Subcategory"
 
@@ -33,8 +28,15 @@ en:
     index:
       description: "A budgeting application."
 
+  toolbar:
+    plan: "Plan"
+    spending: "Spending"
+    accounts: "Accounts"
+    reflect: "Reflect"
+
   transactions:
     new:
       cancel: "Cancel"
+      select_account: "Select an account"
       select_subcategory: "Select a category"
       submit: "Add Transaction"

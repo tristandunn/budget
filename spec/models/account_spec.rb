@@ -7,6 +7,7 @@ describe Account do
 
   describe "associations" do
     it { is_expected.to belong_to(:budget) }
+    it { is_expected.to have_many(:transactions).dependent(:destroy) }
   end
 
   describe "validations" do

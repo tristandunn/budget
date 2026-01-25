@@ -7,76 +7,99 @@ describe TransactionsController do
 
   describe "#new" do
     let(:budget) { create(:budget) }
+    let(:form)   { instance_double(TransactionForm) }
 
     before do
+      allow(TransactionForm).to receive(:new).and_return(form)
+
       get :new, params: { budget_id: budget.id }
     end
 
     it { is_expected.to respond_with(200) }
     it { is_expected.to render_template(:new) }
 
-    it "assigns a form" do
-      expect(assigns(:form)).to be_a(TransactionForm)
-        .and(have_attributes(budget: budget))
+    it "initializes the form with the budget" do
+      expect(TransactionForm).to have_received(:new).with(budget: budget)
     end
 
-    it "assigns subcategories" do
+    it "assigns the budget accounts" do
+      expect(assigns(:accounts)).to eq(budget.accounts)
+    end
+
+    it "assigns a transaction form" do
+      expect(assigns(:form)).to eq(form)
+    end
+
+    it "assigns the budget subcategories" do
       expect(assigns(:subcategories)).to eq(budget.subcategories)
     end
   end
 
   describe "#create" do
-    context "when created successfully" do
+    context "when valid" do
       let(:budget)      { create(:budget) }
+      let(:account)     { create(:account, budget: budget) }
       let(:subcategory) { create(:category, :subcategory, budget: budget) }
-      let(:form)        { assigns(:form) }
-      let(:transaction) { form.transaction }
+      let(:form)        { instance_double(TransactionForm, save: true) }
 
       before do
+        allow(TransactionForm).to receive(:new).and_return(form)
+
         post :create, params: {
           budget_id:        budget.id,
-          transaction_form: { amount: 100, subcategory_id: subcategory.id }
+          transaction_form: { account_id: account.id, amount: "100", subcategory_id: subcategory.id }
         }
       end
 
       it { is_expected.to redirect_to(budget_url(budget)) }
 
-      it "creates a transaction" do
-        expect(transaction).to be_a(Transaction)
-          .and(be_persisted)
-          .and(have_attributes(amount: 10_000, budget: budget, subcategory: subcategory))
+      it "initializes the form with account, amount, budget, and subcategory" do
+        expect(TransactionForm).to have_received(:new)
+          .with(account: account, amount: "100", budget: budget, subcategory: subcategory)
       end
 
-      it "assigns subcategories" do
-        expect(assigns(:subcategories)).to eq(budget.subcategories)
+      it "saves the form" do
+        expect(form).to have_received(:save)
       end
     end
 
-    context "with no amount" do
-      let(:budget)      { create(:budget) }
+    context "when invalid" do
+      let(:account)     { create(:account) }
+      let(:budget)      { account.budget }
+      let(:form)        { instance_double(TransactionForm, save: false) }
       let(:subcategory) { create(:category, :subcategory, budget: budget) }
 
       before do
+        allow(TransactionForm).to receive(:new).and_return(form)
+
         post :create, params: {
           budget_id:        budget.id,
-          transaction_form: { amount: nil, subcategory_id: subcategory.id }
+          transaction_form: {
+            account_id:     account.id,
+            amount:         "invalid",
+            subcategory_id: subcategory.id
+          }
         }
       end
 
       it { is_expected.to respond_with(200) }
       it { is_expected.to render_template(:new) }
 
-      it "assigns a form without an amount" do
-        expect(assigns(:form)).to be_a(TransactionForm)
-          .and(have_attributes(amount: nil, budget: budget, subcategory: subcategory))
+      it "initializes the form" do
+        expect(TransactionForm).to have_received(:new)
+          .with(account: account, amount: "invalid", budget: budget, subcategory: subcategory)
       end
 
-      it "assigns subcategories" do
+      it "assigns the budget accounts" do
+        expect(assigns(:accounts)).to eq(budget.accounts)
+      end
+
+      it "assigns a transaction form" do
+        expect(assigns(:form)).to eq(form)
+      end
+
+      it "assigns the budget subcategories" do
         expect(assigns(:subcategories)).to eq(budget.subcategories)
-      end
-
-      it "does not create a transaction" do
-        expect(Transaction.count).to eq(0)
       end
     end
   end

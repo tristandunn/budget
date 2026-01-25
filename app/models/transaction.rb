@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Transaction < ApplicationRecord
+  belongs_to :account
   belongs_to :budget
   belongs_to :subcategory, class_name:  "Category",
                            foreign_key: :category_id,

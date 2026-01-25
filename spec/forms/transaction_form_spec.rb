@@ -26,17 +26,22 @@ describe TransactionForm, type: :form do
   describe "#save" do
     subject(:save) { form.save }
 
-    let(:budget)      { subcategory.budget }
-    let(:form)        { described_class.new(amount: amount, budget: budget, subcategory: subcategory) }
-    let(:subcategory) { create(:category, :subcategory) }
-
-    before do
-      allow(CreateTransaction).to receive(:call).and_return(result)
-    end
+    let(:account)       { create(:account, budget: subcategory.budget) }
+    let(:subcategory)   { create(:category, :subcategory) }
 
     context "when valid" do
-      let(:amount) { "25.00" }
-      let(:result) { true }
+      let(:form) do
+        described_class.new(
+          account:     account,
+          amount:      "25.00",
+          budget:      subcategory.budget,
+          subcategory: subcategory
+        )
+      end
+
+      before do
+        allow(CreateTransaction).to receive(:call).and_return(true)
+      end
 
       it { is_expected.to be(true) }
 
@@ -48,8 +53,18 @@ describe TransactionForm, type: :form do
     end
 
     context "when invalid" do
-      let(:amount) { "0" }
-      let(:result) { false }
+      let(:form) do
+        described_class.new(
+          account:     account,
+          amount:      "0",
+          budget:      subcategory.budget,
+          subcategory: subcategory
+        )
+      end
+
+      before do
+        allow(CreateTransaction).to receive(:call)
+      end
 
       it { is_expected.to be_nil }
 
@@ -64,11 +79,24 @@ describe TransactionForm, type: :form do
   describe "#transaction" do
     subject(:transaction) { form.transaction }
 
+    let(:account)     { create(:account, budget: budget) }
     let(:budget)      { subcategory.budget }
-    let(:form)        { described_class.new(amount: "15.00", budget: budget, subcategory: subcategory) }
     let(:subcategory) { create(:category, :subcategory) }
 
+    let(:form) do
+      described_class.new(
+        account:     account,
+        amount:      "15.00",
+        budget:      budget,
+        subcategory: subcategory
+      )
+    end
+
     it { is_expected.to be_a(Transaction) }
+
+    it "sets the account" do
+      expect(transaction.account).to eq(account)
+    end
 
     it "sets the amount in cents" do
       expect(transaction.amount).to eq(1500)

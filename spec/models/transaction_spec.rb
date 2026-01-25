@@ -6,6 +6,7 @@ describe Transaction do
   it { is_expected.to be_a(ApplicationRecord) }
 
   describe "associations" do
+    it { is_expected.to belong_to(:account) }
     it { is_expected.to belong_to(:budget) }
     it { is_expected.to belong_to(:subcategory).class_name("Category") }
   end

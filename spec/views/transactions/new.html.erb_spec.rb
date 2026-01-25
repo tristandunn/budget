@@ -9,18 +9,24 @@ describe "transactions/new.html.erb" do
     rendered
   end
 
+  let(:accounts)      { budget.accounts }
   let(:budget)        { subcategory.budget }
   let(:form)          { TransactionForm.new(budget: budget, subcategory: subcategory) }
   let(:subcategories) { budget.subcategories }
   let(:subcategory)   { create(:category, :subcategory) }
 
   before do
+    assign :accounts, accounts
     assign :form, form
     assign :subcategories, subcategories
   end
 
   it "renders the amount field" do
     expect(html).to have_field("transaction_form_amount")
+  end
+
+  it "renders the account select" do
+    expect(html).to have_select("transaction_form_account_id")
   end
 
   it "renders the subcategory select" do

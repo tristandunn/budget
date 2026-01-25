@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_24_180153) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_25_182833) do
   create_table "accounts", force: :cascade do |t|
     t.integer "balance", default: 0, null: false
     t.integer "budget_id", null: false
@@ -50,11 +50,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_180153) do
   end
 
   create_table "transactions", force: :cascade do |t|
+    t.integer "account_id", null: false
     t.integer "amount", null: false
     t.integer "budget_id", null: false
     t.integer "category_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_transactions_on_account_id"
     t.index ["budget_id", "category_id"], name: "index_transactions_on_budget_id_and_category_id"
     t.index ["category_id"], name: "index_transactions_on_category_id"
   end
@@ -63,6 +65,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_180153) do
   add_foreign_key "categories", "budgets"
   add_foreign_key "category_snapshots", "budgets"
   add_foreign_key "category_snapshots", "categories"
+  add_foreign_key "transactions", "accounts"
   add_foreign_key "transactions", "budgets"
   add_foreign_key "transactions", "categories"
 end

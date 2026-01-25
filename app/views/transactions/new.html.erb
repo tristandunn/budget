@@ -13,6 +13,11 @@
     </div>
 
     <div class="mt-6">
+      <%= form.label :account_id, class: "block mb-1 text-sm font-medium text-gray-800 hidden" %>
+      <%= form.collection_select :account_id, @accounts, :id, :name, { prompt: t(".select_account"), selected: @form.account&.id }, { class: "w-full p-3 text-lg border border-gray-300 rounded-lg" } %>
+    </div>
+
+    <div class="mt-6">
       <%= form.label :subcategory_id, class: "block mb-1 text-sm font-medium text-gray-800 hidden" %>
       <%= form.collection_select :subcategory_id, @subcategories, :id, :name, { prompt: t(".select_subcategory"), selected: @form.subcategory&.id }, { class: "w-full p-3 text-lg border border-gray-300 rounded-lg", required: true } %>
 
