@@ -1,0 +1,9 @@
+{
+  "name": "Budget",
+  "short_name": "Budget",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFF",
+  "theme_color": "#FFF",
+  "icons": []
+}
