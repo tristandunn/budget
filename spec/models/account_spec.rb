@@ -35,4 +35,14 @@ describe Account do
       expect(described_class.credit).to contain_exactly(credit_account)
     end
   end
+
+  describe ".default_scope" do
+    it "orders accounts by name" do
+      bob     = create(:account, name: "Bob")
+      charlie = create(:account, budget: bob.budget, name: "Charlie")
+      alice   = create(:account, budget: bob.budget, name: "Alice")
+
+      expect(described_class.all).to eq([alice, bob, charlie])
+    end
+  end
 end
