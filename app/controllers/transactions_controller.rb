@@ -28,16 +28,6 @@ class TransactionsController < ApplicationController
     @budget ||= Budget.find(params[:budget_id])
   end
 
-  # Return the category for the given `subcategory_id` parameter.
-  #
-  # @return [Category] The requested subcategory.
-  # @return [nil] When no subcategory is provided.
-  def category
-    if parameters[:subcategory_id].present?
-      @category ||= budget.subcategories.find(parameters[:subcategory_id])
-    end
-  end
-
   # Return the permitted form parameters.
   #
   # @return [ActionController::Parameters]
@@ -45,10 +35,18 @@ class TransactionsController < ApplicationController
     @parameters ||= params.expect(transaction_form: %i(amount subcategory_id))
   end
 
-  # Return the permitted parameters with budget and category.
+  # Return the subcategory for the given `subcategory_id` parameter.
+  #
+  # @return [Category] The requested subcategory.
+  # @return [nil] When no subcategory is provided.
+  def subcategory
+    @subcategory ||= budget.subcategories.find(parameters[:subcategory_id])
+  end
+
+  # Return the permitted parameters with budget and subcategory.
   #
   # @return [Hash]
   def transaction_parameters
-    { amount: parameters[:amount], budget: budget, category: category }
+    { amount: parameters[:amount], budget: budget, subcategory: subcategory }
   end
 end

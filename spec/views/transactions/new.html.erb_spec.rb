@@ -9,10 +9,10 @@ describe "transactions/new.html.erb" do
     rendered
   end
 
-  let(:budget)        { category.budget }
-  let(:category)      { create(:category, :subcategory) }
-  let(:form)          { TransactionForm.new(budget: budget, category: category) }
+  let(:budget)        { subcategory.budget }
+  let(:form)          { TransactionForm.new(budget: budget, subcategory: subcategory) }
   let(:subcategories) { budget.subcategories }
+  let(:subcategory)   { create(:category, :subcategory) }
 
   before do
     assign :form, form
@@ -23,7 +23,7 @@ describe "transactions/new.html.erb" do
     expect(html).to have_field("transaction_form_amount")
   end
 
-  it "renders the category select" do
+  it "renders the subcategory select" do
     expect(html).to have_select("transaction_form_subcategory_id")
   end
 
@@ -31,23 +31,28 @@ describe "transactions/new.html.erb" do
     expect(html).to have_button(I18n.t("transactions.new.submit"))
   end
 
-  context "when the form has amount errors" do
+  context "with errors" do
     before do
-      form.errors.add(:amount, "can't be blank")
+      form.errors.add(:amount, :blank)
+      form.errors.add(:subcategory, :blank)
     end
 
-    it "renders the error message" do
-      expect(html).to have_css("p", text: /Amount/i)
-    end
-  end
-
-  context "when the form has category errors" do
-    before do
-      form.errors.add(:category, "must exist")
+    it "wraps amount field in error container" do
+      expect(html).to have_css(".field_with_errors #transaction_form_amount")
     end
 
-    it "renders the error message" do
-      expect(html).to have_css("p", text: /Category/i)
+    it "displays amount error message" do
+      expect(html).to have_css("p", text: Regexp.new([
+        TransactionForm.human_attribute_name(:amount).humanize,
+        t("errors.messages.blank")
+      ].join('\s+'), Regexp::IGNORECASE))
+    end
+
+    it "displays subcategory error message" do
+      expect(html).to have_css("p", text: Regexp.new([
+        TransactionForm.human_attribute_name(:subcategory).humanize,
+        t("errors.messages.blank")
+      ].join('\s+'), Regexp::IGNORECASE))
     end
   end
 end

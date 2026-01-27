@@ -11,7 +11,7 @@ describe Category do
 
     it { is_expected.to have_many(:snapshots).class_name("CategorySnapshot").dependent(:destroy) }
     it { is_expected.to have_many(:subcategories).class_name("Category").inverse_of(:parent).dependent(:destroy) }
-    it { is_expected.to have_many(:transactions).dependent(:nullify) }
+    it { is_expected.to have_many(:transactions).inverse_of(:subcategory).dependent(:nullify) }
   end
 
   describe "validations" do

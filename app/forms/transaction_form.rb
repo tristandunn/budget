@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class TransactionForm < BaseForm
-  attr_accessor :budget, :category
+  attr_accessor :budget, :subcategory
   attr_writer   :amount
 
   # Return the amount as a Money object.
@@ -26,7 +26,7 @@ class TransactionForm < BaseForm
   #
   # @return [Transaction]
   def transaction
-    @transaction ||= Transaction.new(amount: amount&.cents, budget: budget, category: category)
+    @transaction ||= Transaction.new(amount: amount&.cents, budget: budget, subcategory: subcategory)
   end
 
   private

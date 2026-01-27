@@ -1,11 +1,19 @@
 en:
   title: "Budget"
 
+  activerecord:
+    errors:
+      models:
+        transaction:
+          attributes:
+            subcategory:
+              not_a_subcategory: "is not a subcategory"
+
   activemodel:
     attributes:
       transaction_form:
         amount: "Amount"
-        subcategory_id: "Category"
+        subcategory_id: "Subcategory"
 
   pages:
     index:

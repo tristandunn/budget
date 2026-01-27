@@ -21,10 +21,11 @@ class CreateTransaction
   # @return [Boolean]
   def call
     ActiveRecord::Base.transaction do
-      transaction.save!
+      snapshots.each do |snapshot|
+        snapshot.increment!(:amount_used, amount) # rubocop:disable Rails/SkipsModelValidations
+      end
 
-      category_snapshot.increment!(:amount_used, amount)         # rubocop:disable Rails/SkipsModelValidations
-      parent_category_snapshot&.increment!(:amount_used, amount) # rubocop:disable Rails/SkipsModelValidations
+      transaction.save!
 
       true
     end
@@ -34,30 +35,15 @@ class CreateTransaction
 
   attr_reader :transaction
 
-  delegate :amount, :category, to: :transaction
+  delegate :amount, :subcategory, to: :transaction
 
-  # Return the category snapshot for the current month.
+  # Return the category and subcategory snapshots for the current month.
   #
-  # @return [CategorySnapshot] The snapshot of the category.
-  def category_snapshot
-    @category_snapshot ||= category.snapshots.for_month(Date.current).first
-  end
-
-  # Return the parent category of the transaction category.
-  #
-  # @return [Category] The parent category.
-  # @return [nil] When there is no parent category.
-  def parent_category
-    @parent_category ||= category.parent
-  end
-
-  # Return the parent category snapshot for the current month.
-  #
-  # @return [CategorySnapshot] The snapshot for the parent category.
-  # @return [nil] When there is no parent category.
-  def parent_category_snapshot
-    @parent_category_snapshot ||= if parent_category
-                                    parent_category.snapshots.for_month(Date.current).first
-                                  end
+  # @return [Array<CategorySnapshot>] The snapshots for the category and subcategory.
+  def snapshots
+    [
+      subcategory.parent.snapshots.for_month(Date.current).first,
+      subcategory.snapshots.for_month(Date.current).first
+    ]
   end
 end

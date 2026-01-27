@@ -26,9 +26,9 @@ describe TransactionForm, type: :form do
   describe "#save" do
     subject(:save) { form.save }
 
-    let(:form)     { described_class.new(amount: amount, budget: budget, category: category) }
-    let(:budget)   { category.budget }
-    let(:category) { create(:category, :subcategory) }
+    let(:budget)      { subcategory.budget }
+    let(:form)        { described_class.new(amount: amount, budget: budget, subcategory: subcategory) }
+    let(:subcategory) { create(:category, :subcategory) }
 
     before do
       allow(CreateTransaction).to receive(:call).and_return(result)
@@ -64,9 +64,9 @@ describe TransactionForm, type: :form do
   describe "#transaction" do
     subject(:transaction) { form.transaction }
 
-    let(:form)     { described_class.new(amount: "15.00", budget: budget, category: category) }
-    let(:budget)   { category.budget }
-    let(:category) { create(:category, :subcategory) }
+    let(:budget)      { subcategory.budget }
+    let(:form)        { described_class.new(amount: "15.00", budget: budget, subcategory: subcategory) }
+    let(:subcategory) { create(:category, :subcategory) }
 
     it { is_expected.to be_a(Transaction) }
 
@@ -78,14 +78,8 @@ describe TransactionForm, type: :form do
       expect(transaction.budget).to eq(budget)
     end
 
-    it "sets the category" do
-      expect(transaction.category).to eq(category)
-    end
-
-    context "when a category is not present" do
-      let(:form) { described_class.new(amount: "15.00", budget: nil, category: nil) }
-
-      it { is_expected.not_to be_valid }
+    it "sets the subcategory" do
+      expect(transaction.subcategory).to eq(subcategory)
     end
   end
 end

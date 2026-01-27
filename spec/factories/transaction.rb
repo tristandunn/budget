@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :transaction do
     budget
-    category
+    subcategory { association(:category, :subcategory, budget: budget) }
 
     amount { Faker::Number.number }
   end
