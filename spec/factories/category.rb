@@ -4,7 +4,7 @@ FactoryBot.define do
   factory :category do
     budget
 
-    name { Faker::Commerce.unique.department }
+    sequence(:name) { |n| "Category #{n}" }
 
     transient do
       with_snapshot { true }
