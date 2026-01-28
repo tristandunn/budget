@@ -8,7 +8,7 @@ class TransactionForm < BaseForm
   #
   # @return [Money]
   def amount
-    if @amount.to_f.positive?
+    if @amount.to_f.nonzero?
       Money.from_amount(@amount.to_f)
     end
   end

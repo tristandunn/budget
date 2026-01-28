@@ -16,10 +16,16 @@ describe TransactionForm, type: :form do
       it { is_expected.to be_nil }
     end
 
-    context "when amount is present" do
+    context "when amount is positive" do
       let(:amount) { "10.50" }
 
       it { is_expected.to eq(Money.from_amount(10.50)) }
+    end
+
+    context "when amount is negative" do
+      let(:amount) { "-10.50" }
+
+      it { is_expected.to eq(Money.from_amount(-10.50)) }
     end
   end
 
@@ -34,6 +40,29 @@ describe TransactionForm, type: :form do
         described_class.new(
           account:     account,
           amount:      "25.00",
+          budget:      subcategory.budget,
+          subcategory: subcategory
+        )
+      end
+
+      before do
+        allow(CreateTransaction).to receive(:call).and_return(true)
+      end
+
+      it { is_expected.to be(true) }
+
+      it "creates a transaction" do
+        save
+
+        expect(CreateTransaction).to have_received(:call).with(transaction: form.transaction)
+      end
+    end
+
+    context "when valid with negative amount" do
+      let(:form) do
+        described_class.new(
+          account:     account,
+          amount:      "-25.00",
           budget:      subcategory.budget,
           subcategory: subcategory
         )
@@ -108,6 +137,21 @@ describe TransactionForm, type: :form do
 
     it "sets the subcategory" do
       expect(transaction.subcategory).to eq(subcategory)
+    end
+
+    context "with negative amount" do
+      let(:form) do
+        described_class.new(
+          account:     account,
+          amount:      "-15.00",
+          budget:      budget,
+          subcategory: subcategory
+        )
+      end
+
+      it "sets the amount as negative cents" do
+        expect(transaction.amount).to eq(-1500)
+      end
     end
   end
 end

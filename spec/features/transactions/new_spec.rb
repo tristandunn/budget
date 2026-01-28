@@ -17,7 +17,7 @@ describe "Transaction" do
   end
 
   it "updates the amount remaining" do
-    fill_in_transaction_and_submit(account: account, amount: 13.37, subcategory: subcategory)
+    fill_in_transaction_and_submit(account: account, amount: -13.37, subcategory: subcategory)
 
     expect(page).to have_text("$86.63")
   end

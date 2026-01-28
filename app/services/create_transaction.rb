@@ -21,11 +21,8 @@ class CreateTransaction
   # @return [Boolean]
   def call
     ActiveRecord::Base.transaction do
-      account.decrement!(:balance, amount) # rubocop:disable Rails/SkipsModelValidations
-
-      snapshots.each do |snapshot|
-        snapshot.increment!(:amount_used, amount) # rubocop:disable Rails/SkipsModelValidations
-      end
+      increment_account
+      increment_snapshots
 
       transaction.save!
 
@@ -38,6 +35,26 @@ class CreateTransaction
   attr_reader :transaction
 
   delegate :account, :amount, :subcategory, to: :transaction
+
+  # Update the account based on the transaction amount.
+  #
+  # @return [void]
+  def increment_account
+    account.increment!(:balance, amount) # rubocop:disable Rails/SkipsModelValidations
+  end
+
+  # Update the category and subcategory snapshots based on transaction amount.
+  #
+  # @return [void]
+  def increment_snapshots
+    snapshots.each do |snapshot|
+      if amount.positive?
+        snapshot.increment!(:amount_assigned, amount) # rubocop:disable Rails/SkipsModelValidations
+      else
+        snapshot.increment!(:amount_used, amount.abs) # rubocop:disable Rails/SkipsModelValidations
+      end
+    end
+  end
 
   # Return the category and subcategory snapshots for the current month.
   #
