@@ -10,6 +10,18 @@ describe TransactionForm, type: :form do
 
     let(:form) { described_class.new(amount: amount) }
 
+    context "when amount is blank" do
+      let(:amount) { "" }
+
+      it { is_expected.to be_nil }
+    end
+
+    context "when amount is nil" do
+      let(:amount) { nil }
+
+      it { is_expected.to be_nil }
+    end
+
     context "when amount is zero" do
       let(:amount) { "0" }
 
@@ -19,13 +31,13 @@ describe TransactionForm, type: :form do
     context "when amount is positive" do
       let(:amount) { "10.50" }
 
-      it { is_expected.to eq(Money.from_amount(10.50)) }
+      it { is_expected.to eq(Money.from_amount(BigDecimal("10.50"))) }
     end
 
     context "when amount is negative" do
       let(:amount) { "-10.50" }
 
-      it { is_expected.to eq(Money.from_amount(-10.50)) }
+      it { is_expected.to eq(Money.from_amount(BigDecimal("-10.50"))) }
     end
   end
 

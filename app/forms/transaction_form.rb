@@ -8,8 +8,10 @@ class TransactionForm < BaseForm
   #
   # @return [Money]
   def amount
-    if @amount.to_f.nonzero?
-      Money.from_amount(@amount.to_f)
+    value = BigDecimal(@amount.to_s, exception: false)
+
+    if value&.nonzero?
+      Money.from_amount(value)
     end
   end
 
