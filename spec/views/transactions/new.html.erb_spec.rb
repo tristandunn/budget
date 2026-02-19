@@ -62,7 +62,7 @@ describe "transactions/new.html.erb" do
 
     it "displays subcategory error message" do
       expect(html).to have_css("p", text: Regexp.new([
-        TransactionForm.human_attribute_name(:subcategory).humanize,
+        TransactionForm.human_attribute_name(:subcategory_id).humanize,
         t("errors.messages.blank")
       ].join('\s+'), Regexp::IGNORECASE))
     end

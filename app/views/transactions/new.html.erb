@@ -6,7 +6,7 @@
 
       <% if @form.errors[:amount].present? %>
         <p class="mt-2 text-xs text-red-700">
-          <%= Transaction.human_attribute_name(:amount).humanize %>
+          <%= TransactionForm.human_attribute_name(:amount).humanize %>
           <%= @form.errors[:amount].first %>.
         </p>
       <% end %>
