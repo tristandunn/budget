@@ -9,6 +9,11 @@ en:
       owed: "Owed"
       title: "Accounts"
 
+  budgets:
+    show:
+      assigned: "Assigned"
+      available: "Available"
+
   activerecord:
     errors:
       models:
