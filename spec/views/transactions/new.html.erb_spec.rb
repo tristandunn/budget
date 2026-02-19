@@ -38,9 +38,15 @@ describe "transactions/new.html.erb" do
   end
 
   context "with errors" do
+    let(:form) { TransactionForm.new(amount: "12.50", budget: budget, subcategory: subcategory) }
+
     before do
       form.errors.add(:amount, :blank)
       form.errors.add(:subcategory, :blank)
+    end
+
+    it "preserves the entered amount" do
+      expect(html).to have_field("transaction_form_amount", with: "12.50")
     end
 
     it "wraps amount field in error container" do
