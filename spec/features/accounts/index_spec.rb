@@ -30,7 +30,7 @@ describe "Accounts" do
       end
 
       it "shows accounts when clicking a collapsed header" do
-        2.times { find("h2", text: "Cash").click }
+        2.times { find("h2", text: I18n.t("accounts.index.cash")).click }
 
         expect(page).to have_content(account.name)
       end
@@ -54,7 +54,7 @@ describe "Accounts" do
       end
 
       it "shows accounts when clicking a collapsed header" do
-        2.times { find("h2", text: "Credit").click }
+        2.times { find("h2", text: I18n.t("accounts.index.credit")).click }
 
         expect(page).to have_content(account.name)
       end
