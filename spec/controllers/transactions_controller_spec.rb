@@ -37,10 +37,10 @@ describe TransactionsController do
 
   describe "#create" do
     context "when valid" do
-      let(:budget)      { create(:budget) }
       let(:account)     { create(:account, budget: budget) }
-      let(:subcategory) { create(:category, :subcategory, budget: budget) }
+      let(:budget)      { create(:budget) }
       let(:form)        { instance_double(TransactionForm, save: true) }
+      let(:subcategory) { create(:category, :subcategory, budget: budget) }
 
       before do
         allow(TransactionForm).to receive(:new).and_return(form)

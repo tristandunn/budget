@@ -31,9 +31,9 @@ describe "Budget" do
     end
 
     context "when toggling a category", :js do
-      let(:subcategory) { create(:category, :subcategory) }
       let(:budget)      { subcategory.budget }
       let(:category)    { subcategory.parent }
+      let(:subcategory) { create(:category, :subcategory) }
 
       before do
         visit budget_path(budget)

@@ -5,9 +5,9 @@ require "rails_helper"
 describe CreateTransaction do
   describe ".call" do
     let(:account)                { create(:account, balance: 10_000) }
+    let(:category_snapshot)      { subcategory.parent.snapshots.for_month(Date.current).first }
     let(:subcategory)            { create(:category, :subcategory) }
     let(:subcategory_snapshot)   { subcategory.snapshots.for_month(Date.current).first }
-    let(:category_snapshot)      { subcategory.parent.snapshots.for_month(Date.current).first }
 
     context "with a positive amount" do
       let(:transaction) do
