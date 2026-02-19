@@ -22,6 +22,15 @@ describe CategorySnapshot do
     it { is_expected.to validate_presence_of(:date) }
   end
 
+  describe ".for_month" do
+    it "returns snapshots matching the given month" do
+      matching = create(:category_snapshot, date: Date.current.beginning_of_month)
+      create(:category_snapshot, date: 1.month.from_now.beginning_of_month)
+
+      expect(described_class.for_month(Date.current)).to contain_exactly(matching)
+    end
+  end
+
   describe "#amount_remaining" do
     subject { category_snapshot.amount_remaining }
 
