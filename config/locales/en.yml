@@ -24,10 +24,6 @@ en:
         amount: "Amount"
         subcategory_id: "Subcategory"
 
-  pages:
-    index:
-      description: "A budgeting application."
-
   toolbar:
     plan: "Plan"
     spending: "Spending"
