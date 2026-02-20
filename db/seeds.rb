@@ -7,14 +7,18 @@ Budget.first_or_create!.tap do |budget|
     account.balance = 250_000
   end
   budget.accounts.find_or_create_by!(name: "Savings") do |account|
-    account.balance = 1_000_000
+    account.balance = 100_000
   end
   budget.accounts.find_or_create_by!(name: "United Club") do |account|
     account.balance = -45_000
     account.credit  = true
   end
 
-  budget.categories.find_or_create_by(name: "Immediate Obligations", position: 0).tap do |parent|
+  budget.categories.find_or_create_by(name: Category::INFLOW, position: 0).tap do |parent|
+    parent.subcategories.find_or_create_by(budget: budget, name: Category::AVAILABLE_TO_ASSIGN, position: 0)
+  end
+
+  budget.categories.find_or_create_by(name: "Immediate Obligations", position: 1).tap do |parent|
     parent.snapshots.find_or_create_by!(budget: budget, date: date) do |snapshot|
       snapshot.amount_assigned = 112_500
       snapshot.amount_used     = 100_000
@@ -38,7 +42,7 @@ Budget.first_or_create!.tap do |budget|
     end
   end
 
-  budget.categories.find_or_create_by(name: "Food & Drink", position: 1).tap do |parent|
+  budget.categories.find_or_create_by(name: "Food & Drink", position: 2).tap do |parent|
     parent.snapshots.find_or_create_by!(budget: budget, date: date) do |snapshot|
       snapshot.amount_assigned = 45_000
       snapshot.amount_used     = 17_500
@@ -56,4 +60,6 @@ Budget.first_or_create!.tap do |budget|
       end
     end
   end
+
+  budget.update!(available_to_assign: 147_500)
 end

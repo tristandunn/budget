@@ -8,7 +8,7 @@ class CreateTransaction
     @transaction = transaction
   end
 
-  # Create the transaction, update the account and category snapshots.
+  # Create the transaction and update the related balances.
   #
   # @param transaction [Transaction] The transaction to create.
   # @return [Boolean]
@@ -16,13 +16,18 @@ class CreateTransaction
     new(transaction: transaction).call
   end
 
-  # Create the transaction, update the account and category snapshots.
+  # Create the transaction and update the related balances.
   #
   # @return [Boolean]
   def call
     ActiveRecord::Base.transaction do
       increment_account
-      increment_snapshots
+
+      if subcategory.inflow?
+        increment_available_to_assign
+      else
+        increment_snapshots
+      end
 
       transaction.save!
 
@@ -34,7 +39,14 @@ class CreateTransaction
 
   attr_reader :transaction
 
-  delegate :account, :amount, :subcategory, to: :transaction
+  delegate :account, :amount, :budget, :subcategory, to: :transaction
+
+  # Update the budget available to assign based on the transaction amount.
+  #
+  # @return [void]
+  def increment_available_to_assign
+    budget.increment!(:available_to_assign, amount)
+  end
 
   # Update the account based on the transaction amount.
   #

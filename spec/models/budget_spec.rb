@@ -27,4 +27,8 @@ describe Budget do
       end
     end
   end
+
+  describe "validations" do
+    it { is_expected.to validate_numericality_of(:available_to_assign).only_integer }
+  end
 end

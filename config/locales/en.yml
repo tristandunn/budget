@@ -13,6 +13,7 @@ en:
     show:
       assigned: "Assigned"
       available: "Available"
+      available_to_assign: "Available to Assign"
 
   activerecord:
     errors:

@@ -23,4 +23,20 @@ describe Category do
     it { is_expected.to validate_presence_of(:position) }
     it { is_expected.to validate_numericality_of(:position).only_integer }
   end
+
+  describe "#inflow?" do
+    Category::INFLOW_NAMES.each do |name|
+      it "returns true for a category named #{name}" do
+        category = build(:category, name: name)
+
+        expect(category).to be_inflow
+      end
+    end
+
+    it "returns false for a regular category" do
+      category = build(:category, name: "Groceries")
+
+      expect(category).not_to be_inflow
+    end
+  end
 end

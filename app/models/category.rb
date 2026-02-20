@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class Category < ApplicationRecord
+  AVAILABLE_TO_ASSIGN = "Available to Assign"
+  INFLOW              = "Inflow"
+  INFLOW_NAMES        = [AVAILABLE_TO_ASSIGN, INFLOW].freeze
+
   belongs_to :budget
   belongs_to :parent, class_name: "Category", optional: true
 
@@ -11,4 +15,11 @@ class Category < ApplicationRecord
   validates :name, presence:   true,
                    uniqueness: { case_sensitive: false, scope: :budget_id }
   validates :position, presence: true, numericality: { only_integer: true }
+
+  # Returns true if this category is an inflow category.
+  #
+  # @return [Boolean]
+  def inflow?
+    name.in?(INFLOW_NAMES)
+  end
 end

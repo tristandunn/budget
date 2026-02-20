@@ -14,6 +14,18 @@ FactoryBot.define do
       parent { association(:category, budget: budget) }
     end
 
+    trait :inflow do
+      name          { Category::INFLOW }
+      with_snapshot { false }
+    end
+
+    trait :inflow_subcategory do
+      parent { association(:category, :inflow, budget: budget) }
+
+      name          { Category::AVAILABLE_TO_ASSIGN }
+      with_snapshot { false }
+    end
+
     after(:create) do |category, context|
       if context.with_snapshot
         create(:category_snapshot, category: category, budget: category.budget)

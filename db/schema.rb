@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_25_182833) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_19_221402) do
   create_table "accounts", force: :cascade do |t|
     t.integer "balance", default: 0, null: false
     t.integer "budget_id", null: false
@@ -22,6 +22,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_25_182833) do
   end
 
   create_table "budgets", force: :cascade do |t|
+    t.integer "available_to_assign", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

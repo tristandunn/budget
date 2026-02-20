@@ -27,6 +27,12 @@ describe "budgets/show.html.erb" do
     expect(html).to have_css("h1", text: date.strftime("%B %Y"))
   end
 
+  it "renders the available to assign amount" do
+    expect(html).to have_css(
+      "header", text: number_to_currency(Money.from_cents(category.budget.available_to_assign))
+    )
+  end
+
   it "renders the parent category name" do
     expect(html).to have_css("thead th", text: category.name)
   end

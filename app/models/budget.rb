@@ -7,4 +7,6 @@ class Budget < ApplicationRecord
   has_many :subcategories, -> { where.not(parent_id: nil) },
            class_name: "Category", dependent: :destroy, inverse_of: :budget
   has_many :transactions, dependent: :destroy
+
+  validates :available_to_assign, numericality: { only_integer: true }
 end

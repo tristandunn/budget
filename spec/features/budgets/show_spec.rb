@@ -12,6 +12,14 @@ describe "Budget" do
       expect(page).to have_content(Date.current.strftime("%B %Y"))
     end
 
+    it "renders the available to assign amount" do
+      budget = create(:budget, available_to_assign: 100_000)
+
+      visit budget_path(budget)
+
+      expect(page).to have_content("$1,000.00")
+    end
+
     it "renders the parent categories" do
       category = create(:category)
       budget   = category.budget
