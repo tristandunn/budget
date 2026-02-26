@@ -38,6 +38,29 @@ describe "Budget" do
       expect(page).to have_content(subcategory.name)
     end
 
+    context "when assigning to a subcategory", :js do
+      let(:budget)      { subcategory.budget }
+      let(:subcategory) { create(:category, :subcategory) }
+
+      before do
+        budget.update!(available_to_assign: 100_000)
+        subcategory.snapshots.update_all(amount_assigned: 0) # rubocop:disable Rails/SkipsModelValidations
+        subcategory.parent.snapshots.update_all(amount_assigned: 0) # rubocop:disable Rails/SkipsModelValidations
+        visit budget_path(budget)
+        find("tbody td a", text: "$0.00").click
+        fill_in "assignment_form_amount", with: "250.00"
+        find_by_id("assignment_form_amount").native.send_keys(:return)
+      end
+
+      it "updates the assigned amount" do
+        expect(page).to have_content("$250.00")
+      end
+
+      it "updates the available to assign amount" do
+        expect(page).to have_content("$750.00")
+      end
+    end
+
     context "when toggling a category", :js do
       let(:budget)      { subcategory.budget }
       let(:category)    { subcategory.parent }

@@ -54,11 +54,15 @@ describe "budgets/show.html.erb" do
     expect(html).to have_css("tbody th", text: subcategory.name)
   end
 
-  it "renders the subcategory amount assigned" do
+  it "renders the subcategory amount assigned as a link" do
     expect(html).to have_css(
-      "tbody td",
+      "tbody td a",
       text: number_to_currency(Money.from_cents(subcategory_snapshot.amount_assigned))
     )
+  end
+
+  it "wraps the subcategory assigned amount in a turbo frame" do
+    expect(html).to have_css("tbody td turbo-frame##{dom_id(subcategory, :assignment)}")
   end
 
   it "renders the subcategory amount remaining" do

@@ -3,6 +3,9 @@
 Rails.application.routes.draw do
   resources :budgets, only: [:show] do
     resources :accounts, only: %i(index)
+    resources :categories, only: [] do
+      resource :assignment, only: %i(edit update)
+    end
     resources :transactions, only: %i(new create)
   end
 
