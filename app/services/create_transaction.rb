@@ -40,7 +40,7 @@ class CreateTransaction
   #
   # @return [void]
   def increment_account
-    account.increment!(:balance, amount) # rubocop:disable Rails/SkipsModelValidations
+    account.increment!(:balance, amount)
   end
 
   # Update the category and subcategory snapshots based on transaction amount.
@@ -49,9 +49,9 @@ class CreateTransaction
   def increment_snapshots
     snapshots.each do |snapshot|
       if amount.positive?
-        snapshot.increment!(:amount_assigned, amount) # rubocop:disable Rails/SkipsModelValidations
+        snapshot.increment!(:amount_assigned, amount)
       else
-        snapshot.increment!(:amount_used, amount.abs) # rubocop:disable Rails/SkipsModelValidations
+        snapshot.increment!(:amount_used, amount.abs)
       end
     end
   end

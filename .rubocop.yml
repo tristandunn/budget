@@ -52,6 +52,10 @@ RSpec/ImplicitSubject:
 RSpec/MultipleDescribes:
   Enabled: false
 
+Rails/SkipsModelValidations:
+  AllowedMethods:
+    - increment!
+
 RSpec/SpecFilePathFormat:
   Enabled: false
 
