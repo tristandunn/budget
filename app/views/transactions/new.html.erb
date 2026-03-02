@@ -2,7 +2,7 @@
   <%= form_with model: @form, url: budget_transactions_path(@form.budget), class: "highlight-errors", data: { turbo: false } do |form| %>
     <div>
       <%= form.label :amount, class: "block mb-1 text-sm font-medium text-gray-800 hidden" %>
-      <%= form.number_field :amount, autocomplete: false, autofocus: true, class: "w-full text-red-600 text-4xl font-semibold text-center bg-transparent outline-none no-spinner", required: true, inputmode: "decimal", step: 0.01, value: @form.amount || "0.00" %>
+      <%= form.number_field :amount, autocomplete: false, autofocus: true, class: "w-full text-4xl font-semibold text-center bg-transparent outline-none no-spinner", required: true, inputmode: "decimal", step: 0.01, value: @form.amount || "0.00", data: { controller: "amount", action: "input->amount#input keydown->amount#keydown" } %>
 
       <% if @form.errors[:amount].present? %>
         <p class="mt-2 text-xs text-red-700">
