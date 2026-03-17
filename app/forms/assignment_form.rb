@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class AssignmentForm < BaseForm
+  ARITHMETIC_PATTERN = /[+-]?[\d.]+/
+
   attr_accessor :budget, :date, :subcategory
   attr_writer   :amount
 
@@ -8,10 +10,8 @@ class AssignmentForm < BaseForm
   #
   # @return [Money] The parsed amount.
   def amount
-    value = BigDecimal(@amount.to_s, exception: false)
-
-    if value
-      Money.from_amount(value)
+    if parts.any?
+      Money.from_amount(parts.sum)
     end
   end
 
@@ -37,6 +37,15 @@ class AssignmentForm < BaseForm
   end
 
   private
+
+  # Parse the amount string into numeric parts, supporting arithmetic expressions.
+  #
+  # @return [Array<BigDecimal>] The numeric parts of the amount string.
+  def parts
+    @parts ||= @amount.to_s.scan(ARITHMETIC_PATTERN).filter_map do |part|
+      BigDecimal(part, exception: false)
+    end
+  end
 
   # Validate the assignment, merging errors into the form.
   #

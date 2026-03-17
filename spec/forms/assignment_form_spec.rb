@@ -33,6 +33,54 @@ describe AssignmentForm, type: :form do
 
       it { is_expected.to eq(Money.from_amount(BigDecimal("10.50"))) }
     end
+
+    context "when amount is an addition expression" do
+      let(:amount) { "100.00+13.37" }
+
+      it { is_expected.to eq(Money.from_amount(BigDecimal("113.37"))) }
+    end
+
+    context "when amount is a subtraction expression" do
+      let(:amount) { "100.00-13.37" }
+
+      it { is_expected.to eq(Money.from_amount(BigDecimal("86.63"))) }
+    end
+
+    context "when amount is a chained expression" do
+      let(:amount) { "100+10-5" }
+
+      it { is_expected.to eq(Money.from_amount(BigDecimal("105"))) }
+    end
+
+    context "when amount starts with a negative part" do
+      let(:amount) { "-50+20" }
+
+      it { is_expected.to eq(Money.from_amount(BigDecimal("-30"))) }
+    end
+
+    context "when amount has a trailing operator" do
+      let(:amount) { "100+" }
+
+      it { is_expected.to eq(Money.from_amount(BigDecimal("100"))) }
+    end
+
+    context "when amount is a bare minus sign" do
+      let(:amount) { "-" }
+
+      it { is_expected.to be_nil }
+    end
+
+    context "when amount is a bare plus sign" do
+      let(:amount) { "+" }
+
+      it { is_expected.to be_nil }
+    end
+
+    context "when amount contains invalid decimal parts" do
+      let(:amount) { "100+.." }
+
+      it { is_expected.to eq(Money.from_amount(BigDecimal("100"))) }
+    end
   end
 
   describe "#assignment" do
