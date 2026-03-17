@@ -16,7 +16,7 @@ describe "shared/_toolbar.html.erb" do
   end
 
   it "renders the spending link" do
-    expect(html).to have_link(I18n.t("toolbar.spending"), href: "#")
+    expect(html).to have_link(I18n.t("toolbar.spending"), href: root_path)
   end
 
   it "renders the accounts link" do
@@ -24,7 +24,7 @@ describe "shared/_toolbar.html.erb" do
   end
 
   it "renders the reflect link" do
-    expect(html).to have_link(I18n.t("toolbar.reflect"), href: "#")
+    expect(html).to have_link(I18n.t("toolbar.reflect"), href: root_path)
   end
 
   it "renders the add transaction link" do
