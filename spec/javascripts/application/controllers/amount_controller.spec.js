@@ -63,8 +63,8 @@ describe("AmountController", () => {
 
       beforeEach(() => {
         event = new window.KeyboardEvent("keydown", {
-          "key": "-",
-          "cancelable": true
+          "cancelable": true,
+          "key": "-"
         });
       });
 
@@ -120,8 +120,8 @@ describe("AmountController", () => {
 
       beforeEach(() => {
         event = new window.KeyboardEvent("keydown", {
-          "key": "5",
-          "cancelable": true
+          "cancelable": true,
+          "key": "5"
         });
       });
 
@@ -149,8 +149,8 @@ describe("AmountController", () => {
 
       beforeEach(() => {
         event = new window.KeyboardEvent("keydown", {
-          "key": "5",
-          "cancelable": true
+          "cancelable": true,
+          "key": "5"
         });
 
         element.value = "42.50";
@@ -172,8 +172,8 @@ describe("AmountController", () => {
     describe("when pressing an invalid character", () => {
       it("allows the decimal point", () => {
         const event = new window.KeyboardEvent("keydown", {
-          "key": ".",
-          "cancelable": true
+          "cancelable": true,
+          "key": "."
         });
 
         instance.keydown(event);
@@ -183,8 +183,8 @@ describe("AmountController", () => {
 
       it("allows backspace", () => {
         const event = new window.KeyboardEvent("keydown", {
-          "key": "Backspace",
-          "cancelable": true
+          "cancelable": true,
+          "key": "Backspace"
         });
 
         instance.keydown(event);
@@ -194,9 +194,9 @@ describe("AmountController", () => {
 
       it("allows control shortcuts", () => {
         const event = new window.KeyboardEvent("keydown", {
-          "key": "c",
           "cancelable": true,
-          "ctrlKey": true
+          "ctrlKey": true,
+          "key": "c"
         });
 
         instance.keydown(event);
@@ -206,8 +206,8 @@ describe("AmountController", () => {
 
       it("allows meta shortcuts", () => {
         const event = new window.KeyboardEvent("keydown", {
-          "key": "c",
           "cancelable": true,
+          "key": "c",
           "metaKey": true
         });
 
@@ -218,8 +218,8 @@ describe("AmountController", () => {
 
       it("does not allow letters", () => {
         const event = new window.KeyboardEvent("keydown", {
-          "key": "a",
-          "cancelable": true
+          "cancelable": true,
+          "key": "a"
         });
 
         instance.keydown(event);
@@ -229,8 +229,8 @@ describe("AmountController", () => {
 
       it("does not allow symbols", () => {
         const event = new window.KeyboardEvent("keydown", {
-          "key": "$",
-          "cancelable": true
+          "cancelable": true,
+          "key": "$"
         });
 
         instance.keydown(event);
@@ -244,8 +244,8 @@ describe("AmountController", () => {
 
       beforeEach(() => {
         event = new window.KeyboardEvent("keydown", {
-          "key": "Enter",
-          "cancelable": true
+          "cancelable": true,
+          "key": "Enter"
         });
 
         element.value = "42.50";

@@ -29,9 +29,6 @@ export default [
       ...js.configs.recommended.rules,
       ...stylistic.configs["all"].rules,
 
-      "arrow-body-style": ["error", "always"],
-      "no-magic-numbers": ["error", { "ignore": [0, 1, 2, 3] }],
-
       "@stylistic/array-element-newline": ["error", "consistent"],
       "@stylistic/function-call-argument-newline": ["error", "consistent"],
       "@stylistic/function-paren-newline": ["error", "consistent"],
@@ -47,10 +44,13 @@ export default [
         }
       ],
       "@stylistic/lines-around-comment": ["error", { "allowClassStart": true }],
-      "@stylistic/object-curly-spacing": ["error", "always"],
       "@stylistic/no-multi-spaces": "off",
+      "@stylistic/object-curly-spacing": ["error", "always"],
       "@stylistic/padded-blocks": "off",
-      "@stylistic/space-before-function-paren": "off"
+      "@stylistic/space-before-function-paren": "off",
+      "arrow-body-style": ["error", "always"],
+      "no-magic-numbers": ["error", { "ignore": [0, 1, 2, 3] }],
+      "sort-keys": "error"
     }
   },
   {
