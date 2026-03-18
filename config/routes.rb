@@ -2,6 +2,11 @@
 
 Rails.application.routes.draw do
   resources :budgets, only: [:show] do
+    get ":year/:month", action:      :show,
+                        as:          :month,
+                        constraints: { year: /\d{4}/, month: /\d{1,2}/ },
+                        on:          :member
+
     resources :accounts, only: %i(index)
     resources :categories, only: [] do
       resource :assignment, only: %i(edit update)

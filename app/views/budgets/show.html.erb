@@ -1,6 +1,48 @@
 <div class="flex flex-col min-h-screen">
   <header class="flex items-center justify-between bg-white p-4">
-    <h1 class="text-lg font-semibold"><%= @date.strftime("%B %Y") %></h1>
+    <div class="flex items-center gap-2">
+      <%= link_to(
+            month_budget_path(@budget, year: @budget_snapshot.previous_date.year, month: @budget_snapshot.previous_date.month),
+            aria:  { label: t(".previous_month"), disabled: @budget_snapshot.first_month? || nil },
+            class: navigation_arrow_class(@budget_snapshot.first_month?),
+            id:    "previous-month"
+          ) do %>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      <% end %>
+
+      <h1 class="text-lg font-semibold"><%= @budget_snapshot.date.strftime("%b %Y") %></h1>
+
+      <%= link_to(
+            month_budget_path(@budget, year: @budget_snapshot.next_date.year, month: @budget_snapshot.next_date.month),
+            aria:  { label: t(".next_month"), disabled: @budget_snapshot.last_month? || nil },
+            class: navigation_arrow_class(@budget_snapshot.last_month?),
+            id:    "next-month"
+          ) do %>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      <% end %>
+    </div>
 
     <div class="text-right leading-tight">
       <div
@@ -34,7 +76,7 @@
               <%= category.name %>
             </th>
 
-            <% @snapshots[category.id].tap do |snapshot| %>
+            <% @budget_snapshot.snapshot_for(category.id).tap do |snapshot| %>
               <th scope="col" class="py-2 px-4 w-1/4 text-right">
                 <div class="text-sm font-normal"><%= t(".assigned") %></div>
                 <div><%= number_to_currency Money.from_cents(snapshot.amount_assigned) %></div>
@@ -55,11 +97,11 @@
                 <%= subcategory.name %>
               </th>
 
-              <% @snapshots[subcategory.id].tap do |snapshot| %>
+              <% @budget_snapshot.snapshot_for(subcategory.id).tap do |snapshot| %>
                 <td class="py-3 px-4 font-semibold text-right">
                   <%= turbo_frame_tag dom_id(subcategory, :assignment) do %>
                     <%= link_to number_to_currency(Money.from_cents(snapshot.amount_assigned)),
-                                edit_budget_category_assignment_path(@budget, subcategory),
+                                edit_budget_category_assignment_path(@budget, subcategory, year: @budget_snapshot.date.year, month: @budget_snapshot.date.month),
                                 class: "text-inherit no-underline cursor-text",
                                 data:  { turbo_prefetch: false } %>
                   <% end %>

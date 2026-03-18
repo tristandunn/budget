@@ -39,6 +39,26 @@ describe AssignmentsController do
     it "assigns the form" do
       expect(assigns(:form)).to eq(form)
     end
+
+    context "with year and month parameters" do
+      let(:date) { 2.months.ago.to_date.beginning_of_month }
+
+      before do
+        allow(AssignmentForm).to receive(:new).and_return(form)
+
+        get :edit, params: {
+          budget_id:   budget.id,
+          category_id: subcategory.id,
+          month:       date.month,
+          year:        date.year
+        }
+      end
+
+      it "initializes the form with the parsed date" do
+        expect(AssignmentForm).to have_received(:new)
+          .with(budget: budget, subcategory: subcategory, date: date)
+      end
+    end
   end
 
   describe "#update" do
@@ -57,8 +77,6 @@ describe AssignmentsController do
         }
       end
 
-      it { is_expected.to redirect_to(budget_url(budget)) }
-
       it "initializes the form with the parameters" do
         expect(AssignmentForm).to have_received(:new)
           .with(amount: "100.00", budget: budget, date: Date.current.beginning_of_month, subcategory: subcategory)
@@ -66,6 +84,42 @@ describe AssignmentsController do
 
       it "saves the form" do
         expect(form).to have_received(:save)
+      end
+
+      it "redirects to the budget" do
+        expect(response).to redirect_to(
+          month_budget_url(budget, month: Date.current.month, year: Date.current.year)
+        )
+      end
+    end
+
+    context "with valid year and month parameters" do
+      let(:budget)      { subcategory.budget }
+      let(:date)        { 2.months.ago.to_date.beginning_of_month }
+      let(:form)        { instance_double(AssignmentForm, save: true) }
+      let(:subcategory) { create(:category, :subcategory) }
+
+      before do
+        allow(AssignmentForm).to receive(:new).and_return(form)
+
+        patch :update, params: {
+          budget_id:       budget.id,
+          category_id:     subcategory.id,
+          year:            date.year,
+          month:           date.month,
+          assignment_form: { amount: "100.00" }
+        }
+      end
+
+      it "redirects to the budget" do
+        expect(response).to redirect_to(
+          month_budget_url(budget, month: date.month, year: date.year)
+        )
+      end
+
+      it "initializes the form with the parsed date" do
+        expect(AssignmentForm).to have_received(:new)
+          .with(amount: "100.00", budget: budget, date: date, subcategory: subcategory)
       end
     end
 

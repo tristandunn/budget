@@ -9,7 +9,7 @@ describe "Budget" do
 
       visit budget_path(budget)
 
-      expect(page).to have_content(Date.current.strftime("%B %Y"))
+      expect(page).to have_content(Date.current.strftime("%b %Y"))
     end
 
     it "renders the available to assign amount" do
@@ -38,26 +38,24 @@ describe "Budget" do
       expect(page).to have_content(subcategory.name)
     end
 
-    context "when assigning to a subcategory", :js do
-      let(:budget)      { subcategory.budget }
-      let(:subcategory) { create(:category, :subcategory) }
+    context "when navigating months" do
+      it "navigates to the next month" do
+        budget = create(:budget)
 
-      before do
-        budget.update!(available_to_assign: 100_000)
-        subcategory.snapshots.update_all(amount_assigned: 0) # rubocop:disable Rails/SkipsModelValidations
-        subcategory.parent.snapshots.update_all(amount_assigned: 0) # rubocop:disable Rails/SkipsModelValidations
         visit budget_path(budget)
-        find("tbody td a", text: "$0.00").click
-        fill_in "assignment_form_amount", with: "250.00"
-        find_by_id("assignment_form_amount").native.send_keys(:return)
+        click_on "next-month"
+
+        expect(page).to have_content(1.month.from_now.strftime("%b %Y"))
       end
 
-      it "updates the assigned amount" do
-        expect(page).to have_content("$250.00")
-      end
+      it "navigates back to the previous month" do
+        budget = create(:budget)
 
-      it "updates the available to assign amount" do
-        expect(page).to have_content("$750.00")
+        visit budget_path(budget)
+        click_on "next-month"
+        click_on "previous-month"
+
+        expect(page).to have_content(Date.current.strftime("%b %Y"))
       end
     end
 

@@ -8,8 +8,7 @@ class BudgetsController < ApplicationController
 
   # Render a budget.
   def show
-    @date      = Date.current.beginning_of_month
-    @budget    = Budget.includes(categories: :subcategories).find(params[:id])
-    @snapshots = @budget.category_snapshots.for_month(@date).index_by(&:category_id)
+    @budget          = Budget.includes(categories: :subcategories).find(params[:id])
+    @budget_snapshot = BudgetSnapshot.new(@budget, month: params[:month], year: params[:year])
   end
 end

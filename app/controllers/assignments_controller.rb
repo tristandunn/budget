@@ -17,7 +17,7 @@ class AssignmentsController < ApplicationController
     @form                 = AssignmentForm.new(assignment_parameters)
 
     if @form.save
-      redirect_to budget_path(budget)
+      redirect_to month_budget_path(budget, month: date.month, year: date.year)
     else
       render :edit, status: :unprocessable_content
     end
@@ -32,11 +32,13 @@ class AssignmentsController < ApplicationController
     @budget ||= Budget.find(params[:budget_id])
   end
 
-  # Return the current month date.
+  # Parse the year and month parameters, falling back to the current month.
   #
-  # @return [Date] The first day of the current month.
+  # @return [Date] The parsed date, or the current month if parsing fails.
   def date
-    Date.current.beginning_of_month
+    @date ||= Date.new(params[:year].to_i, params[:month].to_i)
+  rescue Date::Error
+    @date = Date.current.beginning_of_month
   end
 
   # Return the permitted form parameters.

@@ -1,5 +1,5 @@
 <%= turbo_frame_tag dom_id(@subcategory, :assignment) do %>
-  <%= form_with model: @form, url: budget_category_assignment_path(@budget, @subcategory), method: :patch, class: "inline", data: { controller: "inline-edit", turbo_frame: "_top" } do |form| %>
+  <%= form_with model: @form, url: budget_category_assignment_path(@budget, @subcategory, month: @form.date.month, year: @form.date.year), method: :patch, class: "inline", data: { controller: "inline-edit", turbo_frame: "_top" } do |form| %>
     <%= form.text_field :amount,
                         autofocus: true,
                         class:     "w-full text-right font-semibold bg-transparent outline-none cursor-text no-spinner focus:ring-1 focus:ring-slate-400 focus:rounded",

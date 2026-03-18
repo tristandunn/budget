@@ -24,4 +24,20 @@ describe BudgetHelper do
       it { is_expected.to eq("bg-lime-400 text-lime-950") }
     end
   end
+
+  describe "#navigation_arrow_class" do
+    subject { helper.navigation_arrow_class(disabled) }
+
+    context "when enabled" do
+      let(:disabled) { false }
+
+      it { is_expected.to eq("h-5 w-5") }
+    end
+
+    context "when disabled" do
+      let(:disabled) { true }
+
+      it { is_expected.to eq("h-5 w-5 text-slate-300 pointer-events-none") }
+    end
+  end
 end
