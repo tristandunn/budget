@@ -7,5 +7,7 @@ FactoryBot.define do
     subcategory { association(:category, :subcategory, budget: budget) }
 
     amount { Faker::Number.number }
+    date   { Date.current }
+    payee  { Faker::Name.name }
   end
 end

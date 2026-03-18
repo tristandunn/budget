@@ -41,6 +41,36 @@ describe TransactionForm, type: :form do
     end
   end
 
+  describe "#date" do
+    subject { form.date }
+
+    let(:form) { described_class.new(date: date) }
+
+    context "when date is a valid string" do
+      let(:date) { "2026-03-18" }
+
+      it { is_expected.to eq(Date.new(2026, 3, 18)) }
+    end
+
+    context "when date is blank" do
+      let(:date) { "" }
+
+      it { is_expected.to eq(Date.current) }
+    end
+
+    context "when date is nil" do
+      let(:date) { nil }
+
+      it { is_expected.to eq(Date.current) }
+    end
+
+    context "when date is invalid" do
+      let(:date) { "not-a-date" }
+
+      it { is_expected.to eq(Date.current) }
+    end
+  end
+
   describe "#save" do
     subject(:save) { form.save }
 
@@ -53,6 +83,9 @@ describe TransactionForm, type: :form do
           account:     account,
           amount:      "25.00",
           budget:      subcategory.budget,
+          date:        "2026-03-18",
+          memo:        "A memo",
+          payee:       "Test Payee",
           subcategory: subcategory
         )
       end
@@ -76,6 +109,8 @@ describe TransactionForm, type: :form do
           account:     account,
           amount:      "-25.00",
           budget:      subcategory.budget,
+          date:        "2026-03-18",
+          payee:       "Test Payee",
           subcategory: subcategory
         )
       end
@@ -99,6 +134,8 @@ describe TransactionForm, type: :form do
           account:     account,
           amount:      "0",
           budget:      subcategory.budget,
+          date:        "2026-03-18",
+          payee:       "Test Payee",
           subcategory: subcategory
         )
       end
@@ -129,6 +166,9 @@ describe TransactionForm, type: :form do
         account:     account,
         amount:      "15.00",
         budget:      budget,
+        date:        "2026-03-18",
+        memo:        "Lunch",
+        payee:       "Test Payee",
         subcategory: subcategory
       )
     end
@@ -147,6 +187,18 @@ describe TransactionForm, type: :form do
       expect(transaction.budget).to eq(budget)
     end
 
+    it "sets the date" do
+      expect(transaction.date).to eq(Date.new(2026, 3, 18))
+    end
+
+    it "sets the memo" do
+      expect(transaction.memo).to eq("Lunch")
+    end
+
+    it "sets the payee" do
+      expect(transaction.payee).to eq("Test Payee")
+    end
+
     it "sets the subcategory" do
       expect(transaction.subcategory).to eq(subcategory)
     end
@@ -157,6 +209,8 @@ describe TransactionForm, type: :form do
           account:     account,
           amount:      "-15.00",
           budget:      budget,
+          date:        "2026-03-18",
+          payee:       "Test Payee",
           subcategory: subcategory
         )
       end

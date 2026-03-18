@@ -42,20 +42,38 @@ describe TransactionsController do
       let(:form)        { instance_double(TransactionForm, save: true) }
       let(:subcategory) { create(:category, :subcategory, budget: budget) }
 
+      let(:expected_parameters) do
+        {
+          account:     account,
+          amount:      "100",
+          budget:      budget,
+          date:        "2026-03-18",
+          memo:        "A memo",
+          payee:       "Test Payee",
+          subcategory: subcategory
+        }
+      end
+
       before do
         allow(TransactionForm).to receive(:new).and_return(form)
 
         post :create, params: {
           budget_id:        budget.id,
-          transaction_form: { account_id: account.id, amount: "100", subcategory_id: subcategory.id }
+          transaction_form: {
+            account_id:     account.id,
+            amount:         "100",
+            date:           "2026-03-18",
+            memo:           "A memo",
+            payee:          "Test Payee",
+            subcategory_id: subcategory.id
+          }
         }
       end
 
       it { is_expected.to redirect_to(budget_url(budget)) }
 
-      it "initializes the form with account, amount, budget, and subcategory" do
-        expect(TransactionForm).to have_received(:new)
-          .with(account: account, amount: "100", budget: budget, subcategory: subcategory)
+      it "initializes the form with transaction parameters" do
+        expect(TransactionForm).to have_received(:new).with(expected_parameters)
       end
 
       it "saves the form" do
@@ -69,6 +87,18 @@ describe TransactionsController do
       let(:form)        { instance_double(TransactionForm, save: false) }
       let(:subcategory) { create(:category, :subcategory, budget: budget) }
 
+      let(:expected_parameters) do
+        {
+          account:     account,
+          amount:      "invalid",
+          budget:      budget,
+          date:        "2026-03-18",
+          memo:        "A memo",
+          payee:       "Test Payee",
+          subcategory: subcategory
+        }
+      end
+
       before do
         allow(TransactionForm).to receive(:new).and_return(form)
 
@@ -77,6 +107,9 @@ describe TransactionsController do
           transaction_form: {
             account_id:     account.id,
             amount:         "invalid",
+            date:           "2026-03-18",
+            memo:           "A memo",
+            payee:          "Test Payee",
             subcategory_id: subcategory.id
           }
         }
@@ -86,8 +119,7 @@ describe TransactionsController do
       it { is_expected.to render_template(:new) }
 
       it "initializes the form" do
-        expect(TransactionForm).to have_received(:new)
-          .with(account: account, amount: "invalid", budget: budget, subcategory: subcategory)
+        expect(TransactionForm).to have_received(:new).with(expected_parameters)
       end
 
       it "assigns the budget accounts" do

@@ -13,8 +13,15 @@
     </div>
 
     <div class="mt-6">
-      <%= form.label :account_id, class: "block mb-1 text-sm font-medium text-gray-800 hidden" %>
-      <%= form.collection_select :account_id, @accounts, :id, :name, { prompt: t(".select_account"), selected: @form.account&.id }, { class: "w-full p-3 text-lg border border-gray-300 rounded-lg" } %>
+      <%= form.label :payee, class: "block mb-1 text-sm font-medium text-gray-800 hidden" %>
+      <%= form.text_field :payee, class: "w-full p-3 text-lg border border-gray-300 rounded-lg", placeholder: t(".enter_payee"), required: true %>
+
+      <% if @form.errors[:payee].present? %>
+        <p class="mt-2 text-xs text-red-700">
+          <%= TransactionForm.human_attribute_name(:payee).humanize %>
+          <%= @form.errors[:payee].first %>.
+        </p>
+      <% end %>
     </div>
 
     <div class="mt-6">
@@ -27,6 +34,28 @@
           <%= @form.errors[:subcategory].first %>.
         </p>
       <% end %>
+    </div>
+
+    <div class="mt-6">
+      <%= form.label :account_id, class: "block mb-1 text-sm font-medium text-gray-800 hidden" %>
+      <%= form.collection_select :account_id, @accounts, :id, :name, { prompt: t(".select_account"), selected: @form.account&.id }, { class: "w-full p-3 text-lg border border-gray-300 rounded-lg" } %>
+    </div>
+
+    <div class="mt-6">
+      <%= form.label :date, class: "block mb-1 text-sm font-medium text-gray-800 hidden" %>
+      <%= form.date_field :date, class: "w-full p-3 text-lg border border-gray-300 rounded-lg", required: true, value: @form.date %>
+
+      <% if @form.errors[:date].present? %>
+        <p class="mt-2 text-xs text-red-700">
+          <%= TransactionForm.human_attribute_name(:date).humanize %>
+          <%= @form.errors[:date].first %>.
+        </p>
+      <% end %>
+    </div>
+
+    <div class="mt-6">
+      <%= form.label :memo, class: "block mb-1 text-sm font-medium text-gray-800 hidden" %>
+      <%= form.text_field :memo, class: "w-full p-3 text-lg border border-gray-300 rounded-lg", placeholder: t(".enter_memo") %>
     </div>
 
     <button

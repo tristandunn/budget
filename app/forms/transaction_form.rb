@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class TransactionForm < BaseForm
-  attr_accessor :account, :budget, :subcategory
-  attr_writer   :amount
+  attr_accessor :account, :budget, :memo, :payee, :subcategory
+  attr_writer   :amount, :date
 
   # Return the amount as a Money object.
   #
@@ -13,6 +13,15 @@ class TransactionForm < BaseForm
     if value&.nonzero?
       Money.from_amount(value)
     end
+  end
+
+  # Return the date, defaulting to today when blank or unparseable.
+  #
+  # @return [Date] The parsed date.
+  def date
+    Date.parse(@date.to_s)
+  rescue Date::Error
+    Date.current
   end
 
   # Attempt to save the transaction if it's valid.
@@ -32,6 +41,9 @@ class TransactionForm < BaseForm
       account:     account,
       amount:      amount&.cents,
       budget:      budget,
+      date:        date,
+      memo:        memo,
+      payee:       payee,
       subcategory: subcategory
     )
   end

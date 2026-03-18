@@ -25,12 +25,24 @@ describe "transactions/new.html.erb" do
     expect(html).to have_field("transaction_form_amount")
   end
 
-  it "renders the account select" do
-    expect(html).to have_select("transaction_form_account_id")
+  it "renders the payee field" do
+    expect(html).to have_field("transaction_form_payee")
   end
 
   it "renders the subcategory select" do
     expect(html).to have_select("transaction_form_subcategory_id")
+  end
+
+  it "renders the account select" do
+    expect(html).to have_select("transaction_form_account_id")
+  end
+
+  it "renders the date field" do
+    expect(html).to have_field("transaction_form_date")
+  end
+
+  it "renders the memo field" do
+    expect(html).to have_field("transaction_form_memo")
   end
 
   it "renders the submit button" do
@@ -38,15 +50,23 @@ describe "transactions/new.html.erb" do
   end
 
   context "with errors" do
-    let(:form) { TransactionForm.new(amount: "12.50", budget: budget, subcategory: subcategory) }
+    let(:form) do
+      TransactionForm.new(amount: "12.50", budget: budget, payee: "Test Payee", subcategory: subcategory)
+    end
 
     before do
       form.errors.add(:amount, :blank)
+      form.errors.add(:date, :blank)
+      form.errors.add(:payee, :blank)
       form.errors.add(:subcategory, :blank)
     end
 
     it "preserves the entered amount" do
       expect(html).to have_field("transaction_form_amount", with: "12.50")
+    end
+
+    it "preserves the entered payee" do
+      expect(html).to have_field("transaction_form_payee", with: "Test Payee")
     end
 
     it "wraps amount field in error container" do
@@ -63,6 +83,20 @@ describe "transactions/new.html.erb" do
     it "displays subcategory error message" do
       expect(html).to have_css("p", text: Regexp.new([
         TransactionForm.human_attribute_name(:subcategory_id).humanize,
+        t("errors.messages.blank")
+      ].join('\s+'), Regexp::IGNORECASE))
+    end
+
+    it "displays payee error message" do
+      expect(html).to have_css("p", text: Regexp.new([
+        TransactionForm.human_attribute_name(:payee).humanize,
+        t("errors.messages.blank")
+      ].join('\s+'), Regexp::IGNORECASE))
+    end
+
+    it "displays date error message" do
+      expect(html).to have_css("p", text: Regexp.new([
+        TransactionForm.human_attribute_name(:date).humanize,
         t("errors.messages.blank")
       ].join('\s+'), Regexp::IGNORECASE))
     end

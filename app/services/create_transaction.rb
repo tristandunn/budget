@@ -39,7 +39,7 @@ class CreateTransaction
 
   attr_reader :transaction
 
-  delegate :account, :amount, :budget, :subcategory, to: :transaction
+  delegate :account, :amount, :budget, :date, :subcategory, to: :transaction
 
   # Update the budget available to assign based on the transaction amount.
   #
@@ -68,13 +68,13 @@ class CreateTransaction
     end
   end
 
-  # Return the category and subcategory snapshots for the current month.
+  # Return the category and subcategory snapshots for the transaction month.
   #
   # @return [Array<CategorySnapshot>] The snapshots for the category and subcategory.
   def snapshots
     [
-      subcategory.parent.snapshots.for_month(Date.current).first,
-      subcategory.snapshots.for_month(Date.current).first
+      subcategory.parent.snapshots.for_month(date).first,
+      subcategory.snapshots.for_month(date).first
     ]
   end
 end

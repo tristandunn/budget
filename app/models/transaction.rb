@@ -8,6 +8,9 @@ class Transaction < ApplicationRecord
                            inverse_of:  :transactions
 
   validates :amount, presence: true, numericality: { only_integer: true }
+  validates :date,   presence: true
+  validates :payee,  presence: true
+
   validate  :validate_subcategory
 
   private

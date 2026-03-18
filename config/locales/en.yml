@@ -28,6 +28,9 @@ en:
       transaction_form:
         account_id: "Account"
         amount: "Amount"
+        date: "Date"
+        memo: "Memo"
+        payee: "Payee"
         subcategory_id: "Subcategory"
 
   toolbar:
@@ -39,6 +42,8 @@ en:
   transactions:
     new:
       cancel: "Cancel"
-      select_account: "Select an account"
-      select_subcategory: "Select a category"
+      enter_memo: "Enter a memo..."
+      enter_payee: "Enter a Payee"
+      select_account: "Choose Account"
+      select_subcategory: "Choose Category"
       submit: "Add Transaction"

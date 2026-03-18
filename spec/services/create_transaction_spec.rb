@@ -5,9 +5,9 @@ require "rails_helper"
 describe CreateTransaction do
   describe ".call" do
     let(:account)                { create(:account, balance: 10_000) }
-    let(:category_snapshot)      { subcategory.parent.snapshots.for_month(Date.current).first }
+    let(:category_snapshot)      { subcategory.parent.snapshots.for_month(transaction.date).first }
     let(:subcategory)            { create(:category, :subcategory) }
-    let(:subcategory_snapshot)   { subcategory.snapshots.for_month(Date.current).first }
+    let(:subcategory_snapshot)   { subcategory.snapshots.for_month(transaction.date).first }
 
     context "with a positive amount" do
       let(:transaction) do
@@ -106,6 +106,36 @@ describe CreateTransaction do
       it "saves the transaction" do
         expect { described_class.call(transaction: transaction) }
           .to change(transaction, :persisted?).from(false).to(true)
+      end
+    end
+
+    context "with a backdated transaction" do
+      let(:subcategory) { create(:category, :subcategory, with_snapshot: false) }
+
+      let(:transaction) do
+        build(:transaction, account:     account,
+                            subcategory: subcategory,
+                            budget:      subcategory.budget,
+                            amount:      -500,
+                            date:        Date.new(2026, 1, 15))
+      end
+
+      before do
+        create(:category_snapshot, category:        subcategory.parent,
+                                   amount_assigned: 0,
+                                   amount_used:     0,
+                                   date:            transaction.date.beginning_of_month)
+        create(:category_snapshot, category:        subcategory,
+                                   amount_assigned: 0,
+                                   amount_used:     0,
+                                   date:            transaction.date.beginning_of_month)
+      end
+
+      it "uses the transaction date for snapshot lookup" do
+        snapshot = subcategory.snapshots.for_month(transaction.date).first
+
+        expect { described_class.call(transaction: transaction) }
+          .to change { snapshot.reload.amount_used }.by(500)
       end
     end
   end

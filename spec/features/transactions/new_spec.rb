@@ -33,9 +33,10 @@ describe "Transaction" do
 
   def fill_in_transaction_and_submit(account:, amount:, subcategory:)
     click_on "add-transaction"
-    select account.name, from: t("activemodel.attributes.transaction_form.account_id")
-    select subcategory.name, from: t("activemodel.attributes.transaction_form.subcategory_id")
     fill_in t("activemodel.attributes.transaction_form.amount"), with: amount
+    fill_in t("activemodel.attributes.transaction_form.payee"), with: "Test Payee"
+    select subcategory.name, from: t("activemodel.attributes.transaction_form.subcategory_id")
+    select account.name, from: t("activemodel.attributes.transaction_form.account_id")
     click_on t("transactions.new.submit")
   end
 end
