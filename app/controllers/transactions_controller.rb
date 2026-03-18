@@ -39,7 +39,7 @@ class TransactionsController < ApplicationController
 
   # Return the permitted form parameters.
   #
-  # @return [ActionController::Parameters]
+  # @return [ActionController::Parameters] The permitted parameters for the form.
   def parameters
     @parameters ||= params.expect(transaction_form: %i(account_id amount subcategory_id))
   end
@@ -54,7 +54,7 @@ class TransactionsController < ApplicationController
 
   # Return the permitted parameters with budget and subcategory.
   #
-  # @return [Hash]
+  # @return [Hash] The permitted parameters merged with the budget and subcategory.
   def transaction_parameters
     {
       account:     account,

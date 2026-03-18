@@ -27,42 +27,42 @@ class AssignmentsController < ApplicationController
 
   # Return the budget for the given budget_id parameter.
   #
-  # @return [Budget]
+  # @return [Budget] The requested budget.
   def budget
     @budget ||= Budget.find(params[:budget_id])
   end
 
   # Return the current month date.
   #
-  # @return [Date]
+  # @return [Date] The first day of the current month.
   def date
     Date.current.beginning_of_month
   end
 
   # Return the permitted form parameters.
   #
-  # @return [ActionController::Parameters]
+  # @return [ActionController::Parameters] The permitted parameters for the form.
   def parameters
     @parameters ||= params.expect(assignment_form: %i(amount))
   end
 
   # Return the subcategory for the given category_id parameter.
   #
-  # @return [Category]
+  # @return [Category] The requested subcategory.
   def subcategory
     @subcategory ||= budget.subcategories.find(params[:category_id])
   end
 
   # Return the current category snapshot for the subcategory.
   #
-  # @return [CategorySnapshot]
+  # @return [CategorySnapshot] The snapshot for the current month.
   def subcategory_snapshot
     @subcategory_snapshot ||= subcategory.snapshots.find_or_initialize_by(budget: budget, date: date)
   end
 
   # Return the parameters for building the form.
   #
-  # @return [Hash]
+  # @return [Hash] The permitted parameters merged with the budget, date, and subcategory.
   def assignment_parameters
     {
       amount:      parameters[:amount],

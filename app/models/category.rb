@@ -18,7 +18,7 @@ class Category < ApplicationRecord
 
   # Returns true if this category is an inflow category.
   #
-  # @return [Boolean]
+  # @return [Boolean] Whether this category is an inflow category.
   def inflow?
     name.in?(INFLOW_NAMES)
   end

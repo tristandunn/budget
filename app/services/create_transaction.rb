@@ -11,14 +11,14 @@ class CreateTransaction
   # Create the transaction and update the related balances.
   #
   # @param transaction [Transaction] The transaction to create.
-  # @return [Boolean]
+  # @return [Boolean] Whether the transaction was created successfully.
   def self.call(transaction:)
     new(transaction: transaction).call
   end
 
   # Create the transaction and update the related balances.
   #
-  # @return [Boolean]
+  # @return [Boolean] Whether the transaction was created successfully.
   def call
     ActiveRecord::Base.transaction do
       increment_account

@@ -6,7 +6,7 @@ class AssignmentForm < BaseForm
 
   # Return the amount as a Money object.
   #
-  # @return [Money]
+  # @return [Money] The parsed amount.
   def amount
     value = BigDecimal(@amount.to_s, exception: false)
 
@@ -17,7 +17,7 @@ class AssignmentForm < BaseForm
 
   # Build the assignment.
   #
-  # @return [Assignment]
+  # @return [Assignment] The built assignment record.
   def assignment
     @assignment ||= Assignment.new(
       amount:      amount&.cents,
@@ -29,7 +29,7 @@ class AssignmentForm < BaseForm
 
   # Attempt to save the assignment if it's valid.
   #
-  # @return [Boolean]
+  # @return [Boolean] Whether the assignment was saved successfully.
   def save
     if valid?
       AssignCategory.call(budget: budget, subcategory: subcategory, amount: amount, date: date)
@@ -40,7 +40,7 @@ class AssignmentForm < BaseForm
 
   # Validate the assignment, merging errors into the form.
   #
-  # @return [Boolean]
+  # @return [Boolean] Whether the assignment is valid.
   def valid?(context = nil)
     assignment.valid?(context).tap do
       errors.merge!(assignment.errors)

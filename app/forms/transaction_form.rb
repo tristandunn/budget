@@ -6,7 +6,7 @@ class TransactionForm < BaseForm
 
   # Return the amount as a Money object.
   #
-  # @return [Money]
+  # @return [Money] The parsed amount.
   def amount
     value = BigDecimal(@amount.to_s, exception: false)
 
@@ -17,7 +17,7 @@ class TransactionForm < BaseForm
 
   # Attempt to save the transaction if it's valid.
   #
-  # @return [Boolean]
+  # @return [Boolean] Whether the transaction was saved successfully.
   def save
     if valid?
       CreateTransaction.call(transaction: transaction)
@@ -26,7 +26,7 @@ class TransactionForm < BaseForm
 
   # Build a new transaction.
   #
-  # @return [Transaction]
+  # @return [Transaction] The built transaction record.
   def transaction
     @transaction ||= Transaction.new(
       account:     account,
@@ -40,7 +40,7 @@ class TransactionForm < BaseForm
 
   # Validate the transaction, merging transaction errors into the form errors.
   #
-  # @return [Boolean]
+  # @return [Boolean] Whether the transaction is valid.
   def valid?(context = nil)
     transaction.valid?(context).tap do
       errors.merge!(transaction.errors)
