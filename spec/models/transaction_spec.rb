@@ -23,6 +23,22 @@ describe Transaction do
     it { is_expected.to validate_presence_of(:payee) }
   end
 
+  describe ".default_scope" do
+    it "orders transactions by date descending" do
+      newer = create(:transaction, date: Date.new(2026, 3, 15))
+      older = create(:transaction, date: Date.new(2026, 3, 10), budget: newer.budget)
+
+      expect(described_class.all).to eq([newer, older])
+    end
+
+    it "orders transactions with the same date by created_at descending" do
+      first  = create(:transaction, date: Date.new(2026, 3, 15))
+      second = create(:transaction, date: Date.new(2026, 3, 15), budget: first.budget)
+
+      expect(described_class.all).to eq([second, first])
+    end
+  end
+
   describe "#validate_subcategory" do
     subject(:transaction) { build(:transaction, subcategory: subcategory) }
 

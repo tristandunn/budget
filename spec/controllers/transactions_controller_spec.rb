@@ -5,6 +5,32 @@ require "rails_helper"
 describe TransactionsController do
   it { is_expected.to be_a(ApplicationController) }
 
+  describe "#index" do
+    let(:budget)  { create(:budget) }
+    let!(:newer)  { create(:transaction, budget: budget, date: Date.new(2026, 3, 15)) }
+    let!(:older)  { create(:transaction, budget: budget, date: Date.new(2026, 3, 10)) }
+
+    before do
+      create(:transaction)
+
+      get :index, params: { budget_id: budget.id }
+    end
+
+    it { is_expected.to respond_with(200) }
+    it { is_expected.to render_template(:index) }
+
+    it "assigns the budget" do
+      expect(assigns(:budget)).to eq(budget)
+    end
+
+    it "assigns transactions grouped by date in reverse chronological order" do
+      expect(assigns(:grouped_transactions)).to eq(
+        newer.date => [newer],
+        older.date => [older]
+      )
+    end
+  end
+
   describe "#new" do
     let(:budget) { create(:budget) }
     let(:form)   { instance_double(TransactionForm) }

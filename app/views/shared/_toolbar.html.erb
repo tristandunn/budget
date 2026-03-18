@@ -17,7 +17,8 @@
         <span class="text-[10px] font-semibold mt-0.5"><%= t("toolbar.plan") %></span>
       <% end %>
 
-      <%= link_to root_path, class: toolbar_item_class(active: false) do %>
+      <%= link_to budget_transactions_path(budget),
+                  class: toolbar_item_class(active: controller_name == "transactions") do %>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           class="w-5 h-5"

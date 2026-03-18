@@ -40,6 +40,9 @@ en:
     reflect: "Reflect"
 
   transactions:
+    index:
+      empty: "No transactions yet."
+      title: "Spending"
     new:
       cancel: "Cancel"
       enter_memo: "Enter a memo..."

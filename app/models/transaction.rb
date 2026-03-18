@@ -13,6 +13,8 @@ class Transaction < ApplicationRecord
 
   validate  :validate_subcategory
 
+  default_scope -> { order(date: :desc, created_at: :desc) }
+
   private
 
   # Validate that the subcategory is a subcategory.

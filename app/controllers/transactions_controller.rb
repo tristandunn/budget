@@ -1,6 +1,14 @@
 # frozen_string_literal: true
 
 class TransactionsController < ApplicationController
+  # Render all transactions grouped by date.
+  def index
+    @budget               = budget
+    @grouped_transactions = budget.transactions
+                                  .includes(:account, :subcategory)
+                                  .group_by(&:date)
+  end
+
   # Render the new transaction form.
   def new
     @accounts      = budget.accounts
