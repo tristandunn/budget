@@ -3,12 +3,12 @@
 ruby   "4.0.2"
 source "https://rubygems.org"
 
-gem "bcrypt",            "3.1.21"
+gem "bcrypt",            "3.1.22"
 gem "bootsnap",          "1.23.0", require: false
 gem "bundler-audit",     "0.9.3",  require: false
 gem "importmap-rails",   "2.2.3"
 gem "jbuilder",          "2.14.1"
-gem "kamal",             "2.10.1", require: false
+gem "kamal",             "2.11.0", require: false
 gem "litestream",        "0.14.0"
 gem "money",             "7.0.2"
 gem "propshaft",         "1.3.1"
