@@ -1,6 +1,10 @@
 en:
   title: "Budget"
 
+  dates:
+    today: "Today"
+    yesterday: "Yesterday"
+
   accounts:
     index:
       available: "Available"

@@ -34,11 +34,28 @@ describe "transactions/index.html.erb" do
   end
 
   context "when there are transactions" do
+    let(:date)                 { Date.current }
     let(:grouped_transactions) { { transaction.date => [transaction] } }
-    let(:transaction)          { create(:transaction, budget: budget) }
+    let(:transaction)          { create(:transaction, budget: budget, date: date) }
 
-    it "renders the date header" do
-      expect(html).to have_css("h3", text: I18n.l(transaction.date, format: :long))
+    it "renders today for today's date" do
+      expect(html).to have_css("h3", text: t("dates.today"))
+    end
+
+    context "when the date is yesterday" do
+      let(:date) { Date.yesterday }
+
+      it "renders yesterday for yesterday's date" do
+        expect(html).to have_css("h3", text: t("dates.yesterday"))
+      end
+    end
+
+    context "when the date is older" do
+      let(:date) { 2.days.ago.to_date }
+
+      it "renders the long date format for older dates" do
+        expect(html).to have_css("h3", text: I18n.l(date, format: :long))
+      end
     end
 
     it "renders the payee" do
