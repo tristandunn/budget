@@ -22,4 +22,11 @@ class Category < ApplicationRecord
   def inflow?
     name.in?(INFLOW_NAMES)
   end
+
+  # Returns subcategories sorted by position.
+  #
+  # @return [Array<Category>] The subcategories sorted by position.
+  def subcategories_by_position
+    subcategories.sort_by(&:position)
+  end
 end

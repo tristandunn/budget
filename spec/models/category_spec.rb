@@ -39,4 +39,14 @@ describe Category do
       expect(category).not_to be_inflow
     end
   end
+
+  describe "#subcategories_by_position" do
+    it "returns subcategories sorted by position" do
+      category = create(:category, with_snapshot: false)
+      second   = create(:category, parent: category, budget: category.budget, position: 2, with_snapshot: false)
+      first    = create(:category, parent: category, budget: category.budget, position: 1, with_snapshot: false)
+
+      expect(category.subcategories_by_position).to eq([first, second])
+    end
+  end
 end

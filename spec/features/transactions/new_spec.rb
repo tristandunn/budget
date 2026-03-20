@@ -19,16 +19,6 @@ describe "Transaction" do
     expect(page).to have_text("$86.63")
   end
 
-  context "with an inflow category" do
-    it "updates the available to assign" do
-      subcategory = create(:category, :inflow_subcategory, budget: budget)
-
-      fill_in_transaction_and_submit(account: account, amount: 13.37, subcategory: subcategory)
-
-      expect(page).to have_text("$113.37")
-    end
-  end
-
   protected
 
   def fill_in_transaction_and_submit(account:, amount:, subcategory:)

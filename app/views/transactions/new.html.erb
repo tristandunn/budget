@@ -26,7 +26,7 @@
 
     <div class="mt-6">
       <%= form.label :subcategory_id, class: "block mb-1 text-sm font-medium text-gray-800 hidden" %>
-      <%= form.collection_select :subcategory_id, @subcategories, :id, :name, { prompt: t(".select_subcategory"), selected: @form.subcategory&.id }, { class: "w-full p-3 text-lg border border-gray-300 rounded-lg", required: true } %>
+      <%= form.grouped_collection_select :subcategory_id, @categories, :subcategories_by_position, :name, :id, :name, { prompt: t(".select_subcategory"), selected: @form.subcategory&.id }, { class: "w-full p-3 text-lg border border-gray-300 rounded-lg", required: true } %>
 
       <% if @form.errors[:subcategory].present? %>
         <p class="mt-2 text-xs text-red-700">

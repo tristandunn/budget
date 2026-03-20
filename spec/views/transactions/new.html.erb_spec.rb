@@ -9,16 +9,16 @@ describe "transactions/new.html.erb" do
     rendered
   end
 
-  let(:accounts)      { budget.accounts }
-  let(:budget)        { subcategory.budget }
-  let(:form)          { TransactionForm.new(budget: budget, subcategory: subcategory) }
-  let(:subcategories) { budget.subcategories }
-  let(:subcategory)   { create(:category, :subcategory) }
+  let(:accounts)    { budget.accounts }
+  let(:budget)      { subcategory.budget }
+  let(:categories)  { budget.categories.reject(&:inflow?).sort_by(&:position) }
+  let(:form)        { TransactionForm.new(budget: budget, subcategory: subcategory) }
+  let(:subcategory) { create(:category, :subcategory) }
 
   before do
     assign :accounts, accounts
+    assign :categories, categories
     assign :form, form
-    assign :subcategories, subcategories
   end
 
   it "renders the amount field" do
@@ -31,6 +31,18 @@ describe "transactions/new.html.erb" do
 
   it "renders the subcategory select" do
     expect(html).to have_select("transaction_form_subcategory_id")
+  end
+
+  it "groups subcategories under their parent category" do
+    parent = subcategory.parent
+
+    expect(html).to have_css("optgroup[label='#{parent.name}'] option", text: subcategory.name)
+  end
+
+  it "excludes inflow categories" do
+    inflow = create(:category, :inflow, budget: budget)
+
+    expect(html).to have_no_css("optgroup[label='#{inflow.name}']")
   end
 
   it "renders the account select" do

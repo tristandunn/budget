@@ -56,8 +56,8 @@ describe TransactionsController do
       expect(assigns(:form)).to eq(form)
     end
 
-    it "assigns the budget subcategories" do
-      expect(assigns(:subcategories)).to eq(budget.subcategories)
+    it "assigns non-inflow categories sorted by position" do
+      expect(assigns(:categories)).to eq(budget.categories.reject(&:inflow?).sort_by(&:position))
     end
   end
 
@@ -156,8 +156,8 @@ describe TransactionsController do
         expect(assigns(:form)).to eq(form)
       end
 
-      it "assigns the budget subcategories" do
-        expect(assigns(:subcategories)).to eq(budget.subcategories)
+      it "assigns non-inflow categories sorted by position" do
+        expect(assigns(:categories)).to eq(budget.categories.reject(&:inflow?).sort_by(&:position))
       end
     end
   end

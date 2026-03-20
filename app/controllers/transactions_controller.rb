@@ -11,16 +11,16 @@ class TransactionsController < ApplicationController
 
   # Render the new transaction form.
   def new
-    @accounts      = budget.accounts
-    @form          = TransactionForm.new(budget: budget)
-    @subcategories = budget.subcategories
+    @accounts   = budget.accounts
+    @categories = budget.categories.reject(&:inflow?).sort_by(&:position)
+    @form       = TransactionForm.new(budget: budget)
   end
 
   # Create a new transaction.
   def create
-    @accounts      = budget.accounts
-    @form          = TransactionForm.new(transaction_parameters)
-    @subcategories = budget.subcategories
+    @accounts   = budget.accounts
+    @categories = budget.categories.reject(&:inflow?).sort_by(&:position)
+    @form       = TransactionForm.new(transaction_parameters)
 
     if @form.save
       redirect_to budget_path(budget)
@@ -42,7 +42,7 @@ class TransactionsController < ApplicationController
   #
   # @return [Budget] The requested budget.
   def budget
-    @budget ||= Budget.includes(:accounts, :subcategories).find(params[:budget_id])
+    @budget ||= Budget.includes(:accounts, categories: :subcategories).find(params[:budget_id])
   end
 
   # Return the permitted form parameters.
