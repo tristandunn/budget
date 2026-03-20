@@ -35,12 +35,15 @@
 
       <ul class="divide-y divide-slate-200" data-collapsible-content="collapsible-cash">
         <% @cash_accounts.each do |account| %>
-          <li class="flex items-center justify-between py-3 px-4 bg-white">
-            <span class="font-medium"><%= account.name %></span>
+          <li>
+            <%= link_to budget_account_transactions_path(@budget, account),
+                        class: "flex items-center justify-between py-3 px-4 bg-white" do %>
+              <span class="font-medium"><%= account.name %></span>
 
-            <span class="inline-block py-0.5 px-2 font-semibold rounded-full <%= amount_color(account.balance) %>">
-              <%= number_to_currency Money.from_cents(account.balance) %>
-            </span>
+              <span class="inline-block py-0.5 px-2 font-semibold rounded-full <%= amount_color(account.balance) %>">
+                <%= number_to_currency Money.from_cents(account.balance) %>
+              </span>
+            <% end %>
           </li>
         <% end %>
       </ul>
@@ -77,12 +80,15 @@
 
       <ul class="divide-y divide-slate-200" data-collapsible-content="collapsible-credit">
         <% @credit_accounts.each do |account| %>
-          <li class="flex items-center justify-between py-3 px-4 bg-white">
-            <span class="font-medium"><%= account.name %></span>
+          <li>
+            <%= link_to budget_account_transactions_path(@budget, account),
+                        class: "flex items-center justify-between py-3 px-4 bg-white" do %>
+              <span class="font-medium"><%= account.name %></span>
 
-            <span class="inline-block py-0.5 px-2 font-semibold rounded-full <%= amount_color(account.balance) %>">
-              <%= number_to_currency Money.from_cents(account.balance) %>
-            </span>
+              <span class="inline-block py-0.5 px-2 font-semibold rounded-full <%= amount_color(account.balance) %>">
+                <%= number_to_currency Money.from_cents(account.balance) %>
+              </span>
+            <% end %>
           </li>
         <% end %>
       </ul>

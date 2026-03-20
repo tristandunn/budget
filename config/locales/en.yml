@@ -6,6 +6,9 @@ en:
     yesterday: "Yesterday"
 
   accounts:
+    transactions:
+      index:
+        empty: "No transactions yet."
     index:
       available: "Available"
       cash: "Cash"

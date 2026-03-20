@@ -40,6 +40,10 @@ describe "accounts/index.html.erb" do
         .and(have_css("li", text: account.name))
         .and(have_css("li", text: number_to_currency(Money.from_cents(account.balance))))
     end
+
+    it "links the account to its transaction register" do
+      expect(html).to have_link(account.name, href: budget_account_transactions_path(budget, account))
+    end
   end
 
   describe "credit section" do
@@ -54,6 +58,10 @@ describe "accounts/index.html.erb" do
         .and(have_text(t("accounts.index.owed")))
         .and(have_css("li", text: account.name))
         .and(have_css("li", text: number_to_currency(Money.from_cents(account.balance))))
+    end
+
+    it "links the account to its transaction register" do
+      expect(html).to have_link(account.name, href: budget_account_transactions_path(budget, account))
     end
   end
 end

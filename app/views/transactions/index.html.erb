@@ -4,39 +4,9 @@
   </header>
 
   <section class="flex-1">
-    <% if @grouped_transactions.empty? %>
-      <p class="p-8 text-center text-slate-400"><%= t(".empty") %></p>
-    <% else %>
-      <% @grouped_transactions.each do |date, transactions| %>
-        <h3 class="py-2 px-4 text-sm font-semibold bg-slate-100 border-y border-slate-200">
-          <%= relative_date(date) %>
-        </h3>
-
-        <ul class="divide-y divide-slate-200">
-          <% transactions.each do |transaction| %>
-            <li class="flex flex-col gap-0.5 py-3 px-4 bg-white">
-              <div class="flex items-center justify-between">
-                <span class="font-medium"><%= transaction.payee %></span>
-
-                <span
-                  class="
-                    inline-block py-0.5 px-2 font-semibold rounded-full
-                    <%= amount_color(transaction.amount) %>
-                  "
-                >
-                  <%= number_to_currency Money.from_cents(transaction.amount) %>
-                </span>
-              </div>
-
-              <div class="flex items-center justify-between text-sm text-slate-400">
-                <span><%= transaction.subcategory.name %></span>
-                <span><%= transaction.account.name %></span>
-              </div>
-            </li>
-          <% end %>
-        </ul>
-      <% end %>
-    <% end %>
+    <%= render "transactions/list",
+               grouped_transactions: @grouped_transactions,
+               empty_message:        t(".empty") %>
   </section>
 
   <%= render "shared/toolbar", budget: @budget %>

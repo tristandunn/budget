@@ -1,0 +1,35 @@
+<div class="flex flex-col min-h-screen">
+  <header class="flex items-center justify-between bg-white p-4">
+    <div class="flex items-center gap-2">
+      <%= link_to budget_accounts_path(@budget), class: "text-slate-500" do %>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      <% end %>
+
+      <h1 class="text-lg font-semibold"><%= @account.name %></h1>
+    </div>
+
+    <div class="inline-block rounded-full px-2.5 py-0.5 font-semibold <%= amount_color(@account.balance) %>">
+      <%= number_to_currency Money.from_cents(@account.balance) %>
+    </div>
+  </header>
+
+  <section class="flex-1">
+    <%= render "transactions/list",
+               grouped_transactions: @grouped_transactions,
+               empty_message:        t(".empty"),
+               show_account:         false %>
+  </section>
+
+  <%= render "shared/toolbar", budget: @budget %>
+</div>
