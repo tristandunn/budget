@@ -115,6 +115,56 @@ describe("AmountController", () => {
       });
     });
 
+    describe("when pressing +", () => {
+      let event;
+
+      beforeEach(() => {
+        event = new window.KeyboardEvent("keydown", {
+          "cancelable": true,
+          "key": "+"
+        });
+      });
+
+      it("makes a negative value positive", () => {
+        element.value = "-42.50";
+
+        instance.keydown(event);
+
+        expect(parseFloat(element.value)).to.eq(42.5);
+      });
+
+      it("keeps a positive value positive", () => {
+        element.value = "42.50";
+
+        instance.keydown(event);
+
+        expect(parseFloat(element.value)).to.eq(42.5);
+      });
+
+      it("keeps an empty value at zero", () => {
+        element.value = "";
+
+        instance.keydown(event);
+
+        expect(parseFloat(element.value)).to.eq(0);
+      });
+
+      it("prevents the default behavior", () => {
+        instance.keydown(event);
+
+        expect(event.defaultPrevented).to.eq(true);
+      });
+
+      it("applies black text when made positive", () => {
+        element.value = "-42.50";
+
+        instance.keydown(event);
+
+        expect(element.classList.contains("text-black")).to.eq(true);
+        expect(element.classList.contains("text-red-600")).to.eq(false);
+      });
+    });
+
     describe("when pressing a digit and value is zero", () => {
       let event;
 
@@ -141,6 +191,59 @@ describe("AmountController", () => {
         instance.keydown(event);
 
         expect(element.classList.contains("text-red-600")).to.eq(true);
+      });
+    });
+
+    describe("when pressing a digit and value is empty", () => {
+      let event;
+
+      beforeEach(() => {
+        event = new window.KeyboardEvent("keydown", {
+          "cancelable": true,
+          "key": "5"
+        });
+
+        element.value = "";
+      });
+
+      it("replaces the value with the negative digit", () => {
+        instance.keydown(event);
+
+        expect(element.value).to.eq("-5");
+      });
+
+      it("prevents the default behavior", () => {
+        instance.keydown(event);
+
+        expect(event.defaultPrevented).to.eq(true);
+      });
+
+      it("applies red text after replacing", () => {
+        instance.keydown(event);
+
+        expect(element.classList.contains("text-red-600")).to.eq(true);
+      });
+    });
+
+    describe("when pressing a digit after pressing +", () => {
+      it("does not negate the digit", () => {
+        element.value = "";
+
+        const plusEvent = new window.KeyboardEvent("keydown", {
+          "cancelable": true,
+          "key": "+"
+        });
+
+        instance.keydown(plusEvent);
+
+        const digitEvent = new window.KeyboardEvent("keydown", {
+          "cancelable": true,
+          "key": "5"
+        });
+
+        instance.keydown(digitEvent);
+
+        expect(element.value).to.eq("5");
       });
     });
 

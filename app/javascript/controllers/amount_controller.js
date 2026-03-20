@@ -1,6 +1,8 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
+  #positive = false;
+
   connect() {
     this.#updateColor();
   }
@@ -13,11 +15,22 @@ export default class extends Controller {
     if (event.key === "-") {
       event.preventDefault();
 
+      this.#positive = false;
       this.#toggleSign();
-    } else if (this.#isZero() && (/^\d$/).test(event.key)) {
+    } else if (event.key === "+") {
+      event.preventDefault();
+
+      this.#positive = true;
+      this.#makePositive();
+    } else if (this.#isZero() && !this.#positive && (/^\d$/).test(event.key)) {
       event.preventDefault();
 
       this.element.value = `-${event.key}`;
+      this.#updateColor();
+    } else if (this.#isZero() && this.#positive && (/^\d$/).test(event.key)) {
+      event.preventDefault();
+
+      this.element.value = event.key;
       this.#updateColor();
     } else if (this.#isInvalidKey(event)) {
       event.preventDefault();
@@ -32,8 +45,15 @@ export default class extends Controller {
     }
   }
 
+  #makePositive() {
+    const value = Math.abs(parseFloat(this.element.value) || 0);
+
+    this.element.value = value.toFixed(2);
+    this.#updateColor();
+  }
+
   #isZero() {
-    return parseFloat(this.element.value) === 0;
+    return !parseFloat(this.element.value);
   }
 
   #toggleSign() {
