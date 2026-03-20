@@ -18,6 +18,7 @@ describe Transaction do
     it { is_expected.to validate_numericality_of(:amount).only_integer }
     it { is_expected.to allow_value(1337).for(:amount) }
     it { is_expected.to allow_value(-723).for(:amount) }
+    it { is_expected.not_to allow_value(0).for(:amount) }
 
     it { is_expected.to validate_presence_of(:date) }
     it { is_expected.to validate_presence_of(:payee) }
