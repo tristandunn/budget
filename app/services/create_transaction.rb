@@ -41,18 +41,18 @@ class CreateTransaction
 
   delegate :account, :amount, :budget, :date, :subcategory, to: :transaction
 
-  # Update the budget available to assign based on the transaction amount.
-  #
-  # @return [void]
-  def increment_available_to_assign
-    budget.increment!(:available_to_assign, amount)
-  end
-
   # Update the account based on the transaction amount.
   #
   # @return [void]
   def increment_account
     account.increment!(:balance, amount)
+  end
+
+  # Update the budget available to assign based on the transaction amount.
+  #
+  # @return [void]
+  def increment_available_to_assign
+    budget.increment!(:available_to_assign, amount)
   end
 
   # Update the category and subcategory snapshots based on transaction amount.

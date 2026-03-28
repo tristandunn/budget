@@ -25,6 +25,18 @@ class AssignmentsController < ApplicationController
 
   protected
 
+  # Return the parameters for building the form.
+  #
+  # @return [Hash] The permitted parameters merged with the budget, date, and subcategory.
+  def assignment_parameters
+    {
+      amount:      parameters[:amount],
+      budget:      budget,
+      date:        date,
+      subcategory: subcategory
+    }
+  end
+
   # Return the budget for the given budget_id parameter.
   #
   # @return [Budget] The requested budget.
@@ -60,17 +72,5 @@ class AssignmentsController < ApplicationController
   # @return [CategorySnapshot] The snapshot for the current month.
   def subcategory_snapshot
     @subcategory_snapshot ||= subcategory.snapshots.find_or_initialize_by(budget: budget, date: date)
-  end
-
-  # Return the parameters for building the form.
-  #
-  # @return [Hash] The permitted parameters merged with the budget, date, and subcategory.
-  def assignment_parameters
-    {
-      amount:      parameters[:amount],
-      budget:      budget,
-      date:        date,
-      subcategory: subcategory
-    }
   end
 end

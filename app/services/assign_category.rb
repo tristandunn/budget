@@ -44,21 +44,21 @@ class AssignCategory
 
   attr_reader :amount, :budget, :date, :subcategory
 
-  # Find or create the subcategory snapshot for the month.
-  #
-  # @return [CategorySnapshot] The snapshot for the subcategory.
-  def subcategory_snapshot
-    @subcategory_snapshot ||= subcategory.snapshots.find_or_create_by!(
-      budget: budget,
-      date:   date
-    )
-  end
-
   # Find or create the parent category snapshot for the month.
   #
   # @return [CategorySnapshot] The snapshot for the parent category.
   def category_snapshot
     @category_snapshot ||= subcategory.parent.snapshots.find_or_create_by!(
+      budget: budget,
+      date:   date
+    )
+  end
+
+  # Find or create the subcategory snapshot for the month.
+  #
+  # @return [CategorySnapshot] The snapshot for the subcategory.
+  def subcategory_snapshot
+    @subcategory_snapshot ||= subcategory.snapshots.find_or_create_by!(
       budget: budget,
       date:   date
     )
