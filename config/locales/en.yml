@@ -49,13 +49,16 @@ en:
     reflect: "Reflect"
 
   transactions:
+    form:
+      enter_memo: "Enter a memo..."
+      enter_payee: "Enter a Payee"
+      select_account: "Choose Account"
+      select_subcategory: "Choose Category"
+    edit:
+      submit: "Save Transaction"
     index:
       empty: "No transactions yet."
       title: "Spending"
     new:
       cancel: "Cancel"
-      enter_memo: "Enter a memo..."
-      enter_payee: "Enter a Payee"
-      select_account: "Choose Account"
-      select_subcategory: "Choose Category"
       submit: "Add Transaction"

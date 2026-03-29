@@ -5,6 +5,40 @@ require "rails_helper"
 describe TransactionForm, type: :form do
   it { is_expected.to be_a(BaseForm) }
 
+  describe ".from" do
+    subject(:form) { described_class.from(transaction: transaction) }
+
+    let(:transaction) { create(:transaction, amount: -1500, memo: "Lunch") }
+
+    it "sets the account" do
+      expect(form.account).to eq(transaction.account)
+    end
+
+    it "sets the amount as a decimal string" do
+      expect(form.amount).to eq(Money.from_amount(BigDecimal("-15.00")))
+    end
+
+    it "sets the budget" do
+      expect(form.budget).to eq(transaction.budget)
+    end
+
+    it "sets the date" do
+      expect(form.date).to eq(transaction.date)
+    end
+
+    it "sets the memo" do
+      expect(form.memo).to eq("Lunch")
+    end
+
+    it "sets the payee" do
+      expect(form.payee).to eq(transaction.payee)
+    end
+
+    it "sets the subcategory" do
+      expect(form.subcategory).to eq(transaction.subcategory)
+    end
+  end
+
   describe "#amount" do
     subject { form.amount }
 
@@ -74,26 +108,28 @@ describe TransactionForm, type: :form do
   describe "#save" do
     subject(:save) { form.save }
 
-    let(:account)       { create(:account, budget: subcategory.budget) }
-    let(:subcategory)   { create(:category, :subcategory) }
+    let(:account)     { create(:account, budget: subcategory.budget) }
+    let(:subcategory) { create(:category, :subcategory) }
+
+    let(:attributes) do
+      {
+        account:     account,
+        amount:      "25.00",
+        budget:      subcategory.budget,
+        date:        "2026-03-18",
+        memo:        "A memo",
+        payee:       "Test Payee",
+        subcategory: subcategory
+      }
+    end
+
+    let(:form) { described_class.new(**attributes) }
+
+    before do
+      allow(CreateTransaction).to receive(:call).and_return(true)
+    end
 
     context "when valid" do
-      let(:form) do
-        described_class.new(
-          account:     account,
-          amount:      "25.00",
-          budget:      subcategory.budget,
-          date:        "2026-03-18",
-          memo:        "A memo",
-          payee:       "Test Payee",
-          subcategory: subcategory
-        )
-      end
-
-      before do
-        allow(CreateTransaction).to receive(:call).and_return(true)
-      end
-
       it { is_expected.to be(true) }
 
       it "creates a transaction" do
@@ -104,20 +140,7 @@ describe TransactionForm, type: :form do
     end
 
     context "when valid with negative amount" do
-      let(:form) do
-        described_class.new(
-          account:     account,
-          amount:      "-25.00",
-          budget:      subcategory.budget,
-          date:        "2026-03-18",
-          payee:       "Test Payee",
-          subcategory: subcategory
-        )
-      end
-
-      before do
-        allow(CreateTransaction).to receive(:call).and_return(true)
-      end
+      let(:form) { described_class.new(**attributes, amount: "-25.00") }
 
       it { is_expected.to be(true) }
 
@@ -129,20 +152,7 @@ describe TransactionForm, type: :form do
     end
 
     context "when invalid" do
-      let(:form) do
-        described_class.new(
-          account:     account,
-          amount:      "0",
-          budget:      subcategory.budget,
-          date:        "2026-03-18",
-          payee:       "Test Payee",
-          subcategory: subcategory
-        )
-      end
-
-      before do
-        allow(CreateTransaction).to receive(:call)
-      end
+      let(:form) { described_class.new(**attributes, amount: "0") }
 
       it { is_expected.to be_nil }
 
@@ -157,21 +167,22 @@ describe TransactionForm, type: :form do
   describe "#transaction" do
     subject(:transaction) { form.transaction }
 
-    let(:account)     { create(:account, budget: budget) }
-    let(:budget)      { subcategory.budget }
+    let(:account)     { create(:account, budget: subcategory.budget) }
     let(:subcategory) { create(:category, :subcategory) }
 
-    let(:form) do
-      described_class.new(
+    let(:attributes) do
+      {
         account:     account,
         amount:      "15.00",
-        budget:      budget,
+        budget:      subcategory.budget,
         date:        "2026-03-18",
         memo:        "Lunch",
         payee:       "Test Payee",
         subcategory: subcategory
-      )
+      }
     end
+
+    let(:form) { described_class.new(**attributes) }
 
     it { is_expected.to be_a(Transaction) }
 
@@ -184,7 +195,7 @@ describe TransactionForm, type: :form do
     end
 
     it "sets the budget" do
-      expect(transaction.budget).to eq(budget)
+      expect(transaction.budget).to eq(subcategory.budget)
     end
 
     it "sets the date" do
@@ -204,19 +215,58 @@ describe TransactionForm, type: :form do
     end
 
     context "with negative amount" do
-      let(:form) do
-        described_class.new(
-          account:     account,
-          amount:      "-15.00",
-          budget:      budget,
-          date:        "2026-03-18",
-          payee:       "Test Payee",
-          subcategory: subcategory
-        )
-      end
+      let(:form) { described_class.new(**attributes, amount: "-15.00") }
 
       it "sets the amount as negative cents" do
         expect(transaction.amount).to eq(-1500)
+      end
+    end
+  end
+
+  describe "#update" do
+    subject(:update) { form.update(transaction) }
+
+    let(:attributes) do
+      {
+        account:     transaction.account,
+        amount:      "25.00",
+        budget:      transaction.budget,
+        date:        "2026-03-18",
+        memo:        "A memo",
+        payee:       "Test Payee",
+        subcategory: transaction.subcategory
+      }
+    end
+
+    let(:form)        { described_class.new(**attributes) }
+    let(:transaction) { create(:transaction) }
+
+    before do
+      allow(UpdateTransaction).to receive(:call).and_return(true)
+    end
+
+    context "when valid" do
+      it { is_expected.to be(true) }
+
+      it "calls UpdateTransaction" do
+        update
+
+        expect(UpdateTransaction).to have_received(:call).with(
+          attributes:  attributes.except(:budget).merge(amount: 2500, date: Date.new(2026, 3, 18)),
+          transaction: transaction
+        )
+      end
+    end
+
+    context "when invalid" do
+      let(:form) { described_class.new(**attributes, amount: "0") }
+
+      it { is_expected.to be_nil }
+
+      it "does not call UpdateTransaction" do
+        update
+
+        expect(UpdateTransaction).not_to have_received(:call)
       end
     end
   end

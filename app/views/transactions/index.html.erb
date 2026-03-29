@@ -5,8 +5,8 @@
 
   <section class="flex-1">
     <%= render "transactions/list",
-               grouped_transactions: @grouped_transactions,
-               empty_message:        t(".empty") %>
+               empty_message:        t(".empty"),
+               grouped_transactions: @grouped_transactions %>
   </section>
 
   <%= render "shared/toolbar", budget: @budget %>

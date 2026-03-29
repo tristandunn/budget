@@ -2,6 +2,6 @@
            accounts:     @accounts,
            categories:   @categories,
            form:         @form,
-           method:       :post,
+           method:       :patch,
            submit_label: t(".submit"),
-           url:          budget_transactions_path(@form.budget) %>
+           url:          budget_transaction_path(@form.budget, @transaction) %>

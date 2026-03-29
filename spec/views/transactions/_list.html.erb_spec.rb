@@ -39,6 +39,12 @@ describe "transactions/_list.html.erb" do
       expect(html).to have_text(transaction.account.name)
     end
 
+    it "links each transaction to its edit page" do
+      expected = edit_budget_transaction_path(transaction.budget, transaction)
+
+      expect(html).to have_link(href: expected)
+    end
+
     context "when the date is today" do
       let(:date) { Date.current }
 

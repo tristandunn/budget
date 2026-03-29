@@ -4,6 +4,22 @@ class TransactionForm < BaseForm
   attr_accessor :account, :budget, :memo, :payee, :subcategory
   attr_writer   :amount, :date
 
+  # Build a form prepopulated from an existing transaction.
+  #
+  # @param transaction [Transaction] The transaction to prepopulate from.
+  # @return [TransactionForm] The prepopulated form.
+  def self.from(transaction:)
+    new(
+      account:     transaction.account,
+      amount:      Money.from_cents(transaction.amount).to_s,
+      budget:      transaction.budget,
+      date:        transaction.date.to_s,
+      memo:        transaction.memo,
+      payee:       transaction.payee,
+      subcategory: transaction.subcategory
+    )
+  end
+
   # Return the amount as a Money object.
   #
   # @return [Money] The parsed amount.
@@ -37,18 +53,37 @@ class TransactionForm < BaseForm
   #
   # @return [Transaction] The built transaction record.
   def transaction
-    @transaction ||= Transaction.new(
+    @transaction ||= Transaction.new(budget: budget, **attributes)
+  end
+
+  # Attempt to update the transaction if the form is valid.
+  #
+  # @param transaction [Transaction] The transaction to update.
+  # @return [Boolean] Whether the transaction was updated successfully.
+  def update(transaction)
+    if valid?
+      UpdateTransaction.call(
+        attributes:  attributes,
+        transaction: transaction
+      )
+    end
+  end
+
+  private
+
+  # Return the form attributes as a hash for creating or updating a transaction.
+  #
+  # @return [Hash] The transaction attributes.
+  def attributes
+    {
       account:     account,
       amount:      amount&.cents,
-      budget:      budget,
       date:        date,
       memo:        memo,
       payee:       payee,
       subcategory: subcategory
-    )
+    }
   end
-
-  private
 
   # Validate the transaction, merging transaction errors into the form errors.
   #

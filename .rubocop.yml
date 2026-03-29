@@ -29,6 +29,10 @@ Metrics/BlockLength:
     - config/environments/*.rb
     - db/seeds.rb
 
+Metrics/ClassLength:
+  Enabled: true
+  Max: 128
+
 Metrics/MethodLength:
   Enabled: true
   Exclude:
@@ -45,6 +49,10 @@ Rails/ApplicationController:
   Enabled: true
   Exclude:
     - app/controllers/health_controller.rb
+
+RSpec/ExampleLength:
+  Enabled: true
+  Max: 10
 
 RSpec/ImplicitSubject:
   EnforcedStyle: single_line_only

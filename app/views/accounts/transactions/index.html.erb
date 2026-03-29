@@ -26,8 +26,8 @@
 
   <section class="flex-1">
     <%= render "transactions/list",
-               grouped_transactions: @grouped_transactions,
                empty_message:        t(".empty"),
+               grouped_transactions: @grouped_transactions,
                show_account:         false %>
   </section>
 

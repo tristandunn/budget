@@ -13,7 +13,7 @@ Rails.application.routes.draw do
     resources :categories, only: [] do
       resource :assignment, only: %i(edit update)
     end
-    resources :transactions, only: %i(index new create)
+    resources :transactions, only: %i(index new create edit update)
   end
 
   get "/health", to: "health#index"
