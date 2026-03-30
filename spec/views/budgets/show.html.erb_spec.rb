@@ -50,8 +50,9 @@ describe "budgets/show.html.erb" do
     )
   end
 
-  it "renders the subcategory name" do
-    expect(html).to have_css("tbody th", text: subcategory.name)
+  it "renders the subcategory name as a link to edit" do
+    expect(html).to have_link(subcategory.name,
+                              href: edit_budget_category_path(subcategory.budget, subcategory))
   end
 
   it "renders the subcategory amount assigned as a link" do

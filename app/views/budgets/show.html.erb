@@ -94,7 +94,9 @@
           <% category.subcategories.sort_by(&:position).each do |subcategory| %>
             <tr class="bg-white border-b border-slate-200">
               <th scope="row" class="py-3 px-4 font-normal whitespace-nowrap">
-                <%= subcategory.name %>
+                <%= link_to subcategory.name,
+                            edit_budget_category_path(@budget, subcategory),
+                            class: "text-inherit no-underline" %>
               </th>
 
               <% @budget_snapshot.snapshot_for(subcategory.id).tap do |snapshot| %>

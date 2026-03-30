@@ -10,7 +10,7 @@ Rails.application.routes.draw do
     resources :accounts, only: %i(index) do
       resources :transactions, only: %i(index), controller: "accounts/transactions"
     end
-    resources :categories, only: [] do
+    resources :categories, only: %i(edit update) do
       resource :assignment, only: %i(edit update)
     end
     resources :transactions, only: %i(index new create edit update destroy)

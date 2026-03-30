@@ -16,6 +16,10 @@ en:
       owed: "Owed"
       title: "Accounts"
 
+  categories:
+    edit:
+      submit: "Save Category"
+
   budgets:
     show:
       assigned: "Assigned"

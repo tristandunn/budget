@@ -1,0 +1,32 @@
+<div class="self-center py-12 px-8 mx-auto w-full max-w-lg">
+  <%= form_with model:  @category,
+                url:    budget_category_path(@budget, @category),
+                method: :patch,
+                class:  "highlight-errors",
+                data:   { turbo: false } do |f| %>
+    <div>
+      <%= f.label :name, class: "block mb-1 text-sm font-medium text-gray-800 hidden" %>
+
+      <%= f.text_field :name,
+                       autofocus: true,
+                       class:     "w-full p-3 text-lg border border-gray-300 rounded-lg",
+                       required:  true %>
+
+      <% if @category.errors[:name].present? %>
+        <p class="mt-2 text-xs text-red-700">
+          <%= Category.human_attribute_name(:name).humanize %> <%= @category.errors[:name].first %>.
+        </p>
+      <% end %>
+    </div>
+
+    <button
+      class="
+        block p-4 mx-auto mt-6 w-4/5 text-lg font-semibold text-center text-white bg-green-600
+        rounded-lg hover:bg-green-500 focus:outline-none focus:drop-shadow-green-200
+      "
+      type="submit"
+    >
+      <%= t(".submit") %>
+    </button>
+  <% end %>
+</div>
