@@ -53,6 +53,13 @@ class TransactionsController < ApplicationController
     end
   end
 
+  # Destroy an existing transaction.
+  def destroy
+    DestroyTransaction.call(transaction: transaction)
+
+    redirect_to return_location
+  end
+
   protected
 
   # Return the account for the given `account_id` parameter.

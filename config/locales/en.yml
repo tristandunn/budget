@@ -55,6 +55,9 @@ en:
       select_account: "Choose Account"
       select_subcategory: "Choose Category"
     edit:
+      delete:
+        confirmation: "Are you sure you want to delete this transaction?"
+        submit: "Delete Transaction"
       submit: "Save Transaction"
     index:
       empty: "No transactions yet."

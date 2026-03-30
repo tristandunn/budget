@@ -327,4 +327,35 @@ describe TransactionsController do
       end
     end
   end
+
+  describe "#destroy" do
+    let(:budget)      { create(:budget) }
+    let(:transaction) { create(:transaction, budget: budget) }
+
+    before do
+      allow(DestroyTransaction).to receive(:call)
+
+      delete :destroy, params: { budget_id: budget.id, id: transaction.id }
+    end
+
+    it { is_expected.to redirect_to(budget_transactions_path(budget)) }
+
+    it "calls the destroy service with the transaction" do
+      expect(DestroyTransaction).to have_received(:call).with(transaction: transaction)
+    end
+
+    context "with a stored return location" do
+      before do
+        session[:return_to] = "/stored-location"
+
+        delete :destroy, params: { budget_id: budget.id, id: transaction.id }
+      end
+
+      it { is_expected.to redirect_to("/stored-location") }
+
+      it "clears the stored return location" do
+        expect(session[:return_to]).to be_nil
+      end
+    end
+  end
 end

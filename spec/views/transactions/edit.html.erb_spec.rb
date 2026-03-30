@@ -24,4 +24,8 @@ describe "transactions/edit.html.erb" do
   it "renders the form partial" do
     expect(html).to include("FORM_PARTIAL")
   end
+
+  it "renders a delete button" do
+    expect(html).to have_button("Delete Transaction")
+  end
 end

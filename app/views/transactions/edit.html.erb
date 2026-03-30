@@ -5,3 +5,11 @@
            method:       :patch,
            submit_label: t(".submit"),
            url:          budget_transaction_path(@form.budget, @transaction) %>
+
+<div class="self-center -mt-6 px-8 pb-12 mx-auto w-full max-w-lg text-center">
+  <%= button_to t(".delete.submit"),
+                budget_transaction_path(@form.budget, @transaction),
+                method: :delete,
+                data:   { turbo_confirm: t(".delete.confirmation") },
+                class:  "mx-auto text-sm text-red-600 underline cursor-pointer hover:text-red-500" %>
+</div>
