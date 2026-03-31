@@ -1,26 +1,52 @@
 import { Controller } from "@hotwired/stimulus";
 
+const CLEANUP_DELAY_MS = 1000;
+
 export default class extends Controller {
   static targets = ["input"];
 
-  connect() {
-    this.originalValue = this.inputTarget.value;
-    this.inputTarget.select();
+  cancel() {
+    const input = this.inputTarget;
+
+    input.value = this.originalValue;
+    input.blur();
   }
 
-  cancel() {
-    this.inputTarget.value = this.originalValue;
-    this.inputTarget.blur();
+  inputTargetConnected() {
+    const input = this.inputTarget;
+
+    input.focus();
+    input.select();
+
+    this.originalValue = input.value;
+  }
+
+  prefocus() {
+    const input = document.createElement("input");
+
+    input.style.left     = "-9999px";
+    input.style.opacity  = "0";
+    input.style.position = "fixed";
+
+    document.body.appendChild(input);
+
+    input.focus();
+
+    window.setTimeout(() => {
+      input.remove();
+    }, CLEANUP_DELAY_MS);
   }
 
   submit() {
+    const input = this.inputTarget;
+
     if (
-      this.inputTarget.value !== this.originalValue &&
-      this.inputTarget.value.trim() !== ""
+      input.value !== this.originalValue &&
+      input.value.trim() !== ""
     ) {
-      this.element.requestSubmit();
+      input.form.requestSubmit();
     } else {
-      this.element.closest("turbo-frame").src = window.location.href;
+      input.closest("turbo-frame").src = window.location.href;
     }
   }
 
