@@ -19,6 +19,10 @@ describe "transactions/_list.html.erb" do
     let(:grouped_transactions) { { transaction.date => [transaction] } }
     let(:transaction)          { create(:transaction, date: date) }
 
+    before do
+      stub_template("transactions/_status_indicator.html.erb" => "STATUS_INDICATOR")
+    end
+
     it "renders the date" do
       expect(html).to have_css("h3", text: I18n.l(date, format: :long))
     end
@@ -37,6 +41,10 @@ describe "transactions/_list.html.erb" do
 
     it "renders the account name" do
       expect(html).to have_text(transaction.account.name)
+    end
+
+    it "renders the status indicator" do
+      expect(html).to include("STATUS_INDICATOR")
     end
 
     it "links each transaction to its edit page" do
@@ -58,6 +66,14 @@ describe "transactions/_list.html.erb" do
 
       it "renders yesterday for the date" do
         expect(html).to have_css("h3", text: t("dates.yesterday"))
+      end
+    end
+
+    context "when the transaction is reconciled" do
+      let(:transaction) { create(:transaction, :reconciled, date: date) }
+
+      it "does not link to the edit page" do
+        expect(html).to have_no_link(href: edit_budget_transaction_path(transaction.budget, transaction))
       end
     end
 

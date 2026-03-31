@@ -1,7 +1,7 @@
 <div class="flex flex-col min-h-screen">
   <header class="flex items-center justify-between bg-white p-4">
     <div class="flex items-center gap-2">
-      <%= link_to budget_accounts_path(@budget), class: "text-slate-500" do %>
+      <%= link_to budget_accounts_path(@budget), class: "text-slate-500", aria: { label: "Back" } do %>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           class="h-5 w-5"
@@ -19,10 +19,32 @@
       <h1 class="text-lg font-semibold"><%= @account.name %></h1>
     </div>
 
-    <div class="inline-block rounded-full px-2.5 py-0.5 font-semibold <%= amount_color(@account.balance) %>">
-      <%= number_to_currency Money.from_cents(@account.balance) %>
-    </div>
+    <%= render "accounts/transactions/reconcile_link", account: @account, budget: @budget %>
   </header>
+
+  <div class="flex items-end justify-between border-b border-slate-200 bg-white px-4 pb-2">
+    <div>
+      <p class="text-lg font-semibold">
+        <%= number_to_currency Money.from_cents(@account.balance) %>
+      </p>
+
+      <p class="text-xs text-slate-500"><%= t(".working_balance") %></p>
+    </div>
+
+    <div class="grid grid-cols-[auto_auto] gap-x-3 text-sm text-slate-500">
+      <span><%= t(".cleared_balance") %></span>
+
+      <span id="cleared_balance" class="text-right font-semibold">
+        <%= number_to_currency Money.from_cents(@account.cleared_balance) %>
+      </span>
+
+      <span><%= t(".uncleared_balance") %></span>
+
+      <span id="uncleared_balance" class="text-right font-semibold">
+        <%= number_to_currency Money.from_cents(@account.uncleared_balance) %>
+      </span>
+    </div>
+  </div>
 
   <section class="flex-1">
     <%= render "transactions/list",

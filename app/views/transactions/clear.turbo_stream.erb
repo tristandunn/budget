@@ -1,0 +1,19 @@
+<%= turbo_stream.replace dom_id(@transaction, :status) do %>
+  <%= render "transactions/status_indicator", transaction: @transaction %>
+<% end %>
+
+<%= turbo_stream.replace "cleared_balance" do %>
+  <span id="cleared_balance" class="text-right font-semibold">
+    <%= number_to_currency Money.from_cents(@transaction.account.cleared_balance) %>
+  </span>
+<% end %>
+
+<%= turbo_stream.replace "uncleared_balance" do %>
+  <span id="uncleared_balance" class="text-right font-semibold">
+    <%= number_to_currency Money.from_cents(@transaction.account.uncleared_balance) %>
+  </span>
+<% end %>
+
+<%= turbo_stream.replace "reconcile_link" do %>
+  <%= render "accounts/transactions/reconcile_link", account: @transaction.account, budget: @transaction.budget %>
+<% end %>

@@ -24,11 +24,13 @@ Budget.first_or_create!.tap do |budget|
       transaction.subcategory = available_to_assign
       transaction.amount      = 350_000
       transaction.date        = date
+      transaction.status      = :reconciled
     end
     budget.transactions.find_or_create_by!(account: savings, payee: "Opening Balance") do |transaction|
       transaction.subcategory = available_to_assign
       transaction.amount      = 100_000
       transaction.date        = date
+      transaction.status      = :reconciled
     end
   end
 
@@ -59,7 +61,8 @@ Budget.first_or_create!.tap do |budget|
     budget.transactions.find_or_create_by!(account: checking, payee: "Landlord") do |transaction|
       transaction.subcategory = rent
       transaction.amount      = -100_000
-      transaction.date        = date
+      transaction.date        = date + 1
+      transaction.status      = :reconciled
     end
   end
 
@@ -85,15 +88,16 @@ Budget.first_or_create!.tap do |budget|
       end
     end
 
-    budget.transactions.find_or_create_by!(account: united_club, payee: "Whole Foods") do |transaction|
+    budget.transactions.find_or_create_by!(account: united_club, payee: "Costco") do |transaction|
       transaction.subcategory = groceries
       transaction.amount      = -27_500
-      transaction.date        = date
+      transaction.date        = date + 5
+      transaction.status      = :cleared
     end
-    budget.transactions.find_or_create_by!(account: united_club, payee: "Olive Garden") do |transaction|
+    budget.transactions.find_or_create_by!(account: united_club, payee: "The Capital Grille") do |transaction|
       transaction.subcategory = dining_out
       transaction.amount      = -17_500
-      transaction.date        = date
+      transaction.date        = date + 8
     end
   end
 

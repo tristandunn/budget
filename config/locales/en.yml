@@ -8,7 +8,12 @@ en:
   accounts:
     transactions:
       index:
+        cleared_balance: "Cleared"
         empty: "No transactions yet."
+        reconcile: "Reconcile"
+        reconcile_confirm: "Mark all cleared transactions as reconciled?"
+        uncleared_balance: "Uncleared"
+        working_balance: "Working Balance"
     index:
       available: "Available"
       cash: "Cash"
@@ -55,6 +60,10 @@ en:
     reflect: "Reflect"
 
   transactions:
+    status_indicator:
+      cleared: "Cleared"
+      pending: "Pending"
+      reconciled: "Reconciled"
     form:
       enter_memo: "Enter a memo..."
       enter_payee: "Enter a Payee"

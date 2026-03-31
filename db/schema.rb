@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_19_004858) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_31_010806) do
   create_table "accounts", force: :cascade do |t|
     t.integer "balance", default: 0, null: false
     t.integer "budget_id", null: false
@@ -59,8 +59,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_19_004858) do
     t.date "date", null: false
     t.string "memo"
     t.string "payee", null: false
+    t.integer "status", default: 0, null: false
     t.datetime "updated_at", null: false
     t.index ["account_id", "date"], name: "index_transactions_on_account_id_and_date"
+    t.index ["account_id", "status"], name: "index_transactions_on_account_id_and_status"
     t.index ["budget_id", "date", "created_at"], name: "index_transactions_on_budget_id_and_date_and_created_at"
     t.index ["category_id"], name: "index_transactions_on_category_id"
   end

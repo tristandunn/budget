@@ -15,4 +15,21 @@ module TransactionsHelper
       l(date, format: :long)
     end
   end
+
+  # Wraps content in a link to the transaction edit page, or a plain div if
+  # the transaction is reconciled.
+  #
+  # @param transaction [Transaction] The transaction to wrap.
+  # @return [String] The wrapped HTML content.
+  def transaction_row_wrapper(transaction, &)
+    classes = "flex flex-1 flex-col gap-0.5"
+
+    if transaction.reconciled?
+      tag.div(class: classes, &)
+    else
+      tag.a(class: classes,
+            href:  edit_budget_transaction_path(transaction.budget, transaction),
+            &)
+    end
+  end
 end

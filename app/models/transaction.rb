@@ -7,6 +7,8 @@ class Transaction < ApplicationRecord
                            foreign_key: :category_id,
                            inverse_of:  :transactions
 
+  enum :status, { pending: 0, cleared: 1, reconciled: 2 }, validate: true
+
   validates :amount, presence: true, numericality: { only_integer: true, other_than: 0 }
   validates :date,   presence: true
   validates :payee,  presence: true

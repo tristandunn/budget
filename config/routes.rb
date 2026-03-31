@@ -9,11 +9,17 @@ Rails.application.routes.draw do
 
     resources :accounts, only: %i(index) do
       resources :transactions, only: %i(index), controller: "accounts/transactions"
+      resource :reconciliation, only: %i(create), controller: "accounts/reconciliations"
     end
     resources :categories, only: %i(edit update) do
       resource :assignment, only: %i(edit update)
     end
-    resources :transactions, only: %i(index new create edit update destroy)
+    resources :transactions, only: %i(index new create edit update destroy) do
+      member do
+        patch  "clear", action: :clear
+        delete "clear", action: :unclear
+      end
+    end
   end
 
   get "/health", to: "health#index"

@@ -200,6 +200,12 @@ describe TransactionsController do
     it "stores the referer in the session" do
       expect(session[:return_to]).to eq("/previous-page")
     end
+
+    context "when the transaction is reconciled" do
+      let(:transaction) { create(:transaction, :reconciled, budget: budget) }
+
+      it { is_expected.to redirect_to("/previous-page") }
+    end
   end
 
   describe "#update" do
@@ -325,6 +331,32 @@ describe TransactionsController do
         expect(session[:return_to]).to be_nil
       end
     end
+
+    context "when the transaction is reconciled" do
+      let(:form)        { instance_double(TransactionForm) }
+      let(:transaction) { create(:transaction, :reconciled, budget: budget) }
+
+      before do
+        patch :update, params: {
+          budget_id:        budget.id,
+          id:               transaction.id,
+          transaction_form: {
+            account_id:     account.id,
+            amount:         "100",
+            date:           "2026-03-18",
+            memo:           "A memo",
+            payee:          "Test Payee",
+            subcategory_id: subcategory.id
+          }
+        }
+      end
+
+      it { is_expected.to redirect_to(budget_transactions_path(budget)) }
+
+      it "does not update the transaction" do
+        expect(transaction.reload.payee).not_to eq("Test Payee")
+      end
+    end
   end
 
   describe "#destroy" do
@@ -354,6 +386,84 @@ describe TransactionsController do
 
       it "clears the stored return location" do
         expect(session[:return_to]).to be_nil
+      end
+    end
+
+    context "when the transaction is reconciled" do
+      let(:transaction) { create(:transaction, :reconciled, budget: budget) }
+
+      it { is_expected.to redirect_to(budget_transactions_path(budget)) }
+
+      it "does not call the destroy service" do
+        expect(DestroyTransaction).not_to have_received(:call).with(transaction: transaction)
+      end
+
+      it "does not destroy the transaction" do
+        expect(Transaction.exists?(transaction.id)).to be(true)
+      end
+    end
+  end
+
+  describe "#clear" do
+    let(:budget) { create(:budget) }
+
+    context "when the transaction is pending" do
+      let(:transaction) { create(:transaction, budget: budget) }
+
+      before do
+        patch :clear, params: { budget_id: budget.id, id: transaction.id }, format: :turbo_stream
+      end
+
+      it { is_expected.to respond_with(200) }
+
+      it "changes the status to cleared" do
+        expect(transaction.reload).to be_cleared
+      end
+    end
+
+    context "when the transaction is reconciled" do
+      let(:transaction) { create(:transaction, :reconciled, budget: budget) }
+
+      before do
+        patch :clear, params: { budget_id: budget.id, id: transaction.id }, format: :turbo_stream
+      end
+
+      it { is_expected.to redirect_to(budget_transactions_path(budget)) }
+
+      it "does not change the status" do
+        expect(transaction.reload).to be_reconciled
+      end
+    end
+  end
+
+  describe "#unclear" do
+    let(:budget) { create(:budget) }
+
+    context "when the transaction is cleared" do
+      let(:transaction) { create(:transaction, :cleared, budget: budget) }
+
+      before do
+        delete :unclear, params: { budget_id: budget.id, id: transaction.id }, format: :turbo_stream
+      end
+
+      it { is_expected.to respond_with(200) }
+
+      it "changes the status to pending" do
+        expect(transaction.reload).to be_pending
+      end
+    end
+
+    context "when the transaction is reconciled" do
+      let(:transaction) { create(:transaction, :reconciled, budget: budget) }
+
+      before do
+        delete :unclear, params: { budget_id: budget.id, id: transaction.id }, format: :turbo_stream
+      end
+
+      it { is_expected.to redirect_to(budget_transactions_path(budget)) }
+
+      it "does not change the status" do
+        expect(transaction.reload).to be_reconciled
       end
     end
   end

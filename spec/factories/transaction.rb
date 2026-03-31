@@ -9,5 +9,13 @@ FactoryBot.define do
     amount { Faker::Number.number }
     date   { Date.current }
     payee  { Faker::Name.name }
+
+    trait :cleared do
+      status { :cleared }
+    end
+
+    trait :reconciled do
+      status { :reconciled }
+    end
   end
 end

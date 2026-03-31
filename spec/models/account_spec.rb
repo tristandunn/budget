@@ -46,4 +46,32 @@ describe Account do
       expect(described_class.all).to eq([alice, bob, charlie])
     end
   end
+
+  describe "#cleared_balance" do
+    it "returns the sum of cleared and reconciled transaction amounts" do
+      account = create(:account, balance: -9000)
+      create(:transaction, account: account, amount: -2000, budget: account.budget)
+      create(:transaction, :cleared, account: account, amount: -4000, budget: account.budget)
+      create(:transaction, :reconciled, account: account, amount: -3000, budget: account.budget)
+
+      expect(account.cleared_balance).to eq(-7000)
+    end
+
+    it "excludes pending transactions" do
+      account = create(:account, balance: -1500)
+      create(:transaction, account: account, amount: -1500, budget: account.budget)
+
+      expect(account.cleared_balance).to eq(0)
+    end
+  end
+
+  describe "#uncleared_balance" do
+    it "returns the sum of pending transaction amounts" do
+      account = create(:account)
+      create(:transaction, account: account, amount: -5000, budget: account.budget)
+      create(:transaction, :cleared, account: account, amount: -3000, budget: account.budget)
+
+      expect(account.uncleared_balance).to eq(-5000)
+    end
+  end
 end

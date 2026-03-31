@@ -2,6 +2,7 @@
 
 class TransactionsController < ApplicationController
   before_action :store_return_location, only: :edit
+  before_action :require_unreconciled, only: %i(edit update destroy clear unclear)
 
   # Render all transactions grouped by date.
   def index
@@ -60,6 +61,26 @@ class TransactionsController < ApplicationController
     redirect_to return_location
   end
 
+  # Mark a transaction as cleared.
+  def clear
+    @transaction = transaction
+    @transaction.update!(status: :cleared)
+
+    respond_to do |format|
+      format.turbo_stream { render "transactions/clear" }
+    end
+  end
+
+  # Mark a transaction as pending.
+  def unclear
+    @transaction = transaction
+    @transaction.update!(status: :pending)
+
+    respond_to do |format|
+      format.turbo_stream { render "transactions/clear" }
+    end
+  end
+
   protected
 
   # Return the account for the given `account_id` parameter.
@@ -86,6 +107,15 @@ class TransactionsController < ApplicationController
     @parameters ||= params.expect(
       transaction_form: %i(account_id amount date memo payee subcategory_id)
     )
+  end
+
+  # Redirect if the transaction is reconciled.
+  #
+  # @return [void]
+  def require_unreconciled
+    if transaction.reconciled?
+      redirect_to return_location
+    end
   end
 
   # Return the stored return location, clearing it from the session.

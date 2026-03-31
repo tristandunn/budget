@@ -18,4 +18,26 @@ describe TransactionsHelper do
       expect(helper.relative_date(date)).to eq(I18n.l(date, format: :long))
     end
   end
+
+  describe "#transaction_row_wrapper" do
+    context "when the transaction is not reconciled" do
+      let(:transaction) { create(:transaction) }
+
+      it "returns a link" do
+        result = helper.transaction_row_wrapper(transaction) { "content" }
+
+        expect(result).to include("href=")
+      end
+    end
+
+    context "when the transaction is reconciled" do
+      let(:transaction) { create(:transaction, :reconciled) }
+
+      it "returns a div without a link" do
+        result = helper.transaction_row_wrapper(transaction) { "content" }
+
+        expect(result).not_to include("href=")
+      end
+    end
+  end
 end

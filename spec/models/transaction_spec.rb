@@ -12,7 +12,7 @@ describe Transaction do
   end
 
   describe "validations" do
-    subject { create(:transaction) }
+    subject(:transaction) { create(:transaction) }
 
     it { is_expected.to validate_presence_of(:amount) }
     it { is_expected.to validate_numericality_of(:amount).only_integer }
@@ -22,6 +22,12 @@ describe Transaction do
 
     it { is_expected.to validate_presence_of(:date) }
     it { is_expected.to validate_presence_of(:payee) }
+
+    it "defines and validates a status enum" do
+      expect(transaction).to define_enum_for(:status)
+        .with_values(pending: 0, cleared: 1, reconciled: 2)
+        .validating
+    end
   end
 
   describe ".default_scope" do
