@@ -12,7 +12,7 @@ describe "Category editing" do
   end
 
   it "updates the category name" do
-    fill_in "category_name", with: "New Name"
+    fill_in "category_form_name", with: "New Name"
     click_on t("categories.edit.submit")
 
     expect(page).to have_text("New Name")

@@ -10,15 +10,17 @@ describe "categories/edit.html.erb" do
   end
 
   let(:budget)      { subcategory.budget }
+  let(:form)        { CategoryForm.from(category: subcategory) }
   let(:subcategory) { create(:category, :subcategory) }
 
   before do
     assign :budget, budget
     assign :category, subcategory
+    assign :form, form
   end
 
   it "renders the category name field" do
-    expect(html).to have_field("category_name", with: subcategory.name)
+    expect(html).to have_field("category_form_name", with: subcategory.name)
   end
 
   it "renders a save button" do
@@ -27,12 +29,12 @@ describe "categories/edit.html.erb" do
 
   context "with errors" do
     before do
-      subcategory.errors.add(:name, :blank)
+      form.errors.add(:name, :blank)
     end
 
     it "displays the name error message" do
       expect(html).to have_css("p", text: Regexp.new([
-        Category.human_attribute_name(:name).humanize,
+        CategoryForm.human_attribute_name(:name).humanize,
         t("errors.messages.blank")
       ].join('\s+'), Regexp::IGNORECASE))
     end

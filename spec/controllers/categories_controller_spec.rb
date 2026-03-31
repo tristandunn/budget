@@ -7,9 +7,12 @@ describe CategoriesController do
 
   describe "#edit" do
     let(:budget)      { subcategory.budget }
+    let(:form)        { instance_double(CategoryForm) }
     let(:subcategory) { create(:category, :subcategory) }
 
     before do
+      allow(CategoryForm).to receive(:from).and_return(form)
+
       get :edit, params: { budget_id: budget.id, id: subcategory.id }
     end
 
@@ -23,23 +26,38 @@ describe CategoriesController do
     it "assigns the category" do
       expect(assigns(:category)).to eq(subcategory)
     end
+
+    it "initializes the form from the category" do
+      expect(CategoryForm).to have_received(:from).with(category: subcategory)
+    end
+
+    it "assigns the form" do
+      expect(assigns(:form)).to eq(form)
+    end
   end
 
   describe "#update" do
     context "when valid" do
       let(:budget)      { subcategory.budget }
+      let(:form)        { instance_double(CategoryForm, update: true) }
       let(:subcategory) { create(:category, :subcategory) }
 
       before do
+        allow(CategoryForm).to receive(:new).and_return(form)
+
         patch :update, params: {
-          budget_id: budget.id,
-          id:        subcategory.id,
-          category:  { name: "New Name" }
+          budget_id:     budget.id,
+          id:            subcategory.id,
+          category_form: { name: "New Name" }
         }
       end
 
-      it "updates the category name" do
-        expect(subcategory.reload.name).to eq("New Name")
+      it "initializes the form with the category and parameters" do
+        expect(CategoryForm).to have_received(:new).with(category: subcategory, name: "New Name")
+      end
+
+      it "updates the category" do
+        expect(form).to have_received(:update).with(no_args)
       end
 
       it "redirects to the budget" do
@@ -49,13 +67,16 @@ describe CategoriesController do
 
     context "when invalid" do
       let(:budget)      { subcategory.budget }
+      let(:form)        { instance_double(CategoryForm, update: nil) }
       let(:subcategory) { create(:category, :subcategory) }
 
       before do
+        allow(CategoryForm).to receive(:new).and_return(form)
+
         patch :update, params: {
-          budget_id: budget.id,
-          id:        subcategory.id,
-          category:  { name: "" }
+          budget_id:     budget.id,
+          id:            subcategory.id,
+          category_form: { name: "" }
         }
       end
 
@@ -68,6 +89,10 @@ describe CategoriesController do
 
       it "assigns the category" do
         expect(assigns(:category)).to eq(subcategory)
+      end
+
+      it "assigns the form" do
+        expect(assigns(:form)).to eq(form)
       end
     end
   end

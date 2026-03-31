@@ -5,14 +5,16 @@ class CategoriesController < ApplicationController
   def edit
     @budget   = budget
     @category = category
+    @form     = CategoryForm.from(category: category)
   end
 
   # Update the category.
   def update
     @budget   = budget
     @category = category
+    @form     = CategoryForm.new(category: category, **form_parameters)
 
-    if @category.update(category_parameters)
+    if @form.update
       redirect_to budget_path(budget)
     else
       render :edit, status: :unprocessable_content
@@ -35,10 +37,10 @@ class CategoriesController < ApplicationController
     @category ||= budget.subcategories.find(params[:id])
   end
 
-  # Return the permitted category parameters.
+  # Return the permitted form parameters.
   #
-  # @return [ActionController::Parameters] The permitted parameters.
-  def category_parameters
-    params.expect(category: %i(name))
+  # @return [Hash] The permitted parameters for the form.
+  def form_parameters
+    params.expect(category_form: %i(name)).to_h.symbolize_keys
   end
 end

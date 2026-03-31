@@ -1,5 +1,5 @@
 <div class="self-center py-12 px-8 mx-auto w-full max-w-lg">
-  <%= form_with model:  @category,
+  <%= form_with model:  @form,
                 url:    budget_category_path(@budget, @category),
                 method: :patch,
                 class:  "highlight-errors",
@@ -12,9 +12,9 @@
                        class:     "w-full p-3 text-lg border border-gray-300 rounded-lg",
                        required:  true %>
 
-      <% if @category.errors[:name].present? %>
+      <% if @form.errors[:name].present? %>
         <p class="mt-2 text-xs text-red-700">
-          <%= Category.human_attribute_name(:name).humanize %> <%= @category.errors[:name].first %>.
+          <%= CategoryForm.human_attribute_name(:name).humanize %> <%= @form.errors[:name].first %>.
         </p>
       <% end %>
     </div>
