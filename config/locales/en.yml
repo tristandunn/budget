@@ -38,6 +38,8 @@ en:
 
   activemodel:
     attributes:
+      category_form:
+        name: "Name"
       transaction_form:
         account_id: "Account"
         amount: "Amount"
