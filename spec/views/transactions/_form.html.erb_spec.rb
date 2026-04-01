@@ -93,6 +93,7 @@ describe "transactions/_form.html.erb" do
 
   context "with errors" do
     before do
+      form.errors.add(:account, :blank)
       form.errors.add(:amount, :blank)
       form.errors.add(:date, :blank)
       form.errors.add(:payee, :blank)
@@ -101,6 +102,13 @@ describe "transactions/_form.html.erb" do
 
     it "wraps amount field in error container" do
       expect(html).to have_css(".field_with_errors #transaction_form_amount")
+    end
+
+    it "displays account error message" do
+      expect(html).to have_css("p", text: Regexp.new([
+        TransactionForm.human_attribute_name(:account_id).humanize,
+        t("errors.messages.blank")
+      ].join('\s+'), Regexp::IGNORECASE))
     end
 
     it "displays amount error message" do

@@ -108,14 +108,13 @@ describe TransactionsController do
     end
 
     context "when invalid" do
-      let(:account)     { create(:account) }
-      let(:budget)      { account.budget }
+      let(:budget)      { create(:budget) }
       let(:form)        { instance_double(TransactionForm, save: false) }
       let(:subcategory) { create(:category, :subcategory, budget: budget) }
 
       let(:expected_parameters) do
         {
-          account:     account,
+          account:     nil,
           amount:      "invalid",
           budget:      budget,
           date:        "2026-03-18",
@@ -131,7 +130,7 @@ describe TransactionsController do
         post :create, params: {
           budget_id:        budget.id,
           transaction_form: {
-            account_id:     account.id,
+            account_id:     "",
             amount:         "invalid",
             date:           "2026-03-18",
             memo:           "A memo",
@@ -258,7 +257,7 @@ describe TransactionsController do
           budget_id:        budget.id,
           id:               transaction.id,
           transaction_form: {
-            account_id:     account.id,
+            account_id:     "",
             amount:         "invalid",
             date:           "2026-03-18",
             memo:           "A memo",
@@ -273,7 +272,7 @@ describe TransactionsController do
 
       it "initializes the form" do
         expect(TransactionForm).to have_received(:new).with(
-          account:     account,
+          account:     nil,
           amount:      "invalid",
           budget:      budget,
           date:        "2026-03-18",

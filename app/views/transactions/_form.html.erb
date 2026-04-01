@@ -39,7 +39,14 @@
 
     <div class="mt-6">
       <%= f.label :account_id, class: "block mb-1 text-sm font-medium text-gray-800 hidden" %>
-      <%= f.collection_select :account_id, accounts, :id, :name, { prompt: t(".select_account"), selected: form.account&.id }, { class: "w-full p-3 text-lg border border-gray-300 rounded-lg" } %>
+      <%= f.collection_select :account_id, accounts, :id, :name, { prompt: t(".select_account"), selected: form.account&.id }, { class: "w-full p-3 text-lg border border-gray-300 rounded-lg", required: true } %>
+
+      <% if form.errors[:account].present? %>
+        <p class="mt-2 text-xs text-red-700">
+          <%= TransactionForm.human_attribute_name(:account_id).humanize %>
+          <%= form.errors[:account].first %>.
+        </p>
+      <% end %>
     </div>
 
     <div class="mt-6">

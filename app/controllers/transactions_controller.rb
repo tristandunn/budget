@@ -65,8 +65,11 @@ class TransactionsController < ApplicationController
   # Return the account for the given `account_id` parameter.
   #
   # @return [Account] The requested account.
+  # @return [nil] When no account is provided.
   def account
-    @account ||= budget.accounts.find(parameters[:account_id])
+    if parameters[:account_id].present?
+      @account ||= budget.accounts.find(parameters[:account_id])
+    end
   end
 
   # Return the budget for the given `budget_id` parameter.
