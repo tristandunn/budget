@@ -14,14 +14,14 @@ class TransactionsController < ApplicationController
   # Render the new transaction form.
   def new
     @accounts   = budget.accounts
-    @categories = outflow_categories
+    @categories = sorted_categories
     @form       = TransactionForm.new(budget: budget)
   end
 
   # Render the edit transaction form.
   def edit
     @accounts    = budget.accounts
-    @categories  = outflow_categories
+    @categories  = sorted_categories
     @transaction = transaction
     @form        = TransactionForm.from(transaction: transaction)
   end
@@ -29,7 +29,7 @@ class TransactionsController < ApplicationController
   # Create a new transaction.
   def create
     @accounts   = budget.accounts
-    @categories = outflow_categories
+    @categories = sorted_categories
     @form       = TransactionForm.new(transaction_parameters)
 
     if @form.save
@@ -42,7 +42,7 @@ class TransactionsController < ApplicationController
   # Update an existing transaction.
   def update
     @accounts    = budget.accounts
-    @categories  = outflow_categories
+    @categories  = sorted_categories
     @transaction = transaction
     @form        = TransactionForm.new(transaction_parameters)
 
@@ -79,13 +79,6 @@ class TransactionsController < ApplicationController
     @budget ||= Budget.includes(:accounts, categories: :subcategories).find(params[:budget_id])
   end
 
-  # Return the budget categories excluding inflow, sorted by position.
-  #
-  # @return [Array<Category>] The sorted non-inflow categories.
-  def outflow_categories
-    @outflow_categories ||= budget.categories.reject(&:inflow?).sort_by(&:position)
-  end
-
   # Return the permitted form parameters.
   #
   # @return [ActionController::Parameters] The permitted parameters for the form.
@@ -100,6 +93,13 @@ class TransactionsController < ApplicationController
   # @return [String] The URL to redirect to after a successful update.
   def return_location
     session.delete(:return_to) || budget_transactions_path(budget)
+  end
+
+  # Return the budget categories sorted by position.
+  #
+  # @return [Array<Category>] The sorted categories.
+  def sorted_categories
+    @sorted_categories ||= budget.categories.sort_by(&:position)
   end
 
   # Store the referer in the session.

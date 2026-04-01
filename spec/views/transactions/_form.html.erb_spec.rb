@@ -17,7 +17,7 @@ describe "transactions/_form.html.erb" do
   end
 
   let(:accounts)    { subcategory.budget.accounts }
-  let(:categories)  { subcategory.budget.categories.reject(&:inflow?).sort_by(&:position) }
+  let(:categories)  { subcategory.budget.categories.sort_by(&:position) }
   let(:form)        { TransactionForm.new(budget: subcategory.budget, subcategory: subcategory) }
   let(:subcategory) { create(:category, :subcategory) }
 
@@ -37,12 +37,6 @@ describe "transactions/_form.html.erb" do
     parent = subcategory.parent
 
     expect(html).to have_css("optgroup[label='#{parent.name}'] option", text: subcategory.name)
-  end
-
-  it "does not include inflow categories" do
-    inflow = create(:category, :inflow, budget: subcategory.budget)
-
-    expect(html).to have_no_css("optgroup[label='#{inflow.name}']")
   end
 
   it "renders the account select" do
