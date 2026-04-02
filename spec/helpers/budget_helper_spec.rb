@@ -37,7 +37,7 @@ describe BudgetHelper do
     context "when disabled" do
       let(:disabled) { true }
 
-      it { is_expected.to eq("h-5 w-5 text-slate-300 pointer-events-none") }
+      it { is_expected.to eq("h-5 w-5 text-taupe-300 pointer-events-none") }
     end
   end
 end

@@ -9,9 +9,9 @@ module ToolbarHelper
   # @return [String] The CSS classes for the toolbar item.
   def toolbar_item_class(active:)
     if active
-      "#{DEFAULT_CLASSES} text-slate-800"
+      "#{DEFAULT_CLASSES} text-taupe-800"
     else
-      "#{DEFAULT_CLASSES} text-slate-400 hover:text-slate-600"
+      "#{DEFAULT_CLASSES} text-taupe-400 hover:text-taupe-600"
     end
   end
 end

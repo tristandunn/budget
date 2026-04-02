@@ -57,7 +57,7 @@
   <section class="flex-1">
     <table class="w-full text-left">
       <% @budget.categories.reject(&:inflow?).sort_by(&:position).each do |category| %>
-        <thead class="bg-slate-100 border-y border-slate-200">
+        <thead class="bg-taupe-100 border-y border-taupe-200">
           <tr
             class="cursor-pointer"
             data-controller="collapsible"
@@ -68,7 +68,7 @@
               <div
                 class="
                   inline-block relative -inset-y-1 mr-2 w-3 h-3 border-r-2 border-b-2 transform
-                  rotate-45 border-slate-500
+                  rotate-45 border-taupe-500
                 "
                 data-collapsible-target="arrow"
               ></div>
@@ -92,7 +92,7 @@
 
         <tbody data-collapsible-content="collapsible-category-<%= category.id %>">
           <% category.subcategories.sort_by(&:position).each do |subcategory| %>
-            <tr class="bg-white border-b border-slate-200">
+            <tr class="bg-white border-b border-taupe-200">
               <th scope="row" class="py-3 px-4 font-normal whitespace-nowrap">
                 <%= link_to subcategory.name,
                             edit_budget_category_path(@budget, subcategory),

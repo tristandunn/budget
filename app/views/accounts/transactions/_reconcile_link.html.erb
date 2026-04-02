@@ -3,7 +3,7 @@
   <% if account.transactions.cleared.any? %>
     <%= button_to t("accounts.transactions.index.reconcile"),
                   budget_account_reconciliation_path(budget, account),
-                  class: "rounded-lg bg-slate-100 px-3 py-1 text-sm font-medium text-slate-700",
+                  class: "rounded-lg bg-taupe-100 px-3 py-1 text-sm font-medium text-taupe-700",
                   form:  { data: { turbo_confirm: t("accounts.transactions.index.reconcile_confirm") } } %>
   <% end %>
 </span>

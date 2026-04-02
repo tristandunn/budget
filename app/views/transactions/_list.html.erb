@@ -1,11 +1,11 @@
 <%# locals: (empty_message:, grouped_transactions:, show_account: true) %>
 <% if grouped_transactions.present? %>
   <% grouped_transactions.each do |date, transactions| %>
-    <h3 class="py-2 px-4 text-sm font-semibold bg-slate-100 border-y border-slate-200">
+    <h3 class="py-2 px-4 text-sm font-semibold bg-taupe-100 border-y border-taupe-200">
       <%= relative_date(date) %>
     </h3>
 
-    <ul class="divide-y divide-slate-200">
+    <ul class="divide-y divide-taupe-200">
       <% transactions.each do |transaction| %>
         <li class="bg-white">
           <div class="flex items-center gap-3 py-3 px-4">
@@ -25,7 +25,7 @@
                 </span>
               </div>
 
-              <div class="flex items-center justify-between text-sm text-slate-400">
+              <div class="flex items-center justify-between text-sm text-taupe-600">
                 <span><%= transaction.subcategory.name %></span>
 
                 <% if show_account %>
@@ -39,5 +39,5 @@
     </ul>
   <% end %>
 <% else %>
-  <p class="border-t border-slate-200 p-8 text-center text-slate-400"><%= empty_message %></p>
+  <p class="border-t border-taupe-200 p-8 text-center text-taupe-400"><%= empty_message %></p>
 <% end %>

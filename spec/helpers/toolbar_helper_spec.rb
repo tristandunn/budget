@@ -9,13 +9,13 @@ describe ToolbarHelper do
     context "when active" do
       let(:active) { true }
 
-      it { is_expected.to eq("#{described_class::DEFAULT_CLASSES} text-slate-800") }
+      it { is_expected.to eq("#{described_class::DEFAULT_CLASSES} text-taupe-800") }
     end
 
     context "when inactive" do
       let(:active) { false }
 
-      it { is_expected.to eq("#{described_class::DEFAULT_CLASSES} text-slate-400 hover:text-slate-600") }
+      it { is_expected.to eq("#{described_class::DEFAULT_CLASSES} text-taupe-400 hover:text-taupe-600") }
     end
   end
 end

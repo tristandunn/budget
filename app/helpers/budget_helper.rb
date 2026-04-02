@@ -18,6 +18,6 @@ module BudgetHelper
   #
   # @return [String] A string representing the CSS classes for the navigation arrow link.
   def navigation_arrow_class(disabled)
-    class_names("h-5 w-5", "text-slate-300 pointer-events-none" => disabled)
+    class_names("h-5 w-5", "text-taupe-300 pointer-events-none" => disabled)
   end
 end

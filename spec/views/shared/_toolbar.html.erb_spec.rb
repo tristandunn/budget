@@ -37,15 +37,15 @@ describe "shared/_toolbar.html.erb" do
     end
 
     it "renders the plan link as active" do
-      expect(html).to have_link(I18n.t("toolbar.plan"), class: "text-slate-800")
+      expect(html).to have_link(I18n.t("toolbar.plan"), class: "text-taupe-800")
     end
 
     it "renders the spending link as inactive" do
-      expect(html).to have_link(I18n.t("toolbar.spending"), class: "text-slate-400")
+      expect(html).to have_link(I18n.t("toolbar.spending"), class: "text-taupe-400")
     end
 
     it "renders the accounts link as inactive" do
-      expect(html).to have_link(I18n.t("toolbar.accounts"), class: "text-slate-400")
+      expect(html).to have_link(I18n.t("toolbar.accounts"), class: "text-taupe-400")
     end
   end
 
@@ -55,15 +55,15 @@ describe "shared/_toolbar.html.erb" do
     end
 
     it "renders the spending link as active" do
-      expect(html).to have_link(I18n.t("toolbar.spending"), class: "text-slate-800")
+      expect(html).to have_link(I18n.t("toolbar.spending"), class: "text-taupe-800")
     end
 
     it "renders the plan link as inactive" do
-      expect(html).to have_link(I18n.t("toolbar.plan"), class: "text-slate-400")
+      expect(html).to have_link(I18n.t("toolbar.plan"), class: "text-taupe-400")
     end
 
     it "renders the accounts link as inactive" do
-      expect(html).to have_link(I18n.t("toolbar.accounts"), class: "text-slate-400")
+      expect(html).to have_link(I18n.t("toolbar.accounts"), class: "text-taupe-400")
     end
   end
 
@@ -73,15 +73,15 @@ describe "shared/_toolbar.html.erb" do
     end
 
     it "renders the accounts link as active" do
-      expect(html).to have_link(I18n.t("toolbar.accounts"), class: "text-slate-800")
+      expect(html).to have_link(I18n.t("toolbar.accounts"), class: "text-taupe-800")
     end
 
     it "renders the plan link as inactive" do
-      expect(html).to have_link(I18n.t("toolbar.plan"), class: "text-slate-400")
+      expect(html).to have_link(I18n.t("toolbar.plan"), class: "text-taupe-400")
     end
 
     it "renders the spending link as inactive" do
-      expect(html).to have_link(I18n.t("toolbar.spending"), class: "text-slate-400")
+      expect(html).to have_link(I18n.t("toolbar.spending"), class: "text-taupe-400")
     end
   end
 
@@ -91,15 +91,15 @@ describe "shared/_toolbar.html.erb" do
     end
 
     it "renders the accounts link as active" do
-      expect(html).to have_link(I18n.t("toolbar.accounts"), class: "text-slate-800")
+      expect(html).to have_link(I18n.t("toolbar.accounts"), class: "text-taupe-800")
     end
 
     it "renders the plan link as inactive" do
-      expect(html).to have_link(I18n.t("toolbar.plan"), class: "text-slate-400")
+      expect(html).to have_link(I18n.t("toolbar.plan"), class: "text-taupe-400")
     end
 
     it "renders the spending link as inactive" do
-      expect(html).to have_link(I18n.t("toolbar.spending"), class: "text-slate-400")
+      expect(html).to have_link(I18n.t("toolbar.spending"), class: "text-taupe-400")
     end
   end
 end
