@@ -1,15 +1,33 @@
-<%= render "form",
-           accounts:     @accounts,
-           categories:   @categories,
-           form:         @form,
-           method:       :patch,
-           submit_label: t(".submit"),
-           url:          budget_transaction_path(@form.budget, @transaction) %>
+<%= turbo_frame_tag "transaction_dialog", class: "flex flex-col h-full" do %>
+  <header class="relative p-4">
+    <h2 class="text-lg font-semibold text-center"><%= t(".title") %></h2>
 
-<div class="self-center -mt-6 px-8 pb-12 mx-auto w-full max-w-lg text-center">
-  <%= button_to t(".delete.submit"),
-                budget_transaction_path(@form.budget, @transaction),
-                method: :delete,
-                data:   { turbo_confirm: t(".delete.confirmation") },
-                class:  "mx-auto text-sm text-red-600 underline cursor-pointer hover:text-red-500" %>
-</div>
+    <button
+      type="button"
+      class="
+        absolute top-4 right-4 text-2xl leading-none text-taupe-400 cursor-pointer
+        hover:text-taupe-600
+      "
+      data-action="dialog#close"
+      aria-label="Close dialog"
+    >
+      &times;
+    </button>
+  </header>
+
+  <%= render "form",
+             accounts:     @accounts,
+             categories:   @categories,
+             form:         @form,
+             method:       :patch,
+             submit_label: t(".submit"),
+             url:          budget_transaction_path(@form.budget, @transaction) %>
+
+  <div class="self-center px-8 pt-1 pb-12 mx-auto w-full max-w-lg text-center">
+    <%= button_to t(".delete.submit"),
+                  budget_transaction_path(@form.budget, @transaction),
+                  method: :delete,
+                  data:   { turbo_confirm: t(".delete.confirmation") },
+                  class:  "mx-auto text-sm text-red-600 underline cursor-pointer hover:text-red-500" %>
+  </div>
+<% end %>

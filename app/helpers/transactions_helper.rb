@@ -46,6 +46,7 @@ module TransactionsHelper
     else
       tag.a(class: classes,
             href:  edit_budget_transaction_path(transaction.budget, transaction),
+            data:  { turbo_frame: "transaction_dialog" },
             &)
     end
   end

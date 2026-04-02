@@ -32,7 +32,7 @@ class TransactionsController < ApplicationController
     @form       = TransactionForm.new(transaction_parameters)
 
     if @form.save
-      redirect_to return_location
+      redirect_to return_location, status: :see_other
     else
       render :new, status: :unprocessable_content
     end
@@ -46,7 +46,7 @@ class TransactionsController < ApplicationController
     @form        = TransactionForm.new(transaction_parameters)
 
     if @form.update(transaction)
-      redirect_to return_location
+      redirect_to return_location, status: :see_other
     else
       render :edit, status: :unprocessable_content
     end
@@ -56,7 +56,7 @@ class TransactionsController < ApplicationController
   def destroy
     DestroyTransaction.call(transaction: transaction)
 
-    redirect_to return_location
+    redirect_to return_location, status: :see_other
   end
 
   # Mark a transaction as cleared.
@@ -132,7 +132,7 @@ class TransactionsController < ApplicationController
   # @return [void]
   def require_unreconciled
     if transaction.reconciled?
-      redirect_to return_location
+      redirect_to return_location, status: :see_other
     end
   end
 

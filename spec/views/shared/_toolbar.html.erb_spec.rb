@@ -29,8 +29,18 @@ describe "shared/_toolbar.html.erb" do
     expect(html).to have_link(I18n.t("toolbar.reflect"), href: root_path)
   end
 
-  it "renders the add transaction link" do
-    expect(html).to have_link(href: new_budget_transaction_path(budget))
+  it "renders the transaction dialog" do
+    expect(html).to have_css("dialog.dialog[aria-label]")
+  end
+
+  it "renders the transaction dialog turbo frame" do
+    expect(html).to have_css("dialog turbo-frame#transaction_dialog")
+  end
+
+  it "renders the add transaction link targeting the dialog frame" do
+    path = new_budget_transaction_path(budget)
+
+    expect(html).to have_css(%(a[href="#{path}"][data-turbo-frame="transaction_dialog"]))
   end
 
   context "with an account ID" do

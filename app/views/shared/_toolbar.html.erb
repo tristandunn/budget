@@ -1,4 +1,16 @@
 <%# locals: (budget:, account_id: nil) %>
+<div data-controller="dialog">
+  <dialog
+    id="transaction_dialog_modal"
+    class="dialog"
+    aria-label="Transaction"
+    data-dialog-target="dialog"
+    data-action="click->dialog#backdropClose cancel->dialog#cancel"
+  >
+    <turbo-frame id="transaction_dialog" data-action="turbo:frame-load->dialog#open"></turbo-frame>
+  </dialog>
+</div>
+
 <footer class="sticky bottom-0 pb-[calc(env(safe-area-inset-bottom)/2)] bg-taupe-50 border-t border-taupe-200">
   <nav class="flex items-center">
     <div class="flex-1 flex justify-evenly">
@@ -39,10 +51,11 @@
     <%= link_to new_budget_transaction_path(budget, account_id: account_id),
                 id:    "add-transaction",
                 aria:  { label: t("transactions.new.submit") },
+                data:  { turbo_frame: "transaction_dialog" },
                 class: "flex flex-col items-center justify-center px-4 -mt-1" do %>
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        class="w-10 h-10 bg-blue-100 hover:bg-blue-200 rounded-full text-blue-600"
+        class="w-10 h-10 bg-indigo-100 hover:bg-indigo-200 rounded-full text-indigo-600"
         viewBox="0 0 24 24"
         fill="currentColor"
       >

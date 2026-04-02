@@ -21,11 +21,23 @@ describe "transactions/edit.html.erb" do
     assign :transaction, transaction
   end
 
+  it "renders within a turbo frame" do
+    expect(html).to have_css("turbo-frame#transaction_dialog")
+  end
+
+  it "renders the title" do
+    expect(html).to have_css("h2", text: I18n.t("transactions.edit.title"))
+  end
+
+  it "renders a close button" do
+    expect(html).to have_css("button[data-action='dialog#close']")
+  end
+
   it "renders the form partial" do
     expect(html).to include("FORM_PARTIAL")
   end
 
   it "renders a delete button" do
-    expect(html).to have_button("Delete Transaction")
+    expect(html).to have_button("Delete")
   end
 end

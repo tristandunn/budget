@@ -86,12 +86,14 @@ en:
     edit:
       delete:
         confirmation: "Are you sure you want to delete this transaction?"
-        submit: "Delete Transaction"
-      submit: "Save Transaction"
+        submit: "Delete"
+      submit: "Save"
+      title: "Edit Transaction"
     index:
       actions: "Actions"
       empty: "No transactions yet."
       title: "Spending"
     new:
       cancel: "Cancel"
-      submit: "Add Transaction"
+      submit: "Save"
+      title: "Add Transaction"

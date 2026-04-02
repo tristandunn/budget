@@ -132,6 +132,7 @@ describe TransactionsController do
         }
       end
 
+      it { is_expected.to respond_with(:see_other) }
       it { is_expected.to redirect_to(budget_transactions_path(budget)) }
 
       it "initializes the form with transaction parameters" do
@@ -167,6 +168,7 @@ describe TransactionsController do
         }
       end
 
+      it { is_expected.to respond_with(:see_other) }
       it { is_expected.to redirect_to("/stored-location") }
 
       it "clears the stored return location" do
@@ -207,7 +209,7 @@ describe TransactionsController do
         }
       end
 
-      it { is_expected.to respond_with(422) }
+      it { is_expected.to respond_with(:unprocessable_content) }
       it { is_expected.to render_template(:new) }
 
       it "initializes the form" do
@@ -222,8 +224,8 @@ describe TransactionsController do
         expect(assigns(:form)).to eq(form)
       end
 
-      it "assigns non-inflow categories sorted by position" do
-        expect(assigns(:categories)).to eq(budget.categories.reject(&:inflow?).sort_by(&:position))
+      it "assigns categories sorted by position" do
+        expect(assigns(:categories)).to eq(budget.categories.sort_by(&:position))
       end
     end
   end
@@ -271,6 +273,7 @@ describe TransactionsController do
     context "when the transaction is reconciled" do
       let(:transaction) { create(:transaction, :reconciled, budget: budget) }
 
+      it { is_expected.to respond_with(:see_other) }
       it { is_expected.to redirect_to("/previous-page") }
     end
   end
@@ -303,6 +306,7 @@ describe TransactionsController do
         }
       end
 
+      it { is_expected.to respond_with(:see_other) }
       it { is_expected.to redirect_to(budget_transactions_path(budget)) }
 
       it "initializes the form with transaction parameters" do
@@ -340,7 +344,7 @@ describe TransactionsController do
         }
       end
 
-      it { is_expected.to respond_with(422) }
+      it { is_expected.to respond_with(:unprocessable_content) }
       it { is_expected.to render_template(:edit) }
 
       it "initializes the form" do
@@ -359,8 +363,8 @@ describe TransactionsController do
         expect(assigns(:accounts)).to eq(budget.accounts)
       end
 
-      it "assigns non-inflow categories sorted by position" do
-        expect(assigns(:categories)).to eq(budget.categories.reject(&:inflow?).sort_by(&:position))
+      it "assigns categories sorted by position" do
+        expect(assigns(:categories)).to eq(budget.categories.sort_by(&:position))
       end
 
       it "assigns the transaction" do
@@ -392,6 +396,7 @@ describe TransactionsController do
         }
       end
 
+      it { is_expected.to respond_with(:see_other) }
       it { is_expected.to redirect_to("/stored-location") }
 
       it "clears the stored return location" do
@@ -418,6 +423,7 @@ describe TransactionsController do
         }
       end
 
+      it { is_expected.to respond_with(:see_other) }
       it { is_expected.to redirect_to(budget_transactions_path(budget)) }
 
       it "does not update the transaction" do
@@ -436,6 +442,7 @@ describe TransactionsController do
       delete :destroy, params: { budget_id: budget.id, id: transaction.id }
     end
 
+    it { is_expected.to respond_with(:see_other) }
     it { is_expected.to redirect_to(budget_transactions_path(budget)) }
 
     it "calls the destroy service with the transaction" do
@@ -449,6 +456,7 @@ describe TransactionsController do
         delete :destroy, params: { budget_id: budget.id, id: transaction.id }
       end
 
+      it { is_expected.to respond_with(:see_other) }
       it { is_expected.to redirect_to("/stored-location") }
 
       it "clears the stored return location" do
@@ -459,6 +467,7 @@ describe TransactionsController do
     context "when the transaction is reconciled" do
       let(:transaction) { create(:transaction, :reconciled, budget: budget) }
 
+      it { is_expected.to respond_with(:see_other) }
       it { is_expected.to redirect_to(budget_transactions_path(budget)) }
 
       it "does not call the destroy service" do
@@ -495,6 +504,7 @@ describe TransactionsController do
         patch :clear, params: { budget_id: budget.id, id: transaction.id }, format: :turbo_stream
       end
 
+      it { is_expected.to respond_with(:see_other) }
       it { is_expected.to redirect_to(budget_transactions_path(budget)) }
 
       it "does not change the status" do
@@ -527,6 +537,7 @@ describe TransactionsController do
         delete :unclear, params: { budget_id: budget.id, id: transaction.id }, format: :turbo_stream
       end
 
+      it { is_expected.to respond_with(:see_other) }
       it { is_expected.to redirect_to(budget_transactions_path(budget)) }
 
       it "does not change the status" do

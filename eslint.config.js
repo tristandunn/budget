@@ -14,6 +14,7 @@ export default [
     "files": ["**/*.js"],
     "languageOptions": {
       "globals": {
+        "Turbo": "readonly",
         "document": "readonly",
         "localStorage": "readonly",
         "window": "readonly"

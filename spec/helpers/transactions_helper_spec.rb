@@ -62,6 +62,12 @@ describe TransactionsHelper do
 
         expect(result).to include("href=")
       end
+
+      it "targets the transaction dialog frame" do
+        result = helper.transaction_row_wrapper(transaction) { "content" }
+
+        expect(result).to include(%(data-turbo-frame="transaction_dialog"))
+      end
     end
 
     context "when the transaction is reconciled" do
