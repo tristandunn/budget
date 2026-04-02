@@ -19,7 +19,7 @@ describe "accounts/transactions/_reconcile_link.html.erb" do
 
   context "when there are cleared transactions" do
     before do
-      create(:transaction, :cleared, account: account, budget: budget)
+      create(:transaction, :cleared, account: account)
     end
 
     it "renders a reconcile button" do

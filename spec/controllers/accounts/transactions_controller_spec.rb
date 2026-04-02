@@ -7,7 +7,7 @@ describe Accounts::TransactionsController do
     context "with an account" do
       let(:account)      { create(:account, budget: budget) }
       let(:budget)       { create(:budget) }
-      let!(:transaction) { create(:transaction, budget: budget, account: account) }
+      let!(:transaction) { create(:transaction, account: account) }
 
       before do
         create(:transaction, budget: budget)

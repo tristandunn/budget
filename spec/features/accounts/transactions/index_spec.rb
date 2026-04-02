@@ -7,7 +7,7 @@ describe "Account transactions" do
   let(:budget)  { create(:budget) }
 
   it "navigates from accounts index to account register" do
-    transaction = create(:transaction, budget: budget, account: account)
+    transaction = create(:transaction, account: account)
 
     visit budget_accounts_path(budget)
     click_on account.name

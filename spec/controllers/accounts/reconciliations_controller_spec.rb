@@ -8,7 +8,7 @@ describe Accounts::ReconciliationsController do
 
   describe "#create" do
     before do
-      create(:transaction, :cleared, account: account, budget: budget)
+      create(:transaction, :cleared, account: account)
 
       post :create, params: { budget_id: budget.id, account_id: account.id }
     end

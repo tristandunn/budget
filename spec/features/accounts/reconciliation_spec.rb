@@ -7,7 +7,7 @@ describe "Account reconciliation", :js do
   let(:budget)  { create(:budget) }
 
   before do
-    create(:transaction, :cleared, budget: budget, account: account, amount: -5000)
+    create(:transaction, :cleared, account: account, amount: -5000)
 
     visit budget_account_transactions_path(budget, account)
   end
