@@ -109,6 +109,58 @@ describe CreateTransaction do
       end
     end
 
+    context "without existing snapshots" do
+      let(:subcategory) do
+        parent = create(:category, with_snapshot: false)
+
+        create(:category, parent: parent, budget: parent.budget, with_snapshot: false)
+      end
+
+      let(:transaction) do
+        build(:transaction, account:     account,
+                            subcategory: subcategory,
+                            budget:      subcategory.budget,
+                            amount:      -500)
+      end
+
+      it "decrements the account balance" do
+        expect { described_class.call(transaction: transaction) }
+          .to change { account.reload.balance }.from(10_000).to(9_500)
+      end
+
+      it "creates the category snapshot" do
+        expect { described_class.call(transaction: transaction) }
+          .to change { subcategory.parent.snapshots.count }.from(0).to(1)
+      end
+
+      it "creates the subcategory snapshot" do
+        expect { described_class.call(transaction: transaction) }
+          .to change { subcategory.snapshots.count }.from(0).to(1)
+      end
+
+      it "increments the amount used in the category snapshot" do
+        described_class.call(transaction: transaction)
+
+        expect(category_snapshot.reload.amount_used).to eq(500)
+      end
+
+      it "increments the amount used in the subcategory snapshot" do
+        described_class.call(transaction: transaction)
+
+        expect(subcategory_snapshot.reload.amount_used).to eq(500)
+      end
+
+      it "does not change available to assign" do
+        expect { described_class.call(transaction: transaction) }
+          .not_to(change { subcategory.budget.reload.available_to_assign })
+      end
+
+      it "saves the transaction" do
+        expect { described_class.call(transaction: transaction) }
+          .to change(transaction, :persisted?).from(false).to(true)
+      end
+    end
+
     context "with a backdated transaction" do
       let(:subcategory) { create(:category, :subcategory, with_snapshot: false) }
 
@@ -131,11 +183,26 @@ describe CreateTransaction do
                                    date:            transaction.date.beginning_of_month)
       end
 
+      it "decrements the account balance" do
+        expect { described_class.call(transaction: transaction) }
+          .to change { account.reload.balance }.from(10_000).to(9_500)
+      end
+
       it "uses the transaction date for snapshot lookup" do
         snapshot = subcategory.snapshots.for_month(transaction.date).first
 
         expect { described_class.call(transaction: transaction) }
           .to change { snapshot.reload.amount_used }.by(500)
+      end
+
+      it "does not change available to assign" do
+        expect { described_class.call(transaction: transaction) }
+          .not_to(change { subcategory.budget.reload.available_to_assign })
+      end
+
+      it "saves the transaction" do
+        expect { described_class.call(transaction: transaction) }
+          .to change(transaction, :persisted?).from(false).to(true)
       end
     end
   end

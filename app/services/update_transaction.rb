@@ -162,9 +162,10 @@ class UpdateTransaction
   # @param date [Date] The date for month-based snapshot lookup.
   # @return [Array<CategorySnapshot>] The parent and subcategory snapshots.
   def snapshots_for(subcategory, date)
-    [subcategory.parent, subcategory].map do |category|
-      category.snapshots.for_month(date).first
-    end
+    [
+      subcategory.parent.snapshots.for_month(date).first,
+      subcategory.snapshots.for_month(date).first
+    ]
   end
 
   # Return the delta for the amount used column.
