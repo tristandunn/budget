@@ -12,7 +12,8 @@ describe "transactions/index.html.erb" do
   let(:budget) { create(:budget) }
 
   before do
-    stub_template("shared/_toolbar.html.erb"    => "TOOLBAR_PARTIAL")
+    stub_template("shared/_toolbar.html.erb" => "TOOLBAR_PARTIAL")
+    stub_template("transactions/_actions.html.erb" => "ACTIONS_PARTIAL")
     stub_template("transactions/_list.html.erb" => "LIST_PARTIAL")
 
     assign :budget,               budget
@@ -21,6 +22,10 @@ describe "transactions/index.html.erb" do
 
   it "renders the header" do
     expect(html).to have_css("h1", text: t("transactions.index.title"))
+  end
+
+  it "renders the actions partial" do
+    expect(html).to include("ACTIONS_PARTIAL")
   end
 
   it "renders the transaction list" do

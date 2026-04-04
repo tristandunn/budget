@@ -17,7 +17,6 @@ en:
   accounts:
     transactions:
       index:
-        actions: "Actions"
         cleared_balance: "Cleared"
         empty: "No transactions yet."
         reconcile: "Reconcile"
@@ -72,6 +71,9 @@ en:
     reflect: "Reflect"
 
   transactions:
+    reconciled:
+      hide: "Hide Reconciled"
+      show: "Show Reconciled"
     status_indicator:
       cleared: "Cleared"
       pending: "Pending"
@@ -87,6 +89,7 @@ en:
         submit: "Delete Transaction"
       submit: "Save Transaction"
     index:
+      actions: "Actions"
       empty: "No transactions yet."
       title: "Spending"
     new:

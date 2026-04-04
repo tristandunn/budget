@@ -10,12 +10,14 @@ describe "Account reconciliation", :js do
     create(:transaction, :cleared, account: account, amount: -5000)
 
     visit budget_account_transactions_path(budget, account)
-    find("button[aria-label='#{t("accounts.transactions.index.actions")}']").click
+    find("button[aria-label='#{t("transactions.index.actions")}']").click
   end
 
   it "reconciles cleared transactions after confirming" do
     accept_confirm do
-      click_on t("accounts.transactions.index.reconcile")
+      within "form[data-turbo-confirm]" do
+        click_on t("accounts.transactions.index.reconcile")
+      end
     end
 
     expect(page).to have_css("[aria-label='#{t("transactions.status_indicator.reconciled")}']")

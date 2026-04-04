@@ -13,9 +13,13 @@ describe "accounts/transactions/_actions.html.erb" do
   let(:account) { create(:account, budget: budget) }
   let(:budget)  { create(:budget) }
 
+  before do
+    stub_template("shared/transactions/_hide_reconciled.html.erb" => "HIDE_RECONCILED_PARTIAL")
+  end
+
   it "renders a popover trigger button" do
     expect(html).to have_css(
-      "button[aria-label='#{I18n.t("accounts.transactions.index.actions")}']"
+      "button[aria-label='#{I18n.t("transactions.index.actions")}']"
     )
   end
 
@@ -25,6 +29,10 @@ describe "accounts/transactions/_actions.html.erb" do
 
   it "renders a confirmation dialog" do
     expect(html).to have_css("[data-turbo-confirm]")
+  end
+
+  it "renders the hide reconciled partial" do
+    expect(html).to include("HIDE_RECONCILED_PARTIAL")
   end
 
   context "when the account has been reconciled" do

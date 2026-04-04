@@ -6,28 +6,48 @@ describe TransactionsController do
   it { is_expected.to be_a(ApplicationController) }
 
   describe "#index" do
-    let(:budget)  { create(:budget) }
-    let!(:newer)  { create(:transaction, budget: budget, date: Date.new(2026, 3, 15)) }
-    let!(:older)  { create(:transaction, budget: budget, date: Date.new(2026, 3, 10)) }
+    let(:budget) { create(:budget) }
 
-    before do
-      create(:transaction)
+    context "with transactions" do
+      let!(:newer) { create(:transaction, budget: budget, date: Date.new(2026, 3, 15)) }
+      let!(:older) { create(:transaction, budget: budget, date: Date.new(2026, 3, 10)) }
 
-      get :index, params: { budget_id: budget.id }
+      before do
+        create(:transaction)
+
+        get :index, params: { budget_id: budget.id }
+      end
+
+      it { is_expected.to respond_with(200) }
+      it { is_expected.to render_template(:index) }
+
+      it "assigns the budget" do
+        expect(assigns(:budget)).to eq(budget)
+      end
+
+      it "assigns transactions grouped by date in reverse chronological order" do
+        expect(assigns(:grouped_transactions)).to eq(
+          newer.date => [newer],
+          older.date => [older]
+        )
+      end
     end
 
-    it { is_expected.to respond_with(200) }
-    it { is_expected.to render_template(:index) }
+    context "when hiding reconciled transactions" do
+      let!(:transaction) { create(:transaction, budget: budget, date: Date.new(2026, 3, 15)) }
 
-    it "assigns the budget" do
-      expect(assigns(:budget)).to eq(budget)
-    end
+      before do
+        create(:transaction, budget: budget, status: :reconciled, date: Date.new(2026, 3, 12))
+        budget.settings.update(hide_reconciled: "1")
 
-    it "assigns transactions grouped by date in reverse chronological order" do
-      expect(assigns(:grouped_transactions)).to eq(
-        newer.date => [newer],
-        older.date => [older]
-      )
+        get :index, params: { budget_id: budget.id }
+      end
+
+      it "excludes reconciled transactions" do
+        expect(assigns(:grouped_transactions)).to eq(
+          transaction.date => [transaction]
+        )
+      end
     end
   end
 

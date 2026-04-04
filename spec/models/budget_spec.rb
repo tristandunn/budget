@@ -31,4 +31,17 @@ describe Budget do
   describe "validations" do
     it { is_expected.to validate_numericality_of(:available_to_assign).only_integer }
   end
+
+  describe "#settings" do
+    subject { budget.settings }
+
+    let(:budget)   { build(:budget) }
+    let(:settings) { instance_double(Settings) }
+
+    before do
+      allow(Settings).to receive(:new).with(budget).and_return(settings)
+    end
+
+    it { is_expected.to eq(settings) }
+  end
 end

@@ -9,4 +9,11 @@ class Budget < ApplicationRecord
   has_many :transactions, dependent: :destroy
 
   validates :available_to_assign, numericality: { only_integer: true }
+
+  # Return the settings for this budget.
+  #
+  # @return [Settings] The budget settings.
+  def settings
+    @settings ||= Settings.new(self)
+  end
 end

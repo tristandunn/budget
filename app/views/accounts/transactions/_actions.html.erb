@@ -3,7 +3,7 @@
   <button
     type="button"
     data-action="popover#toggle"
-    aria-label="<%= t("accounts.transactions.index.actions") %>"
+    aria-label="<%= t("transactions.index.actions") %>"
     class="
       m-0.5 flex h-6 w-6 items-center justify-center rounded-full border-2 border-taupe-800
       leading-none text-taupe-800
@@ -54,5 +54,9 @@
         />
       </svg>
     <% end %>
+
+    <hr class="border-taupe-200">
+
+    <%= render "shared/transactions/hide_reconciled", budget: budget %>
   </div>
 </div>
