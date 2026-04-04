@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class TransactionsController < ApplicationController
-  before_action :store_return_location, only: :edit
+  before_action :store_return_location, only: %i(new edit)
   before_action :require_unreconciled, only: %i(edit update destroy clear unclear)
 
   # Render all transactions grouped by date.
@@ -34,7 +34,7 @@ class TransactionsController < ApplicationController
     @form       = TransactionForm.new(transaction_parameters)
 
     if @form.save
-      redirect_to budget_path(budget)
+      redirect_to return_location
     else
       render :new, status: :unprocessable_content
     end

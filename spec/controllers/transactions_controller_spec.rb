@@ -39,6 +39,8 @@ describe TransactionsController do
     before do
       allow(TransactionForm).to receive(:new).and_return(form)
 
+      request.headers["HTTP_REFERER"] = "/previous-page"
+
       get :new, params: { budget_id: budget.id, account_id: account_id }
     end
 
@@ -59,6 +61,10 @@ describe TransactionsController do
 
     it "assigns a transaction form" do
       expect(assigns(:form)).to eq(form)
+    end
+
+    it "stores the referer in the session" do
+      expect(session[:return_to]).to eq("/previous-page")
     end
 
     context "with an account" do
@@ -106,7 +112,7 @@ describe TransactionsController do
         }
       end
 
-      it { is_expected.to redirect_to(budget_url(budget)) }
+      it { is_expected.to redirect_to(budget_transactions_path(budget)) }
 
       it "initializes the form with transaction parameters" do
         expect(TransactionForm).to have_received(:new).with(expected_parameters)
@@ -114,6 +120,37 @@ describe TransactionsController do
 
       it "saves the form" do
         expect(form).to have_received(:save)
+      end
+    end
+
+    context "with a stored return location" do
+      let(:account)     { create(:account, budget: budget) }
+      let(:budget)      { create(:budget) }
+      let(:form)        { instance_double(TransactionForm, save: true) }
+      let(:subcategory) { create(:category, :subcategory, budget: budget) }
+
+      before do
+        allow(TransactionForm).to receive(:new).and_return(form)
+
+        session[:return_to] = "/stored-location"
+
+        post :create, params: {
+          budget_id:        budget.id,
+          transaction_form: {
+            account_id:     account.id,
+            amount:         "100",
+            date:           "2026-03-18",
+            memo:           "A memo",
+            payee:          "Test Payee",
+            subcategory_id: subcategory.id
+          }
+        }
+      end
+
+      it { is_expected.to redirect_to("/stored-location") }
+
+      it "clears the stored return location" do
+        expect(session[:return_to]).to be_nil
       end
     end
 
