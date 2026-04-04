@@ -21,6 +21,18 @@ class Account < ApplicationRecord
     balance - uncleared_balance
   end
 
+  # Return the time of the most recent reconciliation.
+  #
+  # @return [Time] The time of the last reconciliation.
+  # @return [nil] If no transactions have been reconciled.
+  def last_reconciled_at
+    if defined?(@last_reconciled_at)
+      @last_reconciled_at
+    else
+      @last_reconciled_at = transactions.reconciled.order(updated_at: :desc).pick(:updated_at)
+    end
+  end
+
   # Return the sum of pending transaction amounts.
   #
   # @return [Integer] The uncleared balance in cents.

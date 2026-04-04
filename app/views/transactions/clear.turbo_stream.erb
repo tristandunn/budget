@@ -13,7 +13,3 @@
     <%= number_to_currency Money.from_cents(@transaction.account.uncleared_balance) %>
   </span>
 <% end %>
-
-<%= turbo_stream.replace "reconcile_link" do %>
-  <%= render "accounts/transactions/reconcile_link", account: @transaction.account, budget: @transaction.budget %>
-<% end %>

@@ -47,6 +47,22 @@ describe Account do
     end
   end
 
+  describe "#last_reconciled_at" do
+    let(:account) { create(:account) }
+
+    it "returns the time of the most recent reconciliation" do
+      transaction = create(:transaction, :reconciled, account: account, budget: account.budget)
+
+      expect(account.last_reconciled_at).to eq(transaction.updated_at)
+    end
+
+    it "returns nil when no transactions have been reconciled" do
+      create(:transaction, account: account, budget: account.budget)
+
+      expect(account.last_reconciled_at).to be_nil
+    end
+  end
+
   describe "#cleared_balance" do
     it "returns the sum of cleared and reconciled transaction amounts" do
       account = create(:account, balance: -9000)

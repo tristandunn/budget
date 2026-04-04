@@ -12,8 +12,7 @@ describe "transactions/clear.turbo_stream.erb" do
   let(:transaction) { create(:transaction, :cleared) }
 
   before do
-    stub_template("accounts/transactions/_reconcile_link.html.erb" => "RECONCILE_LINK")
-    stub_template("transactions/_status_indicator.html.erb"        => "STATUS_INDICATOR")
+    stub_template("transactions/_status_indicator.html.erb" => "STATUS_INDICATOR")
 
     assign :transaction, transaction
   end
@@ -46,13 +45,5 @@ describe "transactions/clear.turbo_stream.erb" do
     expect(html).to include(
       number_to_currency(Money.from_cents(transaction.account.uncleared_balance))
     )
-  end
-
-  it "replaces the reconcile link" do
-    expect(html).to have_css("turbo-stream[action='replace'][target='reconcile_link']")
-  end
-
-  it "renders the reconcile link" do
-    expect(html).to include("RECONCILE_LINK")
   end
 end

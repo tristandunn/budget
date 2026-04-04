@@ -1,0 +1,58 @@
+<%# locals: (account:, budget:) %>
+<div data-controller="popover" class="relative">
+  <button
+    type="button"
+    data-action="popover#toggle"
+    aria-label="<%= t("accounts.transactions.index.actions") %>"
+    class="
+      m-0.5 flex h-6 w-6 items-center justify-center rounded-full border-2 border-taupe-800
+      leading-none text-taupe-800
+    "
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 16 16"
+      class="h-[18px] w-[18px] translate-y-px"
+      fill="currentColor"
+    >
+      <path
+        d="M8 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3ZM3.5 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Zm9 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"
+      ></path>
+    </svg>
+  </button>
+
+  <div
+    data-popover-target="menu"
+    class="
+      absolute right-0 top-full z-10 mt-1 overflow-hidden rounded-lg border border-taupe-200
+      bg-white whitespace-nowrap shadow-lg hidden
+    "
+  >
+    <%= button_to budget_account_reconciliation_path(budget, account),
+                  class: "flex w-full items-center justify-between gap-4 px-3 py-2 text-left text-sm text-taupe-800 hover:bg-taupe-50",
+                  form:  { data: { turbo_confirm: t("accounts.transactions.index.reconcile_confirm") } } do %>
+      <span class="flex flex-col">
+        <span><%= t("accounts.transactions.index.reconcile") %></span>
+
+        <span class="text-xs text-taupe-500">
+          <% if account.last_reconciled_at %>
+            <%= t("accounts.transactions.index.reconciled", time: relative_time(account.last_reconciled_at.to_date)) %>
+          <% else %>
+            <%= t("accounts.transactions.index.reconciled_never") %>
+          <% end %>
+        </span>
+      </span>
+
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-4 w-4 text-taupe-800"
+        viewBox="0 0 16 16"
+        fill="currentColor"
+      >
+        <path
+          d="M4 4a4 4 0 0 1 8 0v2h.25c.966 0 1.75.784 1.75 1.75v5.5A1.75 1.75 0 0 1 12.25 15h-8.5A1.75 1.75 0 0 1 2 13.25v-5.5C2 6.784 2.784 6 3.75 6H4Zm8.25 3.5h-8.5a.25.25 0 0 0-.25.25v5.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25v-5.5a.25.25 0 0 0-.25-.25ZM10.5 6V4a2.5 2.5 0 1 0-5 0v2Z"
+        />
+      </svg>
+    <% end %>
+  </div>
+</div>

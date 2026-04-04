@@ -10,21 +10,14 @@ describe "Account reconciliation", :js do
     create(:transaction, :cleared, account: account, amount: -5000)
 
     visit budget_account_transactions_path(budget, account)
+    find("button[aria-label='#{t("accounts.transactions.index.actions")}']").click
   end
 
-  it "hides the reconcile button after confirming" do
+  it "reconciles cleared transactions after confirming" do
     accept_confirm do
       click_on t("accounts.transactions.index.reconcile")
     end
 
-    expect(page).to have_no_button(t("accounts.transactions.index.reconcile"))
-  end
-
-  it "keeps the reconcile button when cancelled" do
-    dismiss_confirm do
-      click_on t("accounts.transactions.index.reconcile")
-    end
-
-    expect(page).to have_button(t("accounts.transactions.index.reconcile"))
+    expect(page).to have_css("[aria-label='#{t("transactions.status_indicator.reconciled")}']")
   end
 end

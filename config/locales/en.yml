@@ -2,16 +2,28 @@ en:
   title: "Budget"
 
   dates:
+    days_ago:
+      one: "%{count} day ago"
+      other: "%{count} days ago"
+    months_ago:
+      one: "%{count} month ago"
+      other: "%{count} months ago"
     today: "Today"
+    weeks_ago:
+      one: "%{count} week ago"
+      other: "%{count} weeks ago"
     yesterday: "Yesterday"
 
   accounts:
     transactions:
       index:
+        actions: "Actions"
         cleared_balance: "Cleared"
         empty: "No transactions yet."
         reconcile: "Reconcile"
         reconcile_confirm: "Mark all cleared transactions as reconciled?"
+        reconciled: "Reconciled %{time}"
+        reconciled_never: "Reconciled never"
         uncleared_balance: "Uncleared"
         working_balance: "Working Balance"
     index:

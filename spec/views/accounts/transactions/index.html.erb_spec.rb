@@ -13,9 +13,9 @@ describe "accounts/transactions/index.html.erb" do
   let(:budget)  { create(:budget) }
 
   before do
-    stub_template("accounts/transactions/_reconcile_link.html.erb" => "RECONCILE_LINK_PARTIAL")
-    stub_template("shared/_toolbar.html.erb"                       => "TOOLBAR_PARTIAL")
-    stub_template("transactions/_list.html.erb"                    => "LIST_PARTIAL")
+    stub_template("accounts/transactions/_actions.html.erb" => "ACTIONS_PARTIAL")
+    stub_template("shared/_toolbar.html.erb"                => "TOOLBAR_PARTIAL")
+    stub_template("transactions/_list.html.erb"             => "LIST_PARTIAL")
 
     assign :budget,               budget
     assign :account,              account
@@ -42,8 +42,8 @@ describe "accounts/transactions/index.html.erb" do
     expect(html).to have_text(number_to_currency(Money.from_cents(account.uncleared_balance)))
   end
 
-  it "renders the reconcile link partial" do
-    expect(html).to include("RECONCILE_LINK_PARTIAL")
+  it "renders the actions partial" do
+    expect(html).to include("ACTIONS_PARTIAL")
   end
 
   it "renders the transaction list" do

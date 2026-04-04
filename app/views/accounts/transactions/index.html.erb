@@ -19,7 +19,7 @@
       <h1 class="text-lg font-semibold"><%= @account.name %></h1>
     </div>
 
-    <%= render "accounts/transactions/reconcile_link", account: @account, budget: @budget %>
+    <%= render "accounts/transactions/actions", account: @account, budget: @budget %>
   </header>
 
   <div class="flex items-end justify-between border-b border-taupe-200 bg-white px-4 pb-2">
