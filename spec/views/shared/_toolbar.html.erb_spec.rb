@@ -4,12 +4,14 @@ require "rails_helper"
 
 describe "shared/_toolbar.html.erb" do
   subject(:html) do
-    render partial: "shared/toolbar", formats: [:html], locals: { budget: budget }
+    render partial: "shared/toolbar",
+           locals:  { budget: budget, account_id: account_id }
 
     rendered
   end
 
-  let(:budget) { create(:budget) }
+  let(:account_id) { nil }
+  let(:budget)     { create(:budget) }
 
   it "renders the plan link" do
     expect(html).to have_link(I18n.t("toolbar.plan"), href: budget_path(budget))
@@ -29,6 +31,15 @@ describe "shared/_toolbar.html.erb" do
 
   it "renders the add transaction link" do
     expect(html).to have_link(href: new_budget_transaction_path(budget))
+  end
+
+  context "with an account ID" do
+    let(:account)    { create(:account, budget: budget) }
+    let(:account_id) { account.id }
+
+    it "renders the add transaction link with the account" do
+      expect(html).to have_link(href: new_budget_transaction_path(budget, account_id: account.id))
+    end
   end
 
   context "when on the budgets controller" do

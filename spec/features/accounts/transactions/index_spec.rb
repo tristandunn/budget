@@ -15,4 +15,14 @@ describe "Account transactions" do
     expect(page).to have_css("h1", text: account.name)
       .and(have_text(transaction.payee))
   end
+
+  it "defaults the account on the new transaction form" do
+    visit budget_account_transactions_path(budget, account)
+    click_on "add-transaction"
+
+    expect(page).to have_select(
+      t("activemodel.attributes.transaction_form.account_id"),
+      selected: account.name
+    )
+  end
 end

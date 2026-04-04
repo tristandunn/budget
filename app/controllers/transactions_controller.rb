@@ -16,7 +16,7 @@ class TransactionsController < ApplicationController
   def new
     @accounts   = budget.accounts
     @categories = sorted_categories
-    @form       = TransactionForm.new(budget: budget)
+    @form       = TransactionForm.new(account: default_account, budget: budget)
   end
 
   # Render the edit transaction form.
@@ -98,6 +98,16 @@ class TransactionsController < ApplicationController
   # @return [Budget] The requested budget.
   def budget
     @budget ||= Budget.includes(:accounts, categories: :subcategories).find(params[:budget_id])
+  end
+
+  # Return the default account from the query parameter, if present.
+  #
+  # @return [Account] The requested account.
+  # @return [nil] When no account is provided.
+  def default_account
+    if params[:account_id].present?
+      budget.accounts.find(params[:account_id])
+    end
   end
 
   # Return the permitted form parameters.

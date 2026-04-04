@@ -1,4 +1,4 @@
-<%# locals: (budget:) %>
+<%# locals: (budget:, account_id: nil) %>
 <footer class="sticky bottom-0 pb-[calc(env(safe-area-inset-bottom)/2)] bg-taupe-50 border-t border-taupe-200">
   <nav class="flex items-center">
     <div class="flex-1 flex justify-evenly">
@@ -36,7 +36,7 @@
       <% end %>
     </div>
 
-    <%= link_to new_budget_transaction_path(budget),
+    <%= link_to new_budget_transaction_path(budget, account_id: account_id),
                 id:    "add-transaction",
                 aria:  { label: t("transactions.new.submit") },
                 class: "flex flex-col items-center justify-center px-4 -mt-1" do %>

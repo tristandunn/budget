@@ -32,20 +32,21 @@ describe TransactionsController do
   end
 
   describe "#new" do
-    let(:budget) { create(:budget) }
-    let(:form)   { instance_double(TransactionForm) }
+    let(:account_id) { nil }
+    let(:budget)     { create(:budget) }
+    let(:form)       { instance_double(TransactionForm) }
 
     before do
       allow(TransactionForm).to receive(:new).and_return(form)
 
-      get :new, params: { budget_id: budget.id }
+      get :new, params: { budget_id: budget.id, account_id: account_id }
     end
 
     it { is_expected.to respond_with(200) }
     it { is_expected.to render_template(:new) }
 
     it "initializes the form with the budget" do
-      expect(TransactionForm).to have_received(:new).with(budget: budget)
+      expect(TransactionForm).to have_received(:new).with(account: nil, budget: budget)
     end
 
     it "assigns the budget accounts" do
@@ -58,6 +59,15 @@ describe TransactionsController do
 
     it "assigns a transaction form" do
       expect(assigns(:form)).to eq(form)
+    end
+
+    context "with an account" do
+      let(:account)    { create(:account, budget: budget) }
+      let(:account_id) { account.id }
+
+      it "initializes the form with the account and budget" do
+        expect(TransactionForm).to have_received(:new).with(account: account, budget: budget)
+      end
     end
   end
 
