@@ -77,12 +77,12 @@
             </th>
 
             <% @budget_snapshot.snapshot_for(category.id).tap do |snapshot| %>
-              <th scope="col" class="py-2 px-4 w-1/4 text-right">
+              <th scope="col" class="py-2 px-4 w-1/4 text-right whitespace-nowrap">
                 <div class="text-sm font-normal"><%= t(".assigned") %></div>
                 <div><%= number_to_currency Money.from_cents(snapshot.amount_assigned) %></div>
               </th>
 
-              <th scope="col" class="py-2 px-4 w-1/4 text-right">
+              <th scope="col" class="py-2 px-4 w-1/4 text-right whitespace-nowrap">
                 <div class="text-sm font-normal"><%= t(".available") %></div>
                 <div><%= number_to_currency Money.from_cents(snapshot.amount_remaining) %></div>
               </th>
@@ -100,7 +100,7 @@
               </th>
 
               <% @budget_snapshot.snapshot_for(subcategory.id).tap do |snapshot| %>
-                <td class="py-3 px-4 font-semibold text-right" data-controller="inline-edit">
+                <td class="py-3 px-4 font-semibold text-right whitespace-nowrap" data-controller="inline-edit">
                   <%= turbo_frame_tag dom_id(subcategory, :assignment) do %>
                     <%= link_to number_to_currency(Money.from_cents(snapshot.amount_assigned)),
                                 edit_budget_category_assignment_path(@budget, subcategory, year: @budget_snapshot.date.year, month: @budget_snapshot.date.month),
@@ -109,7 +109,7 @@
                   <% end %>
                 </td>
 
-                <td class="py-3 px-4 font-semibold text-right">
+                <td class="py-3 px-4 font-semibold text-right whitespace-nowrap">
                   <div class="inline-block py-0.5 px-2 -my-0.5 -mx-2 rounded-full <%= amount_color(snapshot.amount_remaining) %>">
                     <%= number_to_currency Money.from_cents(snapshot.amount_remaining) %>
                   </div>
