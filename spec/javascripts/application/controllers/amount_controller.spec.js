@@ -342,6 +342,106 @@ describe("AmountController", () => {
       });
     });
 
+    describe("when pasting a value", () => {
+      function createPasteEvent(text) {
+        const event = new window.Event("paste", { "cancelable": true });
+
+        event.clipboardData = { "getData": () => {
+          return text;
+        } };
+
+        return event;
+      }
+
+      it("extracts the numeric value and defaults to negative", () => {
+        const event = createPasteEvent("$42.50");
+
+        instance.paste(event);
+
+        expect(element.value).to.eq("-42.50");
+      });
+
+      it("handles values with commas", () => {
+        const event = createPasteEvent("1,234.56");
+
+        instance.paste(event);
+
+        expect(element.value).to.eq("-1234.56");
+      });
+
+      it("handles plain numeric values", () => {
+        const event = createPasteEvent("99.99");
+
+        instance.paste(event);
+
+        expect(element.value).to.eq("-99.99");
+      });
+
+      it("handles values with no decimal", () => {
+        const event = createPasteEvent("50");
+
+        instance.paste(event);
+
+        expect(element.value).to.eq("-50.00");
+      });
+
+      it("keeps value positive when positive mode is active", () => {
+        const plusEvent = new window.KeyboardEvent("keydown", {
+          "cancelable": true,
+          "key": "+"
+        });
+
+        instance.keydown(plusEvent);
+
+        const event = createPasteEvent("42.50");
+
+        instance.paste(event);
+
+        expect(element.value).to.eq("42.50");
+      });
+
+      it("ignores non-numeric content", () => {
+        const event = createPasteEvent("abc");
+
+        instance.paste(event);
+
+        expect(element.value).to.eq("0.00");
+      });
+
+      it("prevents the default behavior", () => {
+        const event = createPasteEvent("42.50");
+
+        instance.paste(event);
+
+        expect(event.defaultPrevented).to.eq(true);
+      });
+
+      it("applies red text for negative values", () => {
+        const event = createPasteEvent("42.50");
+
+        instance.paste(event);
+
+        expect(element.classList.contains("text-red-600")).to.eq(true);
+        expect(element.classList.contains("text-black")).to.eq(false);
+      });
+
+      it("applies black text for positive values", () => {
+        const plusEvent = new window.KeyboardEvent("keydown", {
+          "cancelable": true,
+          "key": "+"
+        });
+
+        instance.keydown(plusEvent);
+
+        const event = createPasteEvent("42.50");
+
+        instance.paste(event);
+
+        expect(element.classList.contains("text-black")).to.eq(true);
+        expect(element.classList.contains("text-red-600")).to.eq(false);
+      });
+    });
+
     describe("when pressing a non-digit, non-minus key", () => {
       let event;
 

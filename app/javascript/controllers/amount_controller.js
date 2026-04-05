@@ -11,6 +11,22 @@ export default class extends Controller {
     this.#updateColor();
   }
 
+  paste(event) {
+    event.preventDefault();
+
+    const pasted = event.clipboardData.getData("text/plain"),
+          cleaned = pasted.replace(/[^\d.]/g, ""),
+          value = parseFloat(cleaned) || 0;
+
+    if (this.#positive) {
+      this.element.value = value.toFixed(2);
+    } else {
+      this.element.value = (-Math.abs(value)).toFixed(2);
+    }
+
+    this.#updateColor();
+  }
+
   keydown(event) {
     if (event.key === "-") {
       event.preventDefault();
