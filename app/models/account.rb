@@ -37,6 +37,6 @@ class Account < ApplicationRecord
   #
   # @return [Integer] The uncleared balance in cents.
   def uncleared_balance
-    transactions.pending.sum(:amount)
+    transactions.pending.where(frequency: nil).sum(:amount)
   end
 end
