@@ -105,14 +105,24 @@ class TransactionForm < BaseForm
     }
   end
 
-  # Return whether the transaction is becoming a recurring scheduled
-  # transaction. This is true when the existing transaction has no frequency
-  # and the form specifies one with a future date.
+  # Return whether the transaction is becoming recurring. This is true when
+  # the existing transaction has no frequency and the form specifies one.
   #
   # @param transaction [Transaction] The existing transaction to check.
   # @return [Boolean] Whether the transaction is becoming recurring.
   def becoming_recurring?(transaction)
-    transaction.frequency.blank? && recurring_scheduled?
+    transaction.frequency.blank? && frequency.present?
+  end
+
+  # Return the service class for converting a transaction to recurring.
+  #
+  # @return [Class] The service class to use for the conversion.
+  def becoming_recurring_service_class
+    if recurring_scheduled?
+      SuspendTransaction
+    else
+      ConvertToRecurringTransaction
+    end
   end
 
   # Return the appropriate service class for updating a transaction.
@@ -121,7 +131,7 @@ class TransactionForm < BaseForm
   # @return [Class] The service class to use for the update.
   def update_service_class(transaction)
     if becoming_recurring?(transaction)
-      SuspendTransaction
+      becoming_recurring_service_class
     elsif activating?(transaction)
       ActivateTransaction
     elsif recurring_scheduled?
