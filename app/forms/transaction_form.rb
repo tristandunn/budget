@@ -71,10 +71,14 @@ class TransactionForm < BaseForm
   # @return [Boolean] Whether the transaction was updated successfully.
   def update(transaction)
     if valid?
-      update_service_class(transaction).call(
-        attributes:  attributes,
-        transaction: transaction
-      )
+      if posting?(transaction)
+        post_updated_transaction(transaction)
+      else
+        update_service_class(transaction).call(
+          attributes:  attributes,
+          transaction: transaction
+        )
+      end
     end
   end
 
@@ -123,6 +127,29 @@ class TransactionForm < BaseForm
     else
       ConvertToRecurringTransaction
     end
+  end
+
+  # Post an updated recurring transaction that is moving from a future date to
+  # a non-future date while keeping the frequency. Apply the form attributes
+  # first so the next occurrence is seeded from the edited values.
+  #
+  # @param transaction [Transaction] The existing transaction to post.
+  # @return [Boolean] Whether the transaction was posted successfully.
+  def post_updated_transaction(transaction)
+    ActiveRecord::Base.transaction do
+      transaction.update!(attributes)
+
+      PostRecurringTransaction.call(transaction: transaction)
+    end
+  end
+
+  # Return whether the transaction is being posted from a future recurring
+  # transaction to a non-future date while keeping the frequency.
+  #
+  # @param transaction [Transaction] The existing transaction to check.
+  # @return [Boolean] Whether the transaction is being posted.
+  def posting?(transaction)
+    transaction.recurring_scheduled? && frequency.present? && !recurring_scheduled?
   end
 
   # Return the appropriate service class for updating a transaction.

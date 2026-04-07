@@ -322,6 +322,7 @@ describe TransactionForm, type: :form do
       allow(ActivateTransaction).to receive(:call).and_return(true)
       allow(ConvertToRecurringTransaction).to receive(:call).and_return(true)
       allow(DirectUpdateTransaction).to receive(:call).and_return(true)
+      allow(PostRecurringTransaction).to receive(:call).and_return(true)
       allow(SuspendTransaction).to receive(:call).and_return(true)
       allow(UpdateTransaction).to receive(:call).and_return(true)
     end
@@ -356,6 +357,12 @@ describe TransactionForm, type: :form do
         expect(DirectUpdateTransaction).not_to have_received(:call)
       end
 
+      it "does not call PostRecurringTransaction" do
+        update
+
+        expect(PostRecurringTransaction).not_to have_received(:call)
+      end
+
       it "does not call SuspendTransaction" do
         update
 
@@ -386,16 +393,22 @@ describe TransactionForm, type: :form do
         expect(DirectUpdateTransaction).not_to have_received(:call)
       end
 
-      it "does not call UpdateTransaction" do
+      it "does not call PostRecurringTransaction" do
         update
 
-        expect(UpdateTransaction).not_to have_received(:call)
+        expect(PostRecurringTransaction).not_to have_received(:call)
       end
 
       it "does not call SuspendTransaction" do
         update
 
         expect(SuspendTransaction).not_to have_received(:call)
+      end
+
+      it "does not call UpdateTransaction" do
+        update
+
+        expect(UpdateTransaction).not_to have_received(:call)
       end
     end
 
@@ -437,6 +450,12 @@ describe TransactionForm, type: :form do
         expect(DirectUpdateTransaction).not_to have_received(:call)
       end
 
+      it "does not call PostRecurringTransaction" do
+        update
+
+        expect(PostRecurringTransaction).not_to have_received(:call)
+      end
+
       it "does not call UpdateTransaction" do
         update
 
@@ -474,6 +493,12 @@ describe TransactionForm, type: :form do
         update
 
         expect(DirectUpdateTransaction).not_to have_received(:call)
+      end
+
+      it "does not call PostRecurringTransaction" do
+        update
+
+        expect(PostRecurringTransaction).not_to have_received(:call)
       end
 
       it "does not call SuspendTransaction" do
@@ -518,6 +543,12 @@ describe TransactionForm, type: :form do
         update
 
         expect(DirectUpdateTransaction).not_to have_received(:call)
+      end
+
+      it "does not call PostRecurringTransaction" do
+        update
+
+        expect(PostRecurringTransaction).not_to have_received(:call)
       end
 
       it "does not call SuspendTransaction" do
@@ -567,16 +598,86 @@ describe TransactionForm, type: :form do
         expect(ConvertToRecurringTransaction).not_to have_received(:call)
       end
 
-      it "does not call UpdateTransaction" do
+      it "does not call PostRecurringTransaction" do
         update
 
-        expect(UpdateTransaction).not_to have_received(:call)
+        expect(PostRecurringTransaction).not_to have_received(:call)
       end
 
       it "does not call SuspendTransaction" do
         update
 
         expect(SuspendTransaction).not_to have_received(:call)
+      end
+
+      it "does not call UpdateTransaction" do
+        update
+
+        expect(UpdateTransaction).not_to have_received(:call)
+      end
+    end
+
+    context "when posting" do
+      let(:form) do
+        described_class.new(**attributes, date: Date.current.to_s, frequency: "monthly")
+      end
+
+      let(:transaction) { create(:transaction, :recurring) }
+
+      before do
+        allow(transaction).to receive(:update!).and_call_original
+      end
+
+      it { is_expected.to be(true) }
+
+      it "updates the transaction with the form attributes" do
+        update
+
+        expect(transaction).to have_received(:update!).with(
+          attributes.except(:budget).merge(
+            amount:    2500,
+            date:      Date.current,
+            frequency: "monthly"
+          )
+        )
+      end
+
+      it "calls PostRecurringTransaction" do
+        update
+
+        expect(PostRecurringTransaction).to have_received(:call).with(
+          transaction: transaction
+        )
+      end
+
+      it "does not call ActivateTransaction" do
+        update
+
+        expect(ActivateTransaction).not_to have_received(:call)
+      end
+
+      it "does not call ConvertToRecurringTransaction" do
+        update
+
+        expect(ConvertToRecurringTransaction).not_to have_received(:call)
+      end
+
+      it "does not call DirectUpdateTransaction" do
+        update
+
+        expect(DirectUpdateTransaction).not_to have_received(:call)
+      end
+
+      it "does not call SuspendTransaction" do
+        update
+
+        expect(SuspendTransaction).not_to have_received(:call)
+      end
+
+      it "does not call UpdateTransaction" do
+        update
+
+        expect(UpdateTransaction).not_to have_received(:call)
       end
     end
 
@@ -605,6 +706,12 @@ describe TransactionForm, type: :form do
         update
 
         expect(DirectUpdateTransaction).not_to have_received(:call)
+      end
+
+      it "does not call PostRecurringTransaction" do
+        update
+
+        expect(PostRecurringTransaction).not_to have_received(:call)
       end
 
       it "does not call SuspendTransaction" do
