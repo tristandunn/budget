@@ -94,6 +94,13 @@ describe "transactions/_form.html.erb" do
     it "preselects the frequency" do
       expect(html).to have_select("transaction_form_frequency", selected: "Monthly")
     end
+
+    it "includes the one-time frequency option" do
+      expect(html).to have_select(
+        "transaction_form_frequency",
+        with_options: [t("transactions.form.select_frequency")]
+      )
+    end
   end
 
   context "with errors" do

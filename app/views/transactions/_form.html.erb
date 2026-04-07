@@ -144,7 +144,7 @@
         </svg>
 
         <div class="grow">
-          <%= f.select :frequency, options_for_select([%w(Monthly monthly)], form.frequency), { prompt: t(".select_frequency") }, { class: "w-full bg-transparent border-none outline-none text-base placeholder:text-gray-400 focus:ring-0" } %>
+          <%= f.select :frequency, options_for_select([%w(Monthly monthly)], form.frequency), { include_blank: t(".select_frequency") }, { class: "w-full bg-transparent border-none outline-none text-base placeholder:text-gray-400 focus:ring-0" } %>
         </div>
       <% end %>
     </div>
