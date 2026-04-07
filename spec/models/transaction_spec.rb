@@ -57,6 +57,48 @@ describe Transaction do
     end
   end
 
+  describe ".recurring_due" do
+    subject { described_class.recurring_due }
+
+    let(:transaction) { create(:transaction, date: date, frequency: frequency) }
+
+    context "with a frequency and today's date" do
+      let(:date)      { Date.current }
+      let(:frequency) { :monthly }
+
+      it { is_expected.to include(transaction) }
+    end
+
+    context "with a frequency and a past date" do
+      let(:date)      { 1.day.ago.to_date }
+      let(:frequency) { :monthly }
+
+      it { is_expected.to include(transaction) }
+    end
+
+    context "with a frequency and a future date" do
+      let(:date)      { 1.month.from_now.to_date }
+      let(:frequency) { :monthly }
+
+      it { is_expected.not_to include(transaction) }
+    end
+
+    context "without a frequency" do
+      let(:date)      { 1.day.from_now.to_date }
+      let(:frequency) { nil }
+
+      it { is_expected.not_to include(transaction) }
+    end
+  end
+
+  describe "#next_recurring_date" do
+    it "returns the date advanced by one month" do
+      transaction = build(:transaction, date: Date.new(2026, 3, 15))
+
+      expect(transaction.next_recurring_date).to eq(Date.new(2026, 4, 15))
+    end
+  end
+
   describe "#recurring_scheduled?" do
     subject { build(:transaction, date: date, frequency: frequency) }
 

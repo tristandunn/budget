@@ -131,6 +131,7 @@ describe TransactionForm, type: :form do
 
     before do
       allow(CreateTransaction).to receive(:call).and_return(true)
+      allow(PostRecurringTransaction).to receive(:call).and_return(true)
     end
 
     context "when valid" do
@@ -140,6 +141,12 @@ describe TransactionForm, type: :form do
         save
 
         expect(CreateTransaction).to have_received(:call).with(transaction: form.transaction)
+      end
+
+      it "does not call PostRecurringTransaction" do
+        save
+
+        expect(PostRecurringTransaction).not_to have_received(:call)
       end
     end
 
@@ -185,6 +192,12 @@ describe TransactionForm, type: :form do
 
         expect(CreateTransaction).not_to have_received(:call)
       end
+
+      it "does not call PostRecurringTransaction" do
+        save
+
+        expect(PostRecurringTransaction).not_to have_received(:call)
+      end
     end
 
     context "when recurring but not scheduled" do
@@ -194,10 +207,16 @@ describe TransactionForm, type: :form do
 
       it { is_expected.to be(true) }
 
-      it "calls CreateTransaction" do
+      it "calls PostRecurringTransaction" do
         save
 
-        expect(CreateTransaction).to have_received(:call).with(transaction: form.transaction)
+        expect(PostRecurringTransaction).to have_received(:call).with(transaction: form.transaction)
+      end
+
+      it "does not call CreateTransaction" do
+        save
+
+        expect(CreateTransaction).not_to have_received(:call)
       end
     end
   end

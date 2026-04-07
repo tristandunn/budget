@@ -18,6 +18,15 @@ class Transaction < ApplicationRecord
 
   default_scope -> { order(date: :desc, created_at: :desc) }
 
+  scope :recurring_due, -> { where.not(frequency: nil).where(date: ..Date.current) }
+
+  # Returns the date for the next recurring occurrence.
+  #
+  # @return [Date]
+  def next_recurring_date
+    date.advance(months: 1)
+  end
+
   # Returns true if the transaction is recurring and scheduled for the future.
   #
   # @return [Boolean]

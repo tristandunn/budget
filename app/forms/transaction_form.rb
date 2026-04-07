@@ -50,6 +50,8 @@ class TransactionForm < BaseForm
     if valid?
       if recurring_scheduled?
         transaction.save!
+      elsif transaction.frequency.present?
+        PostRecurringTransaction.call(transaction: transaction)
       else
         CreateTransaction.call(transaction: transaction)
       end
