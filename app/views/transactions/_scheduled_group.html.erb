@@ -1,0 +1,32 @@
+<%# locals: (date:, transactions:, show_account:) %>
+<h3 class="py-2 px-4 text-sm font-semibold bg-taupe-100 border-y border-taupe-200">
+  <%= relative_date(date) %>
+</h3>
+
+<ul class="divide-y divide-taupe-200">
+  <% transactions.each do |transaction| %>
+    <li class="bg-taupe-50">
+      <div class="flex items-center gap-3 py-3 px-4">
+        <%= render "transactions/status_indicator", transaction: transaction %>
+
+        <div class="flex flex-1 flex-col gap-0.5">
+          <div class="flex items-center justify-between">
+            <span class="font-medium text-taupe-400"><%= transaction.payee %></span>
+
+            <span class="inline-block py-0.5 px-2 font-semibold rounded-full bg-taupe-200 text-taupe-600">
+              <%= number_to_currency Money.from_cents(transaction.amount) %>
+            </span>
+          </div>
+
+          <div class="flex items-center justify-between text-sm text-taupe-400">
+            <span><%= transaction.subcategory.name %></span>
+
+            <% if show_account %>
+              <span><%= transaction.account.name %></span>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </li>
+  <% end %>
+</ul>

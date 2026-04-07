@@ -7,7 +7,8 @@ class Transaction < ApplicationRecord
                            foreign_key: :category_id,
                            inverse_of:  :transactions
 
-  enum :status, { pending: 0, cleared: 1, reconciled: 2 }, validate: true
+  enum :frequency, { monthly: 0 }, validate: { allow_nil: true }
+  enum :status,    { pending: 0, cleared: 1, reconciled: 2 }, validate: true
 
   validates :amount, presence: true, numericality: { only_integer: true, other_than: 0 }
   validates :date,   presence: true
@@ -16,6 +17,20 @@ class Transaction < ApplicationRecord
   validate  :validate_subcategory
 
   default_scope -> { order(date: :desc, created_at: :desc) }
+
+  # Returns true if the transaction is recurring and scheduled for the future.
+  #
+  # @return [Boolean]
+  def recurring_scheduled?
+    frequency.present? && scheduled?
+  end
+
+  # Returns true if the transaction date is in the future.
+  #
+  # @return [Boolean]
+  def scheduled?
+    date.future?
+  end
 
   private
 

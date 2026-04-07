@@ -74,10 +74,13 @@ en:
     reconciled:
       hide: "Hide Reconciled"
       show: "Show Reconciled"
+    list:
+      scheduled: "Scheduled"
     status_indicator:
       cleared: "Cleared"
       pending: "Pending"
       reconciled: "Reconciled"
+      upcoming: "Upcoming"
     form:
       enter_memo: "Enter a memo..."
       enter_payee: "Enter a Payee"

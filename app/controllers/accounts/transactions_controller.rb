@@ -4,9 +4,9 @@ module Accounts
   class TransactionsController < ApplicationController
     # Render transactions for a single account grouped by date.
     def index
-      @account              = account
-      @budget               = budget
-      @grouped_transactions = grouped_transactions
+      @account = account
+      @budget  = budget
+      @scheduled_transactions, @current_transactions = filtered_transactions
     end
 
     private
@@ -25,14 +25,14 @@ module Accounts
       @budget ||= Budget.find(params[:budget_id])
     end
 
-    # Return transactions for the account, grouped by date, optionally
-    # excluding reconciled transactions.
+    # Return transactions for the account, grouped by scheduled or not,
+    # optionally excluding reconciled transactions.
     #
-    # @return [Hash{Date => Array<Transaction>}] The grouped transactions.
-    def grouped_transactions
+    # @return [Array(Array<Transaction>, Array<Transaction>)] The scheduled and current transactions.
+    def filtered_transactions
       transactions = account.transactions.includes(:subcategory)
       transactions = transactions.where.not(status: :reconciled) if budget.settings.hide_reconciled?
-      transactions.group_by(&:date)
+      transactions.partition(&:scheduled?)
     end
   end
 end

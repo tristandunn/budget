@@ -6,8 +6,8 @@ class TransactionsController < ApplicationController
 
   # Render all transactions grouped by date.
   def index
-    @budget               = budget
-    @grouped_transactions = grouped_transactions
+    @budget = budget
+    @scheduled_transactions, @current_transactions = filtered_transactions
   end
 
   # Render the new transaction form.
@@ -108,14 +108,14 @@ class TransactionsController < ApplicationController
     end
   end
 
-  # Return transactions for the budget, grouped by date, optionally
+  # Return transactions for the budget, grouped by scheduled or not, optionally
   # excluding reconciled transactions.
   #
-  # @return [Hash{Date => Array<Transaction>}] The grouped transactions.
-  def grouped_transactions
+  # @return [Array(Array<Transaction>, Array<Transaction>)] The scheduled and current transactions.
+  def filtered_transactions
     transactions = budget.transactions.includes(:account, :subcategory)
     transactions = transactions.where.not(status: :reconciled) if budget.settings.hide_reconciled?
-    transactions.group_by(&:date)
+    transactions.partition(&:scheduled?)
   end
 
   # Return the permitted form parameters.

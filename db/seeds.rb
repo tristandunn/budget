@@ -64,6 +64,12 @@ Budget.first_or_create!.tap do |budget|
       transaction.date        = date + 1
       transaction.status      = :reconciled
     end
+
+    budget.transactions.find_or_create_by!(account: checking, payee: "Landlord", frequency: :monthly) do |transaction|
+      transaction.subcategory = rent
+      transaction.amount      = -100_000
+      transaction.date        = (date + 1).advance(months: 1)
+    end
   end
 
   budget.categories.find_or_create_by(name: "Food & Drink", position: 2).tap do |parent|

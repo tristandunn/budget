@@ -7,8 +7,9 @@
 
   <section class="flex-1">
     <%= render "transactions/list",
-               empty_message:        t(".empty"),
-               grouped_transactions: @grouped_transactions %>
+               current_transactions:   @current_transactions,
+               empty_message:          t(".empty"),
+               scheduled_transactions: @scheduled_transactions %>
   </section>
 
   <%= render "shared/toolbar", budget: @budget %>

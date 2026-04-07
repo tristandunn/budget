@@ -8,9 +8,11 @@ describe Accounts::TransactionsController do
       let(:account)      { create(:account, budget: budget) }
       let(:budget)       { create(:budget) }
       let!(:transaction) { create(:transaction, account: account) }
+      let!(:upcoming)    { create(:transaction, account: account, date: 1.week.from_now) }
 
       before do
         create(:transaction, budget: budget)
+        create(:transaction, budget: budget, date: 1.week.from_now)
 
         get :index, params: { budget_id: budget.id, account_id: account.id }
       end
@@ -26,10 +28,12 @@ describe Accounts::TransactionsController do
         expect(assigns(:account)).to eq(account)
       end
 
-      it "assigns only transactions for the requested account" do
-        expect(assigns(:grouped_transactions)).to eq(
-          transaction.date => [transaction]
-        )
+      it "assigns current transactions for the requested account" do
+        expect(assigns(:current_transactions)).to eq([transaction])
+      end
+
+      it "assigns scheduled transactions for the requested account" do
+        expect(assigns(:scheduled_transactions)).to eq([upcoming])
       end
     end
 
@@ -46,9 +50,7 @@ describe Accounts::TransactionsController do
       end
 
       it "excludes reconciled transactions" do
-        expect(assigns(:grouped_transactions)).to eq(
-          transaction.date => [transaction]
-        )
+        expect(assigns(:current_transactions)).to eq([transaction])
       end
     end
 

@@ -43,6 +43,30 @@ describe "transactions/_status_indicator.html.erb" do
     end
   end
 
+  context "when the transaction is scheduled" do
+    let(:transaction) { create(:transaction, budget: budget, date: 1.week.from_now) }
+
+    it "renders an upcoming indicator" do
+      expect(html).to have_css("[aria-label='Upcoming']")
+    end
+
+    it "does not render a button" do
+      expect(html).to have_no_button
+    end
+  end
+
+  context "when the transaction is recurring and scheduled" do
+    let(:transaction) { create(:transaction, :recurring, budget: budget) }
+
+    it "renders an upcoming indicator" do
+      expect(html).to have_css("[aria-label='Upcoming']")
+    end
+
+    it "does not render a button" do
+      expect(html).to have_no_button
+    end
+  end
+
   context "when the transaction is reconciled" do
     let(:transaction) { create(:transaction, :reconciled, budget: budget) }
 

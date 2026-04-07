@@ -16,8 +16,9 @@ describe "transactions/index.html.erb" do
     stub_template("transactions/_actions.html.erb" => "ACTIONS_PARTIAL")
     stub_template("transactions/_list.html.erb" => "LIST_PARTIAL")
 
-    assign :budget,               budget
-    assign :grouped_transactions, {}
+    assign :budget,                 budget
+    assign :current_transactions,   []
+    assign :scheduled_transactions, []
   end
 
   it "renders the header" do

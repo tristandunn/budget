@@ -17,5 +17,10 @@ FactoryBot.define do
     trait :reconciled do
       status { :reconciled }
     end
+
+    trait :recurring do
+      date      { 1.month.from_now.to_date }
+      frequency { :monthly }
+    end
   end
 end

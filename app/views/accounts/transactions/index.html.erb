@@ -48,9 +48,10 @@
 
   <section class="flex-1">
     <%= render "transactions/list",
-               empty_message:        t(".empty"),
-               grouped_transactions: @grouped_transactions,
-               show_account:         false %>
+               current_transactions:   @current_transactions,
+               empty_message:          t(".empty"),
+               scheduled_transactions: @scheduled_transactions,
+               show_account:           false %>
   </section>
 
   <%= render "shared/toolbar", budget: @budget, account_id: @account.id %>

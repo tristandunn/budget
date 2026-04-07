@@ -5,18 +5,21 @@ require "rails_helper"
 describe "transactions/_list.html.erb" do
   subject(:html) do
     render partial: "transactions/list", locals: {
-      grouped_transactions: grouped_transactions,
-      empty_message:        empty_message
+      current_transactions:   current_transactions,
+      empty_message:          empty_message,
+      scheduled_transactions: scheduled_transactions
     }
 
     rendered
   end
 
-  let(:empty_message) { "No transactions yet." }
+  let(:current_transactions)   { [] }
+  let(:empty_message)          { "No transactions yet." }
+  let(:scheduled_transactions) { [] }
 
   context "when there are transactions" do
+    let(:current_transactions) { [transaction] }
     let(:date)                 { 2.days.ago.to_date }
-    let(:grouped_transactions) { { transaction.date => [transaction] } }
     let(:transaction)          { create(:transaction, date: date) }
 
     before do
@@ -45,6 +48,10 @@ describe "transactions/_list.html.erb" do
 
     it "renders the status indicator" do
       expect(html).to include("STATUS_INDICATOR")
+    end
+
+    it "does not render the current transaction in the scheduled section" do
+      expect(html).to have_no_css("#scheduled", text: transaction.payee)
     end
 
     it "links each transaction to its edit page" do
@@ -80,9 +87,10 @@ describe "transactions/_list.html.erb" do
     context "when not showing accounts" do
       subject(:html) do
         render partial: "transactions/list", locals: {
-          grouped_transactions: grouped_transactions,
-          empty_message:        empty_message,
-          show_account:         false
+          current_transactions:   current_transactions,
+          empty_message:          empty_message,
+          scheduled_transactions: scheduled_transactions,
+          show_account:           false
         }
 
         rendered
@@ -94,9 +102,29 @@ describe "transactions/_list.html.erb" do
     end
   end
 
-  context "when there are no transactions" do
-    let(:grouped_transactions) { {} }
+  context "when there are scheduled transactions" do
+    let(:scheduled_transactions) { [transaction] }
+    let(:transaction)            { create(:transaction, :recurring) }
 
+    before do
+      stub_template("transactions/_status_indicator.html.erb" => "STATUS_INDICATOR")
+      stub_template("transactions/_scheduled_group.html.erb" => "SCHEDULED_GROUP")
+    end
+
+    it "renders the scheduled header" do
+      expect(html).to have_text(t("transactions.list.scheduled"))
+    end
+
+    it "renders the scheduled group partial" do
+      expect(html).to include("SCHEDULED_GROUP")
+    end
+
+    it "does not render the scheduled transaction in the current section" do
+      expect(html).to have_no_css("#current li", text: transaction.payee)
+    end
+  end
+
+  context "when there are no transactions" do
     it "renders the empty message" do
       expect(html).to have_text(empty_message)
     end

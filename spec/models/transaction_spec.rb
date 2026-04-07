@@ -28,6 +28,17 @@ describe Transaction do
         .with_values(pending: 0, cleared: 1, reconciled: 2)
         .validating
     end
+
+    it "defines a frequency enum" do
+      expect(transaction).to define_enum_for(:frequency)
+        .with_values(monthly: 0)
+    end
+
+    it "allows a nil frequency" do
+      transaction.frequency = nil
+
+      expect(transaction).to be_valid
+    end
   end
 
   describe ".default_scope" do
@@ -43,6 +54,51 @@ describe Transaction do
       second = create(:transaction, date: Date.new(2026, 3, 15), budget: first.budget)
 
       expect(described_class.all).to eq([second, first])
+    end
+  end
+
+  describe "#recurring_scheduled?" do
+    subject { build(:transaction, date: date, frequency: frequency) }
+
+    let(:date)      { 1.month.from_now.to_date }
+    let(:frequency) { :monthly }
+
+    context "with a frequency and a future date" do
+      it { is_expected.to be_recurring_scheduled }
+    end
+
+    context "without a frequency" do
+      let(:frequency) { nil }
+
+      it { is_expected.not_to be_recurring_scheduled }
+    end
+
+    context "with a non-future date" do
+      let(:date) { Date.current }
+
+      it { is_expected.not_to be_recurring_scheduled }
+    end
+  end
+
+  describe "#scheduled?" do
+    subject { build(:transaction, date: date) }
+
+    context "with a future date" do
+      let(:date) { 1.day.from_now.to_date }
+
+      it { is_expected.to be_scheduled }
+    end
+
+    context "with today's date" do
+      let(:date) { Date.current }
+
+      it { is_expected.not_to be_scheduled }
+    end
+
+    context "with a past date" do
+      let(:date) { 1.day.ago.to_date }
+
+      it { is_expected.not_to be_scheduled }
     end
   end
 

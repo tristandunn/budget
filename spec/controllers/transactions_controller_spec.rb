@@ -9,8 +9,9 @@ describe TransactionsController do
     let(:budget) { create(:budget) }
 
     context "with transactions" do
-      let!(:newer) { create(:transaction, budget: budget, date: Date.new(2026, 3, 15)) }
-      let!(:older) { create(:transaction, budget: budget, date: Date.new(2026, 3, 10)) }
+      let!(:newer)    { create(:transaction, budget: budget, date: Date.new(2026, 3, 15)) }
+      let!(:older)    { create(:transaction, budget: budget, date: Date.new(2026, 3, 10)) }
+      let!(:upcoming) { create(:transaction, budget: budget, date: 1.week.from_now) }
 
       before do
         create(:transaction)
@@ -25,11 +26,12 @@ describe TransactionsController do
         expect(assigns(:budget)).to eq(budget)
       end
 
-      it "assigns transactions grouped by date in reverse chronological order" do
-        expect(assigns(:grouped_transactions)).to eq(
-          newer.date => [newer],
-          older.date => [older]
-        )
+      it "assigns the current transactions" do
+        expect(assigns(:current_transactions)).to eq([newer, older])
+      end
+
+      it "assigns the scheduled transactions" do
+        expect(assigns(:scheduled_transactions)).to eq([upcoming])
       end
     end
 
@@ -44,9 +46,7 @@ describe TransactionsController do
       end
 
       it "excludes reconciled transactions" do
-        expect(assigns(:grouped_transactions)).to eq(
-          transaction.date => [transaction]
-        )
+        expect(assigns(:current_transactions)).to eq([transaction])
       end
     end
   end

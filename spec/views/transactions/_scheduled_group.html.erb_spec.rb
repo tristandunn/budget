@@ -1,0 +1,66 @@
+# frozen_string_literal: true
+
+require "rails_helper"
+
+describe "transactions/_scheduled_group.html.erb" do
+  subject(:html) do
+    render partial: "transactions/scheduled_group", locals: {
+      date:         date,
+      show_account: true,
+      transactions: [transaction]
+    }
+
+    rendered
+  end
+
+  let(:date)        { 1.month.from_now.to_date }
+  let(:transaction) { create(:transaction, :recurring, date: date) }
+
+  before do
+    stub_template("transactions/_status_indicator.html.erb" => "STATUS_INDICATOR")
+  end
+
+  it "renders the date" do
+    expect(html).to have_css("h3", text: I18n.l(date, format: :long))
+  end
+
+  it "renders the payee" do
+    expect(html).to have_text(transaction.payee)
+  end
+
+  it "renders the amount" do
+    expect(html).to have_text(number_to_currency(Money.from_cents(transaction.amount)))
+  end
+
+  it "renders the subcategory name" do
+    expect(html).to have_text(transaction.subcategory.name)
+  end
+
+  it "renders the account name" do
+    expect(html).to have_text(transaction.account.name)
+  end
+
+  it "renders the status indicator" do
+    expect(html).to include("STATUS_INDICATOR")
+  end
+
+  it "does not link to the edit page" do
+    expect(html).to have_no_link(href: edit_budget_transaction_path(transaction.budget, transaction))
+  end
+
+  context "when not showing accounts" do
+    subject(:html) do
+      render partial: "transactions/scheduled_group", locals: {
+        date:         date,
+        show_account: false,
+        transactions: [transaction]
+      }
+
+      rendered
+    end
+
+    it "does not render the account name" do
+      expect(html).to have_no_css("li span", text: transaction.account.name)
+    end
+  end
+end

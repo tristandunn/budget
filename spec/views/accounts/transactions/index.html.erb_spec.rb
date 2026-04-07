@@ -17,9 +17,10 @@ describe "accounts/transactions/index.html.erb" do
     stub_template("shared/_toolbar.html.erb"                => "TOOLBAR_PARTIAL")
     stub_template("transactions/_list.html.erb"             => "LIST_PARTIAL")
 
-    assign :budget,               budget
-    assign :account,              account
-    assign :grouped_transactions, {}
+    assign :budget,                 budget
+    assign :account,                account
+    assign :current_transactions,   []
+    assign :scheduled_transactions, []
   end
 
   it "renders the account name" do

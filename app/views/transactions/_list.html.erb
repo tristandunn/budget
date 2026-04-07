@@ -1,42 +1,78 @@
-<%# locals: (empty_message:, grouped_transactions:, show_account: true) %>
-<% if grouped_transactions.present? %>
-  <% grouped_transactions.each do |date, transactions| %>
-    <h3 class="py-2 px-4 text-sm font-semibold bg-taupe-100 border-y border-taupe-200">
-      <%= relative_date(date) %>
-    </h3>
+<%# locals: (current_transactions:, empty_message:, scheduled_transactions:, show_account: true) %>
+<% if scheduled_transactions.present? || current_transactions.present? %>
+  <% if scheduled_transactions.present? %>
+    <div id="scheduled" data-controller="collapsible" data-collapsible-id-value="scheduled">
+      <div
+        class="
+          flex cursor-pointer items-center justify-between border-y border-taupe-200
+          bg-taupe-100 px-4 py-2
+        "
+        data-action="click->collapsible#toggle"
+      >
+        <h3 class="text-sm font-semibold">
+          <div
+            class="
+              relative -inset-y-1 mr-2 inline-block h-3 w-3 rotate-45 border-b-2 border-r-2
+              border-taupe-500
+            "
+            data-collapsible-target="arrow"
+          ></div>
 
-    <ul class="divide-y divide-taupe-200">
-      <% transactions.each do |transaction| %>
-        <li class="bg-white">
-          <div class="flex items-center gap-3 py-3 px-4">
-            <%= render "transactions/status_indicator", transaction: transaction %>
+          <%= t("transactions.list.scheduled") %>
+        </h3>
+      </div>
 
-            <%= transaction_row_wrapper(transaction) do %>
-              <div class="flex items-center justify-between">
-                <span class="font-medium"><%= transaction.payee %></span>
+      <div data-collapsible-content="collapsible-scheduled">
+        <% scheduled_transactions.group_by(&:date).each do |date, transactions| %>
+          <%= render "transactions/scheduled_group",
+                     date:         date,
+                     show_account: show_account,
+                     transactions: transactions %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+  <% if current_transactions.present? %>
+    <div id="current">
+      <% current_transactions.group_by(&:date).each do |date, transactions| %>
+        <h3 class="border-y border-taupe-200 bg-taupe-100 px-4 py-2 text-sm font-semibold">
+          <%= relative_date(date) %>
+        </h3>
 
-                <span
-                  class="
-                    inline-block py-0.5 px-2 font-semibold rounded-full
-                    <%= amount_color(transaction.amount) %>
-                  "
-                >
-                  <%= number_to_currency Money.from_cents(transaction.amount) %>
-                </span>
-              </div>
+        <ul class="divide-y divide-taupe-200">
+          <% transactions.each do |transaction| %>
+            <li class="bg-white">
+              <div class="flex items-center gap-3 px-4 py-3">
+                <%= render "transactions/status_indicator", transaction: transaction %>
 
-              <div class="flex items-center justify-between text-sm text-taupe-600">
-                <span><%= transaction.subcategory.name %></span>
+                <%= transaction_row_wrapper(transaction) do %>
+                  <div class="flex items-center justify-between">
+                    <span class="font-medium"><%= transaction.payee %></span>
 
-                <% if show_account %>
-                  <span><%= transaction.account.name %></span>
+                    <span
+                      class="
+                        inline-block rounded-full px-2 py-0.5 font-semibold
+                        <%= amount_color(transaction.amount) %>
+                      "
+                    >
+                      <%= number_to_currency Money.from_cents(transaction.amount) %>
+                    </span>
+                  </div>
+
+                  <div class="flex items-center justify-between text-sm text-taupe-600">
+                    <span><%= transaction.subcategory.name %></span>
+
+                    <% if show_account %>
+                      <span><%= transaction.account.name %></span>
+                    <% end %>
+                  </div>
                 <% end %>
               </div>
-            <% end %>
-          </div>
-        </li>
+            </li>
+          <% end %>
+        </ul>
       <% end %>
-    </ul>
+    </div>
   <% end %>
 <% else %>
   <p class="border-t border-taupe-200 p-8 text-center text-taupe-400"><%= empty_message %></p>
