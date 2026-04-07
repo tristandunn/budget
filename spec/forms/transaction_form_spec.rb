@@ -300,6 +300,7 @@ describe TransactionForm, type: :form do
     let(:transaction) { create(:transaction) }
 
     before do
+      allow(DirectUpdateTransaction).to receive(:call).and_return(true)
       allow(UpdateTransaction).to receive(:call).and_return(true)
     end
 
@@ -314,6 +315,12 @@ describe TransactionForm, type: :form do
           transaction: transaction
         )
       end
+
+      it "does not call DirectUpdateTransaction" do
+        update
+
+        expect(DirectUpdateTransaction).not_to have_received(:call)
+      end
     end
 
     context "when invalid" do
@@ -321,10 +328,63 @@ describe TransactionForm, type: :form do
 
       it { is_expected.to be_nil }
 
+      it "does not call DirectUpdateTransaction" do
+        update
+
+        expect(DirectUpdateTransaction).not_to have_received(:call)
+      end
+
       it "does not call UpdateTransaction" do
         update
 
         expect(UpdateTransaction).not_to have_received(:call)
+      end
+    end
+
+    context "when recurring and scheduled" do
+      let(:form) do
+        described_class.new(**attributes, date: 1.month.from_now.to_date.to_s, frequency: "monthly")
+      end
+
+      it { is_expected.to be(true) }
+
+      it "calls DirectUpdateTransaction" do
+        update
+
+        expect(DirectUpdateTransaction).to have_received(:call).with(
+          attributes:  attributes.except(:budget).merge(
+            amount:    2500,
+            date:      1.month.from_now.to_date,
+            frequency: "monthly"
+          ),
+          transaction: transaction
+        )
+      end
+
+      it "does not call UpdateTransaction" do
+        update
+
+        expect(UpdateTransaction).not_to have_received(:call)
+      end
+    end
+
+    context "when recurring but not scheduled" do
+      let(:form) do
+        described_class.new(**attributes, date: Date.current.to_s, frequency: "monthly")
+      end
+
+      it { is_expected.to be(true) }
+
+      it "calls UpdateTransaction" do
+        update
+
+        expect(UpdateTransaction).to have_received(:call)
+      end
+
+      it "does not call DirectUpdateTransaction" do
+        update
+
+        expect(DirectUpdateTransaction).not_to have_received(:call)
       end
     end
   end

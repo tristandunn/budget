@@ -44,8 +44,8 @@ describe "transactions/_scheduled_group.html.erb" do
     expect(html).to include("STATUS_INDICATOR")
   end
 
-  it "does not link to the edit page" do
-    expect(html).to have_no_link(href: edit_budget_transaction_path(transaction.budget, transaction))
+  it "links to the edit page" do
+    expect(html).to have_link(href: edit_budget_transaction_path(transaction.budget, transaction))
   end
 
   context "when not showing accounts" do

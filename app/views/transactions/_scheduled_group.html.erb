@@ -9,11 +9,11 @@
       <div class="flex items-center gap-3 py-3 px-4">
         <%= render "transactions/status_indicator", transaction: transaction %>
 
-        <div class="flex flex-1 flex-col gap-0.5">
+        <%= transaction_row_wrapper(transaction) do %>
           <div class="flex items-center justify-between">
             <span class="font-medium text-taupe-400"><%= transaction.payee %></span>
 
-            <span class="inline-block py-0.5 px-2 font-semibold rounded-full bg-taupe-200 text-taupe-600">
+            <span class="inline-block rounded-full px-2 py-0.5 font-semibold bg-taupe-200 text-taupe-600">
               <%= number_to_currency Money.from_cents(transaction.amount) %>
             </span>
           </div>
@@ -25,7 +25,7 @@
               <span><%= transaction.account.name %></span>
             <% end %>
           </div>
-        </div>
+        <% end %>
       </div>
     </li>
   <% end %>

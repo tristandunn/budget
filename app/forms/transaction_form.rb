@@ -69,7 +69,7 @@ class TransactionForm < BaseForm
   # @return [Boolean] Whether the transaction was updated successfully.
   def update(transaction)
     if valid?
-      UpdateTransaction.call(
+      update_service_class.call(
         attributes:  attributes,
         transaction: transaction
       )
@@ -91,6 +91,17 @@ class TransactionForm < BaseForm
       payee:       payee,
       subcategory: subcategory
     }
+  end
+
+  # Return the appropriate service class for updating a transaction.
+  #
+  # @return [Class] The service class to use for the update.
+  def update_service_class
+    if recurring_scheduled?
+      DirectUpdateTransaction
+    else
+      UpdateTransaction
+    end
   end
 
   # Validate the transaction, merging transaction errors into the form errors.

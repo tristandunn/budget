@@ -6,28 +6,40 @@ describe "Transaction editing" do
   let(:account)     { create(:account, budget: budget) }
   let(:budget)      { create(:budget) }
   let(:subcategory) { create(:category, :subcategory, budget: budget) }
+  let(:traits)      { [] }
 
   let(:transaction) do
-    create(:transaction, budget:      budget,
-                         account:     account,
-                         subcategory: subcategory,
-                         amount:      -1000,
-                         payee:       "Old Payee")
+    create(:transaction, *traits,
+           budget:      budget,
+           account:     account,
+           subcategory: subcategory,
+           amount:      -1000,
+           payee:       "Old Payee")
   end
 
-  before do
-    CreateTransaction.call(transaction: transaction)
+  shared_examples "an editable transaction" do
+    before do
+      CreateTransaction.call(transaction: transaction)
 
-    visit budget_transactions_path(budget)
-    click_on transaction.payee
+      visit budget_transactions_path(budget)
+      click_on transaction.payee
+    end
+
+    it "updates the transaction" do
+      fill_in t("activemodel.attributes.transaction_form.payee"), with: "New Payee"
+      fill_in t("activemodel.attributes.transaction_form.amount"), with: -20.00
+      click_on t("transactions.edit.submit")
+
+      expect(page).to have_text("New Payee")
+        .and(have_text("$20.00"))
+    end
   end
 
-  it "updates the transaction" do
-    fill_in t("activemodel.attributes.transaction_form.payee"), with: "New Payee"
-    fill_in t("activemodel.attributes.transaction_form.amount"), with: -20.00
-    click_on t("transactions.edit.submit")
+  it_behaves_like "an editable transaction"
 
-    expect(page).to have_text("New Payee")
-      .and(have_text("$20.00"))
+  context "when recurring" do
+    let(:traits) { [:recurring] }
+
+    it_behaves_like "an editable transaction"
   end
 end
