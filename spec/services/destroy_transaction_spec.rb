@@ -90,6 +90,38 @@ describe DestroyTransaction do
       end
     end
 
+    context "with a recurring scheduled transaction" do
+      let(:subcategory) { create(:category, :subcategory) }
+
+      let(:transaction) do
+        build(:transaction, :recurring,
+              account:     account,
+              subcategory: subcategory,
+              budget:      subcategory.budget,
+              amount:      1000)
+      end
+
+      before do
+        transaction.save!
+      end
+
+      it "does not change the account balance" do
+        expect { described_class.call(transaction: transaction) }
+          .not_to(change { account.reload.balance })
+      end
+
+      it "does not change available to assign" do
+        expect { described_class.call(transaction: transaction) }
+          .not_to(change { subcategory.budget.reload.available_to_assign })
+      end
+
+      it "destroys the transaction" do
+        described_class.call(transaction: transaction)
+
+        expect(Transaction.exists?(transaction.id)).to be(false)
+      end
+    end
+
     context "with an inflow transaction" do
       let(:subcategory) { create(:category, :inflow_subcategory) }
 
