@@ -300,6 +300,7 @@ describe TransactionForm, type: :form do
     let(:transaction) { create(:transaction) }
 
     before do
+      allow(ActivateTransaction).to receive(:call).and_return(true)
       allow(DirectUpdateTransaction).to receive(:call).and_return(true)
       allow(SuspendTransaction).to receive(:call).and_return(true)
       allow(UpdateTransaction).to receive(:call).and_return(true)
@@ -315,6 +316,12 @@ describe TransactionForm, type: :form do
           attributes:  attributes.except(:budget).merge(amount: 2500, date: Date.new(2026, 3, 18), frequency: nil),
           transaction: transaction
         )
+      end
+
+      it "does not call ActivateTransaction" do
+        update
+
+        expect(ActivateTransaction).not_to have_received(:call)
       end
 
       it "does not call DirectUpdateTransaction" do
@@ -334,6 +341,12 @@ describe TransactionForm, type: :form do
       let(:form) { described_class.new(**attributes, amount: "0") }
 
       it { is_expected.to be_nil }
+
+      it "does not call ActivateTransaction" do
+        update
+
+        expect(ActivateTransaction).not_to have_received(:call)
+      end
 
       it "does not call DirectUpdateTransaction" do
         update
@@ -374,10 +387,54 @@ describe TransactionForm, type: :form do
         )
       end
 
+      it "does not call ActivateTransaction" do
+        update
+
+        expect(ActivateTransaction).not_to have_received(:call)
+      end
+
       it "does not call DirectUpdateTransaction" do
         update
 
         expect(DirectUpdateTransaction).not_to have_received(:call)
+      end
+
+      it "does not call UpdateTransaction" do
+        update
+
+        expect(UpdateTransaction).not_to have_received(:call)
+      end
+    end
+
+    context "when activating" do
+      let(:form)        { described_class.new(**attributes) }
+      let(:transaction) { create(:transaction, :recurring) }
+
+      it { is_expected.to be(true) }
+
+      it "calls ActivateTransaction" do
+        update
+
+        expect(ActivateTransaction).to have_received(:call).with(
+          attributes:  attributes.except(:budget).merge(
+            amount:    2500,
+            date:      Date.new(2026, 3, 18),
+            frequency: nil
+          ),
+          transaction: transaction
+        )
+      end
+
+      it "does not call DirectUpdateTransaction" do
+        update
+
+        expect(DirectUpdateTransaction).not_to have_received(:call)
+      end
+
+      it "does not call SuspendTransaction" do
+        update
+
+        expect(SuspendTransaction).not_to have_received(:call)
       end
 
       it "does not call UpdateTransaction" do
@@ -409,6 +466,12 @@ describe TransactionForm, type: :form do
         )
       end
 
+      it "does not call ActivateTransaction" do
+        update
+
+        expect(ActivateTransaction).not_to have_received(:call)
+      end
+
       it "does not call UpdateTransaction" do
         update
 
@@ -433,6 +496,12 @@ describe TransactionForm, type: :form do
         update
 
         expect(UpdateTransaction).to have_received(:call)
+      end
+
+      it "does not call ActivateTransaction" do
+        update
+
+        expect(ActivateTransaction).not_to have_received(:call)
       end
 
       it "does not call DirectUpdateTransaction" do

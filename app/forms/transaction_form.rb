@@ -78,6 +78,16 @@ class TransactionForm < BaseForm
 
   private
 
+  # Return whether the transaction is being activated from a recurring
+  # scheduled transaction to a regular transaction. This is true when the
+  # existing transaction has a frequency and the form does not.
+  #
+  # @param transaction [Transaction] The existing transaction to check.
+  # @return [Boolean] Whether the transaction is being activated.
+  def activating?(transaction)
+    transaction.frequency.present? && !recurring_scheduled?
+  end
+
   # Return the form attributes as a hash for creating or updating a transaction.
   #
   # @return [Hash] The transaction attributes.
@@ -110,6 +120,8 @@ class TransactionForm < BaseForm
   def update_service_class(transaction)
     if becoming_recurring?(transaction)
       SuspendTransaction
+    elsif activating?(transaction)
+      ActivateTransaction
     elsif recurring_scheduled?
       DirectUpdateTransaction
     else
