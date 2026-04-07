@@ -8,7 +8,7 @@ describe TransactionForm, type: :form do
   describe ".from" do
     subject(:form) { described_class.from(transaction: transaction) }
 
-    let(:transaction) { create(:transaction, amount: -1500, memo: "Lunch") }
+    let(:transaction) { create(:transaction, amount: -1500, frequency: :monthly, memo: "Lunch") }
 
     it "sets the account" do
       expect(form.account).to eq(transaction.account)
@@ -24,6 +24,10 @@ describe TransactionForm, type: :form do
 
     it "sets the date" do
       expect(form.date).to eq(transaction.date)
+    end
+
+    it "sets the frequency" do
+      expect(form.frequency).to eq("monthly")
     end
 
     it "sets the memo" do
@@ -162,6 +166,40 @@ describe TransactionForm, type: :form do
         expect(CreateTransaction).not_to have_received(:call)
       end
     end
+
+    context "when recurring and scheduled" do
+      let(:form) do
+        described_class.new(**attributes, date: 1.month.from_now.to_date.to_s, frequency: "monthly")
+      end
+
+      it { is_expected.to be(true) }
+
+      it "saves the transaction directly" do
+        save
+
+        expect(form.transaction).to be_persisted
+      end
+
+      it "does not call CreateTransaction" do
+        save
+
+        expect(CreateTransaction).not_to have_received(:call)
+      end
+    end
+
+    context "when recurring but not scheduled" do
+      let(:form) do
+        described_class.new(**attributes, date: Date.current.to_s, frequency: "monthly")
+      end
+
+      it { is_expected.to be(true) }
+
+      it "calls CreateTransaction" do
+        save
+
+        expect(CreateTransaction).to have_received(:call).with(transaction: form.transaction)
+      end
+    end
   end
 
   describe "#transaction" do
@@ -202,6 +240,10 @@ describe TransactionForm, type: :form do
       expect(transaction.date).to eq(Date.new(2026, 3, 18))
     end
 
+    it "sets the frequency" do
+      expect(transaction.frequency).to be_nil
+    end
+
     it "sets the memo" do
       expect(transaction.memo).to eq("Lunch")
     end
@@ -212,6 +254,22 @@ describe TransactionForm, type: :form do
 
     it "sets the subcategory" do
       expect(transaction.subcategory).to eq(subcategory)
+    end
+
+    context "with frequency" do
+      let(:form) { described_class.new(**attributes, frequency: "monthly") }
+
+      it "sets the frequency" do
+        expect(transaction.frequency).to eq("monthly")
+      end
+    end
+
+    context "with blank frequency" do
+      let(:form) { described_class.new(**attributes, frequency: "") }
+
+      it "sets the frequency to nil" do
+        expect(transaction.frequency).to be_nil
+      end
     end
 
     context "with negative amount" do
@@ -252,7 +310,7 @@ describe TransactionForm, type: :form do
         update
 
         expect(UpdateTransaction).to have_received(:call).with(
-          attributes:  attributes.except(:budget).merge(amount: 2500, date: Date.new(2026, 3, 18)),
+          attributes:  attributes.except(:budget).merge(amount: 2500, date: Date.new(2026, 3, 18), frequency: nil),
           transaction: transaction
         )
       end

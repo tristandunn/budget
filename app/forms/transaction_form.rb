@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class TransactionForm < BaseForm
-  attr_accessor :account, :budget, :memo, :payee, :subcategory
+  attr_accessor :account, :budget, :frequency, :memo, :payee, :subcategory
   attr_writer   :amount, :date
 
   # Build a form prepopulated from an existing transaction.
@@ -14,6 +14,7 @@ class TransactionForm < BaseForm
       amount:      Money.from_cents(transaction.amount).to_s,
       budget:      transaction.budget,
       date:        transaction.date.to_s,
+      frequency:   transaction.frequency,
       memo:        transaction.memo,
       payee:       transaction.payee,
       subcategory: transaction.subcategory
@@ -40,12 +41,18 @@ class TransactionForm < BaseForm
     Date.current
   end
 
+  delegate :recurring_scheduled?, to: :transaction
+
   # Attempt to save the transaction if it's valid.
   #
   # @return [Boolean] Whether the transaction was saved successfully.
   def save
     if valid?
-      CreateTransaction.call(transaction: transaction)
+      if recurring_scheduled?
+        transaction.save!
+      else
+        CreateTransaction.call(transaction: transaction)
+      end
     end
   end
 
@@ -79,6 +86,7 @@ class TransactionForm < BaseForm
       account:     account,
       amount:      amount&.cents,
       date:        date,
+      frequency:   frequency.presence,
       memo:        memo,
       payee:       payee,
       subcategory: subcategory

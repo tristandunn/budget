@@ -127,6 +127,26 @@
           <% end %>
         </div>
       </div>
+
+      <%= f.label :frequency, class: "flex items-center gap-3 px-4 py-4", data: { controller: "field-icon", action: "change->field-icon#update click->field-icon#focus" } do %>
+        <span class="sr-only"><%= TransactionForm.human_attribute_name(:frequency) %></span>
+
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-4 h-4 text-taupe-400 shrink-0"
+          data-field-icon-target="icon"
+          viewBox="0 0 16 16"
+          fill="currentColor"
+        >
+          <path
+            d="M5.029 2.217a6.5 6.5 0 0 1 9.437 5.11.75.75 0 1 0 1.492-.154 8 8 0 0 0-11.61-6.28l-.546-.607a.75.75 0 0 0-1.302.51v3.428a.75.75 0 0 0 .8.75l3.428-.2a.75.75 0 0 0 .502-1.26l-.755-.839Zm5.942 11.566a6.5 6.5 0 0 1-9.437-5.11.75.75 0 1 0-1.492.154 8 8 0 0 0 11.61 6.28l.546.607a.75.75 0 0 0 1.302-.51v-3.428a.75.75 0 0 0-.8-.75l-3.428.2a.75.75 0 0 0-.502 1.26l.755.839Z"
+          />
+        </svg>
+
+        <div class="grow">
+          <%= f.select :frequency, options_for_select([%w(Monthly monthly)], form.frequency), { prompt: t(".select_frequency") }, { class: "w-full bg-transparent border-none outline-none text-base placeholder:text-gray-400 focus:ring-0" } %>
+        </div>
+      <% end %>
     </div>
 
     <div class="mt-4 bg-white rounded-xl">

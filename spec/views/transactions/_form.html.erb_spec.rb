@@ -47,6 +47,10 @@ describe "transactions/_form.html.erb" do
     expect(html).to have_field("transaction_form_date")
   end
 
+  it "renders the frequency select" do
+    expect(html).to have_select("transaction_form_frequency")
+  end
+
   it "renders the memo field" do
     expect(html).to have_field("transaction_form_memo")
   end
@@ -56,8 +60,11 @@ describe "transactions/_form.html.erb" do
   end
 
   context "when prepopulated from a transaction" do
-    let(:form)        { TransactionForm.from(transaction: transaction) }
-    let(:transaction) { create(:transaction, budget: subcategory.budget, memo: "Memo", subcategory: subcategory) }
+    let(:form) { TransactionForm.from(transaction: transaction) }
+
+    let(:transaction) do
+      create(:transaction, budget: subcategory.budget, frequency: :monthly, memo: "Memo", subcategory: subcategory)
+    end
 
     it "prepopulates the amount" do
       expect(html).to have_field("transaction_form_amount",
@@ -82,6 +89,10 @@ describe "transactions/_form.html.erb" do
 
     it "preselects the account" do
       expect(html).to have_select("transaction_form_account_id", selected: transaction.account.name)
+    end
+
+    it "preselects the frequency" do
+      expect(html).to have_select("transaction_form_frequency", selected: "Monthly")
     end
   end
 

@@ -123,7 +123,7 @@ class TransactionsController < ApplicationController
   # @return [ActionController::Parameters] The permitted parameters for the form.
   def parameters
     @parameters ||= params.expect(
-      transaction_form: %i(account_id amount date memo payee subcategory_id)
+      transaction_form: %i(account_id amount date frequency memo payee subcategory_id)
     )
   end
 
@@ -181,6 +181,7 @@ class TransactionsController < ApplicationController
       amount:      parameters[:amount],
       budget:      budget,
       date:        parameters[:date],
+      frequency:   parameters[:frequency],
       memo:        parameters[:memo],
       payee:       parameters[:payee],
       subcategory: subcategory

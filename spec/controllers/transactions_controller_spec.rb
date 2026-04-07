@@ -110,6 +110,7 @@ describe TransactionsController do
           amount:      "100",
           budget:      budget,
           date:        "2026-03-18",
+          frequency:   "monthly",
           memo:        "A memo",
           payee:       "Test Payee",
           subcategory: subcategory
@@ -125,6 +126,7 @@ describe TransactionsController do
             account_id:     account.id,
             amount:         "100",
             date:           "2026-03-18",
+            frequency:      "monthly",
             memo:           "A memo",
             payee:          "Test Payee",
             subcategory_id: subcategory.id
@@ -161,6 +163,7 @@ describe TransactionsController do
             account_id:     account.id,
             amount:         "100",
             date:           "2026-03-18",
+            frequency:      "monthly",
             memo:           "A memo",
             payee:          "Test Payee",
             subcategory_id: subcategory.id
@@ -187,6 +190,7 @@ describe TransactionsController do
           amount:      "invalid",
           budget:      budget,
           date:        "2026-03-18",
+          frequency:   "",
           memo:        "A memo",
           payee:       "Test Payee",
           subcategory: subcategory
@@ -202,6 +206,7 @@ describe TransactionsController do
             account_id:     "",
             amount:         "invalid",
             date:           "2026-03-18",
+            frequency:      "",
             memo:           "A memo",
             payee:          "Test Payee",
             subcategory_id: subcategory.id
@@ -299,6 +304,7 @@ describe TransactionsController do
             account_id:     account.id,
             amount:         "100",
             date:           "2026-03-18",
+            frequency:      "monthly",
             memo:           "A memo",
             payee:          "Test Payee",
             subcategory_id: subcategory.id
@@ -315,6 +321,7 @@ describe TransactionsController do
           amount:      "100",
           budget:      budget,
           date:        "2026-03-18",
+          frequency:   "monthly",
           memo:        "A memo",
           payee:       "Test Payee",
           subcategory: subcategory
@@ -337,6 +344,7 @@ describe TransactionsController do
             account_id:     "",
             amount:         "invalid",
             date:           "2026-03-18",
+            frequency:      "",
             memo:           "A memo",
             payee:          "Test Payee",
             subcategory_id: subcategory.id
@@ -353,6 +361,7 @@ describe TransactionsController do
           amount:      "invalid",
           budget:      budget,
           date:        "2026-03-18",
+          frequency:   "",
           memo:        "A memo",
           payee:       "Test Payee",
           subcategory: subcategory

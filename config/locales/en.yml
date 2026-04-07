@@ -60,6 +60,7 @@ en:
         account_id: "Account"
         amount: "Amount"
         date: "Date"
+        frequency: "Frequency"
         memo: "Memo"
         payee: "Payee"
         subcategory_id: "Subcategory"
@@ -85,6 +86,7 @@ en:
       enter_memo: "Enter a memo..."
       enter_payee: "Enter a Payee"
       select_account: "Choose Account"
+      select_frequency: "One-time"
       select_subcategory: "Choose Category"
     edit:
       delete:
