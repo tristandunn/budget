@@ -69,7 +69,7 @@ class TransactionForm < BaseForm
   # @return [Boolean] Whether the transaction was updated successfully.
   def update(transaction)
     if valid?
-      update_service_class.call(
+      update_service_class(transaction).call(
         attributes:  attributes,
         transaction: transaction
       )
@@ -93,11 +93,24 @@ class TransactionForm < BaseForm
     }
   end
 
+  # Return whether the transaction is becoming a recurring scheduled
+  # transaction. This is true when the existing transaction has no frequency
+  # and the form specifies one with a future date.
+  #
+  # @param transaction [Transaction] The existing transaction to check.
+  # @return [Boolean] Whether the transaction is becoming recurring.
+  def becoming_recurring?(transaction)
+    transaction.frequency.blank? && recurring_scheduled?
+  end
+
   # Return the appropriate service class for updating a transaction.
   #
+  # @param transaction [Transaction] The existing transaction being updated.
   # @return [Class] The service class to use for the update.
-  def update_service_class
-    if recurring_scheduled?
+  def update_service_class(transaction)
+    if becoming_recurring?(transaction)
+      SuspendTransaction
+    elsif recurring_scheduled?
       DirectUpdateTransaction
     else
       UpdateTransaction

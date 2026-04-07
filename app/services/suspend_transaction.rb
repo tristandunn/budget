@@ -1,0 +1,83 @@
+# frozen_string_literal: true
+
+class SuspendTransaction
+  # Initialize the service.
+  #
+  # @param attributes [Hash] The new attributes for the transaction.
+  # @param transaction [Transaction] The transaction to suspend.
+  def initialize(attributes:, transaction:)
+    @attributes  = attributes
+    @transaction = transaction
+  end
+
+  # Reverse balance effects and update the transaction to become recurring.
+  #
+  # @param attributes [Hash] The new attributes for the transaction.
+  # @param transaction [Transaction] The transaction to suspend.
+  # @return [Boolean] Whether the transaction was suspended successfully.
+  def self.call(attributes:, transaction:)
+    new(attributes: attributes, transaction: transaction).call
+  end
+
+  # Reverse balance effects and update the transaction to become recurring.
+  #
+  # @return [Boolean] Whether the transaction was suspended successfully.
+  def call
+    ActiveRecord::Base.transaction do
+      reverse_account_balance
+      reverse_category_effects
+      transaction.update!(attributes)
+
+      true
+    end
+  end
+
+  private
+
+  attr_reader :attributes, :transaction
+
+  delegate :account, :amount, :budget, :date, :subcategory, to: :transaction
+
+  # Reverse the account balance change from the transaction.
+  #
+  # @return [void]
+  def reverse_account_balance
+    account.increment!(:balance, -amount)
+  end
+
+  # Reverse the category effects of the transaction. For inflow transactions,
+  # this reverses the available to assign change. For regular transactions,
+  # this reverses the snapshot changes.
+  #
+  # @return [void]
+  def reverse_category_effects
+    if subcategory.inflow?
+      budget.increment!(:available_to_assign, -amount)
+    else
+      snapshots.each do |snapshot|
+        reverse_snapshot(snapshot)
+      end
+    end
+  end
+
+  # Reverse the effect of the transaction on a single snapshot.
+  #
+  # @param snapshot [CategorySnapshot] The snapshot to reverse.
+  # @return [void]
+  def reverse_snapshot(snapshot)
+    if amount.positive?
+      snapshot.increment!(:amount_assigned, -amount)
+    else
+      snapshot.increment!(:amount_used, amount)
+    end
+  end
+
+  # Return the category and subcategory snapshots for the transaction month.
+  #
+  # @return [Array<CategorySnapshot>] The snapshots for the category and subcategory.
+  def snapshots
+    [subcategory.parent, subcategory].map do |category|
+      category.snapshots.for_month(date).first
+    end
+  end
+end
