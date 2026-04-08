@@ -31,7 +31,7 @@ describe "transactions/_list.html.erb" do
     end
 
     it "renders the payee" do
-      expect(html).to have_text(transaction.payee)
+      expect(html).to have_text(transaction.payee.name)
     end
 
     it "renders the amount" do
@@ -51,7 +51,7 @@ describe "transactions/_list.html.erb" do
     end
 
     it "does not render the current transaction in the scheduled section" do
-      expect(html).to have_no_css("#scheduled", text: transaction.payee)
+      expect(html).to have_no_css("#scheduled", text: transaction.payee.name)
     end
 
     it "links each transaction to its edit page" do
@@ -120,7 +120,7 @@ describe "transactions/_list.html.erb" do
     end
 
     it "does not render the scheduled transaction in the current section" do
-      expect(html).to have_no_css("#current li", text: transaction.payee)
+      expect(html).to have_no_css("#current li", text: transaction.payee.name)
     end
   end
 

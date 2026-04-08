@@ -3,33 +3,28 @@
 require "rails_helper"
 
 describe "Hiding reconciled account transactions", :js do
-  let(:account) { create(:account, budget: budget) }
-  let(:budget)  { create(:budget) }
+  let(:account)      { create(:account, budget: budget) }
+  let(:budget)       { create(:budget) }
+  let(:reconciled)   { create(:transaction, :reconciled, budget: budget, account: account) }
+  let(:unreconciled) { create(:transaction, budget: budget, account: account) }
 
   before do
-    create(:transaction, :reconciled, account: account, payee: "Reconciled Payment")
-    create(:transaction, account: account, payee: "Pending Payment")
-
     visit budget_account_transactions_path(budget, account)
+    find("button[aria-label='#{t("transactions.index.actions")}']").click
+    click_on t("transactions.reconciled.hide")
   end
 
   it "hides reconciled transactions" do
-    find("button[aria-label='#{t("transactions.index.actions")}']").click
-    click_on t("transactions.reconciled.hide")
-
-    expect(page).to have_text("Pending Payment")
-      .and(have_no_text("Reconciled Payment"))
+    expect(page).to have_text(unreconciled.payee.name)
+      .and(have_no_text(reconciled.payee.name))
   end
 
   it "shows reconciled transactions after unhiding" do
-    find("button[aria-label='#{t("transactions.index.actions")}']").click
-    click_on t("transactions.reconciled.hide")
-
-    wait_for(have_no_text("Reconciled Payment")) do
+    wait_for(have_no_text(reconciled.payee.name)) do
       find("button[aria-label='#{t("transactions.index.actions")}']").click
       click_on t("transactions.reconciled.show")
     end
 
-    expect(page).to have_text("Reconciled Payment")
+    expect(page).to have_text(reconciled.payee.name)
   end
 end

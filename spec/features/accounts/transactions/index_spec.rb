@@ -13,7 +13,7 @@ describe "Account transactions" do
     click_on account.name
 
     expect(page).to have_css("h1", text: account.name)
-      .and(have_text(transaction.payee))
+      .and(have_text(transaction.payee.name))
   end
 
   it "defaults the account on the new transaction form" do

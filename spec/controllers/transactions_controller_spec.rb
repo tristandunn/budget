@@ -436,7 +436,7 @@ describe TransactionsController do
       it { is_expected.to redirect_to(budget_transactions_path(budget)) }
 
       it "does not update the transaction" do
-        expect(transaction.reload.payee).not_to eq("Test Payee")
+        expect(transaction.reload.payee.name).not_to eq("Test Payee")
       end
     end
   end

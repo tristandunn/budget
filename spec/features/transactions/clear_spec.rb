@@ -10,7 +10,6 @@ describe "Transaction clearing", :js do
     create(:transaction, budget:  budget,
                          account: account,
                          amount:  -1000,
-                         payee:   "Test Payee",
                          status:  status)
   end
 

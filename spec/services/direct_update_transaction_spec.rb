@@ -21,7 +21,7 @@ describe DirectUpdateTransaction do
         date:        Date.new(2026, 5, 1),
         frequency:   "monthly",
         memo:        "New Memo",
-        payee:       "New Payee",
+        payee:       create(:payee, budget: subcategory.budget),
         subcategory: new_subcategory
       }
     end
@@ -59,7 +59,7 @@ describe DirectUpdateTransaction do
     it "updates the payee" do
       update
 
-      expect(transaction.reload.payee).to eq("New Payee")
+      expect(transaction.reload.payee).to eq(attributes[:payee])
     end
 
     it "updates the subcategory" do

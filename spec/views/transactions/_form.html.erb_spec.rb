@@ -72,7 +72,7 @@ describe "transactions/_form.html.erb" do
     end
 
     it "prepopulates the payee" do
-      expect(html).to have_field("transaction_form_payee", with: transaction.payee)
+      expect(html).to have_field("transaction_form_payee", with: transaction.payee.name)
     end
 
     it "prepopulates the date" do

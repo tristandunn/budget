@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_07_003220) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_07_200002) do
   create_table "accounts", force: :cascade do |t|
     t.integer "balance", default: 0, null: false
     t.integer "budget_id", null: false
@@ -51,6 +51,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_07_003220) do
     t.index ["category_id"], name: "index_category_snapshots_on_category_id"
   end
 
+  create_table "payees", force: :cascade do |t|
+    t.integer "budget_id", null: false
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+    t.index ["budget_id", "name"], name: "index_payees_on_budget_id_and_name", unique: true
+    t.index ["budget_id"], name: "index_payees_on_budget_id"
+  end
+
   create_table "transactions", force: :cascade do |t|
     t.integer "account_id", null: false
     t.integer "amount", null: false
@@ -60,20 +69,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_07_003220) do
     t.date "date", null: false
     t.integer "frequency"
     t.string "memo"
-    t.string "payee", null: false
+    t.integer "payee_id", null: false
     t.integer "status", default: 0, null: false
     t.datetime "updated_at", null: false
     t.index ["account_id", "date"], name: "index_transactions_on_account_id_and_date"
     t.index ["account_id", "status"], name: "index_transactions_on_account_id_and_status"
     t.index ["budget_id", "date", "created_at"], name: "index_transactions_on_budget_id_and_date_and_created_at"
     t.index ["category_id"], name: "index_transactions_on_category_id"
+    t.index ["payee_id"], name: "index_transactions_on_payee_id"
   end
 
   add_foreign_key "accounts", "budgets"
   add_foreign_key "categories", "budgets"
   add_foreign_key "category_snapshots", "budgets"
   add_foreign_key "category_snapshots", "categories"
+  add_foreign_key "payees", "budgets"
   add_foreign_key "transactions", "accounts"
   add_foreign_key "transactions", "budgets"
   add_foreign_key "transactions", "categories"
+  add_foreign_key "transactions", "payees"
 end

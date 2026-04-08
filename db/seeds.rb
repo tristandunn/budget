@@ -16,17 +16,22 @@ Budget.first_or_create!.tap do |budget|
     account.credit  = true
   end
 
+  capital_grille = budget.payees.find_or_create_by!(name: "The Capital Grille")
+  costco         = budget.payees.find_or_create_by!(name: "Costco")
+  landlord       = budget.payees.find_or_create_by!(name: "Landlord")
+  opening        = budget.payees.find_or_create_by!(name: "Opening Balance")
+
   budget.categories.find_or_create_by(name: Category::INFLOW, position: 0).tap do |parent|
     available_to_assign = parent.subcategories.find_or_create_by(budget: budget, name: Category::AVAILABLE_TO_ASSIGN,
                                                                  position: 0)
 
-    budget.transactions.find_or_create_by!(account: checking, payee: "Opening Balance") do |transaction|
+    budget.transactions.find_or_create_by!(account: checking, payee: opening) do |transaction|
       transaction.subcategory = available_to_assign
       transaction.amount      = 350_000
       transaction.date        = date
       transaction.status      = :reconciled
     end
-    budget.transactions.find_or_create_by!(account: savings, payee: "Opening Balance") do |transaction|
+    budget.transactions.find_or_create_by!(account: savings, payee: opening) do |transaction|
       transaction.subcategory = available_to_assign
       transaction.amount      = 100_000
       transaction.date        = date
@@ -58,14 +63,14 @@ Budget.first_or_create!.tap do |budget|
       end
     end
 
-    budget.transactions.find_or_create_by!(account: checking, payee: "Landlord") do |transaction|
+    budget.transactions.find_or_create_by!(account: checking, payee: landlord) do |transaction|
       transaction.subcategory = rent
       transaction.amount      = -100_000
       transaction.date        = date + 1
       transaction.status      = :reconciled
     end
 
-    budget.transactions.find_or_create_by!(account: checking, payee: "Landlord", frequency: :monthly) do |transaction|
+    budget.transactions.find_or_create_by!(account: checking, payee: landlord, frequency: :monthly) do |transaction|
       transaction.subcategory = rent
       transaction.amount      = -100_000
       transaction.date        = (date + 1).advance(months: 1)
@@ -94,13 +99,13 @@ Budget.first_or_create!.tap do |budget|
       end
     end
 
-    budget.transactions.find_or_create_by!(account: united_club, payee: "Costco") do |transaction|
+    budget.transactions.find_or_create_by!(account: united_club, payee: costco) do |transaction|
       transaction.subcategory = groceries
       transaction.amount      = -27_500
       transaction.date        = date + 5
       transaction.status      = :cleared
     end
-    budget.transactions.find_or_create_by!(account: united_club, payee: "The Capital Grille") do |transaction|
+    budget.transactions.find_or_create_by!(account: united_club, payee: capital_grille) do |transaction|
       transaction.subcategory = dining_out
       transaction.amount      = -17_500
       transaction.date        = date + 8

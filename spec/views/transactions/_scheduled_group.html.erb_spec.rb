@@ -25,7 +25,7 @@ describe "transactions/_scheduled_group.html.erb" do
   end
 
   it "renders the payee" do
-    expect(html).to have_text(transaction.payee)
+    expect(html).to have_text(transaction.payee.name)
   end
 
   it "renders the amount" do

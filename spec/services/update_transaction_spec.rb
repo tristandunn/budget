@@ -211,12 +211,13 @@ describe UpdateTransaction do
     end
 
     context "when changing payee and memo only" do
-      let(:attributes) { { payee: "New Payee", memo: "New Memo" } }
+      let(:attributes) { { payee: new_payee, memo: "New Memo" } }
+      let(:new_payee)  { create(:payee, budget: subcategory.budget) }
 
       it "updates the payee" do
         update
 
-        expect(transaction.reload.payee).to eq("New Payee")
+        expect(transaction.reload.payee).to eq(new_payee)
       end
 
       it "updates the memo" do
@@ -242,14 +243,14 @@ describe UpdateTransaction do
           account:     create(:account, budget: subcategory.budget),
           amount:      -3000,
           subcategory: create(:category, :subcategory, budget: subcategory.budget),
-          payee:       "New Payee"
+          payee:       create(:payee, budget: subcategory.budget)
         }
       end
 
       it "updates the payee" do
         update
 
-        expect(transaction.reload.payee).to eq("New Payee")
+        expect(transaction.reload.payee).to eq(attributes[:payee])
       end
 
       it "restores the old account balance" do

@@ -30,7 +30,7 @@ module Accounts
     #
     # @return [Array(Array<Transaction>, Array<Transaction>)] The scheduled and current transactions.
     def filtered_transactions
-      transactions = account.transactions.includes(:subcategory)
+      transactions = account.transactions.includes(:payee, :subcategory)
       transactions = transactions.where.not(status: :reconciled) if budget.settings.hide_reconciled?
       transactions.partition(&:scheduled?)
     end

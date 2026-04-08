@@ -11,15 +11,14 @@ describe "Transaction deletion", :js do
     create(:transaction, budget:      budget,
                          account:     account,
                          subcategory: subcategory,
-                         amount:      -1000,
-                         payee:       "Old Payee")
+                         amount:      -1000)
   end
 
   before do
     CreateTransaction.call(transaction: transaction)
 
     visit budget_transactions_path(budget)
-    click_on transaction.payee
+    click_on transaction.payee.name
   end
 
   it "deletes the transaction" do
@@ -27,6 +26,6 @@ describe "Transaction deletion", :js do
       click_on t("transactions.edit.delete.submit")
     end
 
-    expect(page).to have_text(t("transactions.index.title")).and(have_no_text(transaction.payee))
+    expect(page).to have_text(t("transactions.index.title")).and(have_no_text(transaction.payee.name))
   end
 end

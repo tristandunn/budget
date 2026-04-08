@@ -35,7 +35,7 @@ describe TransactionForm, type: :form do
     end
 
     it "sets the payee" do
-      expect(form.payee).to eq(transaction.payee)
+      expect(form.payee).to eq(transaction.payee.name)
     end
 
     it "sets the subcategory" do
@@ -174,6 +174,18 @@ describe TransactionForm, type: :form do
       end
     end
 
+    context "when payee is blank" do
+      let(:form) { described_class.new(**attributes, payee: "") }
+
+      it { is_expected.to be_nil }
+
+      it "does not create a transaction" do
+        save
+
+        expect(CreateTransaction).not_to have_received(:call)
+      end
+    end
+
     context "when recurring and scheduled" do
       let(:form) do
         described_class.new(**attributes, date: 1.month.from_now.to_date.to_s, frequency: "monthly")
@@ -268,7 +280,13 @@ describe TransactionForm, type: :form do
     end
 
     it "sets the payee" do
-      expect(transaction.payee).to eq("Test Payee")
+      expect(transaction.payee.name).to eq("Test Payee")
+    end
+
+    it "reuses an existing payee" do
+      existing = create(:payee, budget: subcategory.budget, name: "Test Payee")
+
+      expect(transaction.payee).to eq(existing)
     end
 
     it "sets the subcategory" do
@@ -334,7 +352,12 @@ describe TransactionForm, type: :form do
         update
 
         expect(UpdateTransaction).to have_received(:call).with(
-          attributes:  attributes.except(:budget).merge(amount: 2500, date: Date.new(2026, 3, 18), frequency: nil),
+          attributes:  attributes.except(:budget, :payee).merge(
+            amount:    2500,
+            date:      Date.new(2026, 3, 18),
+            frequency: nil,
+            payee:     an_object_having_attributes(name: "Test Payee")
+          ),
           transaction: transaction
         )
       end
@@ -423,10 +446,11 @@ describe TransactionForm, type: :form do
         update
 
         expect(SuspendTransaction).to have_received(:call).with(
-          attributes:  attributes.except(:budget).merge(
+          attributes:  attributes.except(:budget, :payee).merge(
             amount:    2500,
             date:      1.month.from_now.to_date,
-            frequency: "monthly"
+            frequency: "monthly",
+            payee:     an_object_having_attributes(name: "Test Payee")
           ),
           transaction: transaction
         )
@@ -474,10 +498,11 @@ describe TransactionForm, type: :form do
         update
 
         expect(ConvertToRecurringTransaction).to have_received(:call).with(
-          attributes:  attributes.except(:budget).merge(
+          attributes:  attributes.except(:budget, :payee).merge(
             amount:    2500,
             date:      Date.current,
-            frequency: "monthly"
+            frequency: "monthly",
+            payee:     an_object_having_attributes(name: "Test Payee")
           ),
           transaction: transaction
         )
@@ -524,10 +549,11 @@ describe TransactionForm, type: :form do
         update
 
         expect(ActivateTransaction).to have_received(:call).with(
-          attributes:  attributes.except(:budget).merge(
+          attributes:  attributes.except(:budget, :payee).merge(
             amount:    2500,
             date:      Date.new(2026, 3, 18),
-            frequency: nil
+            frequency: nil,
+            payee:     an_object_having_attributes(name: "Test Payee")
           ),
           transaction: transaction
         )
@@ -577,10 +603,11 @@ describe TransactionForm, type: :form do
         update
 
         expect(DirectUpdateTransaction).to have_received(:call).with(
-          attributes:  attributes.except(:budget).merge(
+          attributes:  attributes.except(:budget, :payee).merge(
             amount:    2500,
             date:      1.month.from_now.to_date,
-            frequency: "monthly"
+            frequency: "monthly",
+            payee:     an_object_having_attributes(name: "Test Payee")
           ),
           transaction: transaction
         )
@@ -634,10 +661,11 @@ describe TransactionForm, type: :form do
         update
 
         expect(transaction).to have_received(:update!).with(
-          attributes.except(:budget).merge(
+          attributes.except(:budget, :payee).merge(
             amount:    2500,
             date:      Date.current,
-            frequency: "monthly"
+            frequency: "monthly",
+            payee:     an_object_having_attributes(name: "Test Payee")
           )
         )
       end

@@ -9,6 +9,7 @@ describe Budget do
     it { is_expected.to have_many(:accounts).dependent(:destroy) }
     it { is_expected.to have_many(:categories).conditions(parent_id: nil).inverse_of(:budget).dependent(:destroy) }
     it { is_expected.to have_many(:category_snapshots).dependent(:destroy) }
+    it { is_expected.to have_many(:payees).dependent(:destroy) }
     it { is_expected.to have_many(:subcategories).class_name("Category").inverse_of(:budget).dependent(:destroy) }
     it { is_expected.to have_many(:transactions).dependent(:destroy) }
 

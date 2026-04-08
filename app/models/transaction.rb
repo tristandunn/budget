@@ -3,6 +3,7 @@
 class Transaction < ApplicationRecord
   belongs_to :account
   belongs_to :budget
+  belongs_to :payee
   belongs_to :subcategory, class_name:  "Category",
                            foreign_key: :category_id,
                            inverse_of:  :transactions
@@ -12,9 +13,8 @@ class Transaction < ApplicationRecord
 
   validates :amount, presence: true, numericality: { only_integer: true, other_than: 0 }
   validates :date,   presence: true
-  validates :payee,  presence: true
 
-  validate  :validate_subcategory
+  validate :validate_subcategory
 
   default_scope -> { order(date: :desc, created_at: :desc) }
 

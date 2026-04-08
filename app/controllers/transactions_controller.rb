@@ -113,7 +113,7 @@ class TransactionsController < ApplicationController
   #
   # @return [Array(Array<Transaction>, Array<Transaction>)] The scheduled and current transactions.
   def filtered_transactions
-    transactions = budget.transactions.includes(:account, :subcategory)
+    transactions = budget.transactions.includes(:account, :payee, :subcategory)
     transactions = transactions.where.not(status: :reconciled) if budget.settings.hide_reconciled?
     transactions.partition(&:scheduled?)
   end
@@ -169,7 +169,7 @@ class TransactionsController < ApplicationController
   #
   # @return [Transaction] The requested transaction.
   def transaction
-    @transaction ||= budget.transactions.find(params[:id])
+    @transaction ||= budget.transactions.includes(:payee).find(params[:id])
   end
 
   # Return the permitted parameters with budget and subcategory.

@@ -11,7 +11,7 @@
 
         <%= transaction_row_wrapper(transaction) do %>
           <div class="flex items-center justify-between">
-            <span class="font-medium text-taupe-400"><%= transaction.payee %></span>
+            <span class="font-medium text-taupe-400"><%= transaction.payee.name %></span>
 
             <span class="inline-block rounded-full px-2 py-0.5 font-semibold bg-taupe-200 text-taupe-600">
               <%= number_to_currency Money.from_cents(transaction.amount) %>

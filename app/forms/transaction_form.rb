@@ -16,7 +16,7 @@ class TransactionForm < BaseForm
       date:        transaction.date.to_s,
       frequency:   transaction.frequency,
       memo:        transaction.memo,
-      payee:       transaction.payee,
+      payee:       transaction.payee.name,
       subcategory: transaction.subcategory
     )
   end
@@ -104,7 +104,7 @@ class TransactionForm < BaseForm
       date:        date,
       frequency:   frequency.presence,
       memo:        memo,
-      payee:       payee,
+      payee:       payee_record,
       subcategory: subcategory
     }
   end
@@ -126,6 +126,16 @@ class TransactionForm < BaseForm
       SuspendTransaction
     else
       ConvertToRecurringTransaction
+    end
+  end
+
+  # Return the Payee record for the given payee name, creating one if needed.
+  #
+  # @return [Payee] The found or created payee record.
+  # @return [nil] When the payee name is blank.
+  def payee_record
+    if payee.present?
+      Payee.find_or_create_by!(budget: budget, name: payee)
     end
   end
 

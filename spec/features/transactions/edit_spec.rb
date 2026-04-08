@@ -13,8 +13,7 @@ describe "Transaction editing" do
            budget:      budget,
            account:     account,
            subcategory: subcategory,
-           amount:      -1000,
-           payee:       "Old Payee")
+           amount:      -1000)
   end
 
   shared_examples "an editable transaction" do
@@ -22,7 +21,7 @@ describe "Transaction editing" do
       CreateTransaction.call(transaction: transaction)
 
       visit budget_transactions_path(budget)
-      click_on transaction.payee
+      click_on transaction.payee.name
     end
 
     it "updates the transaction" do
