@@ -25,7 +25,7 @@ describe "Transaction editing" do
     end
 
     it "updates the transaction" do
-      fill_in t("activemodel.attributes.transaction_form.payee"), with: "New Payee"
+      fill_in_payee("New Payee")
       fill_in t("activemodel.attributes.transaction_form.amount"), with: -20.00
       click_on t("transactions.edit.submit")
 

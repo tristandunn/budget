@@ -16,6 +16,7 @@ export default [
       "globals": {
         "Turbo": "readonly",
         "document": "readonly",
+        "fetch": "readonly",
         "localStorage": "readonly",
         "window": "readonly"
       },

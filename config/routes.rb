@@ -14,6 +14,7 @@ Rails.application.routes.draw do
     resources :categories, only: %i(edit update) do
       resource :assignment, only: %i(edit update)
     end
+    resources :payees, only: %i(index)
     resource :settings, only: :update
     resources :transactions, only: %i(index new create edit update destroy) do
       member do

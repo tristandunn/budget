@@ -1,25 +1,35 @@
 <%= turbo_frame_tag "transaction_dialog", class: "flex flex-col h-full" do %>
-  <header class="relative p-4">
-    <h2 class="text-lg font-semibold text-center"><%= t(".title") %></h2>
+  <div
+    data-controller="payee-picker"
+    data-payee-picker-url-value="<%= budget_payees_path(@form.budget) %>"
+    class="relative flex flex-col h-full overflow-x-clip"
+  >
+    <div>
+      <header class="relative p-4">
+        <h2 class="text-lg font-semibold text-center"><%= t(".title") %></h2>
 
-    <button
-      type="button"
-      class="
-        absolute top-4 right-4 text-2xl leading-none text-taupe-400 cursor-pointer
-        hover:text-taupe-600
-      "
-      data-action="dialog#close"
-      aria-label="Close dialog"
-    >
-      &times;
-    </button>
-  </header>
+        <button
+          type="button"
+          class="
+            absolute top-4 right-4 text-2xl leading-none text-taupe-400 cursor-pointer
+            hover:text-taupe-600
+          "
+          data-action="dialog#close"
+          aria-label="Close dialog"
+        >
+          &times;
+        </button>
+      </header>
 
-  <%= render "form",
-             accounts:     @accounts,
-             categories:   @categories,
-             form:         @form,
-             method:       :post,
-             submit_label: t(".submit"),
-             url:          budget_transactions_path(@form.budget) %>
+      <%= render "form",
+                 accounts:     @accounts,
+                 categories:   @categories,
+                 form:         @form,
+                 method:       :post,
+                 submit_label: t(".submit"),
+                 url:          budget_transactions_path(@form.budget) %>
+    </div>
+
+    <%= render "payee_picker" %>
+  </div>
 <% end %>

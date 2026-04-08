@@ -85,9 +85,12 @@ en:
     form:
       enter_memo: "Enter a memo..."
       enter_payee: "Enter a Payee"
+      search_payees: "Find or add a payee"
       select_account: "Choose Account"
       select_frequency: "One-time"
       select_subcategory: "Choose Category"
+    payee_picker:
+      back: "Back"
     edit:
       delete:
         confirmation: "Are you sure you want to delete this transaction?"

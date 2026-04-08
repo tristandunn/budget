@@ -14,6 +14,7 @@ describe "transactions/new.html.erb" do
 
   before do
     stub_template("transactions/_form.html.erb" => "FORM_PARTIAL")
+    stub_template("transactions/_payee_picker.html.erb" => "PAYEE_PICKER_PARTIAL")
 
     assign :accounts,   budget.accounts
     assign :categories, []
@@ -34,5 +35,9 @@ describe "transactions/new.html.erb" do
 
   it "renders the form partial" do
     expect(html).to include("FORM_PARTIAL")
+  end
+
+  it "renders the payee picker partial" do
+    expect(html).to include("PAYEE_PICKER_PARTIAL")
   end
 end

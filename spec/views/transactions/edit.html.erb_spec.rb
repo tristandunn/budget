@@ -14,6 +14,7 @@ describe "transactions/edit.html.erb" do
 
   before do
     stub_template("transactions/_form.html.erb" => "FORM_PARTIAL")
+    stub_template("transactions/_payee_picker.html.erb" => "PAYEE_PICKER_PARTIAL")
 
     assign :accounts,    transaction.budget.accounts
     assign :categories,  []
@@ -39,5 +40,9 @@ describe "transactions/edit.html.erb" do
 
   it "renders a delete button" do
     expect(html).to have_button("Delete")
+  end
+
+  it "renders the payee picker partial" do
+    expect(html).to include("PAYEE_PICKER_PARTIAL")
   end
 end

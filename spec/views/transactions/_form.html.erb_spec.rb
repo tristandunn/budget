@@ -25,8 +25,15 @@ describe "transactions/_form.html.erb" do
     expect(html).to have_field("transaction_form_amount")
   end
 
-  it "renders the payee field" do
-    expect(html).to have_field("transaction_form_payee")
+  it "renders the payee hidden field" do
+    expect(html).to have_field("transaction_form_payee", type: :hidden)
+  end
+
+  it "shows the payee placeholder when no payee is selected" do
+    expect(html).to have_css(
+      "[data-payee-picker-target='display']",
+      text: t("transactions.form.enter_payee")
+    )
   end
 
   it "renders the subcategory select" do
@@ -72,7 +79,14 @@ describe "transactions/_form.html.erb" do
     end
 
     it "prepopulates the payee" do
-      expect(html).to have_field("transaction_form_payee", with: transaction.payee.name)
+      expect(html).to have_field("transaction_form_payee", type: :hidden, with: transaction.payee.name)
+    end
+
+    it "displays the payee name" do
+      expect(html).to have_css(
+        "[data-payee-picker-target='display']",
+        text: transaction.payee.name
+      )
     end
 
     it "prepopulates the date" do
