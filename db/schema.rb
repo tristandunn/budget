@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_07_200002) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_08_130609) do
   create_table "accounts", force: :cascade do |t|
     t.integer "balance", default: 0, null: false
     t.integer "budget_id", null: false
@@ -72,11 +72,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_07_200002) do
     t.integer "payee_id", null: false
     t.integer "status", default: 0, null: false
     t.datetime "updated_at", null: false
-    t.index ["account_id", "date"], name: "index_transactions_on_account_id_and_date"
-    t.index ["account_id", "status"], name: "index_transactions_on_account_id_and_status"
+    t.index ["account_id", "date", "created_at"], name: "index_transactions_on_account_id_and_date_and_created_at"
+    t.index ["account_id", "status", "date", "created_at"], name: "idx_on_account_id_status_date_created_at_34c64413eb"
     t.index ["budget_id", "date", "created_at"], name: "index_transactions_on_budget_id_and_date_and_created_at"
     t.index ["category_id"], name: "index_transactions_on_category_id"
     t.index ["payee_id"], name: "index_transactions_on_payee_id"
+    t.index ["status", "date"], name: "index_transactions_on_status_and_date"
   end
 
   add_foreign_key "accounts", "budgets"
