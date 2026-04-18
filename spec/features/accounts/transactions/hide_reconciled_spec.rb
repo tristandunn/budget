@@ -3,10 +3,10 @@
 require "rails_helper"
 
 describe "Hiding reconciled account transactions", :js do
-  let(:account)      { create(:account, budget: budget) }
-  let(:budget)       { create(:budget) }
-  let(:reconciled)   { create(:transaction, :reconciled, budget: budget, account: account) }
-  let(:unreconciled) { create(:transaction, budget: budget, account: account) }
+  let(:account)       { create(:account, budget: budget) }
+  let(:budget)        { create(:budget) }
+  let!(:reconciled)   { create(:transaction, :reconciled, budget: budget, account: account) }
+  let!(:unreconciled) { create(:transaction, budget: budget, account: account) }
 
   before do
     visit budget_account_transactions_path(budget, account)
