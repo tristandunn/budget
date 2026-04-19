@@ -11,7 +11,7 @@ gem "jbuilder",          "2.14.1"
 gem "kamal",             "2.11.0", require: false
 gem "litestream",        "0.14.0"
 gem "money",             "7.0.2"
-gem "propshaft",         "1.3.1"
+gem "propshaft",         "1.3.2"
 gem "puma",              "8.0.0"
 gem "rack-timeout",      "0.7.0"
 gem "rails",             "8.1.3"
