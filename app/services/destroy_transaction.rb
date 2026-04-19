@@ -21,7 +21,7 @@ class DestroyTransaction
   # @return [Boolean] Whether the transaction was destroyed successfully.
   def call
     ActiveRecord::Base.transaction do
-      unless transaction.recurring_scheduled?
+      unless transaction.upcoming?
         reverse_account_balance
         reverse_category_effects
       end

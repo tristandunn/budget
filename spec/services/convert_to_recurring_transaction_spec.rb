@@ -27,14 +27,11 @@ describe ConvertToRecurringTransaction do
 
     it "creates the next occurrence with the correct attributes" do
       expect(next_occurrence).to have_attributes(
-        account:     transaction.account,
-        amount:      transaction.amount,
-        budget:      transaction.budget,
-        date:        transaction.date.advance(months: 1),
-        frequency:   "monthly",
-        memo:        transaction.memo,
-        payee:       transaction.payee,
-        subcategory: transaction.subcategory
+        **transaction.copyable_attributes,
+        amount:    -1500,
+        date:      transaction.date.advance(months: 1),
+        frequency: "monthly",
+        status:    "upcoming"
       )
     end
 

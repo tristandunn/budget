@@ -1,6 +1,6 @@
 <%# locals: (transaction:) %>
 <div id="<%= dom_id(transaction, :status) %>" class="flex items-center">
-  <% if transaction.scheduled? %>
+  <% if transaction.upcoming? %>
     <span role="img" aria-label="<%= t(".upcoming") %>">
       <svg
         xmlns="http://www.w3.org/2000/svg"

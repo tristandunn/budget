@@ -8,7 +8,7 @@ describe Accounts::TransactionsController do
       let(:account)      { create(:account, budget: budget) }
       let(:budget)       { create(:budget) }
       let!(:transaction) { create(:transaction, account: account) }
-      let!(:upcoming)    { create(:transaction, account: account, date: 1.week.from_now) }
+      let!(:upcoming)    { create(:transaction, :upcoming, account: account) }
 
       before do
         create(:transaction, budget: budget)

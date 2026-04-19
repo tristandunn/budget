@@ -21,6 +21,12 @@ FactoryBot.define do
     trait :recurring do
       date      { 1.month.from_now.to_date }
       frequency { :monthly }
+      status    { :upcoming }
+    end
+
+    trait :upcoming do
+      date   { 1.month.from_now.to_date }
+      status { :upcoming }
     end
   end
 end

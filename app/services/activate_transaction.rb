@@ -3,28 +3,28 @@
 class ActivateTransaction
   # Initialize the service.
   #
-  # @param attributes [Hash] The new attributes for the transaction.
   # @param transaction [Transaction] The transaction to activate.
-  def initialize(attributes:, transaction:)
+  # @param attributes [Hash] The new attributes for the transaction.
+  def initialize(transaction:, attributes: {})
     @attributes  = attributes
     @transaction = transaction
   end
 
-  # Apply balance effects and update the transaction to become regular.
+  # Apply balance effects and update the transaction from upcoming to pending.
   #
-  # @param attributes [Hash] The new attributes for the transaction.
   # @param transaction [Transaction] The transaction to activate.
+  # @param attributes [Hash] The new attributes for the transaction.
   # @return [Boolean] Whether the transaction was activated successfully.
-  def self.call(attributes:, transaction:)
+  def self.call(transaction:, attributes: {})
     new(attributes: attributes, transaction: transaction).call
   end
 
-  # Apply balance effects and update the transaction to become regular.
+  # Apply balance effects and update the transaction from upcoming to pending.
   #
   # @return [Boolean] Whether the transaction was activated successfully.
   def call
     ActiveRecord::Base.transaction do
-      transaction.update!(attributes)
+      transaction.update!(attributes.merge(status: :pending))
 
       increment_account
 

@@ -42,14 +42,10 @@ class ConvertToRecurringTransaction
   # @return [Transaction] The newly created recurring transaction.
   def create_next_occurrence
     Transaction.create!(
-      account:     transaction.account,
-      amount:      transaction.amount,
-      budget:      transaction.budget,
-      category_id: transaction.category_id,
-      date:        transaction.next_recurring_date,
-      frequency:   attributes[:frequency],
-      memo:        transaction.memo,
-      payee:       transaction.payee
+      **transaction.copyable_attributes,
+      date:      transaction.next_recurring_date,
+      frequency: attributes[:frequency],
+      status:    :upcoming
     )
   end
 

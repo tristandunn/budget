@@ -11,7 +11,7 @@ describe TransactionsController do
     context "with transactions" do
       let!(:newer)    { create(:transaction, budget: budget, date: Date.new(2026, 3, 15)) }
       let!(:older)    { create(:transaction, budget: budget, date: Date.new(2026, 3, 10)) }
-      let!(:upcoming) { create(:transaction, budget: budget, date: 1.week.from_now) }
+      let!(:upcoming) { create(:transaction, :upcoming, budget: budget) }
 
       before do
         create(:transaction)

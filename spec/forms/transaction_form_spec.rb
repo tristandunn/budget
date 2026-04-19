@@ -186,6 +186,32 @@ describe TransactionForm, type: :form do
       end
     end
 
+    context "when scheduled" do
+      let(:form) do
+        described_class.new(**attributes, date: 1.month.from_now.to_date.to_s)
+      end
+
+      it { is_expected.to be(true) }
+
+      it "saves the transaction directly with upcoming status" do
+        save
+
+        expect(form.transaction).to be_persisted.and(be_upcoming)
+      end
+
+      it "does not call CreateTransaction" do
+        save
+
+        expect(CreateTransaction).not_to have_received(:call)
+      end
+
+      it "does not call PostRecurringTransaction" do
+        save
+
+        expect(PostRecurringTransaction).not_to have_received(:call)
+      end
+    end
+
     context "when recurring and scheduled" do
       let(:form) do
         described_class.new(**attributes, date: 1.month.from_now.to_date.to_s, frequency: "monthly")
@@ -193,10 +219,10 @@ describe TransactionForm, type: :form do
 
       it { is_expected.to be(true) }
 
-      it "saves the transaction directly" do
+      it "saves the transaction directly with upcoming status" do
         save
 
-        expect(form.transaction).to be_persisted
+        expect(form.transaction).to be_persisted.and(be_upcoming)
       end
 
       it "does not call CreateTransaction" do
@@ -752,6 +778,111 @@ describe TransactionForm, type: :form do
         update
 
         expect(UpdateTransaction).not_to have_received(:call)
+      end
+    end
+
+    context "when upcoming and still scheduled" do
+      let(:form) do
+        described_class.new(**attributes, date: 1.month.from_now.to_date.to_s)
+      end
+
+      let(:transaction) { create(:transaction, :upcoming) }
+
+      it { is_expected.to be(true) }
+
+      it "calls DirectUpdateTransaction" do
+        update
+
+        expect(DirectUpdateTransaction).to have_received(:call).with(
+          attributes:  attributes.except(:budget, :payee).merge(
+            amount:    2500,
+            date:      1.month.from_now.to_date,
+            frequency: nil,
+            payee:     an_object_having_attributes(name: "Test Payee")
+          ),
+          transaction: transaction
+        )
+      end
+
+      it "does not call ActivateTransaction" do
+        update
+
+        expect(ActivateTransaction).not_to have_received(:call)
+      end
+
+      it "does not call UpdateTransaction" do
+        update
+
+        expect(UpdateTransaction).not_to have_received(:call)
+      end
+    end
+
+    context "when upcoming and date moved to current" do
+      let(:form)        { described_class.new(**attributes) }
+      let(:transaction) { create(:transaction, :upcoming) }
+
+      it { is_expected.to be(true) }
+
+      it "calls ActivateTransaction" do
+        update
+
+        expect(ActivateTransaction).to have_received(:call).with(
+          attributes:  attributes.except(:budget, :payee).merge(
+            amount:    2500,
+            date:      Date.new(2026, 3, 18),
+            frequency: nil,
+            payee:     an_object_having_attributes(name: "Test Payee")
+          ),
+          transaction: transaction
+        )
+      end
+
+      it "does not call DirectUpdateTransaction" do
+        update
+
+        expect(DirectUpdateTransaction).not_to have_received(:call)
+      end
+
+      it "does not call UpdateTransaction" do
+        update
+
+        expect(UpdateTransaction).not_to have_received(:call)
+      end
+    end
+
+    context "when upcoming and becoming recurring and scheduled" do
+      let(:form) do
+        described_class.new(**attributes, date: 1.month.from_now.to_date.to_s, frequency: "monthly")
+      end
+
+      let(:transaction) { create(:transaction, :upcoming) }
+
+      it { is_expected.to be(true) }
+
+      it "calls DirectUpdateTransaction" do
+        update
+
+        expect(DirectUpdateTransaction).to have_received(:call).with(
+          attributes:  attributes.except(:budget, :payee).merge(
+            amount:    2500,
+            date:      1.month.from_now.to_date,
+            frequency: "monthly",
+            payee:     an_object_having_attributes(name: "Test Payee")
+          ),
+          transaction: transaction
+        )
+      end
+
+      it "does not call SuspendTransaction" do
+        update
+
+        expect(SuspendTransaction).not_to have_received(:call)
+      end
+
+      it "does not call ActivateTransaction" do
+        update
+
+        expect(ActivateTransaction).not_to have_received(:call)
       end
     end
   end

@@ -108,14 +108,14 @@ class TransactionsController < ApplicationController
     end
   end
 
-  # Return transactions for the budget, grouped by scheduled or not, optionally
+  # Return transactions for the budget, grouped by upcoming or not, optionally
   # excluding reconciled transactions.
   #
-  # @return [Array(Array<Transaction>, Array<Transaction>)] The scheduled and current transactions.
+  # @return [Array(Array<Transaction>, Array<Transaction>)] The upcoming and current transactions.
   def filtered_transactions
     transactions = budget.transactions.includes(:account, :payee, :subcategory)
     transactions = transactions.where.not(status: :reconciled) if budget.settings.hide_reconciled?
-    transactions.partition(&:scheduled?)
+    transactions.partition(&:upcoming?)
   end
 
   # Return the permitted form parameters.

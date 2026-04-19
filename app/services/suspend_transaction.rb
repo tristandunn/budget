@@ -10,7 +10,7 @@ class SuspendTransaction
     @transaction = transaction
   end
 
-  # Reverse balance effects and update the transaction to become recurring.
+  # Reverse balance effects and update the transaction to upcoming status.
   #
   # @param attributes [Hash] The new attributes for the transaction.
   # @param transaction [Transaction] The transaction to suspend.
@@ -19,14 +19,14 @@ class SuspendTransaction
     new(attributes: attributes, transaction: transaction).call
   end
 
-  # Reverse balance effects and update the transaction to become recurring.
+  # Reverse balance effects and update the transaction to upcoming status.
   #
   # @return [Boolean] Whether the transaction was suspended successfully.
   def call
     ActiveRecord::Base.transaction do
       reverse_account_balance
       reverse_category_effects
-      transaction.update!(attributes)
+      transaction.update!(attributes.merge(status: :upcoming))
 
       true
     end

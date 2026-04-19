@@ -25,14 +25,14 @@ module Accounts
       @budget ||= Budget.find(params[:budget_id])
     end
 
-    # Return transactions for the account, grouped by scheduled or not,
+    # Return transactions for the account, grouped by upcoming or not,
     # optionally excluding reconciled transactions.
     #
-    # @return [Array(Array<Transaction>, Array<Transaction>)] The scheduled and current transactions.
+    # @return [Array(Array<Transaction>, Array<Transaction>)] The upcoming and current transactions.
     def filtered_transactions
       transactions = account.transactions.includes(:payee, :subcategory)
       transactions = transactions.where.not(status: :reconciled) if budget.settings.hide_reconciled?
-      transactions.partition(&:scheduled?)
+      transactions.partition(&:upcoming?)
     end
   end
 end

@@ -80,9 +80,16 @@ describe Account do
       expect(account.cleared_balance).to eq(0)
     end
 
-    it "excludes recurring scheduled transactions" do
+    it "excludes upcoming recurring transactions" do
       account = create(:account, balance: -5000)
       create(:transaction, :recurring, account: account, amount: -2000, budget: account.budget)
+
+      expect(account.cleared_balance).to eq(-5000)
+    end
+
+    it "excludes upcoming non-recurring transactions" do
+      account = create(:account, balance: -5000)
+      create(:transaction, :upcoming, account: account, amount: -2000, budget: account.budget)
 
       expect(account.cleared_balance).to eq(-5000)
     end
@@ -97,10 +104,18 @@ describe Account do
       expect(account.uncleared_balance).to eq(-5000)
     end
 
-    it "excludes recurring scheduled transactions" do
+    it "excludes upcoming recurring transactions" do
       account = create(:account)
       create(:transaction, account: account, amount: -5000, budget: account.budget)
       create(:transaction, :recurring, account: account, amount: -2000, budget: account.budget)
+
+      expect(account.uncleared_balance).to eq(-5000)
+    end
+
+    it "excludes upcoming non-recurring transactions" do
+      account = create(:account)
+      create(:transaction, account: account, amount: -5000, budget: account.budget)
+      create(:transaction, :upcoming, account: account, amount: -2000, budget: account.budget)
 
       expect(account.uncleared_balance).to eq(-5000)
     end

@@ -59,7 +59,8 @@ describe SuspendTransaction do
 
         expect(transaction.reload).to have_attributes(
           date:      1.month.from_now.to_date,
-          frequency: "monthly"
+          frequency: "monthly",
+          status:    "upcoming"
         )
       end
     end
@@ -103,7 +104,8 @@ describe SuspendTransaction do
 
         expect(transaction.reload).to have_attributes(
           date:      1.month.from_now.to_date,
-          frequency: "monthly"
+          frequency: "monthly",
+          status:    "upcoming"
         )
       end
     end
@@ -143,7 +145,8 @@ describe SuspendTransaction do
 
         expect(transaction.reload).to have_attributes(
           date:      1.month.from_now.to_date,
-          frequency: "monthly"
+          frequency: "monthly",
+          status:    "upcoming"
         )
       end
     end

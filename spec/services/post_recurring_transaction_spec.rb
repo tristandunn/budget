@@ -15,19 +15,16 @@ describe PostRecurringTransaction do
 
     it "creates the next occurrence with the same attributes and an advanced date" do
       expect(next_occurrence).to have_attributes(
-        account:     transaction.account,
-        amount:      -1500,
-        budget:      transaction.budget,
-        date:        transaction.date.advance(months: 1),
-        frequency:   "monthly",
-        memo:        transaction.memo,
-        payee:       transaction.payee,
-        subcategory: transaction.subcategory
+        **transaction.copyable_attributes,
+        amount:    -1500,
+        date:      transaction.date.advance(months: 1),
+        frequency: "monthly",
+        status:    "upcoming"
       )
     end
 
-    it "clears the frequency on the original transaction" do
-      expect(transaction.frequency).to be_nil
+    it "clears the frequency and sets the status to pending on the original" do
+      expect(transaction).to have_attributes(frequency: nil, status: "pending")
     end
 
     it "calls CreateTransaction" do

@@ -44,7 +44,7 @@ describe "transactions/_status_indicator.html.erb" do
   end
 
   context "when the transaction is scheduled" do
-    let(:transaction) { build_stubbed(:transaction, budget: budget, date: 1.week.from_now) }
+    let(:transaction) { build_stubbed(:transaction, :upcoming, budget: budget) }
 
     it "renders an upcoming indicator" do
       expect(html).to have_css("[aria-label='Upcoming']")

@@ -25,7 +25,7 @@ describe Transaction do
 
     it "defines and validates a status enum" do
       expect(transaction).to define_enum_for(:status)
-        .with_values(pending: 0, cleared: 1, reconciled: 2)
+        .with_values(pending: 0, cleared: 1, reconciled: 2, upcoming: 3)
         .validating
     end
 
@@ -57,37 +57,44 @@ describe Transaction do
     end
   end
 
-  describe ".recurring_due" do
-    subject { described_class.recurring_due }
+  describe ".activation_due" do
+    it "includes upcoming transactions with today's date" do
+      transaction = create(:transaction, :upcoming, date: Date.current)
 
-    let(:transaction) { create(:transaction, date: date, frequency: frequency) }
-
-    context "with a frequency and today's date" do
-      let(:date)      { Date.current }
-      let(:frequency) { :monthly }
-
-      it { is_expected.to include(transaction) }
+      expect(described_class.activation_due).to include(transaction)
     end
 
-    context "with a frequency and a past date" do
-      let(:date)      { 1.day.ago.to_date }
-      let(:frequency) { :monthly }
+    it "includes upcoming transactions with a past date" do
+      transaction = create(:transaction, :upcoming, date: 1.day.ago.to_date)
 
-      it { is_expected.to include(transaction) }
+      expect(described_class.activation_due).to include(transaction)
     end
 
-    context "with a frequency and a future date" do
-      let(:date)      { 1.month.from_now.to_date }
-      let(:frequency) { :monthly }
+    it "excludes upcoming transactions with a future date" do
+      transaction = create(:transaction, :upcoming)
 
-      it { is_expected.not_to include(transaction) }
+      expect(described_class.activation_due).not_to include(transaction)
     end
 
-    context "without a frequency" do
-      let(:date)      { 1.day.from_now.to_date }
-      let(:frequency) { nil }
+    it "excludes pending transactions with today's date" do
+      transaction = create(:transaction, date: Date.current)
 
-      it { is_expected.not_to include(transaction) }
+      expect(described_class.activation_due).not_to include(transaction)
+    end
+  end
+
+  describe "#copyable_attributes" do
+    it "returns the attributes to copy when creating a new occurrence" do
+      transaction = create(:transaction)
+
+      expect(transaction.copyable_attributes).to eq(
+        account_id:  transaction.account_id,
+        amount:      transaction.amount,
+        budget_id:   transaction.budget_id,
+        category_id: transaction.category_id,
+        memo:        transaction.memo,
+        payee_id:    transaction.payee_id
+      )
     end
   end
 

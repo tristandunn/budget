@@ -56,7 +56,7 @@ describe ActivateTransaction do
       it "updates the transaction with the new attributes" do
         described_class.call(attributes: new_attributes, transaction: transaction)
 
-        expect(transaction.reload).to have_attributes(frequency: nil)
+        expect(transaction.reload).to have_attributes(frequency: nil, status: "pending")
       end
     end
 
@@ -96,7 +96,7 @@ describe ActivateTransaction do
       it "updates the transaction with the new attributes" do
         described_class.call(attributes: new_attributes, transaction: transaction)
 
-        expect(transaction.reload).to have_attributes(frequency: nil)
+        expect(transaction.reload).to have_attributes(frequency: nil, status: "pending")
       end
     end
 
@@ -130,7 +130,7 @@ describe ActivateTransaction do
       it "updates the transaction with the new attributes" do
         described_class.call(attributes: new_attributes, transaction: transaction)
 
-        expect(transaction.reload).to have_attributes(frequency: nil)
+        expect(transaction.reload).to have_attributes(frequency: nil, status: "pending")
       end
     end
 
@@ -184,7 +184,7 @@ describe ActivateTransaction do
       it "updates the transaction with the new attributes" do
         described_class.call(attributes: new_attributes, transaction: transaction)
 
-        expect(transaction.reload).to have_attributes(frequency: nil)
+        expect(transaction.reload).to have_attributes(frequency: nil, status: "pending")
       end
     end
   end
