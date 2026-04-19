@@ -6,7 +6,6 @@ describe "transactions/_form.html.erb" do
   subject(:html) do
     render partial: "transactions/form", locals: {
       accounts:     accounts,
-      categories:   categories,
       form:         form,
       method:       :post,
       submit_label: "Save",
@@ -17,7 +16,6 @@ describe "transactions/_form.html.erb" do
   end
 
   let(:accounts)    { subcategory.budget.accounts }
-  let(:categories)  { subcategory.budget.categories.sort_by(&:position) }
   let(:form)        { TransactionForm.new(budget: subcategory.budget, subcategory: subcategory) }
   let(:subcategory) { create(:category, :subcategory) }
 
@@ -36,14 +34,19 @@ describe "transactions/_form.html.erb" do
     )
   end
 
-  it "renders the subcategory select" do
-    expect(html).to have_select("transaction_form_subcategory_id")
+  it "renders the subcategory hidden field" do
+    expect(html).to have_field("transaction_form_subcategory_id", type: :hidden)
   end
 
-  it "groups subcategories under their parent category" do
-    parent = subcategory.parent
+  context "when no subcategory is selected" do
+    let(:form) { TransactionForm.new(budget: subcategory.budget) }
 
-    expect(html).to have_css("optgroup[label='#{parent.name}'] option", text: subcategory.name)
+    it "shows the subcategory placeholder" do
+      expect(html).to have_css(
+        "[data-category-picker-target='display']",
+        text: t("transactions.form.select_subcategory")
+      )
+    end
   end
 
   it "renders the account select" do
@@ -97,8 +100,19 @@ describe "transactions/_form.html.erb" do
       expect(html).to have_field("transaction_form_memo", with: transaction.memo)
     end
 
-    it "preselects the subcategory" do
-      expect(html).to have_select("transaction_form_subcategory_id", selected: subcategory.name)
+    it "prepopulates the subcategory" do
+      expect(html).to have_field(
+        "transaction_form_subcategory_id",
+        type: :hidden,
+        with: subcategory.id.to_s
+      )
+    end
+
+    it "displays the subcategory name" do
+      expect(html).to have_css(
+        "[data-category-picker-target='display']",
+        text: subcategory.name
+      )
     end
 
     it "preselects the account" do

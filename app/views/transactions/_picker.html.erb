@@ -1,0 +1,64 @@
+<%# locals: (controller:, placeholder:) %>
+<%= tag.div(
+      class: "picker hidden absolute inset-0 flex flex-col bg-taupe-100",
+      data:  { "#{controller}-target": "picker" }
+    ) do %>
+  <header class="flex items-center gap-3 p-4">
+    <button
+      type="button"
+      data-action="<%= controller %>#back"
+      class="flex items-center gap-1 text-sm text-taupe-400 hover:text-taupe-600"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="w-4 h-4"
+        viewBox="0 0 16 16"
+        fill="currentColor"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M9.78 4.22a.75.75 0 0 1 0 1.06L7.06 8l2.72 2.72a.75.75 0 1 1-1.06 1.06L5.47 8.53a.75.75 0 0 1 0-1.06l3.25-3.25a.75.75 0 0 1 1.06 0Z"
+          clip-rule="evenodd"
+        />
+      </svg>
+
+      <%= t(".back") %>
+    </button>
+  </header>
+
+  <div class="px-4 pb-4">
+    <div class="flex items-center gap-3 px-4 py-3 bg-white rounded-xl">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="w-4 h-4 text-taupe-400 shrink-0"
+        viewBox="0 0 16 16"
+        fill="currentColor"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
+          clip-rule="evenodd"
+        />
+      </svg>
+
+      <%= tag.input(
+            "aria-label": placeholder,
+            autocomplete: "off",
+            class:        "grow bg-transparent border-none outline-none text-base placeholder:text-gray-400 focus:ring-0 p-0",
+            data:         {
+              action:                 "input->#{controller}#filter",
+              "#{controller}-target": "search"
+            },
+            placeholder:  placeholder,
+            type:         "search"
+          ) %>
+    </div>
+  </div>
+
+  <%= tag.div(
+        class: "flex-1 px-4 pb-4 overflow-y-auto",
+        data:  { "#{controller}-target": "list" }
+      ) %>
+
+  <%= yield if block_given? %>
+<% end %>

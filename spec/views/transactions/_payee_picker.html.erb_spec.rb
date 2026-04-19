@@ -10,7 +10,7 @@ describe "transactions/_payee_picker.html.erb" do
   end
 
   it "renders the back button" do
-    expect(html).to have_button(I18n.t("transactions.payee_picker.back"))
+    expect(html).to have_button(I18n.t("transactions.picker.back"))
   end
 
   it "renders the search input" do

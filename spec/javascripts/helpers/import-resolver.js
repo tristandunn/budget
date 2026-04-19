@@ -5,6 +5,8 @@ const applicationRoot = `${path.resolve("./")}/app/javascript`;
 export async function resolve(specifier, context, nextResolve) {
   if (specifier.startsWith("@app")) {
     specifier = specifier.replace("@app", applicationRoot);
+  } else if (specifier.startsWith("controllers/")) {
+    specifier = `${applicationRoot}/${specifier}.js`;
   }
 
   return nextResolve(specifier, context);

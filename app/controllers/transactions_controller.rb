@@ -12,24 +12,21 @@ class TransactionsController < ApplicationController
 
   # Render the new transaction form.
   def new
-    @accounts   = budget.accounts
-    @categories = sorted_categories
-    @form       = TransactionForm.new(account: default_account, budget: budget)
+    @accounts = budget.accounts
+    @form     = TransactionForm.new(account: default_account, budget: budget)
   end
 
   # Render the edit transaction form.
   def edit
     @accounts    = budget.accounts
-    @categories  = sorted_categories
     @transaction = transaction
     @form        = TransactionForm.from(transaction: transaction)
   end
 
   # Create a new transaction.
   def create
-    @accounts   = budget.accounts
-    @categories = sorted_categories
-    @form       = TransactionForm.new(transaction_parameters)
+    @accounts = budget.accounts
+    @form     = TransactionForm.new(transaction_parameters)
 
     if @form.save
       redirect_to return_location, status: :see_other
@@ -41,7 +38,6 @@ class TransactionsController < ApplicationController
   # Update an existing transaction.
   def update
     @accounts    = budget.accounts
-    @categories  = sorted_categories
     @transaction = transaction
     @form        = TransactionForm.new(transaction_parameters)
 
@@ -141,13 +137,6 @@ class TransactionsController < ApplicationController
   # @return [String] The URL to redirect to after a successful update.
   def return_location
     session.delete(:return_to) || budget_transactions_path(budget)
-  end
-
-  # Return the budget categories sorted by position.
-  #
-  # @return [Array<Category>] The sorted categories.
-  def sorted_categories
-    @sorted_categories ||= budget.categories.sort_by(&:position)
   end
 
   # Store the referer in the session.
