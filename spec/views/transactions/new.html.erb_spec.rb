@@ -9,7 +9,7 @@ describe "transactions/new.html.erb" do
     rendered
   end
 
-  let(:budget) { create(:budget) }
+  let(:budget) { build_stubbed(:budget) }
   let(:form)   { TransactionForm.new(budget: budget) }
 
   before do

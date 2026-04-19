@@ -9,7 +9,7 @@ describe "accounts/index.html.erb" do
     rendered
   end
 
-  let(:budget) { create(:budget) }
+  let(:budget) { build_stubbed(:budget) }
 
   before do
     stub_template("shared/_toolbar.html.erb" => "TOOLBAR_PARTIAL")
@@ -28,7 +28,7 @@ describe "accounts/index.html.erb" do
   end
 
   describe "cash section" do
-    let(:account) { create(:account, budget: budget) }
+    let(:account) { build_stubbed(:account, budget: budget) }
 
     before do
       assign :cash_accounts, [account]
@@ -47,7 +47,7 @@ describe "accounts/index.html.erb" do
   end
 
   describe "credit section" do
-    let(:account) { create(:account, :credit, budget: budget) }
+    let(:account) { build_stubbed(:account, :credit, budget: budget) }
 
     before do
       assign :credit_accounts, [account]

@@ -20,7 +20,7 @@ describe "transactions/_list.html.erb" do
   context "when there are transactions" do
     let(:current_transactions) { [transaction] }
     let(:date)                 { 2.days.ago.to_date }
-    let(:transaction)          { create(:transaction, date: date) }
+    let(:transaction)          { build_stubbed(:transaction, date: date) }
 
     before do
       stub_template("transactions/_status_indicator.html.erb" => "STATUS_INDICATOR")
@@ -77,7 +77,7 @@ describe "transactions/_list.html.erb" do
     end
 
     context "when the transaction is reconciled" do
-      let(:transaction) { create(:transaction, :reconciled, date: date) }
+      let(:transaction) { build_stubbed(:transaction, :reconciled, date: date) }
 
       it "does not link to the edit page" do
         expect(html).to have_no_link(href: edit_budget_transaction_path(transaction.budget, transaction))
@@ -104,7 +104,7 @@ describe "transactions/_list.html.erb" do
 
   context "when there are scheduled transactions" do
     let(:scheduled_transactions) { [transaction] }
-    let(:transaction)            { create(:transaction, :recurring) }
+    let(:transaction)            { build_stubbed(:transaction, :recurring) }
 
     before do
       stub_template("transactions/_status_indicator.html.erb" => "STATUS_INDICATOR")

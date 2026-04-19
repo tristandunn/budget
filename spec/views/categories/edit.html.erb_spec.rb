@@ -11,7 +11,7 @@ describe "categories/edit.html.erb" do
 
   let(:budget)      { subcategory.budget }
   let(:form)        { CategoryForm.from(category: subcategory) }
-  let(:subcategory) { create(:category, :subcategory) }
+  let(:subcategory) { build_stubbed(:category, :subcategory) }
 
   before do
     assign :budget, budget

@@ -10,7 +10,7 @@ describe "transactions/edit.html.erb" do
   end
 
   let(:form)        { TransactionForm.from(transaction: transaction) }
-  let(:transaction) { create(:transaction) }
+  let(:transaction) { build_stubbed(:transaction) }
 
   before do
     stub_template("transactions/_form.html.erb" => "FORM_PARTIAL")

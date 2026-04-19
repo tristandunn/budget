@@ -148,13 +148,13 @@ describe Transaction do
     subject(:transaction) { build(:transaction, subcategory: subcategory) }
 
     context "when valid" do
-      let(:subcategory) { create(:category, :subcategory) }
+      let(:subcategory) { build_stubbed(:category, :subcategory) }
 
       it { is_expected.to be_valid }
     end
 
     context "when invalid" do
-      let(:subcategory) { create(:category) }
+      let(:subcategory) { build_stubbed(:category) }
 
       it { is_expected.not_to be_valid }
 

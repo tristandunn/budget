@@ -10,7 +10,7 @@ describe "transactions/_actions.html.erb" do
     rendered
   end
 
-  let(:budget) { create(:budget) }
+  let(:budget) { build_stubbed(:budget) }
 
   before do
     stub_template("shared/transactions/_hide_reconciled.html.erb" => "HIDE_RECONCILED_PARTIAL")

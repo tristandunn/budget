@@ -11,7 +11,7 @@ describe "shared/_toolbar.html.erb" do
   end
 
   let(:account_id) { nil }
-  let(:budget)     { create(:budget) }
+  let(:budget)     { build_stubbed(:budget) }
 
   it "renders the plan link" do
     expect(html).to have_link(I18n.t("toolbar.plan"), href: budget_path(budget))
@@ -44,7 +44,7 @@ describe "shared/_toolbar.html.erb" do
   end
 
   context "with an account ID" do
-    let(:account)    { create(:account, budget: budget) }
+    let(:account)    { build_stubbed(:account, budget: budget) }
     let(:account_id) { account.id }
 
     it "renders the add transaction link with the account" do

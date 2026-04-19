@@ -55,7 +55,7 @@ describe TransactionsHelper do
 
   describe "#transaction_row_wrapper" do
     context "when the transaction is not reconciled" do
-      let(:transaction) { create(:transaction) }
+      let(:transaction) { build_stubbed(:transaction) }
 
       it "returns a link" do
         result = helper.transaction_row_wrapper(transaction) { "content" }
@@ -71,7 +71,7 @@ describe TransactionsHelper do
     end
 
     context "when the transaction is reconciled" do
-      let(:transaction) { create(:transaction, :reconciled) }
+      let(:transaction) { build_stubbed(:transaction, :reconciled) }
 
       it "returns a div without a link" do
         result = helper.transaction_row_wrapper(transaction) { "content" }

@@ -14,7 +14,7 @@ describe "transactions/_scheduled_group.html.erb" do
   end
 
   let(:date)        { 1.month.from_now.to_date }
-  let(:transaction) { create(:transaction, :recurring, date: date) }
+  let(:transaction) { build_stubbed(:transaction, :recurring, date: date) }
 
   before do
     stub_template("transactions/_status_indicator.html.erb" => "STATUS_INDICATOR")

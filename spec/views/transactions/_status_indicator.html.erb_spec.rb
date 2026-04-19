@@ -9,10 +9,10 @@ describe "transactions/_status_indicator.html.erb" do
     rendered
   end
 
-  let(:budget) { create(:budget) }
+  let(:budget) { build_stubbed(:budget) }
 
   context "when the transaction is pending" do
-    let(:transaction) { create(:transaction, budget: budget) }
+    let(:transaction) { build_stubbed(:transaction, budget: budget) }
 
     it "renders a clear button" do
       expect(html).to have_button("Pending")
@@ -28,7 +28,7 @@ describe "transactions/_status_indicator.html.erb" do
   end
 
   context "when the transaction is cleared" do
-    let(:transaction) { create(:transaction, :cleared, budget: budget) }
+    let(:transaction) { build_stubbed(:transaction, :cleared, budget: budget) }
 
     it "renders an unclear button" do
       expect(html).to have_button("Cleared")
@@ -44,7 +44,7 @@ describe "transactions/_status_indicator.html.erb" do
   end
 
   context "when the transaction is scheduled" do
-    let(:transaction) { create(:transaction, budget: budget, date: 1.week.from_now) }
+    let(:transaction) { build_stubbed(:transaction, budget: budget, date: 1.week.from_now) }
 
     it "renders an upcoming indicator" do
       expect(html).to have_css("[aria-label='Upcoming']")
@@ -56,7 +56,7 @@ describe "transactions/_status_indicator.html.erb" do
   end
 
   context "when the transaction is recurring and scheduled" do
-    let(:transaction) { create(:transaction, :recurring, budget: budget) }
+    let(:transaction) { build_stubbed(:transaction, :recurring, budget: budget) }
 
     it "renders an upcoming indicator" do
       expect(html).to have_css("[aria-label='Upcoming']")
@@ -68,7 +68,7 @@ describe "transactions/_status_indicator.html.erb" do
   end
 
   context "when the transaction is reconciled" do
-    let(:transaction) { create(:transaction, :reconciled, budget: budget) }
+    let(:transaction) { build_stubbed(:transaction, :reconciled, budget: budget) }
 
     it "renders a reconciled indicator" do
       expect(html).to have_css("[aria-label='Reconciled']")

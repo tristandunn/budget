@@ -9,8 +9,8 @@ describe "accounts/transactions/index.html.erb" do
     rendered
   end
 
-  let(:account) { create(:account, budget: budget) }
-  let(:budget)  { create(:budget) }
+  let(:account) { build_stubbed(:account, budget: budget) }
+  let(:budget)  { build_stubbed(:budget) }
 
   before do
     stub_template("accounts/transactions/_actions.html.erb" => "ACTIONS_PARTIAL")

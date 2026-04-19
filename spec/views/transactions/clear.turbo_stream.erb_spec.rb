@@ -9,7 +9,7 @@ describe "transactions/clear.turbo_stream.erb" do
     rendered
   end
 
-  let(:transaction) { create(:transaction, :cleared) }
+  let(:transaction) { build_stubbed(:transaction, :cleared) }
 
   before do
     stub_template("transactions/_status_indicator.html.erb" => "STATUS_INDICATOR")
