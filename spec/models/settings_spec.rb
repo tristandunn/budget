@@ -19,6 +19,14 @@ describe Settings do
     end
   end
 
+  describe "#time_zone" do
+    it "returns the stored zone" do
+      budget.settings = { time_zone: "Asia/Tokyo" }
+
+      expect(settings.time_zone).to eq("Asia/Tokyo")
+    end
+  end
+
   describe "#update" do
     it "enables a boolean setting" do
       settings.update(hide_reconciled: "1")

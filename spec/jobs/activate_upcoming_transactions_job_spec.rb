@@ -46,5 +46,29 @@ describe ActivateUpcomingTransactionsJob do
 
       expect(ActivateTransaction).not_to have_received(:call)
     end
+
+    context "when budgets are on different calendar dates" do
+      before do
+        travel_to(Time.utc(2026, 4, 19, 3))
+      end
+
+      it "skips a transaction whose date is still future in the budget's zone" do
+        budget    = create(:budget, settings: { time_zone: "Hawaii" })
+        recurring = create(:transaction, :recurring, budget: budget, date: Date.new(2026, 4, 19))
+
+        described_class.new.perform
+
+        expect(PostRecurringTransaction).not_to have_received(:call).with(transaction: recurring)
+      end
+
+      it "posts a transaction whose date is today in the budget's zone" do
+        budget    = create(:budget, settings: { time_zone: "Asia/Tokyo" })
+        recurring = create(:transaction, :recurring, budget: budget, date: Date.new(2026, 4, 19))
+
+        described_class.new.perform
+
+        expect(PostRecurringTransaction).to have_received(:call).with(transaction: recurring)
+      end
+    end
   end
 end

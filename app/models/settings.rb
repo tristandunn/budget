@@ -15,6 +15,13 @@ class Settings
     enabled?(:hide_reconciled)
   end
 
+  # The configured time zone.
+  #
+  # @return [String] The Rails time zone name.
+  def time_zone
+    store["time_zone"]
+  end
+
   # Update settings from a permitted parameters hash.
   #
   # @param attributes [Hash] The settings to update.

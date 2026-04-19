@@ -3,5 +3,23 @@
 require "rails_helper"
 
 describe ApplicationController do
+  controller do
+    def index
+      render plain: Time.zone.name
+    end
+  end
+
   it { is_expected.to be_a(ActionController::Base) }
+
+  describe "#assign_current_budget" do
+    subject { response.body }
+
+    let(:budget) { create(:budget, settings: { time_zone: "Asia/Tokyo" }) }
+
+    before do
+      get :index, params: { budget_id: budget.id }
+    end
+
+    it { is_expected.to eq("Asia/Tokyo") }
+  end
 end

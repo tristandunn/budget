@@ -15,4 +15,4 @@ production:
     schedule: every hour at minute 12
   activate_upcoming_transactions:
     class: ActivateUpcomingTransactionsJob
-    schedule: at midnight every day
+    schedule: every 30 minutes
