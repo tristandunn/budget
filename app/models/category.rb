@@ -13,7 +13,7 @@ class Category < ApplicationRecord
   has_many :transactions, inverse_of: :subcategory, dependent: :nullify
 
   validates :name, presence:   true,
-                   uniqueness: { case_sensitive: false, scope: :budget_id }
+                   uniqueness: { case_sensitive: false, scope: %i(budget_id parent_id) }
   validates :position, presence: true, numericality: { only_integer: true }
 
   # Returns true if this category is an inflow category.

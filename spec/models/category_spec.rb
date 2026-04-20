@@ -18,7 +18,7 @@ describe Category do
     subject { create(:category) }
 
     it { is_expected.to validate_presence_of(:name) }
-    it { is_expected.to validate_uniqueness_of(:name).scoped_to(:budget_id).case_insensitive }
+    it { is_expected.to validate_uniqueness_of(:name).scoped_to(:budget_id, :parent_id).case_insensitive }
 
     it { is_expected.to validate_presence_of(:position) }
     it { is_expected.to validate_numericality_of(:position).only_integer }

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_08_130609) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_20_222049) do
   create_table "accounts", force: :cascade do |t|
     t.integer "balance", default: 0, null: false
     t.integer "budget_id", null: false
@@ -35,7 +35,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_08_130609) do
     t.integer "parent_id"
     t.integer "position", default: 0, null: false
     t.datetime "updated_at", null: false
-    t.index ["budget_id", "name"], name: "index_categories_on_budget_id_and_name", unique: true
+    t.index ["budget_id", "name"], name: "index_categories_on_budget_id_and_name_for_parents", unique: true, where: "parent_id IS NULL"
+    t.index ["budget_id", "parent_id", "name"], name: "index_categories_on_budget_id_and_parent_id_and_name", unique: true, where: "parent_id IS NOT NULL"
     t.index ["parent_id"], name: "index_categories_on_parent_id"
   end
 
