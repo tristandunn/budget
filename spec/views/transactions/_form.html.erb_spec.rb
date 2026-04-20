@@ -5,7 +5,6 @@ require "rails_helper"
 describe "transactions/_form.html.erb" do
   subject(:html) do
     render partial: "transactions/form", locals: {
-      accounts:     accounts,
       form:         form,
       method:       :post,
       submit_label: "Save",
@@ -15,7 +14,6 @@ describe "transactions/_form.html.erb" do
     rendered
   end
 
-  let(:accounts)    { subcategory.budget.accounts }
   let(:form)        { TransactionForm.new(budget: subcategory.budget, subcategory: subcategory) }
   let(:subcategory) { create(:category, :subcategory) }
 
@@ -49,8 +47,17 @@ describe "transactions/_form.html.erb" do
     end
   end
 
-  it "renders the account select" do
-    expect(html).to have_select("transaction_form_account_id")
+  it "renders the account hidden field" do
+    expect(html).to have_field("transaction_form_account_id", type: :hidden)
+  end
+
+  context "when no account is selected" do
+    it "shows the account placeholder" do
+      expect(html).to have_css(
+        "[data-account-picker-target='display']",
+        text: t("transactions.form.select_account")
+      )
+    end
   end
 
   it "renders the date field" do
@@ -115,8 +122,19 @@ describe "transactions/_form.html.erb" do
       )
     end
 
-    it "preselects the account" do
-      expect(html).to have_select("transaction_form_account_id", selected: transaction.account.name)
+    it "prepopulates the account" do
+      expect(html).to have_field(
+        "transaction_form_account_id",
+        type: :hidden,
+        with: transaction.account.id.to_s
+      )
+    end
+
+    it "displays the account name" do
+      expect(html).to have_css(
+        "[data-account-picker-target='display']",
+        text: transaction.account.name
+      )
     end
 
     it "preselects the frequency" do

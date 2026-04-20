@@ -85,6 +85,7 @@ en:
     form:
       enter_memo: "Enter a memo..."
       enter_payee: "Enter a Payee"
+      search_accounts: "Find an account"
       search_categories: "Find a category"
       search_payees: "Find or add a payee"
       select_account: "Choose Account"

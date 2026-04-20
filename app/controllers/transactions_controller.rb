@@ -12,21 +12,18 @@ class TransactionsController < ApplicationController
 
   # Render the new transaction form.
   def new
-    @accounts = budget.accounts
-    @form     = TransactionForm.new(account: default_account, budget: budget)
+    @form = TransactionForm.new(account: default_account, budget: budget)
   end
 
   # Render the edit transaction form.
   def edit
-    @accounts    = budget.accounts
     @transaction = transaction
     @form        = TransactionForm.from(transaction: transaction)
   end
 
   # Create a new transaction.
   def create
-    @accounts = budget.accounts
-    @form     = TransactionForm.new(transaction_parameters)
+    @form = TransactionForm.new(transaction_parameters)
 
     if @form.save
       redirect_to return_location, status: :see_other
@@ -37,7 +34,6 @@ class TransactionsController < ApplicationController
 
   # Update an existing transaction.
   def update
-    @accounts    = budget.accounts
     @transaction = transaction
     @form        = TransactionForm.new(transaction_parameters)
 
@@ -91,7 +87,7 @@ class TransactionsController < ApplicationController
   #
   # @return [Budget] The requested budget.
   def budget
-    @budget ||= Budget.includes(:accounts, categories: :subcategories).find(params[:budget_id])
+    @budget ||= Budget.find(params[:budget_id])
   end
 
   # Return the default account from the query parameter, if present.

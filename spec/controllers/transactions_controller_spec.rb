@@ -71,10 +71,6 @@ describe TransactionsController do
       expect(TransactionForm).to have_received(:new).with(account: nil, budget: budget)
     end
 
-    it "assigns the budget accounts" do
-      expect(assigns(:accounts)).to eq(budget.accounts)
-    end
-
     it "assigns a transaction form" do
       expect(assigns(:form)).to eq(form)
     end
@@ -217,10 +213,6 @@ describe TransactionsController do
         expect(TransactionForm).to have_received(:new).with(expected_parameters)
       end
 
-      it "assigns the budget accounts" do
-        expect(assigns(:accounts)).to eq(budget.accounts)
-      end
-
       it "assigns a transaction form" do
         expect(assigns(:form)).to eq(form)
       end
@@ -242,10 +234,6 @@ describe TransactionsController do
 
     it { is_expected.to respond_with(200) }
     it { is_expected.to render_template(:edit) }
-
-    it "assigns the budget accounts" do
-      expect(assigns(:accounts)).to eq(budget.accounts)
-    end
 
     it "assigns the transaction" do
       expect(assigns(:transaction)).to eq(transaction)
@@ -354,10 +342,6 @@ describe TransactionsController do
           payee:       "Test Payee",
           subcategory: subcategory
         )
-      end
-
-      it "assigns the budget accounts" do
-        expect(assigns(:accounts)).to eq(budget.accounts)
       end
 
       it "assigns the transaction" do

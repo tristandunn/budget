@@ -1,8 +1,9 @@
 <%= turbo_frame_tag "transaction_dialog", class: "flex flex-col h-full" do %>
   <div
-    data-controller="payee-picker category-picker"
+    data-controller="payee-picker category-picker account-picker"
     data-payee-picker-url-value="<%= budget_payees_path(@form.budget) %>"
     data-category-picker-url-value="<%= budget_categories_path(@form.budget, format: :json) %>"
+    data-account-picker-url-value="<%= budget_accounts_path(@form.budget, format: :json) %>"
     class="relative flex flex-col h-full overflow-x-clip"
   >
     <div>
@@ -23,7 +24,6 @@
       </header>
 
       <%= render "form",
-                 accounts:     @accounts,
                  form:         @form,
                  method:       :post,
                  submit_label: t(".submit"),
@@ -32,5 +32,6 @@
 
     <%= render "payee_picker" %>
     <%= render "category_picker" %>
+    <%= render "account_picker" %>
   </div>
 <% end %>

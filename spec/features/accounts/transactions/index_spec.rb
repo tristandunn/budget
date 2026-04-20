@@ -20,9 +20,10 @@ describe "Account transactions" do
     visit budget_account_transactions_path(budget, account)
     click_on "add-transaction"
 
-    expect(page).to have_select(
-      t("activemodel.attributes.transaction_form.account_id"),
-      selected: account.name
-    )
+    expect(page).to have_field(
+      "transaction_form_account_id",
+      type: :hidden,
+      with: account.id.to_s
+    ).and have_css("[data-account-picker-target='display']", text: account.name)
   end
 end
