@@ -143,4 +143,20 @@ describe("PayeePickerController", () => {
       expect(display.textContent).to.eq("Taco");
     });
   });
+
+  describe("#selectOnKey", () => {
+    it("does not activate the create option when Enter is pressed", async () => {
+      await controller.open();
+      search.value = "Taco";
+      await controller.filter();
+
+      await controller.selectOnKey({
+        "key": "Enter",
+        "preventDefault": sinon.fake()
+      });
+
+      expect(hiddenField.value).to.eq("");
+      expect(picker.classList.contains("hidden")).to.be.false;
+    });
+  });
 });

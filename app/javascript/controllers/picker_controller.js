@@ -61,14 +61,32 @@ export default class extends Controller {
   select(event) {
     const target = event.currentTarget;
 
-    this.hiddenFieldTarget.value = target.dataset.value;
-    this.displayTarget.textContent = target.dataset.label;
-    this.displayTarget.classList.remove("text-gray-400");
-    this.displayTarget.classList.add("text-gray-800");
-    this.iconTarget.classList.remove("text-taupe-400");
-    this.iconTarget.classList.add("text-indigo-600");
+    this.#applySelection(target.dataset.value, target.dataset.label);
+  }
 
-    this.#closePanel();
+  // Select an item whose label exactly matches the search input on Enter.
+  selectOnKey(event) {
+    if (event.key !== "Enter" || event.isComposing) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const trimmed = this.searchTarget.value.trim();
+
+    if (trimmed.length === 0) {
+      return;
+    }
+
+    return this.#fetchItems().then((items) => {
+      const match = items.find((item) => {
+        return this.labelFor(item).toLowerCase() === trimmed.toLowerCase();
+      });
+
+      if (match) {
+        this.#applySelection(this.valueFor(match), this.labelFor(match));
+      }
+    });
   }
 
   /*
@@ -106,6 +124,18 @@ export default class extends Controller {
     } else {
       return String(item.id);
     }
+  }
+
+  // Apply a selection to the form and close the picker.
+  #applySelection(value, label) {
+    this.hiddenFieldTarget.value = value;
+    this.displayTarget.textContent = label;
+    this.displayTarget.classList.remove("text-gray-400");
+    this.displayTarget.classList.add("text-gray-800");
+    this.iconTarget.classList.remove("text-taupe-400");
+    this.iconTarget.classList.add("text-indigo-600");
+
+    this.#closePanel();
   }
 
   // Animate the picker panel closed.

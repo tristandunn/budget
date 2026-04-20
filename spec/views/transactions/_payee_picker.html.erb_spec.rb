@@ -14,7 +14,10 @@ describe "transactions/_payee_picker.html.erb" do
   end
 
   it "renders the search input" do
-    expect(html).to have_css("input[data-payee-picker-target='search']")
+    expect(html).to have_css(
+      "input[data-payee-picker-target='search']" \
+      "[data-action='input->payee-picker#filter keydown->payee-picker#selectOnKey']"
+    )
   end
 
   it "renders the payee list" do

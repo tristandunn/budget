@@ -293,6 +293,103 @@ describe("PickerController", () => {
     });
   });
 
+  describe("#selectOnKey", () => {
+    beforeEach(async () => {
+      await controller.open();
+    });
+
+    it("selects a case-insensitive exact label match when Enter is pressed", async () => {
+      const event = {
+        "key": "Enter",
+        "preventDefault": sinon.fake()
+      };
+
+      search.value = "alpha";
+
+      await controller.selectOnKey(event);
+
+      expect(event.preventDefault).to.have.been.called;
+      expect(hiddenField.value).to.eq("1");
+      expect(display.textContent).to.eq("Alpha");
+      expect(picker.classList.contains("hidden")).to.be.true;
+    });
+
+    it("trims whitespace from the query before matching", async () => {
+      const event = {
+        "key": "Enter",
+        "preventDefault": sinon.fake()
+      };
+
+      search.value = "  Alpha  ";
+
+      await controller.selectOnKey(event);
+
+      expect(hiddenField.value).to.eq("1");
+      expect(display.textContent).to.eq("Alpha");
+    });
+
+    it("does nothing when the search has no exact match", async () => {
+      const event = {
+        "key": "Enter",
+        "preventDefault": sinon.fake()
+      };
+
+      search.value = "alp";
+
+      await controller.selectOnKey(event);
+
+      expect(event.preventDefault).to.have.been.called;
+      expect(hiddenField.value).to.eq("");
+      expect(picker.classList.contains("hidden")).to.be.false;
+    });
+
+    it("does nothing when the search is only whitespace", async () => {
+      const event = {
+        "key": "Enter",
+        "preventDefault": sinon.fake()
+      };
+
+      search.value = "   ";
+
+      await controller.selectOnKey(event);
+
+      expect(event.preventDefault).to.have.been.called;
+      expect(hiddenField.value).to.eq("");
+      expect(picker.classList.contains("hidden")).to.be.false;
+    });
+
+    it("ignores other keys", async () => {
+      const event = {
+        "key": "a",
+        "preventDefault": sinon.fake()
+      };
+
+      search.value = "Alpha";
+
+      await controller.selectOnKey(event);
+
+      expect(event.preventDefault).not.to.have.been.called;
+      expect(hiddenField.value).to.eq("");
+      expect(picker.classList.contains("hidden")).to.be.false;
+    });
+
+    it("ignores Enter pressed during IME composition", async () => {
+      const event = {
+        "isComposing": true,
+        "key": "Enter",
+        "preventDefault": sinon.fake()
+      };
+
+      search.value = "Alpha";
+
+      await controller.selectOnKey(event);
+
+      expect(event.preventDefault).not.to.have.been.called;
+      expect(hiddenField.value).to.eq("");
+      expect(picker.classList.contains("hidden")).to.be.false;
+    });
+  });
+
   describe("#beforeRender hook", () => {
     beforeEach(() => {
       sinon.stub(controller, "beforeRender").callsFake(() => {
