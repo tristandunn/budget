@@ -79,12 +79,65 @@ describe TransactionsController do
       expect(session[:return_to]).to eq("/previous-page")
     end
 
+    it "assigns the payees" do
+      expect(assigns(:payees)).to eq([])
+    end
+
+    it "assigns the categories" do
+      expect(assigns(:categories)).to eq([])
+    end
+
+    it "assigns the accounts" do
+      expect(assigns(:accounts)).to eq([])
+    end
+
     context "with an account" do
       let(:account)    { create(:account, budget: budget) }
       let(:account_id) { account.id }
 
       it "initializes the form with the account and budget" do
         expect(TransactionForm).to have_received(:new).with(account: account, budget: budget)
+      end
+    end
+
+    context "with accounts" do
+      let(:cash_account) { create(:account, budget: budget, name: "Checking") }
+      let(:credit_card)  { create(:account, :credit, budget: budget, name: "Visa") }
+
+      before do
+        credit_card
+
+        get :new, params: { budget_id: cash_account.budget_id }
+      end
+
+      it "assigns the accounts" do
+        expect(assigns(:accounts)).to eq([cash_account, credit_card])
+      end
+    end
+
+    context "with categories" do
+      let(:category) { create(:category, budget: budget, name: "Food", position: 1) }
+
+      before do
+        create(:category, :subcategory, parent: category, budget: budget, name: "Groceries")
+
+        get :new, params: { budget_id: category.budget_id }
+      end
+
+      it "assigns the top-level categories" do
+        expect(assigns(:categories)).to eq([category])
+      end
+    end
+
+    context "with payees" do
+      let(:payee) { create(:payee, budget: budget, name: "Alpha") }
+
+      before do
+        get :new, params: { budget_id: payee.budget_id }
+      end
+
+      it "assigns the payees" do
+        expect(assigns(:payees)).to eq([payee])
       end
     end
   end
@@ -216,6 +269,18 @@ describe TransactionsController do
       it "assigns a transaction form" do
         expect(assigns(:form)).to eq(form)
       end
+
+      it "assigns the payees" do
+        expect(assigns(:payees)).to eq([])
+      end
+
+      it "assigns the categories" do
+        expect(assigns(:categories)).to eq([subcategory.parent])
+      end
+
+      it "assigns the accounts" do
+        expect(assigns(:accounts)).to eq([])
+      end
     end
   end
 
@@ -249,6 +314,31 @@ describe TransactionsController do
 
     it "stores the referer in the session" do
       expect(session[:return_to]).to eq("/previous-page")
+    end
+
+    it "assigns the payees" do
+      expect(assigns(:payees)).to eq([transaction.payee])
+    end
+
+    it "assigns the categories" do
+      expect(assigns(:categories)).to eq([transaction.subcategory.parent])
+    end
+
+    it "assigns the accounts" do
+      expect(assigns(:accounts)).to eq([transaction.account])
+    end
+
+    context "with additional parent categories" do
+      let!(:first)  { create(:category, budget: budget, name: "Alpha", position: 1) }
+      let!(:second) { create(:category, budget: budget, name: "Beta",  position: 2) }
+
+      before do
+        get :edit, params: { budget_id: budget.id, id: transaction.id }
+      end
+
+      it "assigns every parent category sorted by position" do
+        expect(assigns(:categories)).to eq([transaction.subcategory.parent, first, second])
+      end
     end
 
     context "when the transaction is reconciled" do
@@ -350,6 +440,18 @@ describe TransactionsController do
 
       it "assigns a transaction form" do
         expect(assigns(:form)).to eq(form)
+      end
+
+      it "assigns the payees" do
+        expect(assigns(:payees)).to eq([transaction.payee])
+      end
+
+      it "assigns the categories" do
+        expect(assigns(:categories)).to contain_exactly(subcategory.parent, transaction.subcategory.parent)
+      end
+
+      it "assigns the accounts" do
+        expect(assigns(:accounts)).to eq([transaction.account])
       end
     end
 

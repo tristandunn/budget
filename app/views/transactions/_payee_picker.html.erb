@@ -1,11 +1,31 @@
-<%# locals: () %>
+<%# locals: (form:, payees:) %>
 <%= render "picker",
            controller:  "payee-picker",
            placeholder: t("transactions.form.search_payees") do %>
+  <ul class="bg-white rounded-xl divide-y divide-taupe-200" role="listbox">
+    <% payees.each do |payee| %>
+      <%= tag.li(
+            "aria-selected": form.payee == payee.name,
+            class:           [
+              "px-4 py-3 text-base cursor-pointer",
+              { "text-indigo-600 font-medium": form.payee == payee.name }
+            ],
+            data:            {
+              action:              "click->payee-picker#select",
+              label:               payee.name,
+              payee_picker_target: "item",
+              value:               payee.name
+            },
+            role:            "option"
+          ) { payee.name } %>
+    <% end %>
+  </ul>
+
   <%= tag.template(data: { payee_picker_target: "createPayeeTemplate" }) do %>
     <li
       class="flex items-center gap-3 px-4 py-3 text-base cursor-pointer"
       data-action="click->payee-picker#select"
+      role="option"
     >
       <span class="flex items-center justify-center w-6 h-6 rounded-full bg-indigo-100 shrink-0">
         <svg

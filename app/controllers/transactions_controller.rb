@@ -13,12 +13,16 @@ class TransactionsController < ApplicationController
   # Render the new transaction form.
   def new
     @form = TransactionForm.new(account: default_account, budget: budget)
+
+    assign_form_collections
   end
 
   # Render the edit transaction form.
   def edit
     @transaction = transaction
     @form        = TransactionForm.from(transaction: transaction)
+
+    assign_form_collections
   end
 
   # Create a new transaction.
@@ -28,6 +32,8 @@ class TransactionsController < ApplicationController
     if @form.save
       redirect_to return_location, status: :see_other
     else
+      assign_form_collections
+
       render :new, status: :unprocessable_content
     end
   end
@@ -40,6 +46,8 @@ class TransactionsController < ApplicationController
     if @form.update(transaction)
       redirect_to return_location, status: :see_other
     else
+      assign_form_collections
+
       render :edit, status: :unprocessable_content
     end
   end
@@ -81,6 +89,15 @@ class TransactionsController < ApplicationController
     if parameters[:account_id].present?
       @account ||= budget.accounts.find(parameters[:account_id])
     end
+  end
+
+  # Assign the collections rendered by the transaction form.
+  #
+  # @return [void]
+  def assign_form_collections
+    @accounts   = budget.accounts.to_a
+    @categories = budget.categories.includes(:subcategories).sort_by(&:position)
+    @payees     = budget.payees.order(:name).to_a
   end
 
   # Return the budget for the given `budget_id` parameter.

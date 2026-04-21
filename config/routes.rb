@@ -11,10 +11,9 @@ Rails.application.routes.draw do
       resources :transactions, only: %i(index), controller: "accounts/transactions"
       resource :reconciliation, only: %i(create), controller: "accounts/reconciliations"
     end
-    resources :categories, only: %i(edit index update) do
+    resources :categories, only: %i(edit update) do
       resource :assignment, only: %i(edit update)
     end
-    resources :payees, only: %i(index)
     resource :settings, only: :update
     resources :transactions, only: %i(index new create edit update destroy) do
       member do

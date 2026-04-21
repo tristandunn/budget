@@ -1,4 +1,38 @@
-<%# locals: () %>
+<%# locals: (accounts:, form:) %>
 <%= render "picker",
            controller:  "account-picker",
-           placeholder: t("transactions.form.search_accounts") %>
+           placeholder: t("transactions.form.search_accounts") do %>
+  <div class="space-y-4">
+    <% {
+         cash:   accounts.reject(&:credit),
+         credit: accounts.select(&:credit)
+       }.each do |type, entries| %>
+      <% if entries.any? %>
+        <%= tag.section(data: { account_picker_target: "group" }) do %>
+          <h3 class="px-1 pb-1 text-sm font-semibold text-gray-800">
+            <%= t("accounts.index.#{type}") %>
+          </h3>
+
+          <ul class="bg-white rounded-xl divide-y divide-taupe-200" role="listbox">
+            <% entries.each do |account| %>
+              <%= tag.li(
+                    "aria-selected": form.account == account,
+                    class:           [
+                      "px-4 py-3 text-base cursor-pointer",
+                      { "text-indigo-600 font-medium": form.account == account }
+                    ],
+                    data:            {
+                      account_picker_target: "item",
+                      action:                "click->account-picker#select",
+                      label:                 account.name,
+                      value:                 account.id
+                    },
+                    role:            "option"
+                  ) { account.name } %>
+            <% end %>
+          </ul>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>

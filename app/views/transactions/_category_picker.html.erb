@@ -1,4 +1,33 @@
-<%# locals: () %>
+<%# locals: (categories:, form:) %>
 <%= render "picker",
            controller:  "category-picker",
-           placeholder: t("transactions.form.search_categories") %>
+           placeholder: t("transactions.form.search_categories") do %>
+  <div class="space-y-4">
+    <% categories.each do |category| %>
+      <% if category.subcategories_by_position.any? %>
+        <%= tag.section(data: { category_picker_target: "group" }) do %>
+          <h3 class="px-1 pb-1 text-sm font-semibold text-gray-800"><%= category.name %></h3>
+
+          <ul class="bg-white rounded-xl divide-y divide-taupe-200" role="listbox">
+            <% category.subcategories_by_position.each do |subcategory| %>
+              <%= tag.li(
+                    "aria-selected": form.subcategory == subcategory,
+                    class:           [
+                      "px-4 py-3 text-base cursor-pointer",
+                      { "text-indigo-600 font-medium": form.subcategory == subcategory }
+                    ],
+                    data:            {
+                      action:                 "click->category-picker#select",
+                      category_picker_target: "item",
+                      label:                  subcategory.name,
+                      value:                  subcategory.id
+                    },
+                    role:            "option"
+                  ) { subcategory.name } %>
+            <% end %>
+          </ul>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
