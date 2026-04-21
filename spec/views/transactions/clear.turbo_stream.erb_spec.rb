@@ -33,7 +33,7 @@ describe "transactions/clear.turbo_stream.erb" do
 
   it "renders the cleared balance" do
     expect(html).to include(
-      number_to_currency(Money.from_cents(transaction.account.cleared_balance))
+      number_to_money(transaction.account.cleared_balance)
     )
   end
 
@@ -43,7 +43,7 @@ describe "transactions/clear.turbo_stream.erb" do
 
   it "renders the uncleared balance" do
     expect(html).to include(
-      number_to_currency(Money.from_cents(transaction.account.uncleared_balance))
+      number_to_money(transaction.account.uncleared_balance)
     )
   end
 end

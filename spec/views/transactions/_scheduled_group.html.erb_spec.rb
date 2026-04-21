@@ -29,7 +29,7 @@ describe "transactions/_scheduled_group.html.erb" do
   end
 
   it "renders the amount" do
-    expect(html).to have_text(number_to_currency(Money.from_cents(transaction.amount)))
+    expect(html).to have_text(number_to_money(transaction.amount))
   end
 
   it "renders the subcategory name" do

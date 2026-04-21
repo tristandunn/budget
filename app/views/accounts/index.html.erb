@@ -28,7 +28,7 @@
           <div class="text-sm font-normal"><%= t(".available") %></div>
 
           <div class="font-bold">
-            <%= number_to_currency Money.from_cents(@cash_accounts.sum(&:balance)) %>
+            <%= number_to_money @cash_accounts.sum(&:balance) %>
           </div>
         </div>
       </div>
@@ -41,7 +41,7 @@
               <span class="font-medium"><%= account.name %></span>
 
               <span class="inline-block py-0.5 px-2 font-semibold rounded-full <%= amount_color(account.balance) %>">
-                <%= number_to_currency Money.from_cents(account.balance) %>
+                <%= number_to_money account.balance %>
               </span>
             <% end %>
           </li>
@@ -73,7 +73,7 @@
           <div class="text-sm font-normal"><%= t(".owed") %></div>
 
           <div class="font-bold">
-            <%= number_to_currency Money.from_cents(@credit_accounts.sum(&:balance)) %>
+            <%= number_to_money @credit_accounts.sum(&:balance) %>
           </div>
         </div>
       </div>
@@ -86,7 +86,7 @@
               <span class="font-medium"><%= account.name %></span>
 
               <span class="inline-block py-0.5 px-2 font-semibold rounded-full <%= amount_color(account.balance) %>">
-                <%= number_to_currency Money.from_cents(account.balance) %>
+                <%= number_to_money account.balance %>
               </span>
             <% end %>
           </li>

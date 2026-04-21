@@ -25,7 +25,7 @@ describe "budgets/show.html.erb" do
 
   it "renders the available to assign amount" do
     expect(html).to have_css(
-      "header", text: number_to_currency(Money.from_cents(subcategory.budget.available_to_assign))
+      "header", text: number_to_money(subcategory.budget.available_to_assign)
     )
   end
 
@@ -37,7 +37,7 @@ describe "budgets/show.html.erb" do
     parent_snapshot = budget_snapshot.snapshot_for(subcategory.parent_id)
 
     expect(html).to have_css(
-      "thead th", text: number_to_currency(Money.from_cents(parent_snapshot.amount_assigned))
+      "thead th", text: number_to_money(parent_snapshot.amount_assigned)
     )
   end
 
@@ -46,7 +46,7 @@ describe "budgets/show.html.erb" do
 
     expect(html).to have_css(
       "thead th",
-      text: number_to_currency(Money.from_cents(parent_snapshot.amount_remaining))
+      text: number_to_money(parent_snapshot.amount_remaining)
     )
   end
 
@@ -60,7 +60,7 @@ describe "budgets/show.html.erb" do
 
     expect(html).to have_css(
       "tbody td a",
-      text: number_to_currency(Money.from_cents(subcategory_snapshot.amount_assigned))
+      text: number_to_money(subcategory_snapshot.amount_assigned)
     )
   end
 
@@ -69,7 +69,7 @@ describe "budgets/show.html.erb" do
 
     expect(html).to have_css(
       "tbody td",
-      text: number_to_currency(Money.from_cents(subcategory_snapshot.amount_remaining))
+      text: number_to_money(subcategory_snapshot.amount_remaining)
     )
   end
 

@@ -25,7 +25,7 @@
   <div class="flex items-end justify-between border-b border-taupe-200 bg-white px-4 pb-2">
     <div>
       <p class="text-lg font-semibold">
-        <%= number_to_currency Money.from_cents(@account.balance) %>
+        <%= number_to_money @account.balance %>
       </p>
 
       <p class="text-xs"><%= t(".working_balance") %></p>
@@ -35,13 +35,13 @@
       <span><%= t(".cleared_balance") %></span>
 
       <span id="cleared_balance" class="text-right font-semibold">
-        <%= number_to_currency Money.from_cents(@account.cleared_balance) %>
+        <%= number_to_money @account.cleared_balance %>
       </span>
 
       <span><%= t(".uncleared_balance") %></span>
 
       <span id="uncleared_balance" class="text-right font-semibold">
-        <%= number_to_currency Money.from_cents(@account.uncleared_balance) %>
+        <%= number_to_money @account.uncleared_balance %>
       </span>
     </div>
   </div>

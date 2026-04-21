@@ -32,15 +32,15 @@ describe "accounts/transactions/index.html.erb" do
   end
 
   it "renders the working balance" do
-    expect(html).to have_text(number_to_currency(Money.from_cents(account.balance)))
+    expect(html).to have_text(number_to_money(account.balance))
   end
 
   it "renders the cleared balance" do
-    expect(html).to have_text(number_to_currency(Money.from_cents(account.cleared_balance)))
+    expect(html).to have_text(number_to_money(account.cleared_balance))
   end
 
   it "renders the uncleared balance" do
-    expect(html).to have_text(number_to_currency(Money.from_cents(account.uncleared_balance)))
+    expect(html).to have_text(number_to_money(account.uncleared_balance))
   end
 
   it "renders the actions partial" do

@@ -55,7 +55,7 @@
                         <%= amount_color(transaction.amount) %>
                       "
                     >
-                      <%= number_to_currency Money.from_cents(transaction.amount) %>
+                      <%= number_to_money transaction.amount %>
                     </span>
                   </div>
 

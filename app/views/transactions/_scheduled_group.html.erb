@@ -14,7 +14,7 @@
             <span class="font-medium text-taupe-400"><%= transaction.payee.name %></span>
 
             <span class="inline-block rounded-full px-2 py-0.5 font-semibold bg-taupe-200 text-taupe-600">
-              <%= number_to_currency Money.from_cents(transaction.amount) %>
+              <%= number_to_money transaction.amount %>
             </span>
           </div>
 

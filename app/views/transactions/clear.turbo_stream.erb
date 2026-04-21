@@ -4,12 +4,12 @@
 
 <%= turbo_stream.replace "cleared_balance" do %>
   <span id="cleared_balance" class="text-right font-semibold">
-    <%= number_to_currency Money.from_cents(@transaction.account.cleared_balance) %>
+    <%= number_to_money @transaction.account.cleared_balance %>
   </span>
 <% end %>
 
 <%= turbo_stream.replace "uncleared_balance" do %>
   <span id="uncleared_balance" class="text-right font-semibold">
-    <%= number_to_currency Money.from_cents(@transaction.account.uncleared_balance) %>
+    <%= number_to_money @transaction.account.uncleared_balance %>
   </span>
 <% end %>

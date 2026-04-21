@@ -38,7 +38,7 @@ describe "accounts/index.html.erb" do
       expect(html).to have_css("h2", text: t("accounts.index.cash"))
         .and(have_text(t("accounts.index.available")))
         .and(have_css("li", text: account.name))
-        .and(have_css("li", text: number_to_currency(Money.from_cents(account.balance))))
+        .and(have_css("li", text: number_to_money(account.balance)))
     end
 
     it "links the account to its transaction register" do
@@ -57,7 +57,7 @@ describe "accounts/index.html.erb" do
       expect(html).to have_css("h2", text: t("accounts.index.credit"))
         .and(have_text(t("accounts.index.owed")))
         .and(have_css("li", text: account.name))
-        .and(have_css("li", text: number_to_currency(Money.from_cents(account.balance))))
+        .and(have_css("li", text: number_to_money(account.balance)))
     end
 
     it "links the account to its transaction register" do
