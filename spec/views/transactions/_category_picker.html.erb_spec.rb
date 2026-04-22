@@ -12,16 +12,26 @@ describe "transactions/_category_picker.html.erb" do
     rendered
   end
 
-  let(:budget)    { create(:budget) }
-  let(:food)      { create(:category, budget: budget, name: "Food", position: 1) }
-  let(:form)      { TransactionForm.new(budget: budget) }
-  let(:groceries) { create(:category, :subcategory, parent: food, budget: budget, name: "Groceries") }
+  let(:budget) { create(:budget) }
+  let(:food)   { create(:category, budget: budget, name: "Food", position: 1) }
+  let(:form)   { TransactionForm.new(budget: budget) }
+
+  let(:subcategories) do
+    [
+      create(:category, :subcategory, parent: food, budget: budget, name: "Groceries", position: 1),
+      create(:category, :subcategory, parent: food, budget: budget, name: "Dining",    position: 2)
+    ]
+  end
 
   let(:categories) do
-    groceries
+    subcategories
     empty = create(:category, budget: budget, name: "Empty Parent", position: 2)
 
     [food, empty]
+  end
+
+  before do
+    stub_template("transactions/_picker_indicator.html.erb" => "PICKER_INDICATOR_PARTIAL")
   end
 
   it "renders the back button" do
@@ -40,10 +50,22 @@ describe "transactions/_category_picker.html.erb" do
   end
 
   it "renders each subcategory as an item" do
-    expect(html).to have_css(
-      "li[data-category-picker-target='item'][data-value='#{groceries.id}'][data-label='#{groceries.name}']",
-      text: groceries.name
-    )
+    subcategories.each do |subcategory|
+      expect(html).to have_css(
+        "li[data-category-picker-target='item']" \
+        "[data-value='#{subcategory.id}'][data-label='#{subcategory.name}']",
+        text: subcategory.name
+      )
+    end
+  end
+
+  it "renders the picker_indicator partial inside each item" do
+    subcategories.each do |subcategory|
+      expect(html).to have_css(
+        "li[data-category-picker-target='item'][data-value='#{subcategory.id}']",
+        text: "PICKER_INDICATOR_PARTIAL"
+      )
+    end
   end
 
   it "does not render a group for parents with no subcategories" do
@@ -54,7 +76,7 @@ describe "transactions/_category_picker.html.erb" do
   end
 
   context "when the form has a subcategory selected" do
-    let(:form) { TransactionForm.new(budget: budget, subcategory: groceries) }
+    let(:form) { TransactionForm.new(budget: budget, subcategory: subcategories.first) }
 
     it "marks the matching item as selected" do
       expect(html).to have_css(

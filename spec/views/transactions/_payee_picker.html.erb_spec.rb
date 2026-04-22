@@ -18,6 +18,10 @@ describe "transactions/_payee_picker.html.erb" do
     ]
   end
 
+  before do
+    stub_template("transactions/_picker_indicator.html.erb" => "PICKER_INDICATOR_PARTIAL")
+  end
+
   it "renders the back button" do
     expect(html).to have_button(I18n.t("transactions.picker.back"))
   end
@@ -34,6 +38,15 @@ describe "transactions/_payee_picker.html.erb" do
       expect(html).to have_css(
         "li[data-payee-picker-target='item'][data-value='#{payee.name}'][data-label='#{payee.name}']",
         text: payee.name
+      )
+    end
+  end
+
+  it "renders the picker_indicator partial inside each item" do
+    payees.each do |payee|
+      expect(html).to have_css(
+        "li[data-payee-picker-target='item'][data-value='#{payee.name}']",
+        text: "PICKER_INDICATOR_PARTIAL"
       )
     end
   end

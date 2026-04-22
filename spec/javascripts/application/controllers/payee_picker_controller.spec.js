@@ -5,6 +5,15 @@ describe("PayeePickerController", () => {
   let alpha, beta, controller, createPayeeTemplate, display, element;
   let hiddenField, icon, list, picker, search;
 
+  const buildItem = (label) => {
+    const item = document.createElement("li");
+    item.dataset.payeePickerTarget = "item";
+    item.dataset.label = label;
+    item.dataset.value = label;
+    item.textContent = label;
+    return item;
+  };
+
   beforeEach(() => {
     element = document.createElement("div");
 
@@ -23,17 +32,8 @@ describe("PayeePickerController", () => {
     icon = document.createElement("svg");
     icon.classList.add("text-taupe-400");
 
-    alpha = document.createElement("li");
-    alpha.dataset.payeePickerTarget = "item";
-    alpha.dataset.label = "Alpha";
-    alpha.dataset.value = "Alpha";
-    alpha.textContent = "Alpha";
-
-    beta = document.createElement("li");
-    beta.dataset.payeePickerTarget = "item";
-    beta.dataset.label = "Beta";
-    beta.dataset.value = "Beta";
-    beta.textContent = "Beta";
+    alpha = buildItem("Alpha");
+    beta  = buildItem("Beta");
 
     list = document.createElement("ul");
     list.appendChild(alpha);

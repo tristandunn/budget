@@ -17,10 +17,7 @@
             <% entries.each do |account| %>
               <%= tag.li(
                     "aria-selected": form.account == account,
-                    class:           [
-                      "px-4 py-3 text-base cursor-pointer",
-                      { "text-indigo-600 font-medium": form.account == account }
-                    ],
+                    class:           "group flex items-center gap-3 px-4 py-3 text-base cursor-pointer",
                     data:            {
                       account_picker_target: "item",
                       action:                "click->account-picker#select",
@@ -28,7 +25,10 @@
                       value:                 account.id
                     },
                     role:            "option"
-                  ) { account.name } %>
+                  ) do %>
+                <%= render "picker_indicator" %>
+                <%= account.name %>
+              <% end %>
             <% end %>
           </ul>
         <% end %>

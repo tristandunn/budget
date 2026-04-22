@@ -106,11 +106,7 @@ export default class extends Controller {
     this.iconTarget.classList.add("text-indigo-600");
 
     for (const item of this.itemTargets) {
-      const selected = item.dataset.value === value;
-
-      item.setAttribute("aria-selected", selected);
-      item.classList.toggle("text-indigo-600", selected);
-      item.classList.toggle("font-medium", selected);
+      item.setAttribute("aria-selected", item.dataset.value === value);
     }
 
     this.#closePanel();

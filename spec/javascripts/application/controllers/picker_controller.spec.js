@@ -4,6 +4,15 @@ describe("PickerController", () => {
   let controller, display, element, hiddenField, icon, picker, search;
   let alpha, beta, gamma, groupOne, groupTwo;
 
+  const buildItem = (label, value) => {
+    const item = document.createElement("li");
+    item.dataset.pickerTarget = "item";
+    item.dataset.label = label;
+    item.dataset.value = value;
+    item.textContent = label;
+    return item;
+  };
+
   beforeEach(() => {
     element = document.createElement("div");
 
@@ -22,20 +31,9 @@ describe("PickerController", () => {
     icon = document.createElement("svg");
     icon.classList.add("text-taupe-400");
 
-    alpha = document.createElement("li");
-    alpha.dataset.pickerTarget = "item";
-    alpha.dataset.label = "Alpha";
-    alpha.dataset.value = "1";
-
-    beta = document.createElement("li");
-    beta.dataset.pickerTarget = "item";
-    beta.dataset.label = "Beta";
-    beta.dataset.value = "2";
-
-    gamma = document.createElement("li");
-    gamma.dataset.pickerTarget = "item";
-    gamma.dataset.label = "Gamma";
-    gamma.dataset.value = "3";
+    alpha = buildItem("Alpha", "1");
+    beta  = buildItem("Beta", "2");
+    gamma = buildItem("Gamma", "3");
 
     groupOne = document.createElement("section");
     groupOne.dataset.pickerTarget = "group";
@@ -285,23 +283,20 @@ describe("PickerController", () => {
       expect(picker.classList.contains("hidden")).to.be.true;
     });
 
-    it("marks the selected item with aria-selected and highlight classes", () => {
+    it("marks the selected item with aria-selected", () => {
       controller.select({ "currentTarget": alpha });
 
       expect(alpha.getAttribute("aria-selected")).to.eq("true");
-      expect(alpha.classList.contains("text-indigo-600")).to.be.true;
-      expect(alpha.classList.contains("font-medium")).to.be.true;
     });
 
-    it("clears aria-selected and highlight classes on the other items", () => {
+    it("clears aria-selected on the other items", () => {
       beta.setAttribute("aria-selected", "true");
-      beta.classList.add("text-indigo-600", "font-medium");
+      gamma.setAttribute("aria-selected", "true");
 
       controller.select({ "currentTarget": alpha });
 
       expect(beta.getAttribute("aria-selected")).to.eq("false");
-      expect(beta.classList.contains("text-indigo-600")).to.be.false;
-      expect(beta.classList.contains("font-medium")).to.be.false;
+      expect(gamma.getAttribute("aria-selected")).to.eq("false");
     });
   });
 

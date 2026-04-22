@@ -6,10 +6,7 @@
     <% payees.each do |payee| %>
       <%= tag.li(
             "aria-selected": form.payee == payee.name,
-            class:           [
-              "px-4 py-3 text-base cursor-pointer",
-              { "text-indigo-600 font-medium": form.payee == payee.name }
-            ],
+            class:           "group flex items-center gap-3 px-4 py-3 text-base cursor-pointer",
             data:            {
               action:              "click->payee-picker#select",
               label:               payee.name,
@@ -17,7 +14,10 @@
               value:               payee.name
             },
             role:            "option"
-          ) { payee.name } %>
+          ) do %>
+        <%= render "picker_indicator" %>
+        <%= payee.name %>
+      <% end %>
     <% end %>
   </ul>
 
@@ -32,6 +32,7 @@
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 16 16"
           fill="currentColor"
+          aria-hidden="true"
           class="w-3.5 h-3.5 text-indigo-600"
         >
           <path
