@@ -81,12 +81,12 @@
                 <div class="text-sm font-normal"><%= t(".assigned") %></div>
                 <div><%= number_to_money snapshot.amount_assigned %></div>
               </th>
-
-              <th scope="col" class="py-2 px-4 w-1/4 text-right whitespace-nowrap">
-                <div class="text-sm font-normal"><%= t(".available") %></div>
-                <div><%= number_to_money snapshot.amount_remaining %></div>
-              </th>
             <% end %>
+
+            <th scope="col" class="py-2 px-4 w-1/4 text-right whitespace-nowrap">
+              <div class="text-sm font-normal"><%= t(".available") %></div>
+              <div><%= number_to_money @budget_snapshot.available_for(category) %></div>
+            </th>
           </tr>
         </thead>
 
@@ -112,11 +112,13 @@
                   <% end %>
                 </td>
 
-                <td class="py-3 px-4 font-semibold text-right whitespace-nowrap">
-                  <div class="inline-block py-0.5 px-2 -my-0.5 -mx-2 rounded-full <%= amount_color(snapshot.amount_remaining) %>">
-                    <%= number_to_money snapshot.amount_remaining %>
-                  </div>
-                </td>
+                <% @budget_snapshot.available_for(subcategory).tap do |available| %>
+                  <td class="py-3 px-4 font-semibold text-right whitespace-nowrap">
+                    <div class="inline-block py-0.5 px-2 -my-0.5 -mx-2 rounded-full <%= amount_color(available) %>">
+                      <%= number_to_money available %>
+                    </div>
+                  </td>
+                <% end %>
               <% end %>
             </tr>
           <% end %>

@@ -7,6 +7,22 @@ class BudgetSnapshot
     @year   = year
   end
 
+  # Returns the available amount for a category, summed across every snapshot
+  # up to and including the displayed month. For a top-level category, sums
+  # the available amounts of its subcategories.
+  #
+  # @param category [Category] The category or category group.
+  # @return [Integer] The available amount in cents.
+  def available_for(category)
+    if category.parent_id.nil?
+      category.subcategories.sum do |subcategory|
+        available_amounts_by_category[subcategory.id] || 0
+      end
+    else
+      available_amounts_by_category[category.id] || 0
+    end
+  end
+
   # Returns the date for this budget snapshot.
   #
   # @return [Date] The date for this budget snapshot.
@@ -75,6 +91,17 @@ class BudgetSnapshot
   private
 
   attr_reader :budget, :month, :year
+
+  # Returns a hash of category_id to the available amount (assigned minus used)
+  # summed across every snapshot up to and including the displayed month.
+  #
+  # @return [Hash{Integer => Integer}] Available amount by category id.
+  def available_amounts_by_category
+    @available_amounts_by_category ||= budget.category_snapshots
+                                             .where(date: ..date)
+                                             .group(:category_id)
+                                             .sum("amount_assigned - amount_used")
+  end
 
   # Returns the beginning of the current month.
   #

@@ -41,12 +41,10 @@ describe "budgets/show.html.erb" do
     )
   end
 
-  it "renders the parent category amount remaining" do
-    parent_snapshot = budget_snapshot.snapshot_for(subcategory.parent_id)
-
+  it "renders the parent category cumulative available" do
     expect(html).to have_css(
       "thead th",
-      text: number_to_money(parent_snapshot.amount_remaining)
+      text: number_to_money(budget_snapshot.available_for(subcategory.parent))
     )
   end
 
@@ -64,12 +62,10 @@ describe "budgets/show.html.erb" do
     )
   end
 
-  it "renders the subcategory amount remaining" do
-    subcategory_snapshot = budget_snapshot.snapshot_for(subcategory.id)
-
+  it "renders the subcategory cumulative available" do
     expect(html).to have_css(
       "tbody td",
-      text: number_to_money(subcategory_snapshot.amount_remaining)
+      text: number_to_money(budget_snapshot.available_for(subcategory))
     )
   end
 
