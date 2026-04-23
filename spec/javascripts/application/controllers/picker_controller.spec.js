@@ -59,6 +59,7 @@ describe("PickerController", () => {
     });
     controller.pickerTarget      = picker;
     controller.searchTarget      = search;
+    controller.hasSearchTarget   = true;
     controller.hiddenFieldTarget = hiddenField;
     controller.displayTarget     = display;
     controller.iconTarget        = icon;
@@ -106,6 +107,19 @@ describe("PickerController", () => {
       expect(alpha.classList.contains("hidden")).to.be.false;
       expect(beta.classList.contains("hidden")).to.be.false;
       expect(groupOne.classList.contains("hidden")).to.be.false;
+    });
+
+    it("does not touch the search input when no search target is present", () => {
+      controller.hasSearchTarget = false;
+      search.value = "old query";
+      document.body.appendChild(search);
+
+      controller.open();
+
+      expect(search.value).to.eq("old query");
+      expect(document.activeElement).not.to.eq(search);
+
+      document.body.removeChild(search);
     });
   });
 
@@ -238,6 +252,17 @@ describe("PickerController", () => {
 
       expect(groupOne.classList.contains("hidden")).to.be.false;
       expect(groupTwo.classList.contains("hidden")).to.be.false;
+    });
+
+    it("is a no-op when there is no search target", () => {
+      controller.hasSearchTarget = false;
+      sinon.stub(controller, "afterFilter");
+      alpha.classList.add("hidden");
+
+      controller.filter();
+
+      expect(alpha.classList.contains("hidden")).to.be.true;
+      expect(controller.afterFilter).not.to.have.been.called;
     });
 
     it("invokes the afterFilter hook with the trimmed query", () => {

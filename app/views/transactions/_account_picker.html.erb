@@ -1,7 +1,5 @@
 <%# locals: (accounts:, form:) %>
-<%= render "picker",
-           controller:  "account-picker",
-           placeholder: t("transactions.form.search_accounts") do %>
+<%= render "picker", controller: "account-picker" do %>
   <div class="space-y-4">
     <% {
          cash:   accounts.reject(&:credit),

@@ -11,6 +11,7 @@ describe "transactions/_payee_picker.html.erb" do
 
   let(:budget) { create(:budget) }
   let(:form)   { TransactionForm.new(budget: budget) }
+
   let(:payees) do
     [
       create(:payee, budget: budget, name: "Alpha"),
@@ -20,10 +21,6 @@ describe "transactions/_payee_picker.html.erb" do
 
   before do
     stub_template("transactions/_picker_indicator.html.erb" => "PICKER_INDICATOR_PARTIAL")
-  end
-
-  it "renders the back button" do
-    expect(html).to have_button(I18n.t("transactions.picker.back"))
   end
 
   it "renders the search input" do

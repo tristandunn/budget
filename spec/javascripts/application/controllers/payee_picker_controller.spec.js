@@ -54,6 +54,7 @@ describe("PayeePickerController", () => {
     });
     controller.pickerTarget              = picker;
     controller.searchTarget              = search;
+    controller.hasSearchTarget           = true;
     controller.hiddenFieldTarget         = hiddenField;
     controller.displayTarget             = display;
     controller.iconTarget                = icon;

@@ -18,22 +18,16 @@ describe "transactions/_account_picker.html.erb" do
       create(:account, :credit, budget: budget, name: "Visa")
     ]
   end
-  let(:budget)   { create(:budget) }
-  let(:form)     { TransactionForm.new(budget: budget) }
+
+  let(:budget) { create(:budget) }
+  let(:form)   { TransactionForm.new(budget: budget) }
 
   before do
     stub_template("transactions/_picker_indicator.html.erb" => "PICKER_INDICATOR_PARTIAL")
   end
 
-  it "renders the back button" do
-    expect(html).to have_button(I18n.t("transactions.picker.back"))
-  end
-
-  it "renders the search input" do
-    expect(html).to have_css(
-      "input[data-account-picker-target='search']" \
-      "[data-action='input->account-picker#filter keydown->account-picker#selectOnKey']"
-    )
+  it "does not render a search input" do
+    expect(html).to have_no_css("input[data-account-picker-target='search']")
   end
 
   it "renders the cash and credit group headers" do

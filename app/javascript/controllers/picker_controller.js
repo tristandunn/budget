@@ -17,9 +17,12 @@ export default class extends Controller {
     }
 
     this.pickerTarget.classList.add("open");
-    this.searchTarget.value = "";
-    this.searchTarget.focus();
-    this.filter();
+
+    if (this.hasSearchTarget) {
+      this.searchTarget.value = "";
+      this.searchTarget.focus();
+      this.filter();
+    }
   }
 
   // Open the picker from a keyboard activation on the trigger.
@@ -38,6 +41,10 @@ export default class extends Controller {
 
   // Show only items whose label contains the query; an empty query shows all items.
   filter() {
+    if (!this.hasSearchTarget) {
+      return;
+    }
+
     const trimmed = this.searchTarget.value.trim();
     const query   = trimmed.toLowerCase();
 
