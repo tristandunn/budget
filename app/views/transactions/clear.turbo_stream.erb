@@ -3,13 +3,13 @@
 <% end %>
 
 <%= turbo_stream.replace "cleared_balance" do %>
-  <span id="cleared_balance" class="text-right font-semibold">
+  <p id="cleared_balance" class="text-base font-semibold">
     <%= number_to_money @transaction.account.cleared_balance %>
-  </span>
+  </p>
 <% end %>
 
 <%= turbo_stream.replace "uncleared_balance" do %>
-  <span id="uncleared_balance" class="text-right font-semibold">
+  <p id="uncleared_balance" class="text-base font-semibold">
     <%= number_to_money @transaction.account.uncleared_balance %>
-  </span>
+  </p>
 <% end %>
