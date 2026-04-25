@@ -31,7 +31,7 @@ describe Transaction do
 
     it "defines a frequency enum" do
       expect(transaction).to define_enum_for(:frequency)
-        .with_values(monthly: 0)
+        .with_values(daily: 1, weekly: 7, every_other_week: 14, monthly: 30, yearly: 365)
     end
 
     it "allows a nil frequency" do
@@ -99,10 +99,52 @@ describe Transaction do
   end
 
   describe "#next_recurring_date" do
-    it "returns the date advanced by one month" do
-      transaction = build(:transaction, date: Date.new(2026, 3, 15))
+    subject { transaction.next_recurring_date }
 
-      expect(transaction.next_recurring_date).to eq(Date.new(2026, 4, 15))
+    let(:transaction) { build(:transaction, date: Date.new(2026, 3, 15), frequency: frequency) }
+
+    context "with a daily frequency" do
+      let(:frequency) { :daily }
+
+      it { is_expected.to eq(Date.new(2026, 3, 16)) }
+    end
+
+    context "with a weekly frequency" do
+      let(:frequency) { :weekly }
+
+      it { is_expected.to eq(Date.new(2026, 3, 22)) }
+    end
+
+    context "with an every_other_week frequency" do
+      let(:frequency) { :every_other_week }
+
+      it { is_expected.to eq(Date.new(2026, 3, 29)) }
+    end
+
+    context "with a monthly frequency" do
+      let(:frequency) { :monthly }
+
+      it { is_expected.to eq(Date.new(2026, 4, 15)) }
+    end
+
+    context "with a yearly frequency" do
+      let(:frequency) { :yearly }
+
+      it { is_expected.to eq(Date.new(2027, 3, 15)) }
+    end
+
+    context "without a frequency" do
+      let(:frequency) { nil }
+
+      it { is_expected.to be_nil }
+    end
+
+    context "with a provided frequency" do
+      it "uses the provided frequency over the transaction's frequency" do
+        transaction = build(:transaction, date: Date.new(2026, 3, 15), frequency: :monthly)
+
+        expect(transaction.next_recurring_date(frequency: :daily)).to eq(Date.new(2026, 3, 16))
+      end
     end
   end
 

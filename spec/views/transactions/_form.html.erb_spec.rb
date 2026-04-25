@@ -64,8 +64,15 @@ describe "transactions/_form.html.erb" do
     expect(html).to have_field("transaction_form_date")
   end
 
-  it "renders the frequency select" do
-    expect(html).to have_select("transaction_form_frequency")
+  it "renders the frequency hidden field" do
+    expect(html).to have_field("transaction_form_frequency", type: :hidden)
+  end
+
+  it "shows the frequency placeholder when no frequency is selected" do
+    expect(html).to have_css(
+      "[data-frequency-picker-target='display']",
+      text: t("transactions.frequency.labels.never")
+    )
   end
 
   it "renders the memo field" do
@@ -137,14 +144,18 @@ describe "transactions/_form.html.erb" do
       )
     end
 
-    it "preselects the frequency" do
-      expect(html).to have_select("transaction_form_frequency", selected: "Monthly")
+    it "prepopulates the frequency" do
+      expect(html).to have_field(
+        "transaction_form_frequency",
+        type: :hidden,
+        with: transaction.frequency
+      )
     end
 
-    it "includes the one-time frequency option" do
-      expect(html).to have_select(
-        "transaction_form_frequency",
-        with_options: [t("transactions.form.select_frequency")]
+    it "displays the frequency label" do
+      expect(html).to have_css(
+        "[data-frequency-picker-target='display']",
+        text: t("transactions.frequency.labels.#{transaction.frequency}")
       )
     end
   end

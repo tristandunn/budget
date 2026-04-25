@@ -323,6 +323,29 @@ describe("PickerController", () => {
       expect(beta.getAttribute("aria-selected")).to.eq("false");
       expect(gamma.getAttribute("aria-selected")).to.eq("false");
     });
+
+    it("reverts the display and icon colors when an empty value is selected", () => {
+      display.classList.remove("text-gray-400");
+      display.classList.add("text-gray-800");
+      icon.classList.remove("text-taupe-400");
+      icon.classList.add("text-indigo-600");
+
+      controller.select({
+        "currentTarget": {
+          "dataset": {
+            "label": "Never",
+            "value": ""
+          }
+        }
+      });
+
+      expect(hiddenField.value).to.eq("");
+      expect(display.textContent).to.eq("Never");
+      expect(display.classList.contains("text-gray-400")).to.be.true;
+      expect(display.classList.contains("text-gray-800")).to.be.false;
+      expect(icon.classList.contains("text-taupe-400")).to.be.true;
+      expect(icon.classList.contains("text-indigo-600")).to.be.false;
+    });
   });
 
   describe("#selectOnKey", () => {

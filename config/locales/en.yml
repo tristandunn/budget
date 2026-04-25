@@ -88,8 +88,15 @@ en:
       search_categories: "Find a category"
       search_payees: "Find or add a payee"
       select_account: "Choose Account"
-      select_frequency: "One-time"
       select_subcategory: "Choose Category"
+    frequency:
+      labels:
+        daily: "Daily"
+        every_other_week: "Every other week"
+        monthly: "Monthly"
+        never: "Never"
+        weekly: "Weekly"
+        yearly: "Yearly"
     edit:
       delete:
         confirmation: "Are you sure you want to delete this transaction?"

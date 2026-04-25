@@ -105,12 +105,14 @@ export default class extends Controller {
 
   // Apply a selection to the form and close the picker.
   #applySelection(value, label) {
-    this.hiddenFieldTarget.value      = value;
-    this.displayTarget.textContent    = label;
-    this.displayTarget.classList.remove("text-gray-400");
-    this.displayTarget.classList.add("text-gray-800");
-    this.iconTarget.classList.remove("text-taupe-400");
-    this.iconTarget.classList.add("text-indigo-600");
+    const empty = value === "";
+
+    this.hiddenFieldTarget.value   = value;
+    this.displayTarget.textContent = label;
+    this.displayTarget.classList.toggle("text-gray-400", empty);
+    this.displayTarget.classList.toggle("text-gray-800", !empty);
+    this.iconTarget.classList.toggle("text-taupe-400", empty);
+    this.iconTarget.classList.toggle("text-indigo-600", !empty);
 
     for (const item of this.itemTargets) {
       item.setAttribute("aria-selected", item.dataset.value === value);

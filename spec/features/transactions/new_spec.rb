@@ -23,7 +23,7 @@ describe "Transaction" do
 
   it "displays a scheduled recurring transaction", :js do
     fill_in t("activemodel.attributes.transaction_form.date"), with: 1.month.from_now.to_date.to_s
-    select "Monthly", from: t("activemodel.attributes.transaction_form.frequency")
+    fill_in_frequency(:monthly)
     fill_in_transaction_and_submit(account: account, subcategory: subcategory)
 
     expect(page).to have_text(t("transactions.list.scheduled")).and(have_text("Test Payee"))

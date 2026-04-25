@@ -200,13 +200,16 @@
         </div>
       </div>
 
-      <%= f.label :frequency, class: "flex items-center gap-3 px-4 py-4", data: { controller: "field-icon", action: "change->field-icon#update click->field-icon#focus" } do %>
-        <span class="sr-only"><%= TransactionForm.human_attribute_name(:frequency) %></span>
-
+      <div
+        class="flex items-center gap-3 px-4 py-4 cursor-pointer"
+        role="button"
+        tabindex="0"
+        data-action="click->frequency-picker#open keydown->frequency-picker#openOnKey"
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="w-4 h-4 text-taupe-400 shrink-0"
-          data-field-icon-target="icon"
+          class="w-4 h-4 shrink-0 <%= form.frequency.present? ? "text-indigo-600" : "text-taupe-400" %>"
+          data-frequency-picker-target="icon"
           viewBox="0 0 16 16"
           fill="currentColor"
         >
@@ -216,9 +219,31 @@
         </svg>
 
         <div class="grow">
-          <%= f.select :frequency, options_for_select([%w(Monthly monthly)], form.frequency), { include_blank: t(".select_frequency") }, { class: "w-full bg-transparent border-none outline-none text-base placeholder:text-gray-400 focus:ring-0" } %>
+          <span class="sr-only"><%= TransactionForm.human_attribute_name(:frequency) %></span>
+
+          <%= f.hidden_field :frequency, data: { frequency_picker_target: "hiddenField" } %>
+
+          <span
+            data-frequency-picker-target="display"
+            class="text-base <%= form.frequency.present? ? "text-gray-800" : "text-gray-400" %>"
+          >
+            <%= t("transactions.frequency.labels.#{form.frequency || "never"}") %>
+          </span>
         </div>
-      <% end %>
+
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-4 h-4 text-taupe-400 shrink-0"
+          viewBox="0 0 16 16"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M6.22 4.22a.75.75 0 0 1 1.06 0l3.25 3.25a.75.75 0 0 1 0 1.06l-3.25 3.25a.75.75 0 0 1-1.06-1.06L8.94 8 6.22 5.28a.75.75 0 0 1 0-1.06Z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </div>
     </div>
 
     <div class="mt-4 bg-white rounded-xl">

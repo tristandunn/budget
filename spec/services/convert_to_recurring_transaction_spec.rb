@@ -4,6 +4,7 @@ require "rails_helper"
 
 describe ConvertToRecurringTransaction do
   describe ".call" do
+    let(:frequency)       { "monthly" }
     let(:next_occurrence) { Transaction.where.not(id: transaction.id).last }
     let(:transaction)     { create(:transaction, amount: -1500, memo: "Rent") }
 
@@ -12,7 +13,7 @@ describe ConvertToRecurringTransaction do
         account:     transaction.account,
         amount:      transaction.amount,
         date:        transaction.date,
-        frequency:   "monthly",
+        frequency:   frequency,
         memo:        transaction.memo,
         payee:       transaction.payee,
         subcategory: transaction.subcategory
@@ -40,6 +41,17 @@ describe ConvertToRecurringTransaction do
         attributes:  new_attributes.merge(frequency: nil),
         transaction: transaction
       )
+    end
+
+    context "with a custom frequency" do
+      let(:frequency) { "weekly" }
+
+      it "advances the next occurrence date by the custom frequency" do
+        expect(next_occurrence).to have_attributes(
+          date:      transaction.date.advance(weeks: 1),
+          frequency: "weekly"
+        )
+      end
     end
   end
 end

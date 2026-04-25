@@ -1,6 +1,6 @@
 <%= turbo_frame_tag "transaction_dialog", class: "flex flex-col h-full" do %>
   <div
-    data-controller="payee-picker category-picker account-picker"
+    data-controller="payee-picker category-picker account-picker frequency-picker"
     class="relative flex flex-col h-full overflow-x-clip"
   >
     <div>
@@ -38,5 +38,6 @@
     <%= render "payee_picker", form: @form, payees: @payees %>
     <%= render "category_picker", form: @form, categories: @categories %>
     <%= render "account_picker", form: @form, accounts: @accounts %>
+    <%= render "frequency_picker", form: @form %>
   </div>
 <% end %>
