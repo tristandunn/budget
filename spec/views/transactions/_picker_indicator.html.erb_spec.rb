@@ -9,9 +9,16 @@ describe "transactions/_picker_indicator.html.erb" do
     rendered
   end
 
-  it "renders a checkmark svg that is hidden until the group ancestor is aria-selected" do
+  it "hides the checkmark svg until the picker ancestor has a selection" do
     expect(html).to have_css(
-      "svg.invisible[class~='group-aria-selected:visible']",
+      "svg.hidden[class~='group-has-aria-selected/picker:block']",
+      visible: :all
+    )
+  end
+
+  it "keeps the checkmark transparent until the group ancestor is aria-selected" do
+    expect(html).to have_css(
+      "svg.text-transparent[class~='group-aria-selected:text-indigo-600']",
       visible: :all
     )
   end
