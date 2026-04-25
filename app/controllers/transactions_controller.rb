@@ -95,9 +95,9 @@ class TransactionsController < ApplicationController
   #
   # @return [void]
   def assign_form_collections
-    @accounts   = budget.accounts.to_a
-    @categories = budget.categories.includes(:subcategories).sort_by(&:position)
-    @payees     = budget.payees.order(:name).to_a
+    @accounts        = budget.accounts.to_a
+    @payees          = budget.payees.order(:name).to_a
+    @category_picker = Transactions::CategoryPicker.new(form: @form)
   end
 
   # Return the budget for the given `budget_id` parameter.

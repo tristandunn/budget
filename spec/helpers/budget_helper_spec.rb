@@ -40,4 +40,26 @@ describe BudgetHelper do
       it { is_expected.to eq("h-5 w-5 text-taupe-300 pointer-events-none") }
     end
   end
+
+  describe "#picker_amount_class" do
+    subject { helper.picker_amount_class(amount) }
+
+    context "when the amount is zero" do
+      let(:amount) { 0 }
+
+      it { is_expected.to eq("text-gray-400") }
+    end
+
+    context "when the amount is negative" do
+      let(:amount) { -1 }
+
+      it { is_expected.to eq("text-gray-900") }
+    end
+
+    context "when the amount is positive" do
+      let(:amount) { 1 }
+
+      it { is_expected.to eq("text-green-600") }
+    end
+  end
 end

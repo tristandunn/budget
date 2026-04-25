@@ -54,7 +54,7 @@ describe TransactionsController do
   describe "#new" do
     let(:account_id) { nil }
     let(:budget)     { create(:budget) }
-    let(:form)       { instance_double(TransactionForm) }
+    let(:form)       { instance_double(TransactionForm, budget: budget, subcategory: nil) }
 
     before do
       allow(TransactionForm).to receive(:new).and_return(form)
@@ -83,12 +83,12 @@ describe TransactionsController do
       expect(assigns(:payees)).to eq([])
     end
 
-    it "assigns the categories" do
-      expect(assigns(:categories)).to eq([])
-    end
-
     it "assigns the accounts" do
       expect(assigns(:accounts)).to eq([])
+    end
+
+    it "assigns the category picker" do
+      expect(assigns(:category_picker)).to be_a(Transactions::CategoryPicker)
     end
 
     context "with an account" do
@@ -112,20 +112,6 @@ describe TransactionsController do
 
       it "assigns the accounts" do
         expect(assigns(:accounts)).to eq([cash_account, credit_card])
-      end
-    end
-
-    context "with categories" do
-      let(:category) { create(:category, budget: budget, name: "Food", position: 1) }
-
-      before do
-        create(:category, :subcategory, parent: category, budget: budget, name: "Groceries")
-
-        get :new, params: { budget_id: category.budget_id }
-      end
-
-      it "assigns the top-level categories" do
-        expect(assigns(:categories)).to eq([category])
       end
     end
 
@@ -226,7 +212,7 @@ describe TransactionsController do
 
     context "when invalid" do
       let(:budget)      { create(:budget) }
-      let(:form)        { instance_double(TransactionForm, save: false) }
+      let(:form)        { instance_double(TransactionForm, budget: budget, save: false, subcategory: nil) }
       let(:subcategory) { create(:category, :subcategory, budget: budget) }
 
       let(:expected_parameters) do
@@ -274,19 +260,19 @@ describe TransactionsController do
         expect(assigns(:payees)).to eq([])
       end
 
-      it "assigns the categories" do
-        expect(assigns(:categories)).to eq([subcategory.parent])
-      end
-
       it "assigns the accounts" do
         expect(assigns(:accounts)).to eq([])
+      end
+
+      it "assigns the category picker" do
+        expect(assigns(:category_picker)).to be_a(Transactions::CategoryPicker)
       end
     end
   end
 
   describe "#edit" do
     let(:budget)      { create(:budget) }
-    let(:form)        { instance_double(TransactionForm) }
+    let(:form)        { instance_double(TransactionForm, budget: budget, subcategory: nil) }
     let(:transaction) { create(:transaction, budget: budget) }
 
     before do
@@ -320,25 +306,12 @@ describe TransactionsController do
       expect(assigns(:payees)).to eq([transaction.payee])
     end
 
-    it "assigns the categories" do
-      expect(assigns(:categories)).to eq([transaction.subcategory.parent])
-    end
-
     it "assigns the accounts" do
       expect(assigns(:accounts)).to eq([transaction.account])
     end
 
-    context "with additional parent categories" do
-      let!(:first)  { create(:category, budget: budget, name: "Alpha", position: 1) }
-      let!(:second) { create(:category, budget: budget, name: "Beta",  position: 2) }
-
-      before do
-        get :edit, params: { budget_id: budget.id, id: transaction.id }
-      end
-
-      it "assigns every parent category sorted by position" do
-        expect(assigns(:categories)).to eq([transaction.subcategory.parent, first, second])
-      end
+    it "assigns the category picker" do
+      expect(assigns(:category_picker)).to be_a(Transactions::CategoryPicker)
     end
 
     context "when the transaction is reconciled" do
@@ -400,7 +373,7 @@ describe TransactionsController do
     end
 
     context "when invalid" do
-      let(:form) { instance_double(TransactionForm, update: false) }
+      let(:form) { instance_double(TransactionForm, budget: budget, update: false, subcategory: nil) }
 
       before do
         patch :update, params: {
@@ -446,12 +419,12 @@ describe TransactionsController do
         expect(assigns(:payees)).to eq([transaction.payee])
       end
 
-      it "assigns the categories" do
-        expect(assigns(:categories)).to contain_exactly(subcategory.parent, transaction.subcategory.parent)
-      end
-
       it "assigns the accounts" do
         expect(assigns(:accounts)).to eq([transaction.account])
+      end
+
+      it "assigns the category picker" do
+        expect(assigns(:category_picker)).to be_a(Transactions::CategoryPicker)
       end
     end
 

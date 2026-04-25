@@ -20,4 +20,17 @@ module BudgetHelper
   def navigation_arrow_class(disabled)
     class_names("h-5 w-5", "text-taupe-300 pointer-events-none" => disabled)
   end
+
+  # Returns the CSS classes for a subcategory amount in the picker.
+  #
+  # @return [String] A string representing the CSS classes for the given amount.
+  def picker_amount_class(amount)
+    if amount.zero?
+      "text-gray-400"
+    elsif amount.negative?
+      "text-gray-900"
+    else
+      "text-green-600"
+    end
+  end
 end

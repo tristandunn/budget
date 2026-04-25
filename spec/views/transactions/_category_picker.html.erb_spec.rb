@@ -4,30 +4,27 @@ require "rails_helper"
 
 describe "transactions/_category_picker.html.erb" do
   subject(:html) do
-    render partial: "transactions/category_picker", locals: {
-      categories: categories,
-      form:       form
-    }
+    render partial: "transactions/category_picker", locals: { picker: picker }
 
     rendered
   end
 
-  let(:budget) { create(:budget) }
-  let(:food)   { create(:category, budget: budget, name: "Food", position: 1) }
-  let(:form)   { TransactionForm.new(budget: budget) }
+  let(:amount_remaining) { 0 }
+  let(:picker)           { instance_double(Transactions::CategoryPicker, groups: [group]) }
+  let(:selected)         { false }
 
-  let(:subcategories) do
-    [
-      create(:category, :subcategory, parent: food, budget: budget, name: "Groceries", position: 1),
-      create(:category, :subcategory, parent: food, budget: budget, name: "Dining",    position: 2)
-    ]
-  end
-
-  let(:categories) do
-    subcategories
-    empty = create(:category, budget: budget, name: "Empty Parent", position: 2)
-
-    [food, empty]
+  let(:group) do
+    Transactions::CategoryPicker::Group.new(
+      items: [
+        Transactions::CategoryPicker::Item.new(
+          amount_remaining: amount_remaining,
+          id:               1,
+          name:             "Groceries",
+          selected:         selected
+        )
+      ],
+      name:  "Food"
+    )
   end
 
   before do
@@ -41,57 +38,59 @@ describe "transactions/_category_picker.html.erb" do
     )
   end
 
-  it "renders a group header for parents with subcategories" do
-    expect(html).to have_css("section[data-category-picker-target='group'] h3", text: food.name)
+  it "renders a group header" do
+    expect(html).to have_css("section[data-category-picker-target='group'] h3", text: "Food")
   end
 
-  it "renders each subcategory as an item" do
-    subcategories.each do |subcategory|
-      expect(html).to have_css(
-        "li[data-category-picker-target='item']" \
-        "[data-value='#{subcategory.id}'][data-label='#{subcategory.name}']",
-        text: subcategory.name
-      )
-    end
-  end
-
-  it "renders the picker_indicator partial inside each item" do
-    subcategories.each do |subcategory|
-      expect(html).to have_css(
-        "li[data-category-picker-target='item'][data-value='#{subcategory.id}']",
-        text: "PICKER_INDICATOR_PARTIAL"
-      )
-    end
-  end
-
-  it "does not render a group for parents with no subcategories" do
-    expect(html).to have_no_css(
-      "section[data-category-picker-target='group'] h3",
-      text: "Empty Parent"
+  it "renders each item" do
+    expect(html).to have_css(
+      "li[data-category-picker-target='item'][data-value='1'][data-label='Groceries']",
+      text: "Groceries"
     )
   end
 
-  context "when the form has a subcategory selected" do
-    let(:form) { TransactionForm.new(budget: budget, subcategory: subcategories.first) }
+  it "renders the picker_indicator partial inside each item" do
+    expect(html).to have_css(
+      "li[data-category-picker-target='item'][data-value='1']",
+      text: "PICKER_INDICATOR_PARTIAL"
+    )
+  end
 
-    it "marks the matching item as selected" do
-      expect(html).to have_css(
-        "li[data-category-picker-target='item'][data-value='#{form.subcategory.id}'][aria-selected='true']"
-      )
-    end
+  context "with a positive amount remaining" do
+    let(:amount_remaining) { 7_500 }
 
-    it "does not mark any other item as selected" do
-      expect(html).to have_no_css(
-        "li[data-category-picker-target='item']:not([data-value='#{form.subcategory.id}'])[aria-selected='true']"
-      )
+    it "renders the amount in bold green" do
+      expect(html).to have_css("li[data-value='1'] span.font-bold.text-green-600", text: "$75.00")
     end
   end
 
-  context "when no subcategory is selected" do
-    it "does not mark any item as selected" do
-      expect(html).to have_no_css(
-        "li[data-category-picker-target='item'][aria-selected='true']"
-      )
+  context "with a zero amount remaining" do
+    let(:amount_remaining) { 0 }
+
+    it "renders the amount in bold grey" do
+      expect(html).to have_css("li[data-value='1'] span.font-bold.text-gray-400", text: "$0.00")
+    end
+  end
+
+  context "with a negative amount remaining" do
+    let(:amount_remaining) { -1_500 }
+
+    it "renders the amount in bold dark gray" do
+      expect(html).to have_css("li[data-value='1'] span.font-bold.text-gray-900", text: "-$15.00")
+    end
+  end
+
+  context "when the item is selected" do
+    let(:selected) { true }
+
+    it "marks the item as selected" do
+      expect(html).to have_css("li[data-category-picker-target='item'][data-value='1'][aria-selected='true']")
+    end
+  end
+
+  context "when the item is not selected" do
+    it "does not mark the item as selected" do
+      expect(html).to have_no_css("li[data-category-picker-target='item'][aria-selected='true']")
     end
   end
 end
