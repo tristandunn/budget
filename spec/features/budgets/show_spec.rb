@@ -57,6 +57,16 @@ describe "Budget" do
 
         expect(page).to have_content(Date.current.strftime("%b %Y"))
       end
+
+      it "navigates back to the current month when clicking the month and year" do
+        budget = create(:budget)
+
+        visit budget_path(budget)
+        click_on "next-month"
+        click_on 1.month.from_now.strftime("%b %Y")
+
+        expect(page).to have_content(Date.current.strftime("%b %Y"))
+      end
     end
 
     context "when toggling a category", :js do

@@ -21,7 +21,15 @@
         </svg>
       <% end %>
 
-      <h1 class="text-lg font-semibold"><%= @budget_snapshot.date.strftime("%b %Y") %></h1>
+      <h1 class="text-lg font-semibold">
+        <% if @budget_snapshot.current_month? %>
+          <%= @budget_snapshot.date.strftime("%b %Y") %>
+        <% else %>
+          <%= link_to @budget_snapshot.date.strftime("%b %Y"),
+                      budget_path(@budget),
+                      class: "text-inherit no-underline" %>
+        <% end %>
+      </h1>
 
       <%= link_to(
             month_budget_path(@budget, year: @budget_snapshot.next_date.year, month: @budget_snapshot.next_date.month),

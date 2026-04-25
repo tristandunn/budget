@@ -72,6 +72,24 @@ describe BudgetSnapshot do
     end
   end
 
+  describe "#current_month?" do
+    context "when on the current month" do
+      subject { described_class.new(budget) }
+
+      it { is_expected.to be_current_month }
+    end
+
+    context "when not on the current month" do
+      subject do
+        described_class.new(budget, month: next_month.month.to_s, year: next_month.year.to_s)
+      end
+
+      let(:next_month) { 1.month.from_now.beginning_of_month }
+
+      it { is_expected.not_to be_current_month }
+    end
+  end
+
   describe "#date" do
     context "without year and month parameters" do
       subject(:budget_snapshot) { described_class.new(budget) }

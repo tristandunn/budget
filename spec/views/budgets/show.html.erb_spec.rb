@@ -77,6 +77,12 @@ describe "budgets/show.html.erb" do
     expect(html).to include("TOOLBAR_PARTIAL")
   end
 
+  context "when on the current month" do
+    it "renders the month and year as plain text" do
+      expect(html).to have_no_link(Date.current.beginning_of_month.strftime("%b %Y"))
+    end
+  end
+
   context "when on the first month" do
     it "disables the previous month link" do
       expect(html).to have_css('a#previous-month[aria-disabled="true"]')
@@ -118,6 +124,13 @@ describe "budgets/show.html.erb" do
 
     it "disables the next month link" do
       expect(html).to have_css('a#next-month[aria-disabled="true"]')
+    end
+
+    it "links the month and year to the current month" do
+      expect(html).to have_link(
+        next_month.strftime("%b %Y"),
+        href: budget_path(subcategory.budget)
+      )
     end
   end
 end

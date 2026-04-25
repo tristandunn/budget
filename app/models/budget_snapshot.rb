@@ -23,6 +23,13 @@ class BudgetSnapshot
     end
   end
 
+  # Returns true if this snapshot is on the current month.
+  #
+  # @return [Boolean] Whether this snapshot is on the current month.
+  def current_month?
+    date == current_month
+  end
+
   # Returns the date for this budget snapshot.
   #
   # @return [Date] The date for this budget snapshot.
