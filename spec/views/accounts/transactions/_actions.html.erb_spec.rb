@@ -24,7 +24,7 @@ describe "accounts/transactions/_actions.html.erb" do
   end
 
   it "renders a reconcile button" do
-    expect(html).to have_button(I18n.t("accounts.transactions.index.reconcile"))
+    expect(html).to have_button(I18n.t("accounts.transactions.actions.reconcile"))
   end
 
   it "renders a confirmation dialog" do
@@ -33,6 +33,17 @@ describe "accounts/transactions/_actions.html.erb" do
 
   it "renders the hide reconciled partial" do
     expect(html).to include("HIDE_RECONCILED_PARTIAL")
+  end
+
+  it "renders an edit account link targeting the account dialog" do
+    expect(html).to have_link(I18n.t("accounts.transactions.actions.edit"),
+                              href: edit_budget_account_path(budget, account))
+  end
+
+  it "wires the edit link to the account dialog turbo frame" do
+    expect(html).to have_css(
+      "a[href='#{edit_budget_account_path(budget, account)}'][data-turbo-frame='account_dialog']"
+    )
   end
 
   context "when the account has been reconciled" do
@@ -47,7 +58,7 @@ describe "accounts/transactions/_actions.html.erb" do
 
   context "when the account has never been reconciled" do
     it "renders reconciled never" do
-      expect(html).to have_text(I18n.t("accounts.transactions.index.reconciled_never"))
+      expect(html).to have_text(I18n.t("accounts.transactions.actions.reconciled_never"))
     end
   end
 end

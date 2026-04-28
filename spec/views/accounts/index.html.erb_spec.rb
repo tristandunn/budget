@@ -23,8 +23,16 @@ describe "accounts/index.html.erb" do
     expect(html).to have_css("h1", text: t("accounts.index.title"))
   end
 
+  it "renders the new account link" do
+    expect(html).to have_link(href: new_budget_account_path(budget))
+  end
+
   it "renders the toolbar" do
     expect(html).to include("TOOLBAR_PARTIAL")
+  end
+
+  it "renders the account dialog turbo frame" do
+    expect(html).to have_css("turbo-frame#account_dialog", visible: :all)
   end
 
   describe "cash section" do

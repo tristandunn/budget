@@ -15,22 +15,41 @@ en:
     yesterday: "Yesterday"
 
   accounts:
-    transactions:
-      index:
-        cleared_balance: "Cleared"
-        empty: "No transactions yet."
-        reconcile: "Reconcile"
-        reconcile_confirm: "Mark all cleared transactions as reconciled?"
-        reconciled: "Reconciled %{time}"
-        reconciled_never: "Reconciled never"
-        uncleared_balance: "Uncleared"
-        working_balance: "Working Balance"
+    dialog:
+      close: "Close dialog"
+    edit:
+      submit: "Save Account"
+      title: "Edit Account"
+    form:
+      cash: "Cash"
+      credit: "Credit"
+      delete: "Delete Account"
+      delete_confirmation: "Are you sure you want to delete this account?"
+      enter_name: "Enter a name"
+      type: "Account type"
     index:
       available: "Available"
       cash: "Cash"
       credit: "Credit"
+      new: "Add account"
       owed: "Owed"
       title: "Accounts"
+    new:
+      submit: "Add Account"
+      title: "New Account"
+    transactions:
+      actions:
+        edit: "Edit Account"
+        reconcile: "Reconcile"
+        reconcile_confirm: "Mark all cleared transactions as reconciled?"
+        reconciled: "Reconciled %{time}"
+        reconciled_never: "Reconciled never"
+      index:
+        back: "Back"
+        cleared_balance: "Cleared"
+        empty: "No transactions yet."
+        uncleared_balance: "Uncleared"
+        working_balance: "Working Balance"
 
   categories:
     edit:
@@ -54,6 +73,8 @@ en:
 
   activemodel:
     attributes:
+      account_form:
+        name: "Name"
       category_form:
         name: "Name"
       transaction_form:

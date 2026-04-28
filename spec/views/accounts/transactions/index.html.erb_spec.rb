@@ -54,4 +54,8 @@ describe "accounts/transactions/index.html.erb" do
   it "renders the toolbar" do
     expect(html).to include("TOOLBAR_PARTIAL")
   end
+
+  it "renders the account dialog turbo frame" do
+    expect(html).to have_css("turbo-frame#account_dialog", visible: :all)
+  end
 end

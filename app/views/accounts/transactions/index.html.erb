@@ -1,7 +1,19 @@
 <div class="flex flex-col min-h-screen">
+  <div data-controller="dialog">
+    <dialog
+      id="account_dialog_modal"
+      class="dialog"
+      aria-labelledby="account_dialog_title"
+      data-dialog-target="dialog"
+      data-action="click->dialog#backdropClose cancel->dialog#cancel"
+    >
+      <turbo-frame id="account_dialog" data-action="turbo:frame-load->dialog#open"></turbo-frame>
+    </dialog>
+  </div>
+
   <header class="flex items-center justify-between bg-white p-4">
     <div class="flex items-center gap-2">
-      <%= link_to budget_accounts_path(@budget), aria: { label: "Back" } do %>
+      <%= link_to budget_accounts_path(@budget), aria: { label: t(".back") } do %>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           class="h-5 w-5"

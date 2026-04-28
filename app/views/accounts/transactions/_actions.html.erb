@@ -30,15 +30,15 @@
   >
     <%= button_to budget_account_reconciliation_path(budget, account),
                   class: "flex w-full items-center justify-between gap-4 px-3 py-2 text-left text-sm text-taupe-800 hover:bg-taupe-50",
-                  form:  { data: { turbo_confirm: t("accounts.transactions.index.reconcile_confirm") } } do %>
+                  form:  { data: { turbo_confirm: t(".reconcile_confirm") } } do %>
       <span class="flex flex-col">
-        <span><%= t("accounts.transactions.index.reconcile") %></span>
+        <span><%= t(".reconcile") %></span>
 
         <span class="text-xs text-taupe-500">
           <% if account.last_reconciled_at %>
-            <%= t("accounts.transactions.index.reconciled", time: relative_time(account.last_reconciled_at.to_date)) %>
+            <%= t(".reconciled", time: relative_time(account.last_reconciled_at.to_date)) %>
           <% else %>
-            <%= t("accounts.transactions.index.reconciled_never") %>
+            <%= t(".reconciled_never") %>
           <% end %>
         </span>
       </span>
@@ -58,5 +58,24 @@
     <hr class="border-taupe-200">
 
     <%= render "shared/transactions/hide_reconciled", budget: budget %>
+
+    <hr class="border-t-4 border-taupe-100">
+
+    <%= link_to edit_budget_account_path(budget, account),
+                data:  { turbo_frame: "account_dialog" },
+                class: "flex w-full items-center justify-between gap-4 px-3 py-2 text-left text-sm text-taupe-800 hover:bg-taupe-50" do %>
+      <%= t(".edit") %>
+
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 16 16"
+        class="h-4 w-4 text-taupe-800"
+        fill="currentColor"
+      >
+        <path
+          d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"
+        />
+      </svg>
+    <% end %>
   </div>
 </div>

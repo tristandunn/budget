@@ -16,7 +16,7 @@ describe "Account reconciliation", :js do
   it "reconciles cleared transactions after confirming" do
     accept_confirm do
       within "form[data-turbo-confirm]" do
-        click_on t("accounts.transactions.index.reconcile")
+        click_on t("accounts.transactions.actions.reconcile")
       end
     end
 

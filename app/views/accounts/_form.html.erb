@@ -1,0 +1,62 @@
+<%# locals: (budget:, form:, method:, submit_label:, url:) %>
+<div class="self-center py-6 px-8 mx-auto w-full max-w-lg">
+  <%= form_with model: form, url: url, method: method, class: "highlight-errors" do |f| %>
+    <div class="bg-white rounded-xl">
+      <div class="flex items-center gap-3 px-4 py-4">
+        <div class="grow">
+          <%= f.label :name, class: "sr-only" %>
+
+          <%= f.text_field :name,
+                           autofocus:   true,
+                           class:       "w-full bg-transparent border-none outline-none text-base placeholder:text-gray-400 focus:ring-0",
+                           placeholder: t(".enter_name"),
+                           required:    true %>
+
+          <% if form.errors[:name].present? %>
+            <p role="alert" class="mt-2 text-xs text-red-700">
+              <%= AccountForm.human_attribute_name(:name).humanize %>
+              <%= form.errors[:name].first %>.
+            </p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div
+      role="radiogroup"
+      aria-label="<%= t(".type") %>"
+      class="flex w-full gap-1 p-1 mt-4 rounded-xl bg-taupe-200"
+    >
+      <%= f.radio_button :credit, false, class: "peer/cash sr-only", checked: !form.credit %>
+
+      <%= label_tag :account_form_credit_false, t(".cash"),
+                    class: "flex-1 cursor-pointer rounded-lg p-3 text-center text-base font-medium text-taupe-500 transition peer-checked/cash:bg-white peer-checked/cash:text-taupe-800 peer-checked/cash:shadow peer-focus-visible/cash:ring-2 peer-focus-visible/cash:ring-taupe-500" %>
+
+      <%= f.radio_button :credit, true, class: "peer/credit sr-only", checked: form.credit %>
+
+      <%= label_tag :account_form_credit_true, t(".credit"),
+                    class: "flex-1 cursor-pointer rounded-lg p-3 text-center text-base font-medium text-taupe-500 transition peer-checked/credit:bg-white peer-checked/credit:text-taupe-800 peer-checked/credit:shadow peer-focus-visible/credit:ring-2 peer-focus-visible/credit:ring-taupe-500" %>
+    </div>
+
+    <button
+      class="
+        block p-4 mx-auto mt-6 w-4/5 text-lg font-semibold text-center text-white bg-green-600
+        rounded-lg hover:bg-green-500 focus:outline-none focus:drop-shadow-green-200
+      "
+      type="submit"
+    >
+      <%= submit_label %>
+    </button>
+  <% end %>
+
+  <% if form.persisted? && form.account.transactions.empty? %>
+    <div class="self-center px-8 pt-4 mx-auto w-full max-w-lg text-center">
+      <%= button_to t(".delete"),
+                    budget_account_path(budget, form.account),
+                    method: :delete,
+                    form:   { data: { turbo_frame: "_top" } },
+                    data:   { turbo_confirm: t(".delete_confirmation") },
+                    class:  "mx-auto text-sm text-red-600 underline cursor-pointer hover:text-red-500" %>
+    </div>
+  <% end %>
+</div>
