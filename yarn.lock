@@ -5,7 +5,7 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
-"@asamuzakjp/css-color@npm:^5.1.5":
+"@asamuzakjp/css-color@npm:^5.1.11":
   version: 5.1.11
   resolution: "@asamuzakjp/css-color@npm:5.1.11"
   dependencies:
@@ -18,7 +18,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@asamuzakjp/dom-selector@npm:^7.0.6":
+"@asamuzakjp/dom-selector@npm:^7.1.1":
   version: 7.1.1
   resolution: "@asamuzakjp/dom-selector@npm:7.1.1"
   dependencies:
@@ -142,7 +142,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@csstools/css-syntax-patches-for-csstree@npm:^1.1.1, @csstools/css-syntax-patches-for-csstree@npm:^1.1.3":
+"@csstools/css-syntax-patches-for-csstree@npm:^1.1.3":
   version: 1.1.3
   resolution: "@csstools/css-syntax-patches-for-csstree@npm:1.1.3"
   peerDependencies:
@@ -614,9 +614,9 @@ __metadata:
   linkType: hard
 
 "@typescript-eslint/types@npm:^8.56.0":
-  version: 8.59.0
-  resolution: "@typescript-eslint/types@npm:8.59.0"
-  checksum: 10c0/2750b1e21290dffe90a424fe05c2bab701f60a7b51b5e0921ed14bb1a5fc29ff3fe8f286817d2287e93ff78e33e6626f6ce26d0bc79a729bd608deda77a9bdde
+  version: 8.59.1
+  resolution: "@typescript-eslint/types@npm:8.59.1"
+  checksum: 10c0/a0bf98389e8673d4aa1034fdef9bb78f576b3dc6b8f413d4adf07ef6edff4a33fdb916148c3bac2cafdbf282c765eebf253c2a05edf3fda4123b8889921cd518
   languageName: node
   linkType: hard
 
@@ -775,13 +775,13 @@ __metadata:
     c8: "npm:11.0.0"
     chai: "npm:6.2.2"
     eslint: "npm:10.2.1"
-    jsdom: "npm:29.0.2"
+    jsdom: "npm:29.1.0"
     mocha: "npm:11.7.5"
     prettier: "npm:3.8.3"
-    prettier-plugin-tailwindcss: "npm:0.7.3"
+    prettier-plugin-tailwindcss: "npm:0.8.0"
     sinon: "npm:21.1.2"
     sinon-chai: "npm:4.0.1"
-    stylelint: "npm:17.9.0"
+    stylelint: "npm:17.9.1"
     stylelint-config-standard: "npm:40.0.0"
   languageName: unknown
   linkType: soft
@@ -1533,9 +1533,9 @@ __metadata:
   linkType: hard
 
 "hookified@npm:^2.1.1":
-  version: 2.1.1
-  resolution: "hookified@npm:2.1.1"
-  checksum: 10c0/f1d3e6a86a91061d321d44cde4bdb90340ff6083992182e08e3c60ba1210c2a9592c24988c66995d7f3e0b32214c3e5c71b8405e2ffb8022b2bb140b1eb1645f
+  version: 2.2.0
+  resolution: "hookified@npm:2.2.0"
+  checksum: 10c0/7017d2b66945490293a5aba239e7b39f39071dd940fa019348c7ffea92b91b8c267853c4c51680ed0f3687b33352582fa4d2cff6dd4c5a1c5c44b037276f07aa
   languageName: node
   linkType: hard
 
@@ -1770,26 +1770,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsdom@npm:29.0.2":
-  version: 29.0.2
-  resolution: "jsdom@npm:29.0.2"
+"jsdom@npm:29.1.0":
+  version: 29.1.0
+  resolution: "jsdom@npm:29.1.0"
   dependencies:
-    "@asamuzakjp/css-color": "npm:^5.1.5"
-    "@asamuzakjp/dom-selector": "npm:^7.0.6"
+    "@asamuzakjp/css-color": "npm:^5.1.11"
+    "@asamuzakjp/dom-selector": "npm:^7.1.1"
     "@bramus/specificity": "npm:^2.4.2"
-    "@csstools/css-syntax-patches-for-csstree": "npm:^1.1.1"
+    "@csstools/css-syntax-patches-for-csstree": "npm:^1.1.3"
     "@exodus/bytes": "npm:^1.15.0"
     css-tree: "npm:^3.2.1"
     data-urls: "npm:^7.0.0"
     decimal.js: "npm:^10.6.0"
     html-encoding-sniffer: "npm:^6.0.0"
     is-potential-custom-element-name: "npm:^1.0.1"
-    lru-cache: "npm:^11.2.7"
-    parse5: "npm:^8.0.0"
+    lru-cache: "npm:^11.3.5"
+    parse5: "npm:^8.0.1"
     saxes: "npm:^6.0.0"
     symbol-tree: "npm:^3.2.4"
     tough-cookie: "npm:^6.0.1"
-    undici: "npm:^7.24.5"
+    undici: "npm:^7.25.0"
     w3c-xmlserializer: "npm:^5.0.0"
     webidl-conversions: "npm:^8.0.1"
     whatwg-mimetype: "npm:^5.0.0"
@@ -1800,7 +1800,7 @@ __metadata:
   peerDependenciesMeta:
     canvas:
       optional: true
-  checksum: 10c0/a325324117932de83d13f00c74ff91a5f6b4bbbf11f45e7e31189fea06d007f764aac286dad80f643430c81b618b9fb20eac1ef03f120cec4c68df271e7547e2
+  checksum: 10c0/875f298f8b1267b4bb4ddecdf94a6d279a01ea55fe14f43b89d56eb5dc3ffe81e93356181620d58d06c43b934e5d9f0c61810a971c38c1613a0b57c060eab85b
   languageName: node
   linkType: hard
 
@@ -1914,7 +1914,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lru-cache@npm:^11.0.0, lru-cache@npm:^11.2.7":
+"lru-cache@npm:^11.0.0, lru-cache@npm:^11.3.5":
   version: 11.3.5
   resolution: "lru-cache@npm:11.3.5"
   checksum: 10c0/5b54ef7b88afb4bd25b7a778f1b2b1cde32d9770913e530da34ab203cf0442413bcaa6e372800cbab9562557a4480e4d8bf32e3a368bb5a91b12218eca085c66
@@ -2124,7 +2124,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"parse5@npm:^8.0.0":
+"parse5@npm:^8.0.1":
   version: 8.0.1
   resolution: "parse5@npm:8.0.1"
   dependencies:
@@ -2242,13 +2242,13 @@ __metadata:
   linkType: hard
 
 "postcss@npm:^8.5.10, postcss@npm:^8.5.9":
-  version: 8.5.10
-  resolution: "postcss@npm:8.5.10"
+  version: 8.5.12
+  resolution: "postcss@npm:8.5.12"
   dependencies:
     nanoid: "npm:^3.3.11"
     picocolors: "npm:^1.1.1"
     source-map-js: "npm:^1.2.1"
-  checksum: 10c0/c592dffa0c4873b401f01955b265538d9942f425040df5e2b8f0ad34c83773a792ea0fa5859ccc99cfb5b955b4ebff118ab7056315388dc83b107b0fa8313576
+  checksum: 10c0/5baebaf574c567bc1b3d61197f38af4ce5920b8f611c887fb6bc3dcc14af00253c169dbf19897bc889cce0b0d9818ab5eb4ea0caedf02b0bab10da8a43ce8c12
   languageName: node
   linkType: hard
 
@@ -2259,9 +2259,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier-plugin-tailwindcss@npm:0.7.3":
-  version: 0.7.3
-  resolution: "prettier-plugin-tailwindcss@npm:0.7.3"
+"prettier-plugin-tailwindcss@npm:0.8.0":
+  version: 0.8.0
+  resolution: "prettier-plugin-tailwindcss@npm:0.8.0"
   peerDependencies:
     "@ianvs/prettier-plugin-sort-imports": "*"
     "@prettier/plugin-hermes": "*"
@@ -2313,7 +2313,7 @@ __metadata:
       optional: true
     prettier-plugin-svelte:
       optional: true
-  checksum: 10c0/9bdd00b070dc83d2a31a0069e8bdd88e6198050240ce1e516c66d87f78f3530a87c5aaaba68178243055ee8eb49a2d5a28cdf7c1236e9c2d0f728cd5045471cc
+  checksum: 10c0/03315d1d5d4c425e3f090bd49fcc59159035839931ee8dcaa771720159f8209dd663aa78abc77473b68a425b4ad0b3dd02d79df149edf36a557ef9d43624c098
   languageName: node
   linkType: hard
 
@@ -2573,12 +2573,12 @@ __metadata:
   linkType: hard
 
 "string-width@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "string-width@npm:8.2.0"
+  version: 8.2.1
+  resolution: "string-width@npm:8.2.1"
   dependencies:
     get-east-asian-width: "npm:^1.5.0"
     strip-ansi: "npm:^7.1.2"
-  checksum: 10c0/d8915428b43519b0f494da6590dbe4491857d8a12e40250e50fc01fbb616ffd8400a436bbe25712255ee129511fe0414c49d3b6b9627e2bc3a33dcec1d2eda02
+  checksum: 10c0/d467b4eaf4c40a01bb438a2620e77badd2456ffd5131c9973abe4f3acf7c802d5b21f3b6a00a5e33a7fc28ca8f9c103226e01bac61e9f259659c6f46d78e353a
   languageName: node
   linkType: hard
 
@@ -2627,9 +2627,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"stylelint@npm:17.9.0":
-  version: 17.9.0
-  resolution: "stylelint@npm:17.9.0"
+"stylelint@npm:17.9.1":
+  version: 17.9.1
+  resolution: "stylelint@npm:17.9.1"
   dependencies:
     "@csstools/css-calc": "npm:^3.2.0"
     "@csstools/css-parser-algorithms": "npm:^4.0.0"
@@ -2669,7 +2669,7 @@ __metadata:
     write-file-atomic: "npm:^7.0.1"
   bin:
     stylelint: bin/stylelint.mjs
-  checksum: 10c0/e4d0867778f31e08a2458d871f70dbb701a5d844a2a775c13aff86b8a681e435da5dc6dc738eedc3d1744a2065fdef1a6bfd51b29a685b8087622d6ea88538c1
+  checksum: 10c0/889e31c66ceedac576ba222e0b1d867eae9a7f3a596d4806f3e5ee982aa77e216a247fba487d009a7e8bf1298ddddf707c21fd267d441395d76daf2deff979f9
   languageName: node
   linkType: hard
 
@@ -2763,21 +2763,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tldts-core@npm:^7.0.28":
-  version: 7.0.28
-  resolution: "tldts-core@npm:7.0.28"
-  checksum: 10c0/1fde2a2806c758d13c7eb2bd285a9482bf905829b38c060d66127e9e0682a103c42e181509f0d3c6da046e9aa2f71fe9d61afadb1b85a6b6c557cb98d6b7dede
+"tldts-core@npm:^7.0.29":
+  version: 7.0.29
+  resolution: "tldts-core@npm:7.0.29"
+  checksum: 10c0/14fbd1806c8eb04cd08951feeaf463b4f280a00bc343c2a33b72cad1c4e7881eda7f30629cefcf443486ea4adfe058529ecacdb0c167723e85935dedc15b8a9b
   languageName: node
   linkType: hard
 
 "tldts@npm:^7.0.5":
-  version: 7.0.28
-  resolution: "tldts@npm:7.0.28"
+  version: 7.0.29
+  resolution: "tldts@npm:7.0.29"
   dependencies:
-    tldts-core: "npm:^7.0.28"
+    tldts-core: "npm:^7.0.29"
   bin:
     tldts: bin/cli.js
-  checksum: 10c0/37f92481bc7276f60f06d93d2671a67fd94dc8e245c232a50c69b8704d34c908658968f7298810e1b4df68a84be9ff6248867981d1cc7ddb08755565edd3f496
+  checksum: 10c0/f2999cba3060a36af7c72f2b756a4c00edb0aa8b0885a368810a1c7ddc52aac6130cc63f2260821ed8cdda104b31434b896d9e9aafbb723ba985d6657160e6a5
   languageName: node
   linkType: hard
 
@@ -2831,7 +2831,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici@npm:^7.24.5":
+"undici@npm:^7.25.0":
   version: 7.25.0
   resolution: "undici@npm:7.25.0"
   checksum: 10c0/02a0b45dc14eb91bc488948750232450fe52f27a6b08086d6ac6736bb47908d600fe3a96d346f12eab24729c782e5c2f693bc8e8eca6696d4e4c09b1ed4cb4ec
