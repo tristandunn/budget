@@ -170,15 +170,10 @@
         </svg>
       </div>
 
-      <div
-        class="flex items-center gap-3 px-4 py-4"
-        data-controller="field-icon"
-        data-action="input->field-icon#update click->field-icon#focus"
-      >
+      <label class="group/date flex items-center gap-3 px-4 py-4">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="w-4 h-4 text-taupe-400 shrink-0"
-          data-field-icon-target="icon"
+          class="w-4 h-4 shrink-0 text-taupe-400 group-has-[input:valid]/date:text-indigo-600"
           viewBox="0 0 16 16"
           fill="currentColor"
         >
@@ -188,7 +183,8 @@
         </svg>
 
         <div class="grow">
-          <%= f.label :date, class: "block mb-1 text-sm font-medium text-gray-800 sr-only" %>
+          <span class="sr-only"><%= TransactionForm.human_attribute_name(:date) %></span>
+
           <%= f.date_field :date, class: "w-full bg-transparent border-none outline-none text-base placeholder:text-gray-400 focus:ring-0", required: true, value: form.date %>
 
           <% if form.errors[:date].present? %>
@@ -198,7 +194,7 @@
             </p>
           <% end %>
         </div>
-      </div>
+      </label>
 
       <div
         class="flex items-center gap-3 px-4 py-4 cursor-pointer"
@@ -247,15 +243,13 @@
     </div>
 
     <div class="mt-4 bg-white rounded-xl">
-      <div
-        class="flex items-center gap-3 px-4 py-4"
-        data-controller="field-icon"
-        data-action="input->field-icon#update click->field-icon#focus"
-      >
+      <label class="group/memo flex items-center gap-3 px-4 py-4">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="w-4 h-4 text-taupe-400 shrink-0"
-          data-field-icon-target="icon"
+          class="
+            w-4 h-4 shrink-0 text-taupe-400
+            group-has-[input:not(:placeholder-shown)]/memo:text-indigo-600
+          "
           viewBox="0 0 16 16"
           fill="currentColor"
         >
@@ -265,10 +259,11 @@
         </svg>
 
         <div class="grow">
-          <%= f.label :memo, class: "block mb-1 text-sm font-medium text-gray-800 sr-only" %>
+          <span class="sr-only"><%= TransactionForm.human_attribute_name(:memo) %></span>
+
           <%= f.text_field :memo, class: "w-full bg-transparent border-none outline-none text-base placeholder:text-gray-400 focus:ring-0", placeholder: t(".enter_memo") %>
         </div>
-      </div>
+      </label>
     </div>
 
     <button
