@@ -29,7 +29,7 @@ class Account < ApplicationRecord
     if defined?(@last_reconciled_at)
       @last_reconciled_at
     else
-      @last_reconciled_at = transactions.reconciled.order(updated_at: :desc).pick(:updated_at)
+      @last_reconciled_at = transactions.reconciled.maximum(:updated_at)
     end
   end
 

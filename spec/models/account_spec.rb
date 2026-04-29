@@ -51,7 +51,12 @@ describe Account do
     let(:account) { create(:account) }
 
     it "returns the time of the most recent reconciliation" do
-      transaction = create(:transaction, :reconciled, account: account, budget: account.budget)
+      attributes  = { account: account, budget: account.budget }
+      transaction = create(:transaction, :reconciled, date: 1.week.ago, **attributes)
+
+      travel_to(2.days.ago) do
+        create(:transaction, :reconciled, date: Date.current, **attributes)
+      end
 
       expect(account.last_reconciled_at).to eq(transaction.updated_at)
     end
