@@ -6,7 +6,8 @@ class Transaction < ApplicationRecord
   belongs_to :payee
   belongs_to :subcategory, class_name:  "Category",
                            foreign_key: :category_id,
-                           inverse_of:  :transactions
+                           inverse_of:  :transactions,
+                           optional:    true
 
   enum :frequency,
        {
@@ -67,11 +68,18 @@ class Transaction < ApplicationRecord
 
   private
 
-  # Validate that the subcategory is a subcategory.
+  # Returns true when a subcategory is present but is not actually a subcategory.
+  #
+  # @return [Boolean]
+  def invalid_subcategory?
+    subcategory.present? && subcategory.parent.blank?
+  end
+
+  # Validate the shape of a present subcategory.
   #
   # @return [void]
   def validate_subcategory
-    if subcategory&.parent.blank?
+    if invalid_subcategory?
       errors.add(:subcategory, :not_a_subcategory)
     end
   end

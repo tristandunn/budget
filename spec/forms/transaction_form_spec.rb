@@ -186,6 +186,24 @@ describe TransactionForm, type: :form do
       end
     end
 
+    context "when subcategory is blank" do
+      let(:form) { described_class.new(**attributes, subcategory: nil) }
+
+      it { is_expected.to be_nil }
+
+      it "adds a presence error to subcategory" do
+        save
+
+        expect(form.errors[:subcategory]).to include(I18n.t("errors.messages.blank"))
+      end
+
+      it "does not create a transaction" do
+        save
+
+        expect(CreateTransaction).not_to have_received(:call)
+      end
+    end
+
     context "when scheduled" do
       let(:form) do
         described_class.new(**attributes, date: 1.month.from_now.to_date.to_s)

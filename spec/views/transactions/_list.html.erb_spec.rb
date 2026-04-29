@@ -100,6 +100,14 @@ describe "transactions/_list.html.erb" do
         expect(html).to have_no_css("li span", text: transaction.account.name)
       end
     end
+
+    context "without a subcategory" do
+      let(:transaction) { build_stubbed(:transaction, date: date, subcategory: nil) }
+
+      it "renders the transaction" do
+        expect(html).to have_text(transaction.payee.name)
+      end
+    end
   end
 
   context "when there are scheduled transactions" do

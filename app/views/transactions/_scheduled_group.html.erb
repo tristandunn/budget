@@ -19,7 +19,7 @@
           </div>
 
           <div class="flex items-center justify-between text-sm text-taupe-400">
-            <span><%= transaction.subcategory.name %></span>
+            <span><%= transaction.subcategory&.name %></span>
 
             <% if show_account %>
               <span><%= transaction.account.name %></span>

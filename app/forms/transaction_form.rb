@@ -4,6 +4,9 @@ class TransactionForm < BaseForm
   attr_accessor :account, :budget, :frequency, :memo, :payee, :subcategory
   attr_writer   :amount, :date
 
+  validates :subcategory, presence: true
+  validate  :validate_transaction
+
   # Build a form prepopulated from an existing transaction.
   #
   # @param transaction [Transaction] The transaction to prepopulate from.
@@ -190,9 +193,9 @@ class TransactionForm < BaseForm
 
   # Validate the transaction, merging transaction errors into the form errors.
   #
-  # @return [Boolean] Whether the transaction is valid.
-  def valid?(context = nil)
-    transaction.valid?(context).tap do
+  # @return [void]
+  def validate_transaction
+    unless transaction.valid?
       errors.merge!(transaction.errors)
     end
   end

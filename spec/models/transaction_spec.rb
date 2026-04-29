@@ -9,7 +9,7 @@ describe Transaction do
     it { is_expected.to belong_to(:account) }
     it { is_expected.to belong_to(:budget) }
     it { is_expected.to belong_to(:payee) }
-    it { is_expected.to belong_to(:subcategory).class_name("Category") }
+    it { is_expected.to belong_to(:subcategory).class_name("Category").optional }
   end
 
   describe "validations" do
@@ -214,6 +214,12 @@ describe Transaction do
           I18n.t("activerecord.errors.models.transaction.attributes.subcategory.not_a_subcategory")
         )
       end
+    end
+
+    context "when nil" do
+      let(:subcategory) { nil }
+
+      it { is_expected.to be_valid }
     end
   end
 end
