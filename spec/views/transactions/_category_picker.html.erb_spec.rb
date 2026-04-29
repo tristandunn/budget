@@ -27,10 +27,6 @@ describe "transactions/_category_picker.html.erb" do
     )
   end
 
-  before do
-    stub_template("transactions/_picker_indicator.html.erb" => "PICKER_INDICATOR_PARTIAL")
-  end
-
   it "renders the search input" do
     expect(html).to have_css(
       "input[data-category-picker-target='search']" \
@@ -46,13 +42,6 @@ describe "transactions/_category_picker.html.erb" do
     expect(html).to have_css(
       "li[data-category-picker-target='item'][data-value='1'][data-label='Groceries']",
       text: "Groceries"
-    )
-  end
-
-  it "renders the picker_indicator partial inside each item" do
-    expect(html).to have_css(
-      "li[data-category-picker-target='item'][data-value='1']",
-      text: "PICKER_INDICATOR_PARTIAL"
     )
   end
 

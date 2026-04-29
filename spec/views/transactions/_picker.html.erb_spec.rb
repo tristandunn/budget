@@ -25,10 +25,6 @@ describe "transactions/_picker.html.erb" do
     expect(html).to have_text("BLOCK_CONTENT")
   end
 
-  it "exposes a named group so descendants can react to aria-selected state" do
-    expect(html).to have_css(".picker[class~='group/picker']")
-  end
-
   context "with a placeholder" do
     let(:locals)      { { controller: "example-picker", placeholder: placeholder } }
     let(:placeholder) { "Find an item" }

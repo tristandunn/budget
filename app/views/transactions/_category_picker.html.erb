@@ -11,7 +11,7 @@
           <% group.items.each do |item| %>
             <%= tag.li(
                   "aria-selected": item.selected,
-                  class:           "group flex items-center gap-3 px-4 py-3 text-base cursor-pointer",
+                  class:           "flex items-center gap-3 px-4 py-3 text-base cursor-pointer",
                   data:            {
                     action:                 "click->category-picker#select",
                     category_picker_target: "item",
@@ -20,7 +20,6 @@
                   },
                   role:            "option"
                 ) do %>
-              <%= render "picker_indicator" %>
               <%= item.name %>
 
               <span class="ml-auto font-bold <%= picker_amount_class(item.amount_remaining) %>">

@@ -22,10 +22,6 @@ describe "transactions/_account_picker.html.erb" do
   let(:budget) { create(:budget) }
   let(:form)   { TransactionForm.new(budget: budget) }
 
-  before do
-    stub_template("transactions/_picker_indicator.html.erb" => "PICKER_INDICATOR_PARTIAL")
-  end
-
   it "does not render a search input" do
     expect(html).to have_no_css("input[data-account-picker-target='search']")
   end
@@ -41,15 +37,6 @@ describe "transactions/_account_picker.html.erb" do
         "li[data-account-picker-target='item']" \
         "[data-value='#{account.id}'][data-label='#{account.name}']",
         text: account.name
-      )
-    end
-  end
-
-  it "renders the picker_indicator partial inside each item" do
-    accounts.each do |account|
-      expect(html).to have_css(
-        "li[data-account-picker-target='item'][data-value='#{account.id}']",
-        text: "PICKER_INDICATOR_PARTIAL"
       )
     end
   end

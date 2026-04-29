@@ -12,10 +12,6 @@ describe "transactions/_frequency_picker.html.erb" do
   let(:budget) { create(:budget) }
   let(:form)   { TransactionForm.new(budget: budget) }
 
-  before do
-    stub_template("transactions/_picker_indicator.html.erb" => "PICKER_INDICATOR_PARTIAL")
-  end
-
   it "does not render a search input" do
     expect(html).to have_no_css("input[data-frequency-picker-target='search']")
   end
@@ -35,15 +31,6 @@ describe "transactions/_frequency_picker.html.erb" do
         "li[data-frequency-picker-target='item']" \
         "[data-value='#{value}'][data-label='#{label}']",
         text: label
-      )
-    end
-  end
-
-  it "renders the picker_indicator partial inside each item" do
-    Transaction.frequencies.each_key do |value|
-      expect(html).to have_css(
-        "li[data-frequency-picker-target='item'][data-value='#{value}']",
-        text: "PICKER_INDICATOR_PARTIAL"
       )
     end
   end
