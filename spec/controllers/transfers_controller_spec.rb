@@ -24,21 +24,28 @@ describe TransfersController do
     it "assigns the budget accounts" do
       expect(assigns(:accounts)).to eq([checking, savings])
     end
+
+    it "assigns a transfer form" do
+      expect(assigns(:form)).to be_a(TransferForm)
+    end
   end
 
   describe "#create" do
     let(:budget) { create(:budget) }
 
+    before do
+      allow(TransferForm).to receive(:new).and_return(form)
+    end
+
     context "when valid" do
-      let(:from_account) { create(:account, budget: budget, name: "Checking") }
-      let(:to_account)   { create(:account, budget: budget, name: "Savings") }
+      let(:form)           { instance_double(TransferForm, save: true) }
+      let(:from_account)   { create(:account, budget: budget, name: "Checking") }
+      let(:to_account)     { create(:account, budget: budget, name: "Savings") }
 
       before do
-        allow(CreateTransfer).to receive(:call)
-
         post :create, params: {
-          budget_id: budget.id,
-          transfer:  {
+          budget_id:     budget.id,
+          transfer_form: {
             amount:          "50.00",
             date:            "2026-04-15",
             from_account_id: from_account.id,
@@ -51,50 +58,49 @@ describe TransfersController do
       it { is_expected.to redirect_to(budget_transactions_path(budget)) }
       it { is_expected.to respond_with(:see_other) }
 
-      it "calls the transfer service with the expected parameters" do
-        expect(CreateTransfer).to have_received(:call).with(
-          accounts: { from: from_account, to: to_account },
-          amount:   Money.from_amount(BigDecimal("50.00")),
-          budget:   budget,
-          date:     "2026-04-15",
-          memo:     "Move savings"
+      it "initializes the form with the resolved attributes" do
+        expect(TransferForm).to have_received(:new).with(
+          amount:       "50.00",
+          budget:       budget,
+          date:         "2026-04-15",
+          from_account: from_account,
+          memo:         "Move savings",
+          to_account:   to_account
         )
+      end
+
+      it "saves the form" do
+        expect(form).to have_received(:save)
       end
     end
 
-    context "when memo is blank" do
-      let(:from_account) { create(:account, budget: budget) }
-      let(:to_account)   { create(:account, budget: budget) }
+    context "when invalid" do
+      let(:form)           { instance_double(TransferForm, save: false) }
+      let(:from_account)   { create(:account, budget: budget, name: "Checking") }
+      let(:to_account)     { create(:account, budget: budget, name: "Savings") }
 
       before do
-        allow(CreateTransfer).to receive(:call)
-
         post :create, params: {
-          budget_id: budget.id,
-          transfer:  {
+          budget_id:     budget.id,
+          transfer_form: {
             amount:          "50.00",
             date:            "2026-04-15",
             from_account_id: from_account.id,
-            memo:            "",
+            memo:            "Move savings",
             to_account_id:   to_account.id
           }
         }
       end
 
-      it "passes nil as the memo" do
-        expect(CreateTransfer).to have_received(:call).with(hash_including(memo: nil))
-      end
-    end
+      it { is_expected.to render_template(:new) }
+      it { is_expected.to respond_with(:unprocessable_content) }
 
-    context "with a non-existent from_account_id" do
-      let(:to_account) { create(:account, budget: budget) }
-      let(:transfer)   do
-        { amount: "50.00", date: "2026-04-15", from_account_id: 0, memo: "", to_account_id: to_account.id }
+      it "assigns the form" do
+        expect(assigns(:form)).to eq(form)
       end
 
-      it "raises an ActiveRecord::RecordNotFound error" do
-        expect { post :create, params: { budget_id: budget.id, transfer: transfer } }
-          .to raise_error(ActiveRecord::RecordNotFound)
+      it "assigns the budget accounts" do
+        expect(assigns(:accounts)).to include(from_account, to_account)
       end
     end
   end

@@ -3,15 +3,22 @@
 class TransfersController < ApplicationController
   # Render the new transfer form.
   def new
+    @form     = TransferForm.new(budget: budget)
     @budget   = budget
     @accounts = budget.accounts
   end
 
   # Create a transfer between two accounts.
   def create
-    CreateTransfer.call(**transfer_parameters)
+    @form     = TransferForm.new(form_attributes)
+    @budget   = budget
+    @accounts = budget.accounts
 
-    redirect_to budget_transactions_path(budget), status: :see_other
+    if @form.save
+      redirect_to budget_transactions_path(budget), status: :see_other
+    else
+      render :new, status: :unprocessable_content
+    end
   end
 
   protected
@@ -23,12 +30,26 @@ class TransfersController < ApplicationController
     @budget ||= Budget.find(params[:budget_id])
   end
 
+  # Return the attributes used to construct the form, with accounts
+  # resolved to records.
+  #
+  # @return [Hash] The form attributes.
+  def form_attributes
+    form_parameters
+      .except(:from_account_id, :to_account_id)
+      .merge(
+        budget:       budget,
+        from_account: from_account,
+        to_account:   to_account
+      )
+  end
+
   # Return the permitted form parameters.
   #
   # @return [Hash] The permitted parameters for the form.
   def form_parameters
     @form_parameters ||= params.expect(
-      transfer: %i(from_account_id to_account_id amount date memo)
+      transfer_form: %i(from_account_id to_account_id amount date memo)
     ).to_h.symbolize_keys
   end
 
@@ -44,18 +65,5 @@ class TransfersController < ApplicationController
   # @return [Account] The destination account.
   def to_account
     @to_account ||= budget.accounts.find(form_parameters[:to_account_id])
-  end
-
-  # Return the keyword arguments for the transfer service.
-  #
-  # @return [Hash] The transfer service arguments.
-  def transfer_parameters
-    {
-      accounts: { from: from_account, to: to_account },
-      amount:   Money.from_amount(form_parameters[:amount].to_d),
-      budget:   budget,
-      date:     form_parameters[:date],
-      memo:     form_parameters[:memo].presence
-    }
   end
 end

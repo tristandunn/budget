@@ -85,6 +85,18 @@ en:
         memo: "Memo"
         payee: "Payee"
         subcategory_id: "Subcategory"
+      transfer_form:
+        amount: "Amount"
+        date: "Date"
+        from_account: "From Account"
+        memo: "Memo"
+        to_account: "To Account"
+    errors:
+      models:
+        transfer_form:
+          attributes:
+            to_account:
+              must_not_match_source: "must not match the source account"
 
   toolbar:
     plan: "Plan"
@@ -137,12 +149,7 @@ en:
 
   transfers:
     form:
-      amount: "Amount"
-      date: "Date"
       enter_memo: "Enter a memo..."
-      from_account_id: "From Account"
-      memo: "Memo"
-      to_account_id: "To Account"
     new:
       submit: "Transfer"
       title: "Transfer Between Accounts"

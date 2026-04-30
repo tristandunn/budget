@@ -1,0 +1,58 @@
+<%# locals: (accounts:, form:, method:, submit_label:, url:) %>
+<%= form_with model: form, url: url, method: method do |f| %>
+  <div>
+    <%= f.label :from_account_id, TransferForm.human_attribute_name(:from_account) %>
+
+    <%= f.select :from_account_id,
+                 options_from_collection_for_select(accounts, :id, :name, form.from_account&.id) %>
+
+    <% if form.errors[:from_account].present? %>
+      <p>
+        <%= TransferForm.human_attribute_name(:from_account) %>
+        <%= form.errors[:from_account].first %>.
+      </p>
+    <% end %>
+  </div>
+
+  <div>
+    <%= f.label :to_account_id, TransferForm.human_attribute_name(:to_account) %>
+
+    <%= f.select :to_account_id,
+                 options_from_collection_for_select(accounts, :id, :name, form.to_account&.id) %>
+
+    <% if form.errors[:to_account].present? %>
+      <p>
+        <%= TransferForm.human_attribute_name(:to_account) %> <%= form.errors[:to_account].first %>.
+      </p>
+    <% end %>
+  </div>
+
+  <div>
+    <%= f.label :amount %>
+    <%= f.number_field :amount, step: 0.01 %>
+
+    <% if form.errors[:amount].present? %>
+      <p>
+        <%= TransferForm.human_attribute_name(:amount) %> <%= form.errors[:amount].first %>.
+      </p>
+    <% end %>
+  </div>
+
+  <div>
+    <%= f.label :date %>
+    <%= f.date_field :date %>
+
+    <% if form.errors[:date].present? %>
+      <p>
+        <%= TransferForm.human_attribute_name(:date) %> <%= form.errors[:date].first %>.
+      </p>
+    <% end %>
+  </div>
+
+  <div>
+    <%= f.label :memo %>
+    <%= f.text_field :memo, placeholder: t("transfers.form.enter_memo") %>
+  </div>
+
+  <%= f.submit submit_label %>
+<% end %>

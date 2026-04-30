@@ -8,3 +8,7 @@ Shoulda::Matchers.configure do |config|
     with.test_framework :rspec
   end
 end
+
+RSpec.configure do |config|
+  config.include(Shoulda::Matchers::ActiveModel, type: :form)
+end
