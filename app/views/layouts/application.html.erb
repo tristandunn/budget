@@ -17,6 +17,25 @@
     <link rel="manifest" href="/manifest.json">
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+
+    <script nonce="<%= request.content_security_policy_nonce %>">
+      (function() {
+        try {
+          var ids = JSON.parse(localStorage.getItem("budget:collapsed-sections") || "[]");
+          if (ids.length === 0) return;
+          var rules = ids.map(function(id) {
+            var root    = "[data-collapsible-id-value=\"" + id + "\"]";
+            var content = "[data-collapsible-content=\"collapsible-" + id + "\"]";
+            return root + " " + content + "," + root + "+" + content + "{display:none}"
+                 + root + " [data-collapsible-arrow]{inset-block:0;rotate:-45deg;translate:var(--collapsible-arrow-shift)}";
+          }).join("");
+          var style = document.createElement("style");
+          style.id = "collapsible-preload";
+          style.textContent = rules;
+          document.head.appendChild(style);
+        } catch (error) {}
+      })();
+    </script>
   </head>
 
   <body class="m-auto max-w-md text-black bg-white outline outline-taupe-200"><%= yield %></body>

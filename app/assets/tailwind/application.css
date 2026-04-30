@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+:root {
+  --collapsible-arrow-shift: -2px;
+}
+
 @layer components {
   /* Dialog component styling */
   .dialog {

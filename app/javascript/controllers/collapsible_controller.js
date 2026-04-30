@@ -1,47 +1,33 @@
 import { Controller } from "@hotwired/stimulus";
 
-const ARROW_CLASSES = ["inset-y-0", "-inset-y-1", "-rotate-45", "rotate-45"],
-      STORAGE_KEY   = "budget:collapsed-sections";
+const STORAGE_KEY = "budget:collapsed-sections";
 
 export default class extends Controller {
-  static targets = ["arrow"];
-
   static values = { "id": String };
 
   connect() {
     if (this.#collapsedIds.has(this.idValue)) {
-      this.#toggleState();
+      this.element.classList.add("collapsed");
     }
+
+    document.getElementById("collapsible-preload")?.remove();
   }
 
   toggle() {
-    this.#toggleState();
+    this.element.classList.toggle("collapsed");
     this.#persistState();
   }
 
-  get content() {
-    return document.querySelector(`[data-collapsible-content="collapsible-${this.idValue}"]`);
-  }
-
   #persistState() {
-    const ids         = this.#collapsedIds,
-          isCollapsed = this.content.classList.contains("hidden");
+    const ids = this.#collapsedIds;
 
-    if (isCollapsed) {
+    if (this.element.classList.contains("collapsed")) {
       ids.add(this.idValue);
     } else {
       ids.delete(this.idValue);
     }
 
     this.#collapsedIds = ids;
-  }
-
-  #toggleState() {
-    this.content.classList.toggle("hidden");
-
-    ARROW_CLASSES.forEach((className) => {
-      this.arrowTarget.classList.toggle(className);
-    });
   }
 
   get #collapsedIds() {
