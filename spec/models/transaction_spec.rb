@@ -10,6 +10,7 @@ describe Transaction do
     it { is_expected.to belong_to(:budget) }
     it { is_expected.to belong_to(:payee) }
     it { is_expected.to belong_to(:subcategory).class_name("Category").optional }
+    it { is_expected.to belong_to(:transfer_pair).class_name("Transaction").optional }
   end
 
   describe "validations" do
@@ -190,6 +191,22 @@ describe Transaction do
       let(:date) { 1.day.ago.to_date }
 
       it { is_expected.not_to be_scheduled }
+    end
+  end
+
+  describe "#transfer?" do
+    subject { build_stubbed(:transaction, transfer_pair_id: transfer_pair_id) }
+
+    context "with a transfer pair ID" do
+      let(:transfer_pair_id) { 1 }
+
+      it { is_expected.to be_transfer }
+    end
+
+    context "without a transfer pair ID" do
+      let(:transfer_pair_id) { nil }
+
+      it { is_expected.not_to be_transfer }
     end
   end
 

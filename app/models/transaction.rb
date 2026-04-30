@@ -8,6 +8,7 @@ class Transaction < ApplicationRecord
                            foreign_key: :category_id,
                            inverse_of:  :transactions,
                            optional:    true
+  belongs_to :transfer_pair, class_name: "Transaction", optional: true
 
   enum :frequency,
        {
@@ -64,6 +65,13 @@ class Transaction < ApplicationRecord
   # @return [Boolean]
   def scheduled?
     date.future?
+  end
+
+  # Returns true when this transaction is one half of a transfer pair.
+  #
+  # @return [Boolean]
+  def transfer?
+    transfer_pair_id.present?
   end
 
   private

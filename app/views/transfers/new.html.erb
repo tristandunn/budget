@@ -1,0 +1,30 @@
+<h1><%= t(".title") %></h1>
+
+<%= form_with url: budget_transfers_path(@budget), scope: :transfer, method: :post do |form| %>
+  <div>
+    <%= form.label :from_account_id, t("transfers.form.from_account_id") %>
+    <%= form.select :from_account_id, options_from_collection_for_select(@accounts, :id, :name) %>
+  </div>
+
+  <div>
+    <%= form.label :to_account_id, t("transfers.form.to_account_id") %>
+    <%= form.select :to_account_id, options_from_collection_for_select(@accounts, :id, :name) %>
+  </div>
+
+  <div>
+    <%= form.label :amount, t("transfers.form.amount") %>
+    <%= form.number_field :amount, step: 0.01 %>
+  </div>
+
+  <div>
+    <%= form.label :date, t("transfers.form.date") %>
+    <%= form.date_field :date, value: Date.current %>
+  </div>
+
+  <div>
+    <%= form.label :memo, t("transfers.form.memo") %>
+    <%= form.text_field :memo, placeholder: t("transfers.form.enter_memo") %>
+  </div>
+
+  <%= form.submit t(".submit") %>
+<% end %>

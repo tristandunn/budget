@@ -21,6 +21,7 @@ Rails.application.routes.draw do
         delete "clear", action: :unclear
       end
     end
+    resources :transfers, only: %i(new create)
   end
 
   get "/health", to: "health#index"

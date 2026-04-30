@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_20_222049) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_30_023211) do
   create_table "accounts", force: :cascade do |t|
     t.integer "balance", default: 0, null: false
     t.integer "budget_id", null: false
@@ -72,6 +72,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_20_222049) do
     t.string "memo"
     t.integer "payee_id", null: false
     t.integer "status", default: 0, null: false
+    t.integer "transfer_pair_id"
     t.datetime "updated_at", null: false
     t.index ["account_id", "date", "created_at"], name: "index_transactions_on_account_id_and_date_and_created_at"
     t.index ["account_id", "status", "date", "created_at"], name: "idx_on_account_id_status_date_created_at_34c64413eb"
@@ -79,6 +80,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_20_222049) do
     t.index ["category_id"], name: "index_transactions_on_category_id"
     t.index ["payee_id"], name: "index_transactions_on_payee_id"
     t.index ["status", "date"], name: "index_transactions_on_status_and_date"
+    t.index ["transfer_pair_id"], name: "index_transactions_on_transfer_pair_id"
   end
 
   add_foreign_key "accounts", "budgets"
@@ -90,4 +92,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_20_222049) do
   add_foreign_key "transactions", "budgets"
   add_foreign_key "transactions", "categories"
   add_foreign_key "transactions", "payees"
+  add_foreign_key "transactions", "transactions", column: "transfer_pair_id", on_delete: :nullify
 end
