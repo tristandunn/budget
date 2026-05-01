@@ -3,7 +3,8 @@
 class TransactionsController < ApplicationController
   before_action :store_return_location, only: %i(new edit)
   before_action :require_editable,     only: %i(update)
-  before_action :require_unreconciled, only: %i(edit update destroy clear unclear)
+  before_action :require_destroyable,  only: %i(destroy)
+  before_action :require_unreconciled, only: %i(edit update clear unclear)
 
   # Render all transactions grouped by date.
   def index
@@ -135,6 +136,15 @@ class TransactionsController < ApplicationController
     @parameters ||= params.expect(
       transaction_form: %i(account_id amount date frequency memo payee subcategory_id)
     )
+  end
+
+  # Redirect if the transaction may not be destroyed.
+  #
+  # @return [void]
+  def require_destroyable
+    unless transaction.destroyable?
+      redirect_to return_location, status: :see_other
+    end
   end
 
   # Redirect if the transaction may not be edited through the standard form.

@@ -112,5 +112,29 @@ describe TransferForm, type: :form do
         expect(form.errors).to be_added(:to_account, :must_not_match_source)
       end
     end
+
+    context "when the date is in the future" do
+      subject(:form) { described_class.new(date: Date.tomorrow.iso8601).tap(&:valid?) }
+
+      it "adds the in-the-future error to date" do
+        expect(form.errors).to be_added(:date, :in_the_future)
+      end
+    end
+
+    context "when the date is today" do
+      subject(:form) { described_class.new(date: Date.current.iso8601).tap(&:valid?) }
+
+      it "does not add an error to date" do
+        expect(form.errors[:date]).to be_empty
+      end
+    end
+
+    context "when the date is in the past" do
+      subject(:form) { described_class.new(date: Date.yesterday.iso8601).tap(&:valid?) }
+
+      it "does not add an error to date" do
+        expect(form.errors[:date]).to be_empty
+      end
+    end
   end
 end

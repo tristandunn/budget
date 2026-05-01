@@ -95,6 +95,8 @@ en:
       models:
         transfer_form:
           attributes:
+            date:
+              in_the_future: "cannot be in the future"
             to_account:
               must_not_match_source: "must not match the source account"
 

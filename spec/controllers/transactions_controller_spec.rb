@@ -562,6 +562,26 @@ describe TransactionsController do
         expect(Transaction.exists?(transaction.id)).to be(true)
       end
     end
+
+    context "when the transaction is a transfer with a reconciled partner" do
+      let(:partner)     { create(:transaction, :reconciled, budget: budget) }
+      let(:transaction) { create(:transaction, budget: budget, transfer_pair: partner) }
+
+      it { is_expected.to respond_with(:see_other) }
+      it { is_expected.to redirect_to(budget_transactions_path(budget)) }
+
+      it "does not call the destroy service" do
+        expect(DestroyTransaction).not_to have_received(:call).with(transaction: transaction)
+      end
+
+      it "does not destroy the transaction" do
+        expect(Transaction.exists?(transaction.id)).to be(true)
+      end
+
+      it "does not destroy the partner" do
+        expect(Transaction.exists?(partner.id)).to be(true)
+      end
+    end
   end
 
   describe "#clear" do

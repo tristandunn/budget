@@ -8,6 +8,7 @@ class TransferForm < BaseForm
   validates :from_account, presence: true
   validates :to_account,   presence: true
 
+  validate :validate_date
   validate :validate_distinct_accounts
 
   # Return the date, defaulting to today when blank or unparseable.
@@ -48,6 +49,15 @@ class TransferForm < BaseForm
       date:     date,
       memo:     memo.presence
     )
+  end
+
+  # Validate that the date is not in the future.
+  #
+  # @return [void]
+  def validate_date
+    if date.future?
+      errors.add(:date, :in_the_future)
+    end
   end
 
   # Validate that the source and destination accounts differ.

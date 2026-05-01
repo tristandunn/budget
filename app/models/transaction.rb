@@ -37,6 +37,14 @@ class Transaction < ApplicationRecord
     attributes.symbolize_keys.slice(:account_id, :amount, :budget_id, :category_id, :memo, :payee_id)
   end
 
+  # Returns true when this transaction may be destroyed. Both the
+  # transaction and, if a transfer, its partner must be unreconciled.
+  #
+  # @return [Boolean]
+  def destroyable?
+    !reconciled? && !transfer_pair&.reconciled?
+  end
+
   # Returns the date for the next recurring occurrence.
   #
   # @param frequency [String, Symbol, nil] The frequency to advance by, defaulting to the transaction's frequency.

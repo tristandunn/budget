@@ -99,6 +99,38 @@ describe Transaction do
     end
   end
 
+  describe "#destroyable?" do
+    context "with a pending transaction" do
+      subject { build_stubbed(:transaction) }
+
+      it { is_expected.to be_destroyable }
+    end
+
+    context "with a reconciled transaction" do
+      subject { build_stubbed(:transaction, :reconciled) }
+
+      it { is_expected.not_to be_destroyable }
+    end
+
+    context "with a transfer whose partner is unreconciled" do
+      subject { build_stubbed(:transaction, transfer_pair: build_stubbed(:transaction)) }
+
+      it { is_expected.to be_destroyable }
+    end
+
+    context "with a transfer whose partner is reconciled" do
+      subject { build_stubbed(:transaction, transfer_pair: build_stubbed(:transaction, :reconciled)) }
+
+      it { is_expected.not_to be_destroyable }
+    end
+
+    context "with a reconciled transfer" do
+      subject { build_stubbed(:transaction, :reconciled, transfer_pair: build_stubbed(:transaction)) }
+
+      it { is_expected.not_to be_destroyable }
+    end
+  end
+
   describe "#next_recurring_date" do
     subject { transaction.next_recurring_date }
 
