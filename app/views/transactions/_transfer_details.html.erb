@@ -1,0 +1,38 @@
+<%# locals: (transaction:) %>
+<div class="self-center py-6 px-8 mx-auto w-full max-w-lg">
+  <div class="text-4xl font-semibold text-center">
+    <%= number_to_money transaction.amount.abs %>
+  </div>
+
+  <dl class="mt-6 bg-white rounded-xl divide-y divide-taupe-200">
+    <div class="flex items-center gap-3 px-4 py-4">
+      <dt class="w-20 text-sm text-taupe-600"><%= t("transfers.show.from") %></dt>
+
+      <dd class="grow text-base text-gray-800">
+        <%= (transaction.amount.negative? ? transaction.account : transaction.transfer_pair.account).name %>
+      </dd>
+    </div>
+
+    <div class="flex items-center gap-3 px-4 py-4">
+      <dt class="w-20 text-sm text-taupe-600"><%= t("transfers.show.to") %></dt>
+
+      <dd class="grow text-base text-gray-800">
+        <%= (transaction.amount.negative? ? transaction.transfer_pair.account : transaction.account).name %>
+      </dd>
+    </div>
+
+    <div class="flex items-center gap-3 px-4 py-4">
+      <dt class="w-20 text-sm text-taupe-600"><%= Transaction.human_attribute_name(:date) %></dt>
+      <dd class="grow text-base text-gray-800"><%= l(transaction.date) %></dd>
+    </div>
+  </dl>
+
+  <% if transaction.memo.present? %>
+    <dl class="mt-4 bg-white rounded-xl">
+      <div class="flex items-center gap-3 px-4 py-4">
+        <dt class="w-20 text-sm text-taupe-600"><%= Transaction.human_attribute_name(:memo) %></dt>
+        <dd class="grow text-base text-gray-800"><%= transaction.memo %></dd>
+      </div>
+    </dl>
+  <% end %>
+</div>

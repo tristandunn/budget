@@ -153,6 +153,9 @@ en:
       title: "Account Transfer"
     payee:
       name: "Transfer: %{account}"
+    show:
+      from: "From"
+      to: "To"
 
   shared:
     picker:

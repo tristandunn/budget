@@ -74,6 +74,13 @@ class Transaction < ApplicationRecord
     transfer_pair_id.present?
   end
 
+  # Returns true when this transaction may not be edited through the standard form.
+  #
+  # @return [Boolean]
+  def uneditable?
+    reconciled? || transfer?
+  end
+
   private
 
   # Returns true when a subcategory is present but is not actually a subcategory.

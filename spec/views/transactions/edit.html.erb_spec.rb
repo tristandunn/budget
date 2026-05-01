@@ -14,6 +14,7 @@ describe "transactions/edit.html.erb" do
 
   before do
     stub_template("transactions/_form.html.erb" => "FORM_PARTIAL")
+    stub_template("transactions/_transfer_details.html.erb" => "TRANSFER_DETAILS_PARTIAL")
     stub_template("transactions/_payee_picker.html.erb" => "PAYEE_PICKER_PARTIAL")
     stub_template("transactions/_category_picker.html.erb" => "CATEGORY_PICKER_PARTIAL")
     stub_template("accounts/_picker.html.erb" => "ACCOUNT_PICKER_PARTIAL")
@@ -52,5 +53,21 @@ describe "transactions/edit.html.erb" do
 
   it "renders the account picker partial" do
     expect(html).to include("ACCOUNT_PICKER_PARTIAL")
+  end
+
+  context "when the transaction is a transfer" do
+    let(:transaction) { build_stubbed(:transaction, transfer_pair_id: 1) }
+
+    it "renders the transfer details partial" do
+      expect(html).to include("TRANSFER_DETAILS_PARTIAL")
+    end
+
+    it "does not render the form partial" do
+      expect(html).not_to include("FORM_PARTIAL")
+    end
+
+    it "does not render a delete button" do
+      expect(html).to have_no_button("Delete")
+    end
   end
 end

@@ -210,6 +210,26 @@ describe Transaction do
     end
   end
 
+  describe "#uneditable?" do
+    context "with a pending transaction" do
+      subject { build_stubbed(:transaction) }
+
+      it { is_expected.not_to be_uneditable }
+    end
+
+    context "with a reconciled transaction" do
+      subject { build_stubbed(:transaction, :reconciled) }
+
+      it { is_expected.to be_uneditable }
+    end
+
+    context "with a transfer transaction" do
+      subject { build_stubbed(:transaction, transfer_pair_id: 1) }
+
+      it { is_expected.to be_uneditable }
+    end
+  end
+
   describe "#validate_subcategory" do
     subject(:transaction) { build(:transaction, subcategory: subcategory) }
 

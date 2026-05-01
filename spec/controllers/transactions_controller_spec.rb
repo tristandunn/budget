@@ -482,6 +482,38 @@ describe TransactionsController do
         expect(transaction.reload.payee.name).not_to eq("Test Payee")
       end
     end
+
+    context "when the transaction is a transfer" do
+      let(:form) { instance_double(TransactionForm) }
+
+      let(:transaction) do
+        create(:transaction,
+               budget:        budget,
+               transfer_pair: create(:transaction, budget: budget))
+      end
+
+      before do
+        patch :update, params: {
+          budget_id:        budget.id,
+          id:               transaction.id,
+          transaction_form: {
+            account_id:     account.id,
+            amount:         "100",
+            date:           "2026-03-18",
+            memo:           "A memo",
+            payee:          "Test Payee",
+            subcategory_id: subcategory.id
+          }
+        }
+      end
+
+      it { is_expected.to respond_with(:see_other) }
+      it { is_expected.to redirect_to(budget_transactions_path(budget)) }
+
+      it "does not update the transaction" do
+        expect(transaction.reload.payee.name).not_to eq("Test Payee")
+      end
+    end
   end
 
   describe "#destroy" do

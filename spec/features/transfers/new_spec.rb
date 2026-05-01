@@ -34,4 +34,23 @@ describe "Transfer" do
       "#{t("errors.messages.greater_than", count: 0)}"
     )
   end
+
+  context "when clicking a transfer row" do
+    let(:pair)  { create(:transaction, budget: budget, account: savings) }
+    let(:payee) { create(:payee, budget: budget, name: "Transfer to Savings") }
+
+    before do
+      create(:transaction, budget: budget, account: checking, payee: payee, transfer_pair: pair)
+
+      visit budget_transactions_path(budget)
+      click_on payee.name
+    end
+
+    it "opens a read-only dialog" do
+      within("turbo-frame#transaction_dialog") do
+        expect(page).to have_no_css("input, select, textarea")
+          .and(have_no_button(t("transactions.edit.delete.submit")))
+      end
+    end
+  end
 end
