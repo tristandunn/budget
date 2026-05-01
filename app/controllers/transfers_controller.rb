@@ -3,7 +3,7 @@
 class TransfersController < ApplicationController
   # Render the new transfer form.
   def new
-    @form     = TransferForm.new(budget: budget)
+    @form     = TransferForm.new(budget: budget, to_account: requested_to_account)
     @budget   = budget
     @accounts = budget.accounts
   end
@@ -60,6 +60,17 @@ class TransfersController < ApplicationController
   def from_account
     if form_parameters[:from_account_id].present?
       @from_account ||= budget.accounts.find(form_parameters[:from_account_id])
+    end
+  end
+
+  # Return the destination account when a `to_account_id` query
+  # parameter is provided to the new transfer action.
+  #
+  # @return [Account] The requested destination account.
+  # @return [nil] When no destination account is provided or it does not exist.
+  def requested_to_account
+    if params[:to_account_id].present?
+      budget.accounts.find_by(id: params[:to_account_id])
     end
   end
 

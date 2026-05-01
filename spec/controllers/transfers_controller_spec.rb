@@ -11,22 +11,56 @@ describe TransfersController do
     let!(:savings)  { create(:account, budget: budget, name: "Savings") }
 
     before do
-      get :new, params: { budget_id: budget.id }
+      allow(TransferForm).to receive(:new).and_call_original
     end
 
-    it { is_expected.to render_template(:new) }
-    it { is_expected.to respond_with(200) }
+    context "without a to_account_id" do
+      before do
+        get :new, params: { budget_id: budget.id }
+      end
 
-    it "assigns the budget" do
-      expect(assigns(:budget)).to eq(budget)
+      it { is_expected.to render_template(:new) }
+      it { is_expected.to respond_with(200) }
+
+      it "assigns the budget" do
+        expect(assigns(:budget)).to eq(budget)
+      end
+
+      it "assigns the budget accounts" do
+        expect(assigns(:accounts)).to eq([checking, savings])
+      end
+
+      it "assigns a transfer form" do
+        expect(assigns(:form)).to be_a(TransferForm)
+      end
+
+      it "initializes the form without a destination account" do
+        expect(TransferForm).to have_received(:new).with(budget: budget, to_account: nil)
+      end
     end
 
-    it "assigns the budget accounts" do
-      expect(assigns(:accounts)).to eq([checking, savings])
+    context "with a known to_account_id" do
+      before do
+        get :new, params: { budget_id: budget.id, to_account_id: savings.id }
+      end
+
+      it { is_expected.to respond_with(200) }
+
+      it "initializes the form with the resolved destination account" do
+        expect(TransferForm).to have_received(:new).with(budget: budget, to_account: savings)
+      end
     end
 
-    it "assigns a transfer form" do
-      expect(assigns(:form)).to be_a(TransferForm)
+    context "with an unknown to_account_id" do
+      before do
+        get :new, params: { budget_id: budget.id, to_account_id: 999_999 }
+      end
+
+      it { is_expected.to respond_with(200) }
+
+      it "initializes the form without a destination account" do
+        expect(TransferForm).to have_received(:new).with(budget: budget, to_account: nil)
+      end
     end
   end
 

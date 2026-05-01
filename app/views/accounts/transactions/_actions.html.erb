@@ -61,6 +61,25 @@
 
     <hr class="border-t-4 border-taupe-100">
 
+    <%= link_to new_budget_transfer_path(budget, to_account_id: account.id),
+                data:  { turbo_frame: "transaction_dialog" },
+                class: "flex w-full items-center justify-between gap-4 px-3 py-2 text-left text-sm text-taupe-800 hover:bg-taupe-50" do %>
+      <%= t(".transfer") %>
+
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 16 16"
+        class="h-4 w-4 text-taupe-800"
+        fill="currentColor"
+      >
+        <path
+          d="M11.78 2.22a.75.75 0 0 0-1.06 1.06L12.69 5.25H2.75a.75.75 0 0 0 0 1.5h9.94l-1.97 1.97a.75.75 0 1 0 1.06 1.06l3.25-3.25a.75.75 0 0 0 0-1.06ZM4.22 13.78a.75.75 0 0 0 1.06-1.06L3.31 10.75h9.94a.75.75 0 0 0 0-1.5H3.31l1.97-1.97a.75.75 0 0 0-1.06-1.06L.97 9.47a.75.75 0 0 0 0 1.06Z"
+        />
+      </svg>
+    <% end %>
+
+    <hr class="border-taupe-200">
+
     <%= link_to edit_budget_account_path(budget, account),
                 data:  { turbo_frame: "account_dialog" },
                 class: "flex w-full items-center justify-between gap-4 px-3 py-2 text-left text-sm text-taupe-800 hover:bg-taupe-50" do %>

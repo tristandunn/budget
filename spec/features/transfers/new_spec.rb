@@ -35,6 +35,18 @@ describe "Transfer" do
     )
   end
 
+  context "with a to_account_id in the URL" do
+    before do
+      visit new_budget_transfer_path(budget, to_account_id: savings.id)
+    end
+
+    it "pre-selects the matching account in the to-account picker" do
+      within("[data-controller~='to-account-picker']") do
+        expect(page).to have_css("[role='option'][aria-selected='true']", text: savings.name)
+      end
+    end
+  end
+
   context "when clicking a transfer row" do
     let(:pair)  { create(:transaction, budget: budget, account: savings) }
     let(:payee) { create(:payee, budget: budget, name: "Transfer to Savings") }

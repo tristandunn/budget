@@ -44,6 +44,7 @@ en:
         reconcile_confirm: "Mark all cleared transactions as reconciled?"
         reconciled: "Reconciled %{time}"
         reconciled_never: "Reconciled never"
+        transfer: "Transfer"
       index:
         back: "Back"
         cleared_balance: "Cleared"
