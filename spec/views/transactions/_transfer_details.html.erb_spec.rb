@@ -61,12 +61,12 @@ describe "transactions/_transfer_details.html.erb" do
     expect(html).to have_css("dd", text: "April rent transfer")
   end
 
-  it "renders no form inputs" do
-    expect(html).to have_no_css("input, select, textarea")
+  it "renders no visible form fields" do
+    expect(html).to have_no_css("input:not([type='hidden']), select, textarea")
   end
 
-  it "renders no delete button" do
-    expect(html).to have_no_button(t("transactions.edit.delete.submit"))
+  it "renders a delete button" do
+    expect(html).to have_button(t("transfers.show.delete.submit"))
   end
 
   context "when viewed from the inflow side" do

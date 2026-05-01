@@ -48,8 +48,7 @@ describe "Transfer" do
 
     it "opens a read-only dialog" do
       within("turbo-frame#transaction_dialog") do
-        expect(page).to have_no_css("input, select, textarea")
-          .and(have_no_button(t("transactions.edit.delete.submit")))
+        expect(page).to have_no_css("input:not([type='hidden']), select, textarea")
       end
     end
   end
