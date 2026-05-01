@@ -29,7 +29,12 @@
 
     <%= render "payee_picker", form: @form, payees: @payees %>
     <%= render "category_picker", picker: @category_picker %>
-    <%= render "account_picker", form: @form, accounts: @accounts %>
+
+    <%= render "accounts/picker",
+               accounts:   @accounts,
+               controller: "account-picker",
+               selected:   @form.account %>
+
     <%= render "frequency_picker", form: @form %>
   </div>
 <% end %>

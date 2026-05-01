@@ -21,12 +21,38 @@ describe "transfers/_form.html.erb" do
   let(:form)     { TransferForm.new(budget: budget) }
   let(:savings)  { create(:account, budget: budget) }
 
-  it "renders the from-account select with each account as an option" do
-    expect(html).to have_select("transfer_form_from_account_id", options: [checking.name, savings.name])
+  it "renders the from-account picker opener with a hidden field" do
+    expect(html).to have_css(
+      "input[type='hidden'][name='transfer_form[from_account_id]']" \
+      "[data-from-account-picker-target='hiddenField']",
+      visible: :hidden
+    )
   end
 
-  it "renders the to-account select with each account as an option" do
-    expect(html).to have_select("transfer_form_to_account_id", options: [checking.name, savings.name])
+  it "wires the from-account opener to the picker controller" do
+    expect(html).to have_css(
+      "[data-action~='click->from-account-picker#open']" \
+      "[data-action~='keydown->from-account-picker#openOnKey']"
+    )
+  end
+
+  it "renders the to-account picker opener with a hidden field" do
+    expect(html).to have_css(
+      "input[type='hidden'][name='transfer_form[to_account_id]']" \
+      "[data-to-account-picker-target='hiddenField']",
+      visible: :hidden
+    )
+  end
+
+  it "wires the to-account opener to the picker controller" do
+    expect(html).to have_css(
+      "[data-action~='click->to-account-picker#open']" \
+      "[data-action~='keydown->to-account-picker#openOnKey']"
+    )
+  end
+
+  it "configures the amount input for positive-only mode" do
+    expect(html).to have_css("input[data-amount-positive-value='true']")
   end
 
   it "renders the amount field" do

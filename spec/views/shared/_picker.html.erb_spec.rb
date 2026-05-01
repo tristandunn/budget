@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-describe "transactions/_picker.html.erb" do
+describe "shared/_picker.html.erb" do
   subject(:html) do
-    render "transactions/picker", **locals do
+    render "shared/picker", **locals do
       "BLOCK_CONTENT"
     end
 
@@ -14,7 +14,7 @@ describe "transactions/_picker.html.erb" do
   let(:locals) { { controller: "example-picker" } }
 
   it "renders the back button" do
-    expect(html).to have_button(I18n.t("transactions.picker.back"))
+    expect(html).to have_button(I18n.t("shared.picker.back"))
   end
 
   it "wires the back button to the controller" do

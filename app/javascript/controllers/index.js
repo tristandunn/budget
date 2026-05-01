@@ -7,3 +7,5 @@ eagerLoadControllersFrom("controllers", application);
 application.register("account-picker", PickerController);
 application.register("category-picker", PickerController);
 application.register("frequency-picker", PickerController);
+application.register("from-account-picker", PickerController);
+application.register("to-account-picker", PickerController);

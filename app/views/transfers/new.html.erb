@@ -1,8 +1,27 @@
-<h1><%= t(".title") %></h1>
+<div
+  data-controller="from-account-picker to-account-picker"
+  class="relative flex flex-col h-full overflow-x-clip"
+>
+  <div>
+    <header class="p-4">
+      <h1 class="text-lg font-semibold text-center"><%= t(".title") %></h1>
+    </header>
 
-<%= render "form",
-           accounts:     @accounts,
-           form:         @form,
-           method:       :post,
-           submit_label: t(".submit"),
-           url:          budget_transfers_path(@budget) %>
+    <%= render "form",
+               accounts:     @accounts,
+               form:         @form,
+               method:       :post,
+               submit_label: t(".submit"),
+               url:          budget_transfers_path(@budget) %>
+  </div>
+
+  <%= render "accounts/picker",
+             accounts:   @accounts,
+             controller: "from-account-picker",
+             selected:   @form.from_account %>
+
+  <%= render "accounts/picker",
+             accounts:   @accounts,
+             controller: "to-account-picker",
+             selected:   @form.to_account %>
+</div>

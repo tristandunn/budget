@@ -4,6 +4,10 @@ export default class extends Controller {
   #positive = false;
 
   connect() {
+    if (this.#positiveOnly()) {
+      this.#positive = true;
+    }
+
     this.#updateColor();
   }
 
@@ -28,6 +32,12 @@ export default class extends Controller {
   }
 
   keydown(event) {
+    if (this.#positiveOnly() && (event.key === "-" || event.key === "+")) {
+      event.preventDefault();
+
+      return;
+    }
+
     if (event.key === "-") {
       event.preventDefault();
 
@@ -72,6 +82,10 @@ export default class extends Controller {
     return !parseFloat(this.element.value);
   }
 
+  #positiveOnly() {
+    return this.element.dataset.amountPositiveValue === "true";
+  }
+
   #toggleSign() {
     const value = parseFloat(this.element.value) || 0;
 
@@ -80,6 +94,13 @@ export default class extends Controller {
   }
 
   #updateColor() {
+    if (this.#positiveOnly()) {
+      this.element.classList.remove("text-red-600");
+      this.element.classList.add("text-black");
+
+      return;
+    }
+
     const isNegative = parseFloat(this.element.value) < 0;
 
     this.element.classList.toggle("text-red-600", isNegative);

@@ -144,14 +144,16 @@ en:
       cancel: "Cancel"
       submit: "Save"
       title: "Add Transaction"
-    picker:
-      back: "Back"
 
   transfers:
     form:
       enter_memo: "Enter a memo..."
     new:
       submit: "Transfer"
-      title: "Transfer Between Accounts"
+      title: "Account Transfer"
     payee:
       name: "Transfer: %{account}"
+
+  shared:
+    picker:
+      back: "Back"

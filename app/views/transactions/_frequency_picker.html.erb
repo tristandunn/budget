@@ -1,5 +1,5 @@
 <%# locals: (form:) %>
-<%= render "picker", controller: "frequency-picker" do %>
+<%= render "shared/picker", controller: "frequency-picker" do %>
   <ul class="bg-white rounded-xl divide-y divide-taupe-200" role="listbox">
     <%= tag.li(
           "aria-selected": form.frequency.blank?,

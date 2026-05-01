@@ -1,12 +1,12 @@
-<%# locals: (accounts:, form:) %>
-<%= render "picker", controller: "account-picker" do %>
+<%# locals: (accounts:, controller:, selected:) %>
+<%= render "shared/picker", controller: controller do %>
   <div class="space-y-4">
     <% {
          cash:   accounts.reject(&:credit),
          credit: accounts.select(&:credit)
        }.each do |type, entries| %>
       <% if entries.any? %>
-        <%= tag.section(data: { account_picker_target: "group" }) do %>
+        <%= tag.section(data: { "#{controller}-target" => "group" }) do %>
           <h3 class="px-1 pb-1 text-sm font-semibold text-gray-800">
             <%= t("accounts.index.#{type}") %>
           </h3>
@@ -14,13 +14,13 @@
           <ul class="bg-white rounded-xl divide-y divide-taupe-200" role="listbox">
             <% entries.each do |account| %>
               <%= tag.li(
-                    "aria-selected": form.account == account,
+                    "aria-selected": account == selected,
                     class:           "flex items-center gap-3 px-4 py-3 text-base cursor-pointer",
                     data:            {
-                      account_picker_target: "item",
-                      action:                "click->account-picker#select",
-                      label:                 account.name,
-                      value:                 account.id
+                      "#{controller}-target" => "item",
+                      :action                => "click->#{controller}#select",
+                      :label                 => account.name,
+                      :value                 => account.id
                     },
                     role:            "option"
                   ) do %>

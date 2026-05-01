@@ -55,15 +55,21 @@ class TransfersController < ApplicationController
 
   # Return the source account for the transfer.
   #
-  # @return [Account] The source account.
+  # @return [Account] The requested source account.
+  # @return [nil] When no source account is provided.
   def from_account
-    @from_account ||= budget.accounts.find(form_parameters[:from_account_id])
+    if form_parameters[:from_account_id].present?
+      @from_account ||= budget.accounts.find(form_parameters[:from_account_id])
+    end
   end
 
   # Return the destination account for the transfer.
   #
-  # @return [Account] The destination account.
+  # @return [Account] The requested destination account.
+  # @return [nil] When no destination account is provided.
   def to_account
-    @to_account ||= budget.accounts.find(form_parameters[:to_account_id])
+    if form_parameters[:to_account_id].present?
+      @to_account ||= budget.accounts.find(form_parameters[:to_account_id])
+    end
   end
 end
