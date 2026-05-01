@@ -320,6 +320,25 @@ describe TransactionsController do
       it { is_expected.to respond_with(:see_other) }
       it { is_expected.to redirect_to("/previous-page") }
     end
+
+    context "when the transaction is a transfer" do
+      let(:transaction) do
+        create(:transaction,
+               budget:        budget,
+               transfer_pair: create(:transaction, budget: budget))
+      end
+
+      it { is_expected.to respond_with(200) }
+      it { is_expected.to render_template(:edit) }
+
+      it "does not initialize a transaction form" do
+        expect(TransactionForm).not_to have_received(:from)
+      end
+
+      it "does not assign a form" do
+        expect(assigns(:form)).to be_nil
+      end
+    end
   end
 
   describe "#update" do

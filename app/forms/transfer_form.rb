@@ -22,7 +22,8 @@ class TransferForm < BaseForm
 
   # Attempt to create the transfer if the form is valid.
   #
-  # @return [Boolean] Whether the transfer was created successfully.
+  # @return [Boolean] When the form is valid and the transfer is created.
+  # @return [nil] When the form is invalid.
   def save
     if valid?
       call_create_transfer

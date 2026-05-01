@@ -6,7 +6,7 @@
 
   <dl class="mt-6 bg-white rounded-xl divide-y divide-taupe-200">
     <div class="flex items-center gap-3 px-4 py-4">
-      <dt class="w-20 text-sm text-taupe-600"><%= t("transfers.show.from") %></dt>
+      <dt class="w-20 text-sm text-taupe-600"><%= t(".from") %></dt>
 
       <dd class="grow text-base text-gray-800">
         <%= (transaction.amount.negative? ? transaction.account : transaction.transfer_pair.account).name %>
@@ -14,7 +14,7 @@
     </div>
 
     <div class="flex items-center gap-3 px-4 py-4">
-      <dt class="w-20 text-sm text-taupe-600"><%= t("transfers.show.to") %></dt>
+      <dt class="w-20 text-sm text-taupe-600"><%= t(".to") %></dt>
 
       <dd class="grow text-base text-gray-800">
         <%= (transaction.amount.negative? ? transaction.transfer_pair.account : transaction.account).name %>
@@ -22,7 +22,7 @@
     </div>
 
     <div class="flex items-center gap-3 px-4 py-4">
-      <dt class="w-20 text-sm text-taupe-600"><%= Transaction.human_attribute_name(:date) %></dt>
+      <dt class="w-20 text-sm text-taupe-600"><%= t(".date") %></dt>
       <dd class="grow text-base text-gray-800"><%= l(transaction.date) %></dd>
     </div>
   </dl>
@@ -30,7 +30,7 @@
   <% if transaction.memo.present? %>
     <dl class="mt-4 bg-white rounded-xl">
       <div class="flex items-center gap-3 px-4 py-4">
-        <dt class="w-20 text-sm text-taupe-600"><%= Transaction.human_attribute_name(:memo) %></dt>
+        <dt class="w-20 text-sm text-taupe-600"><%= t(".memo") %></dt>
         <dd class="grow text-base text-gray-800"><%= transaction.memo %></dd>
       </div>
     </dl>
@@ -38,9 +38,9 @@
 </div>
 
 <div class="self-center px-8 pt-1 pb-12 mx-auto w-full max-w-lg text-center">
-  <%= button_to t("transfers.show.delete.submit"),
+  <%= button_to t(".delete.submit"),
                 budget_transaction_path(transaction.budget, transaction),
                 method: :delete,
-                data:   { turbo_confirm: t("transfers.show.delete.confirmation") },
+                data:   { turbo_confirm: t(".delete.confirmation") },
                 class:  "mx-auto text-sm text-red-600 underline cursor-pointer hover:text-red-500" %>
 </div>

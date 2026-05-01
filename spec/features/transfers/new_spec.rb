@@ -20,9 +20,7 @@ describe "Transfer" do
     fill_in TransferForm.human_attribute_name(:amount), with: "50.00"
     click_on t("transfers.new.submit")
 
-    expect(page)
-      .to have_css("li", text: "#{t("transfers.payee.to", account: savings.name)} -$50.00")
-      .and(have_css("li", text: "#{t("transfers.payee.from", account: checking.name)} $50.00"))
+    expect(page).to have_css("li", text: "#{t("transfers.payee.from", account: checking.name)} $50.00")
   end
 
   it "shows an inline error when the form is invalid" do

@@ -49,6 +49,7 @@ class TransactionForm < BaseForm
   # Attempt to save the transaction if it's valid.
   #
   # @return [Boolean] Whether the transaction was saved successfully.
+  # @return [nil] When the form is invalid.
   def save
     if valid?
       if transaction.scheduled?

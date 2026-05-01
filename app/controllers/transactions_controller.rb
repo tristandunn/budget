@@ -4,7 +4,7 @@ class TransactionsController < ApplicationController
   before_action :store_return_location, only: %i(new edit)
   before_action :require_editable,     only: %i(update)
   before_action :require_destroyable,  only: %i(destroy)
-  before_action :require_unreconciled, only: %i(edit update clear unclear)
+  before_action :require_unreconciled, only: %i(edit clear unclear)
 
   # Render all transactions grouped by date.
   def index
@@ -22,9 +22,12 @@ class TransactionsController < ApplicationController
   # Render the edit transaction form.
   def edit
     @transaction = transaction
-    @form        = TransactionForm.from(transaction: transaction)
 
-    assign_form_collections
+    unless @transaction.transfer?
+      @form = TransactionForm.from(transaction: transaction)
+
+      assign_form_collections
+    end
   end
 
   # Create a new transaction.

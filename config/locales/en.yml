@@ -139,6 +139,7 @@ en:
         submit: "Delete"
       submit: "Save"
       title: "Edit Transaction"
+      transfer_title: "Payment"
     index:
       actions: "Actions"
       empty: "No transactions yet."
@@ -158,10 +159,12 @@ en:
       from: "Payment from %{account}"
       to: "Payment to %{account}"
     show:
+      date: "Date"
       delete:
         confirmation: "Are you sure you want to delete this payment?"
         submit: "Delete"
       from: "From"
+      memo: "Memo"
       to: "To"
 
   shared:

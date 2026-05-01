@@ -43,8 +43,8 @@ describe TransferForm, type: :form do
     subject(:save) { form.save }
 
     let(:budget)       { create(:budget) }
-    let(:from_account) { create(:account, budget: budget, name: "Checking") }
-    let(:to_account)   { create(:account, budget: budget, name: "Savings") }
+    let(:from_account) { create(:account, budget: budget) }
+    let(:to_account)   { create(:account, budget: budget) }
 
     let(:attributes) do
       {

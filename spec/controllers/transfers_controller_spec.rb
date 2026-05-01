@@ -137,5 +137,29 @@ describe TransfersController do
         expect(assigns(:accounts)).to include(from_account, to_account)
       end
     end
+
+    context "with unknown account IDs" do
+      let(:form)         { instance_double(TransferForm, save: false) }
+      let(:from_account) { create(:account, budget: budget, name: "Checking") }
+
+      before do
+        post :create, params: {
+          budget_id:     budget.id,
+          transfer_form: {
+            amount:          "50.00",
+            date:            "2026-04-15",
+            from_account_id: from_account.id,
+            to_account_id:   999_999
+          }
+        }
+      end
+
+      it { is_expected.to render_template(:new) }
+      it { is_expected.to respond_with(:unprocessable_content) }
+
+      it "passes nil for the unresolved account" do
+        expect(TransferForm).to have_received(:new).with(hash_including(to_account: nil))
+      end
+    end
   end
 end

@@ -59,9 +59,9 @@ class DestroyTransaction
   end
 
   # Destroy a transfer, reversing both account balances and removing the
-  # partner row. Transfers are always created as pending, so no upcoming
-  # guard is needed. While `transfer_pair_id` is set, the foreign key
-  # (`on_delete: :nullify`) ensures the partner row exists.
+  # partner row. `CreateTransfer` applies both balance changes immediately
+  # regardless of date, so the destroy must reverse them regardless of
+  # `upcoming?`.
   #
   # @return [void]
   def destroy_transfer

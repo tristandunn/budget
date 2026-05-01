@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-describe "transactions/_transfer_details.html.erb" do
+describe "transfers/_show.html.erb" do
   subject(:html) do
-    render partial: "transactions/transfer_details", locals: { transaction: transaction }
+    render partial: "transfers/show", locals: { transaction: transaction }
 
     rendered
   end
@@ -46,7 +46,7 @@ describe "transactions/_transfer_details.html.erb" do
   end
 
   it "renders the date label" do
-    expect(html).to have_css("dt", text: Transaction.human_attribute_name(:date))
+    expect(html).to have_css("dt", text: t("transfers.show.date"))
   end
 
   it "renders the formatted date" do
@@ -54,7 +54,7 @@ describe "transactions/_transfer_details.html.erb" do
   end
 
   it "renders the memo label" do
-    expect(html).to have_css("dt", text: Transaction.human_attribute_name(:memo))
+    expect(html).to have_css("dt", text: t("transfers.show.memo"))
   end
 
   it "renders the memo text" do
@@ -85,7 +85,7 @@ describe "transactions/_transfer_details.html.erb" do
     let(:memo) { nil }
 
     it "does not render a memo label" do
-      expect(html).to have_no_css("dt", text: Transaction.human_attribute_name(:memo))
+      expect(html).to have_no_css("dt", text: t("transfers.show.memo"))
     end
   end
 end

@@ -5,7 +5,6 @@ require "rails_helper"
 describe "transfers/_form.html.erb" do
   subject(:html) do
     render partial: "transfers/form", locals: {
-      accounts:     accounts,
       form:         form,
       method:       :post,
       submit_label: "Transfer",
@@ -15,11 +14,8 @@ describe "transfers/_form.html.erb" do
     rendered
   end
 
-  let(:accounts) { [checking, savings] }
-  let(:budget)   { create(:budget) }
-  let(:checking) { create(:account, budget: budget) }
-  let(:form)     { TransferForm.new(budget: budget) }
-  let(:savings)  { create(:account, budget: budget) }
+  let(:budget) { create(:budget) }
+  let(:form)   { TransferForm.new(budget: budget) }
 
   it "renders the from-account picker opener with a hidden field" do
     expect(html).to have_css(

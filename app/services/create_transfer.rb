@@ -24,14 +24,14 @@ class CreateTransfer
   # @param budget [Budget] The budget the transfer belongs to.
   # @param date [Date] The transfer date applied to both rows.
   # @param memo [String, nil] An optional memo applied to both rows.
-  # @return [Boolean] Whether the transfer was created successfully.
+  # @return [Boolean] Whether the transfer was created.
   def self.call(accounts:, amount:, budget:, date:, memo: nil)
     new(accounts: accounts, amount: amount, budget: budget, date: date, memo: memo).call
   end
 
   # Create the paired transactions and update both account balances.
   #
-  # @return [Boolean] Whether the transfer was created successfully.
+  # @return [Boolean] Whether the transfer was created.
   def call
     ActiveRecord::Base.transaction do
       outflow = build_outflow
