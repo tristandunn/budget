@@ -15,7 +15,7 @@ class TransfersController < ApplicationController
     @accounts = budget.accounts
 
     if @form.save
-      redirect_to budget_transactions_path(budget), status: :see_other
+      redirect_to budget_account_transactions_path(budget, to_account), status: :see_other
     else
       render :new, status: :unprocessable_content
     end

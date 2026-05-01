@@ -89,7 +89,7 @@ describe TransfersController do
         }
       end
 
-      it { is_expected.to redirect_to(budget_transactions_path(budget)) }
+      it { is_expected.to redirect_to(budget_account_transactions_path(budget, to_account)) }
       it { is_expected.to respond_with(:see_other) }
 
       it "initializes the form with the resolved attributes" do
