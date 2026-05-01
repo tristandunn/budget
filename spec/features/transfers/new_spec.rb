@@ -21,8 +21,8 @@ describe "Transfer" do
     click_on t("transfers.new.submit")
 
     expect(page)
-      .to have_css("li", text: "#{t("transfers.payee.name", account: savings.name)} -$50.00")
-      .and(have_css("li", text: "#{t("transfers.payee.name", account: checking.name)} $50.00"))
+      .to have_css("li", text: "#{t("transfers.payee.to", account: savings.name)} -$50.00")
+      .and(have_css("li", text: "#{t("transfers.payee.from", account: checking.name)} $50.00"))
   end
 
   it "shows an inline error when the form is invalid" do

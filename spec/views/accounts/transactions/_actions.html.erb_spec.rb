@@ -46,6 +46,23 @@ describe "accounts/transactions/_actions.html.erb" do
     )
   end
 
+  context "when the account is a credit account" do
+    let(:account) { create(:account, :credit, budget: budget) }
+
+    it "renders a record payment link targeting the transaction dialog" do
+      expect(html).to have_link(
+        I18n.t("accounts.transactions.actions.record_payment"),
+        href: new_budget_transfer_path(budget, to_account_id: account.id)
+      )
+    end
+  end
+
+  context "when the account is not a credit account" do
+    it "does not render a record payment link" do
+      expect(html).to have_no_link(I18n.t("accounts.transactions.actions.record_payment"))
+    end
+  end
+
   context "when the account has been reconciled" do
     before do
       create(:transaction, account: account, status: :reconciled)

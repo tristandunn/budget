@@ -63,7 +63,7 @@ class CreateTransfer
       budget:  budget,
       date:    date,
       memo:    memo,
-      payee:   payee_for(from_account)
+      payee:   payee_for(:from, from_account)
     )
   end
 
@@ -77,7 +77,7 @@ class CreateTransfer
       budget:  budget,
       date:    date,
       memo:    memo,
-      payee:   payee_for(to_account)
+      payee:   payee_for(:to, to_account)
     )
   end
 
@@ -93,12 +93,13 @@ class CreateTransfer
 
   # Find or create the payee for a transfer counterpart account.
   #
+  # @param direction [Symbol] :from for the inflow side, :to for the outflow side.
   # @param account [Account] The counterpart account whose name labels the payee.
   # @return [Payee] The found or created payee record.
-  def payee_for(account)
+  def payee_for(direction, account)
     Payee.find_or_create_by!(
       budget: budget,
-      name:   I18n.t("transfers.payee.name", account: account.name)
+      name:   I18n.t("transfers.payee.#{direction}", account: account.name)
     )
   end
 end

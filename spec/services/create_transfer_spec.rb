@@ -69,7 +69,7 @@ describe CreateTransfer do
 
       outflow_payee = from_account.transactions.first.payee.name
 
-      expect(outflow_payee).to eq(I18n.t("transfers.payee.name", account: to_account.name))
+      expect(outflow_payee).to eq(I18n.t("transfers.payee.to", account: to_account.name))
     end
 
     it "uses the i18n payee name on the inflow row" do
@@ -77,7 +77,7 @@ describe CreateTransfer do
 
       inflow_payee = to_account.transactions.first.payee.name
 
-      expect(inflow_payee).to eq(I18n.t("transfers.payee.name", account: from_account.name))
+      expect(inflow_payee).to eq(I18n.t("transfers.payee.from", account: from_account.name))
     end
 
     it "persists the supplied date on both rows" do
