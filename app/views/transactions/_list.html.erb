@@ -67,7 +67,7 @@
                   </div>
 
                   <div class="flex items-center justify-between text-sm text-taupe-600">
-                    <span><%= transaction.subcategory&.name %></span>
+                    <span><%= transaction_category(transaction) %></span>
 
                     <% if show_account %>
                       <span><%= transaction.account.name %></span>

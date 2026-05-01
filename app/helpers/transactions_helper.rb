@@ -33,6 +33,19 @@ module TransactionsHelper
     end
   end
 
+  # Returns the category label for a transaction, falling back to a
+  # credit card payment label for transfers since they have no subcategory.
+  #
+  # @param transaction [Transaction] The transaction to label.
+  # @return [String, nil] The category label, or nil when absent.
+  def transaction_category(transaction)
+    if transaction.transfer?
+      t("transactions.transfer_category")
+    else
+      transaction.subcategory&.name
+    end
+  end
+
   # Wraps content in a link to the transaction edit page, or a plain div if
   # the transaction is reconciled.
   #

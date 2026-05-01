@@ -108,6 +108,14 @@ describe "transactions/_list.html.erb" do
         expect(html).to have_text(transaction.payee.name)
       end
     end
+
+    context "when the transaction is a transfer" do
+      let(:transaction) { build_stubbed(:transaction, date: date, subcategory: nil, transfer_pair_id: 1) }
+
+      it "renders the credit card payment label" do
+        expect(html).to have_text(t("transactions.transfer_category"))
+      end
+    end
   end
 
   context "when there are scheduled transactions" do

@@ -108,6 +108,7 @@ en:
     reflect: "Reflect"
 
   transactions:
+    transfer_category: "Credit Card Payment"
     reconciled:
       hide: "Hide Reconciled"
       show: "Show Reconciled"

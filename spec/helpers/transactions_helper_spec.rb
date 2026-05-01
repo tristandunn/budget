@@ -53,6 +53,32 @@ describe TransactionsHelper do
     end
   end
 
+  describe "#transaction_category" do
+    context "when the transaction is a transfer" do
+      let(:transaction) { build_stubbed(:transaction, transfer_pair_id: 1) }
+
+      it "returns the credit card payment label" do
+        expect(helper.transaction_category(transaction)).to eq(t("transactions.transfer_category"))
+      end
+    end
+
+    context "when the transaction has a subcategory" do
+      let(:transaction) { build_stubbed(:transaction) }
+
+      it "returns the subcategory name" do
+        expect(helper.transaction_category(transaction)).to eq(transaction.subcategory.name)
+      end
+    end
+
+    context "when the transaction has no subcategory" do
+      let(:transaction) { build_stubbed(:transaction, subcategory: nil) }
+
+      it "returns nil" do
+        expect(helper.transaction_category(transaction)).to be_nil
+      end
+    end
+  end
+
   describe "#transaction_row_wrapper" do
     context "when the transaction is not reconciled" do
       let(:transaction) { build_stubbed(:transaction) }
