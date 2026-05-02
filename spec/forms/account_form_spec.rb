@@ -148,6 +148,54 @@ describe AccountForm, type: :form do
       end
     end
 
+    context "when the name changes" do
+      let(:form) { described_class.new(account: account, budget: account.budget, name: "New", credit: "false") }
+
+      it "renames the inflow-side transfer payee" do
+        payee = create(:payee, budget: account.budget, name: I18n.t("transfers.payee.from", account: "Old"))
+
+        update
+
+        expect(payee.reload.name).to eq(I18n.t("transfers.payee.from", account: "New"))
+      end
+
+      it "renames the outflow-side transfer payee" do
+        payee = create(:payee, budget: account.budget, name: I18n.t("transfers.payee.to", account: "Old"))
+
+        update
+
+        expect(payee.reload.name).to eq(I18n.t("transfers.payee.to", account: "New"))
+      end
+
+      it "does not rename unrelated payees in the budget" do
+        payee = create(:payee, budget: account.budget, name: "Grocery Store")
+
+        update
+
+        expect(payee.reload.name).to eq("Grocery Store")
+      end
+
+      it "does not rename matching payees in other budgets" do
+        payee = create(:payee, name: I18n.t("transfers.payee.from", account: "Old"))
+
+        update
+
+        expect(payee.reload.name).to eq(I18n.t("transfers.payee.from", account: "Old"))
+      end
+    end
+
+    context "when the name is unchanged" do
+      let(:form) { described_class.new(account: account, budget: account.budget, name: "Old", credit: "true") }
+
+      it "does not rename matching transfer payees" do
+        payee = create(:payee, budget: account.budget, name: I18n.t("transfers.payee.from", account: "Old"))
+
+        update
+
+        expect(payee.reload.name).to eq(I18n.t("transfers.payee.from", account: "Old"))
+      end
+    end
+
     context "when invalid" do
       let(:form) { described_class.new(account: account, budget: account.budget, name: "", credit: "false") }
 

@@ -49,7 +49,13 @@ class AccountForm < BaseForm
     account.assign_attributes(attributes)
 
     if valid?
-      account.save!
+      ActiveRecord::Base.transaction do
+        if account.name_changed?
+          rename_transfer_payees
+        end
+
+        account.save!
+      end
     end
   end
 
@@ -60,6 +66,20 @@ class AccountForm < BaseForm
   # @return [Hash] The account attributes.
   def attributes
     { credit: credit, name: name }
+  end
+
+  # Rename the transfer payees that mirror this account's previous name so
+  # they stay in sync rather than leaving stale payees behind.
+  #
+  # @return [void]
+  def rename_transfer_payees
+    old_name, new_name = account.changes[:name]
+
+    %i(from to).each do |direction|
+      payee = budget.payees.find_by(name: I18n.t("transfers.payee.#{direction}", account: old_name))
+
+      payee&.update!(name: I18n.t("transfers.payee.#{direction}", account: new_name))
+    end
   end
 
   # Validate the account, merging errors into the form.
