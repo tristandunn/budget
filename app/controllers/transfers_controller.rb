@@ -45,9 +45,7 @@ class TransfersController < ApplicationController
   # @return [Account] The requested source account.
   # @return [nil] When no source account is provided or it does not exist.
   def from_account
-    if parameters[:from_account_id].present?
-      @from_account ||= budget.accounts.find_by(id: parameters[:from_account_id])
-    end
+    budget.accounts.find_by(id: parameters[:from_account_id])
   end
 
   # Return the permitted form parameters.
@@ -64,8 +62,10 @@ class TransfersController < ApplicationController
   # @return [Account] The requested destination account.
   # @return [nil] When no destination account is provided or it does not exist.
   def to_account
-    if parameters[:to_account_id].present?
-      @to_account ||= budget.accounts.find_by(id: parameters[:to_account_id])
+    if defined?(@to_account)
+      @to_account
+    else
+      @to_account = budget.accounts.find_by(id: parameters[:to_account_id])
     end
   end
 
