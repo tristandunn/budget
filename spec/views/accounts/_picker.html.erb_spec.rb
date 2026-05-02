@@ -15,12 +15,12 @@ describe "accounts/_picker.html.erb" do
 
   let(:accounts) do
     [
-      create(:account, budget: budget, name: "Checking"),
-      create(:account, :credit, budget: budget, name: "Visa")
+      build_stubbed(:account, budget: budget, name: "Checking"),
+      build_stubbed(:account, :credit, budget: budget, name: "Visa")
     ]
   end
 
-  let(:budget)      { create(:budget) }
+  let(:budget)      { build_stubbed(:budget) }
   let(:picker_name) { "account-picker" }
   let(:selected)    { nil }
 
@@ -111,7 +111,7 @@ describe "accounts/_picker.html.erb" do
   end
 
   context "without any cash accounts" do
-    let(:accounts) { [create(:account, :credit, budget: budget, name: "Visa")] }
+    let(:accounts) { [build_stubbed(:account, :credit, budget: budget, name: "Visa")] }
 
     it "does not render the cash group" do
       expect(html).to have_no_css(
@@ -122,7 +122,7 @@ describe "accounts/_picker.html.erb" do
   end
 
   context "without any credit accounts" do
-    let(:accounts) { [create(:account, budget: budget, name: "Checking")] }
+    let(:accounts) { [build_stubbed(:account, budget: budget, name: "Checking")] }
 
     it "does not render the credit group" do
       expect(html).to have_no_css(

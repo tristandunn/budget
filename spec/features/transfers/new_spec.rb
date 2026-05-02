@@ -46,14 +46,16 @@ describe "Transfer" do
   end
 
   context "when clicking a transfer row" do
-    let(:pair)  { create(:transaction, budget: budget, account: credit_card) }
-    let(:payee) { create(:payee, budget: budget, name: "Transfer to Credit Card") }
-
     before do
-      create(:transaction, budget: budget, account: checking, payee: payee, transfer_pair: pair)
+      CreateTransfer.call(
+        accounts: { from: checking, to: credit_card },
+        amount:   Money.from_amount(50),
+        budget:   budget,
+        date:     Date.current
+      )
 
       visit budget_transactions_path(budget)
-      click_on payee.name
+      click_on t("transfers.payee.to", account: credit_card.name)
     end
 
     it "opens a read-only dialog" do

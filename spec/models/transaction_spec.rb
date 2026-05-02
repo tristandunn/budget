@@ -227,16 +227,14 @@ describe Transaction do
   end
 
   describe "#transfer?" do
-    subject { build_stubbed(:transaction, transfer_pair_id: transfer_pair_id) }
-
-    context "with a transfer pair ID" do
-      let(:transfer_pair_id) { 1 }
+    context "with a transfer pair" do
+      subject { build_stubbed(:transaction, transfer_pair: build_stubbed(:transaction)) }
 
       it { is_expected.to be_transfer }
     end
 
-    context "without a transfer pair ID" do
-      let(:transfer_pair_id) { nil }
+    context "without a transfer pair" do
+      subject { build_stubbed(:transaction) }
 
       it { is_expected.not_to be_transfer }
     end
@@ -256,7 +254,7 @@ describe Transaction do
     end
 
     context "with a transfer transaction" do
-      subject { build_stubbed(:transaction, transfer_pair_id: 1) }
+      subject { build_stubbed(:transaction, transfer_pair: build_stubbed(:transaction)) }
 
       it { is_expected.to be_uneditable }
     end
