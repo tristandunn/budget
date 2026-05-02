@@ -27,7 +27,7 @@ describe("PayeePickerController", () => {
     hiddenField.type = "hidden";
 
     display = document.createElement("span");
-    display.classList.add("text-gray-400");
+    display.classList.add("text-taupe-400");
 
     icon = document.createElement("svg");
     icon.classList.add("text-taupe-400");

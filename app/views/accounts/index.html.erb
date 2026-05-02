@@ -17,7 +17,7 @@
     <%= link_to new_budget_account_path(@budget),
                 aria:  { label: t(".new") },
                 data:  { turbo_frame: "account_dialog" },
-                class: "m-0.5 flex h-6 w-6 items-center justify-center rounded-full border-2 border-taupe-800 leading-none text-taupe-800" do %>
+                class: "m-0.5 flex h-6 w-6 items-center justify-center rounded-full border-2 border-taupe-800 leading-none text-taupe-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2" do %>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 16 16"

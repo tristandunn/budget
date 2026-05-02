@@ -109,8 +109,8 @@ export default class extends Controller {
 
     this.hiddenFieldTarget.value   = value;
     this.displayTarget.textContent = label;
-    this.displayTarget.classList.toggle("text-gray-400", empty);
-    this.displayTarget.classList.toggle("text-gray-800", !empty);
+    this.displayTarget.classList.toggle("text-taupe-400", empty);
+    this.displayTarget.classList.toggle("text-taupe-800", !empty);
     this.iconTarget.classList.toggle("text-taupe-400", empty);
     this.iconTarget.classList.toggle("text-indigo-600", !empty);
 

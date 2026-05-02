@@ -26,7 +26,7 @@ describe("PickerController", () => {
     hiddenField.type = "hidden";
 
     display = document.createElement("span");
-    display.classList.add("text-gray-400");
+    display.classList.add("text-taupe-400");
 
     icon = document.createElement("svg");
     icon.classList.add("text-taupe-400");
@@ -291,8 +291,8 @@ describe("PickerController", () => {
 
       expect(hiddenField.value).to.eq("1");
       expect(display.textContent).to.eq("Alpha");
-      expect(display.classList.contains("text-gray-400")).to.be.false;
-      expect(display.classList.contains("text-gray-800")).to.be.true;
+      expect(display.classList.contains("text-taupe-400")).to.be.false;
+      expect(display.classList.contains("text-taupe-800")).to.be.true;
       expect(icon.classList.contains("text-taupe-400")).to.be.false;
       expect(icon.classList.contains("text-indigo-600")).to.be.true;
     });
@@ -325,8 +325,8 @@ describe("PickerController", () => {
     });
 
     it("reverts the display and icon colors when an empty value is selected", () => {
-      display.classList.remove("text-gray-400");
-      display.classList.add("text-gray-800");
+      display.classList.remove("text-taupe-400");
+      display.classList.add("text-taupe-800");
       icon.classList.remove("text-taupe-400");
       icon.classList.add("text-indigo-600");
 
@@ -341,8 +341,8 @@ describe("PickerController", () => {
 
       expect(hiddenField.value).to.eq("");
       expect(display.textContent).to.eq("Never");
-      expect(display.classList.contains("text-gray-400")).to.be.true;
-      expect(display.classList.contains("text-gray-800")).to.be.false;
+      expect(display.classList.contains("text-taupe-400")).to.be.true;
+      expect(display.classList.contains("text-taupe-800")).to.be.false;
       expect(icon.classList.contains("text-taupe-400")).to.be.true;
       expect(icon.classList.contains("text-indigo-600")).to.be.false;
     });

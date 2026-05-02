@@ -29,7 +29,8 @@
   <% else %>
     <%= button_to clear_budget_transaction_path(transaction.budget, transaction),
                   method: transaction.cleared? ? :delete : :patch,
-                  class:  "-my-3 -ml-4 -mr-1 flex items-center justify-center py-3 pl-4 pr-1" do %>
+                  title:  transaction.cleared? ? t(".cleared") : t(".pending"),
+                  class:  "-my-3 -ml-4 -mr-1 flex items-center justify-center py-3 pl-4 pr-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset" do %>
       <% if transaction.cleared? %>
         <span
           class="

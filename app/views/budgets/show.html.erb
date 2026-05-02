@@ -1,4 +1,16 @@
 <div class="flex flex-col min-h-screen">
+  <div data-controller="dialog">
+    <dialog
+      id="category_dialog_modal"
+      class="dialog"
+      aria-labelledby="category_dialog_title"
+      data-dialog-target="dialog"
+      data-action="click->dialog#backdropClose cancel->dialog#cancel"
+    >
+      <turbo-frame id="category_dialog" data-action="turbo:frame-load->dialog#open"></turbo-frame>
+    </dialog>
+  </div>
+
   <header class="sticky top-0 z-10 flex items-center justify-between bg-white p-4">
     <div class="flex items-center gap-2">
       <%= link_to(
@@ -108,7 +120,8 @@
               <th scope="row" class="py-3 px-4 font-normal whitespace-nowrap">
                 <%= link_to subcategory.name,
                             edit_budget_category_path(@budget, subcategory),
-                            class: "text-inherit no-underline" %>
+                            class: "text-inherit no-underline",
+                            data:  { turbo_frame: "category_dialog" } %>
               </th>
 
               <% @budget_snapshot.snapshot_for(subcategory.id).tap do |snapshot| %>

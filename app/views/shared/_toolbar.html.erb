@@ -52,10 +52,14 @@
                 id:    "add-transaction",
                 aria:  { label: t("transactions.new.submit") },
                 data:  { turbo_frame: "transaction_dialog" },
-                class: "flex flex-col items-center justify-center px-4 -mt-1" do %>
+                class: "group/add flex flex-col items-center justify-center px-4 -mt-1 focus-visible:outline-none" do %>
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        class="w-10 h-10 bg-indigo-100 hover:bg-indigo-200 rounded-full text-indigo-600"
+        class="
+          w-10 h-10 bg-indigo-100 hover:bg-indigo-200 rounded-full text-indigo-600
+          group-focus-visible/add:ring-2 group-focus-visible/add:ring-indigo-500
+          group-focus-visible/add:ring-offset-2
+        "
         viewBox="0 0 24 24"
         fill="currentColor"
       >

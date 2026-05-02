@@ -53,8 +53,12 @@ en:
         working_balance: "Working Balance"
 
   categories:
+    dialog:
+      close: "Close dialog"
     edit:
+      enter_name: "Enter a name"
       submit: "Save Category"
+      title: "Edit Category"
 
   budgets:
     show:

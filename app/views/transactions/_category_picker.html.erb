@@ -5,7 +5,7 @@
   <div class="space-y-4">
     <% picker.groups.each do |group| %>
       <%= tag.section(data: { category_picker_target: "group" }) do %>
-        <h3 class="px-1 pb-1 text-sm font-semibold text-gray-800"><%= group.name %></h3>
+        <h3 class="px-1 pb-1 text-sm font-semibold text-taupe-800"><%= group.name %></h3>
 
         <ul class="bg-white rounded-xl divide-y divide-taupe-200" role="listbox">
           <% group.items.each do |item| %>
