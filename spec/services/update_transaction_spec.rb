@@ -186,27 +186,22 @@ describe UpdateTransaction do
     context "when changing date to a different month" do
       let(:attributes) { { date: Date.new(2026, 2, 15) } }
 
-      before do
-        create(:category_snapshot, category:        subcategory.parent,
-                                   amount_assigned: 0,
-                                   amount_used:     0,
-                                   date:            Date.new(2026, 2, 1))
-        create(:category_snapshot, category:        subcategory,
-                                   amount_assigned: 0,
-                                   amount_used:     0,
-                                   date:            Date.new(2026, 2, 1))
-      end
-
       it "reverses the old month's category snapshot amount used" do
         snapshot = subcategory.parent.snapshots.for_month(transaction.date).first
 
         expect { update }.to change { snapshot.reload.amount_used }.by(-1000)
       end
 
-      it "applies the new month's category snapshot amount used" do
-        snapshot = subcategory.parent.snapshots.for_month(Date.new(2026, 2, 15)).first
+      it "creates and applies the new month's category snapshot amount used" do
+        expect { update }.to change {
+          subcategory.parent.snapshots.for_month(Date.new(2026, 2, 15)).pick(:amount_used)
+        }.from(nil).to(1000)
+      end
 
-        expect { update }.to change { snapshot.reload.amount_used }.by(1000)
+      it "creates and applies the new month's subcategory snapshot amount used" do
+        expect { update }.to change {
+          subcategory.snapshots.for_month(Date.new(2026, 2, 15)).pick(:amount_used)
+        }.from(nil).to(1000)
       end
     end
 

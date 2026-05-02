@@ -163,8 +163,8 @@ class UpdateTransaction
   # @return [Array<CategorySnapshot>] The parent and subcategory snapshots.
   def snapshots_for(subcategory, date)
     [
-      subcategory.parent.snapshots.for_month(date).first,
-      subcategory.snapshots.for_month(date).first
+      subcategory.parent.snapshots.for_month(date).find_or_create_by!(budget: budget),
+      subcategory.snapshots.for_month(date).find_or_create_by!(budget: budget)
     ]
   end
 
