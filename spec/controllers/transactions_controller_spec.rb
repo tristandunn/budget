@@ -9,12 +9,13 @@ describe TransactionsController do
     let(:budget) { create(:budget) }
 
     context "with transactions" do
-      let!(:newer)    { create(:transaction, budget: budget, date: Date.new(2026, 3, 15)) }
-      let!(:older)    { create(:transaction, budget: budget, date: Date.new(2026, 3, 10)) }
+      let!(:newer)    { create(:transaction, budget: budget, date: 5.days.ago.to_date) }
+      let!(:older)    { create(:transaction, budget: budget, date: 10.days.ago.to_date) }
       let!(:upcoming) { create(:transaction, :upcoming, budget: budget) }
 
       before do
         create(:transaction)
+        create(:transaction, budget: budget, date: 32.days.ago.to_date)
 
         get :index, params: { budget_id: budget.id }
       end
@@ -26,7 +27,7 @@ describe TransactionsController do
         expect(assigns(:budget)).to eq(budget)
       end
 
-      it "assigns the current transactions" do
+      it "assigns the current transactions limited to the previous 31 days" do
         expect(assigns(:current_transactions)).to eq([newer, older])
       end
 
@@ -36,10 +37,10 @@ describe TransactionsController do
     end
 
     context "when hiding reconciled transactions" do
-      let!(:transaction) { create(:transaction, budget: budget, date: Date.new(2026, 3, 15)) }
+      let!(:transaction) { create(:transaction, budget: budget, date: 5.days.ago.to_date) }
 
       before do
-        create(:transaction, budget: budget, status: :reconciled, date: Date.new(2026, 3, 12))
+        create(:transaction, budget: budget, status: :reconciled, date: 10.days.ago.to_date)
         budget.settings.update(hide_reconciled: "1")
 
         get :index, params: { budget_id: budget.id }

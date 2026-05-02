@@ -30,7 +30,7 @@ module Accounts
     #
     # @return [Array(Array<Transaction>, Array<Transaction>)] The upcoming and current transactions.
     def filtered_transactions
-      transactions = account.transactions.includes(:payee, :subcategory)
+      transactions = account.transactions.recent.includes(:payee, :subcategory)
       transactions = transactions.where.not(status: :reconciled) if budget.settings.hide_reconciled?
       transactions.partition(&:upcoming?)
     end

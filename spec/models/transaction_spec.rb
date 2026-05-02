@@ -84,6 +84,36 @@ describe Transaction do
     end
   end
 
+  describe ".recent" do
+    subject { described_class.recent }
+
+    let(:transaction) { create(:transaction, date: date) }
+
+    context "with today's date" do
+      let(:date) { Date.current }
+
+      it { is_expected.to include(transaction) }
+    end
+
+    context "with a date 30 days ago" do
+      let(:date) { 30.days.ago.to_date }
+
+      it { is_expected.to include(transaction) }
+    end
+
+    context "with a future date" do
+      let(:date) { 1.week.from_now.to_date }
+
+      it { is_expected.to include(transaction) }
+    end
+
+    context "with a date more than 30 days ago" do
+      let(:date) { 31.days.ago.to_date }
+
+      it { is_expected.not_to include(transaction) }
+    end
+  end
+
   describe "#copyable_attributes" do
     it "returns the attributes to copy when creating a new occurrence" do
       transaction = create(:transaction)

@@ -29,6 +29,7 @@ class Transaction < ApplicationRecord
   default_scope -> { order(date: :desc, created_at: :desc) }
 
   scope :activation_due, -> { upcoming.where(date: ..Date.current) }
+  scope :recent,         -> { where(date: 30.days.ago.to_date..) }
 
   # Returns the attributes to copy when creating a new occurrence.
   #

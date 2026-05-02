@@ -13,6 +13,7 @@ describe Accounts::TransactionsController do
       before do
         create(:transaction, budget: budget)
         create(:transaction, budget: budget, date: 1.week.from_now)
+        create(:transaction, account: account, date: 32.days.ago.to_date)
 
         get :index, params: { budget_id: budget.id, account_id: account.id }
       end
@@ -28,7 +29,7 @@ describe Accounts::TransactionsController do
         expect(assigns(:account)).to eq(account)
       end
 
-      it "assigns current transactions for the requested account" do
+      it "assigns current transactions for the requested account limited to the previous 31 days" do
         expect(assigns(:current_transactions)).to eq([transaction])
       end
 
@@ -40,10 +41,10 @@ describe Accounts::TransactionsController do
     context "when hiding reconciled transactions" do
       let(:account)      { create(:account, budget: budget) }
       let(:budget)       { create(:budget) }
-      let!(:transaction) { create(:transaction, account: account, date: Date.new(2026, 3, 15)) }
+      let!(:transaction) { create(:transaction, account: account, date: 5.days.ago.to_date) }
 
       before do
-        create(:transaction, account: account, status: :reconciled, date: Date.new(2026, 3, 12))
+        create(:transaction, account: account, status: :reconciled, date: 10.days.ago.to_date)
         budget.settings.update(hide_reconciled: "1")
 
         get :index, params: { budget_id: budget.id, account_id: account.id }
