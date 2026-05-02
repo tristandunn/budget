@@ -16,7 +16,7 @@ describe "Account editing", :js do
     fill_in AccountForm.human_attribute_name(:name), with: "New Name"
     click_on t("accounts.edit.submit")
 
-    expect(page).to have_content("New Name").and(have_no_content("Old Name"))
+    expect(page).to have_text("New Name").and(have_no_text("Old Name"))
   end
 
   it "keeps the dialog open after a validation error" do

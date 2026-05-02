@@ -4,7 +4,7 @@ ruby   "4.0.2"
 source "https://rubygems.org"
 
 gem "bcrypt",            "3.1.22"
-gem "bootsnap",          "1.24.0", require: false
+gem "bootsnap",          "1.24.1", require: false
 gem "bundler-audit",     "0.9.3",  require: false
 gem "importmap-rails",   "2.2.3"
 gem "jbuilder",          "2.14.1"
@@ -34,7 +34,7 @@ group :development do
   gem "listen",              "3.10.0"
   gem "rack-mini-profiler",  "4.0.1"
   gem "rubocop",             "1.86.1", require: false
-  gem "rubocop-capybara",    "2.22.1", require: false
+  gem "rubocop-capybara",    "2.23.0", require: false
   gem "rubocop-factory_bot", "2.28.0", require: false
   gem "rubocop-performance", "1.26.1", require: false
   gem "rubocop-rails",       "2.34.3", require: false

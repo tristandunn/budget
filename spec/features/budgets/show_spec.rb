@@ -9,7 +9,7 @@ describe "Budget" do
 
       visit budget_path(budget)
 
-      expect(page).to have_content(Date.current.strftime("%b %Y"))
+      expect(page).to have_text(Date.current.strftime("%b %Y"))
     end
 
     it "renders the available to assign amount" do
@@ -17,7 +17,7 @@ describe "Budget" do
 
       visit budget_path(budget)
 
-      expect(page).to have_content("$1,000.00")
+      expect(page).to have_text("$1,000.00")
     end
 
     it "renders the parent categories" do
@@ -26,7 +26,7 @@ describe "Budget" do
 
       visit budget_path(budget)
 
-      expect(page).to have_content(category.name)
+      expect(page).to have_text(category.name)
     end
 
     it "renders the subcategories" do
@@ -35,7 +35,7 @@ describe "Budget" do
 
       visit budget_path(budget)
 
-      expect(page).to have_content(subcategory.name)
+      expect(page).to have_text(subcategory.name)
     end
 
     context "when navigating months" do
@@ -45,7 +45,7 @@ describe "Budget" do
         visit budget_path(budget)
         click_on "next-month"
 
-        expect(page).to have_content(1.month.from_now.strftime("%b %Y"))
+        expect(page).to have_text(1.month.from_now.strftime("%b %Y"))
       end
 
       it "navigates back to the previous month" do
@@ -55,7 +55,7 @@ describe "Budget" do
         click_on "next-month"
         click_on "previous-month"
 
-        expect(page).to have_content(Date.current.strftime("%b %Y"))
+        expect(page).to have_text(Date.current.strftime("%b %Y"))
       end
 
       it "navigates back to the current month when clicking the month and year" do
@@ -65,7 +65,7 @@ describe "Budget" do
         click_on "next-month"
         click_on 1.month.from_now.strftime("%b %Y")
 
-        expect(page).to have_content(Date.current.strftime("%b %Y"))
+        expect(page).to have_text(Date.current.strftime("%b %Y"))
       end
     end
 
@@ -81,13 +81,13 @@ describe "Budget" do
       it "hides subcategories when clicking the category" do
         find("thead th", text: category.name).click
 
-        expect(page).to have_no_content(subcategory.name)
+        expect(page).to have_no_text(subcategory.name)
       end
 
       it "shows subcategories when clicking a collapsed category" do
         2.times { find("thead th", text: category.name).click }
 
-        expect(page).to have_content(subcategory.name)
+        expect(page).to have_text(subcategory.name)
       end
     end
   end

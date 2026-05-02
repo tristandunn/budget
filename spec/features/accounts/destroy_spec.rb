@@ -17,6 +17,6 @@ describe "Account deletion", :js do
       click_on t("accounts.form.delete")
     end
 
-    expect(page).to have_no_content(account.name)
+    expect(page).to have_no_text(account.name)
   end
 end

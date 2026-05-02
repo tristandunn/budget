@@ -27,7 +27,7 @@ describe "Transfer" do
     fill_in TransferForm.human_attribute_name(:amount), with: "0"
     click_on t("transfers.new.submit")
 
-    expect(page).to have_content(
+    expect(page).to have_text(
       "#{TransferForm.human_attribute_name(:amount)} " \
       "#{t("errors.messages.greater_than", count: 0)}"
     )

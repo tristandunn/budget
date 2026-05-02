@@ -15,11 +15,11 @@ describe "Assigning to a subcategory", :js do
     end
 
     it "updates the assigned amount" do
-      expect(page).to have_content("$250.00")
+      expect(page).to have_text("$250.00")
     end
 
     it "updates the available to assign amount" do
-      expect(page).to have_content("$750.00")
+      expect(page).to have_text("$750.00")
     end
   end
 
@@ -35,15 +35,15 @@ describe "Assigning to a subcategory", :js do
     end
 
     it "stays on the navigated month after assigning" do
-      expect(page).to have_content(next_month.strftime("%b %Y"))
+      expect(page).to have_text(next_month.strftime("%b %Y"))
     end
 
     it "updates the assigned amount" do
-      expect(page).to have_content("$250.00")
+      expect(page).to have_text("$250.00")
     end
 
     it "updates the available to assign amount" do
-      expect(page).to have_content("$750.00")
+      expect(page).to have_text("$750.00")
     end
   end
 
