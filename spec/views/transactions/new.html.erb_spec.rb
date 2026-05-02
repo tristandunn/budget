@@ -29,8 +29,11 @@ describe "transactions/new.html.erb" do
     expect(html).to have_css("h2", text: I18n.t("transactions.new.title"))
   end
 
-  it "renders a close button" do
-    expect(html).to have_css("button[data-action='dialog#close']")
+  it "renders a cancel button" do
+    expect(html).to have_css(
+      "button[data-action='dialog#close']",
+      text: I18n.t("transactions.new.cancel")
+    )
   end
 
   it "renders the form partial" do
