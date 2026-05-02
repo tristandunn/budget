@@ -37,10 +37,12 @@
   <% end %>
 </div>
 
-<div class="self-center px-8 pt-1 pb-12 mx-auto w-full max-w-lg text-center">
-  <%= button_to t(".delete.submit"),
-                budget_transaction_path(transaction.budget, transaction),
-                method: :delete,
-                data:   { turbo_confirm: t(".delete.confirmation") },
-                class:  "mx-auto text-sm text-red-600 underline cursor-pointer hover:text-red-500" %>
-</div>
+<% if transaction.destroyable? %>
+  <div class="self-center px-8 pt-1 pb-12 mx-auto w-full max-w-lg text-center">
+    <%= button_to t(".delete.submit"),
+                  budget_transaction_path(transaction.budget, transaction),
+                  method: :delete,
+                  data:   { turbo_confirm: t(".delete.confirmation") },
+                  class:  "mx-auto text-sm text-red-600 underline cursor-pointer hover:text-red-500" %>
+  </div>
+<% end %>

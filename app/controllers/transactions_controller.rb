@@ -194,7 +194,7 @@ class TransactionsController < ApplicationController
   #
   # @return [Transaction] The requested transaction.
   def transaction
-    @transaction ||= budget.transactions.includes(:payee).find(params[:id])
+    @transaction ||= budget.transactions.includes(:account, :payee, transfer_pair: :account).find(params[:id])
   end
 
   # Return the permitted parameters with budget and subcategory.

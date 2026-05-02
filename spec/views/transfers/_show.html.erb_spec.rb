@@ -88,4 +88,14 @@ describe "transfers/_show.html.erb" do
       expect(html).to have_no_css("dt", text: t("transfers.show.memo"))
     end
   end
+
+  context "when the transaction is not destroyable" do
+    before do
+      transaction.transfer_pair.update!(status: :reconciled)
+    end
+
+    it "does not render a delete button" do
+      expect(html).to have_no_button(t("transfers.show.delete.submit"))
+    end
+  end
 end
