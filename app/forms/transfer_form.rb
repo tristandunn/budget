@@ -8,6 +8,7 @@ class TransferForm < BaseForm
   validates :from_account, presence: true
   validates :to_account,   presence: true
 
+  validate :validate_account_kinds
   validate :validate_date
   validate :validate_distinct_accounts
 
@@ -50,6 +51,33 @@ class TransferForm < BaseForm
       date:     date,
       memo:     memo.presence
     )
+  end
+
+  # Return whether the source account is present and is a credit account.
+  #
+  # @return [Boolean] Whether the source account is the wrong kind.
+  def from_account_invalid_kind?
+    from_account.present? && from_account.credit?
+  end
+
+  # Return whether the destination account is present and is not a credit account.
+  #
+  # @return [Boolean] Whether the destination account is the wrong kind.
+  def to_account_invalid_kind?
+    to_account.present? && !to_account.credit?
+  end
+
+  # Validate that the source is a cash account and the destination is a credit account.
+  #
+  # @return [void]
+  def validate_account_kinds
+    if from_account_invalid_kind?
+      errors.add(:from_account, :must_be_cash)
+    end
+
+    if to_account_invalid_kind?
+      errors.add(:to_account, :must_be_credit)
+    end
   end
 
   # Validate that the date is not in the future.

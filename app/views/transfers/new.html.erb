@@ -28,12 +28,12 @@
     </div>
 
     <%= render "accounts/picker",
-               accounts:   @accounts,
+               accounts:   @accounts.reject(&:credit),
                controller: "from-account-picker",
                selected:   @form.from_account %>
 
     <%= render "accounts/picker",
-               accounts:   @accounts,
+               accounts:   @accounts.select(&:credit),
                controller: "to-account-picker",
                selected:   @form.to_account %>
   </div>

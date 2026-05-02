@@ -9,14 +9,14 @@ describe "transfers/new.html.erb" do
     rendered
   end
 
-  let(:budget)   { build_stubbed(:budget) }
-  let(:checking) { build_stubbed(:account, budget: budget, name: "Checking") }
-  let(:savings)  { build_stubbed(:account, budget: budget, name: "Savings") }
+  let(:budget)      { build_stubbed(:budget) }
+  let(:checking)    { build_stubbed(:account, budget: budget, name: "Checking") }
+  let(:credit_card) { build_stubbed(:account, :credit, budget: budget, name: "Credit Card") }
 
   before do
     stub_template("transfers/_form.html.erb" => "FORM_PARTIAL")
 
-    assign :accounts, [checking, savings]
+    assign :accounts, [checking, credit_card]
     assign :budget,   budget
     assign :form,     TransferForm.new(budget: budget)
   end

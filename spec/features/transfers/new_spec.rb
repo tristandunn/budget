@@ -3,20 +3,20 @@
 require "rails_helper"
 
 describe "Transfer" do
-  let(:budget)   { create(:budget) }
-  let(:checking) { create(:account, balance: 50_000, budget: budget) }
-  let(:savings)  { create(:account, balance: 20_000, budget: budget) }
+  let(:budget)      { create(:budget) }
+  let(:checking)    { create(:account, balance: 50_000, budget: budget) }
+  let(:credit_card) { create(:account, :credit, balance: 20_000, budget: budget) }
 
   before do
     checking
-    savings
+    credit_card
 
     visit new_budget_transfer_path(budget)
   end
 
   it "creates a transfer between accounts" do
     fill_in_from_account(checking)
-    fill_in_to_account(savings)
+    fill_in_to_account(credit_card)
     fill_in TransferForm.human_attribute_name(:amount), with: "50.00"
     click_on t("transfers.new.submit")
 
@@ -35,19 +35,19 @@ describe "Transfer" do
 
   context "with a to_account_id in the URL" do
     before do
-      visit new_budget_transfer_path(budget, to_account_id: savings.id)
+      visit new_budget_transfer_path(budget, to_account_id: credit_card.id)
     end
 
     it "pre-selects the matching account in the to-account picker" do
       within("[data-controller~='to-account-picker']") do
-        expect(page).to have_css("[role='option'][aria-selected='true']", text: savings.name)
+        expect(page).to have_css("[role='option'][aria-selected='true']", text: credit_card.name)
       end
     end
   end
 
   context "when clicking a transfer row" do
-    let(:pair)  { create(:transaction, budget: budget, account: savings) }
-    let(:payee) { create(:payee, budget: budget, name: "Transfer to Savings") }
+    let(:pair)  { create(:transaction, budget: budget, account: credit_card) }
+    let(:payee) { create(:payee, budget: budget, name: "Transfer to Credit Card") }
 
     before do
       create(:transaction, budget: budget, account: checking, payee: payee, transfer_pair: pair)

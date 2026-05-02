@@ -98,7 +98,10 @@ en:
           attributes:
             date:
               in_the_future: "cannot be in the future"
+            from_account:
+              must_be_cash: "must be a cash account"
             to_account:
+              must_be_credit: "must be a credit account"
               must_not_match_source: "must not match the source account"
 
   toolbar:

@@ -44,7 +44,7 @@ describe TransferForm, type: :form do
 
     let(:budget)       { create(:budget) }
     let(:from_account) { create(:account, budget: budget) }
-    let(:to_account)   { create(:account, budget: budget) }
+    let(:to_account)   { create(:account, :credit, budget: budget) }
 
     let(:attributes) do
       {
@@ -110,6 +110,26 @@ describe TransferForm, type: :form do
 
       it "adds the must-not-match error to to_account" do
         expect(form.errors).to be_added(:to_account, :must_not_match_source)
+      end
+    end
+
+    context "when from_account is a credit account" do
+      subject(:form) { described_class.new(from_account: from_account).tap(&:valid?) }
+
+      let(:from_account) { create(:account, :credit) }
+
+      it "adds the must-be-cash error to from_account" do
+        expect(form.errors).to be_added(:from_account, :must_be_cash)
+      end
+    end
+
+    context "when to_account is a cash account" do
+      subject(:form) { described_class.new(to_account: to_account).tap(&:valid?) }
+
+      let(:to_account) { create(:account) }
+
+      it "adds the must-be-credit error to to_account" do
+        expect(form.errors).to be_added(:to_account, :must_be_credit)
       end
     end
 

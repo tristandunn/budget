@@ -6,9 +6,9 @@ describe TransfersController do
   it { is_expected.to be_a(ApplicationController) }
 
   describe "#new" do
-    let(:budget)    { create(:budget) }
-    let!(:checking) { create(:account, budget: budget, name: "Checking") }
-    let!(:savings)  { create(:account, budget: budget, name: "Savings") }
+    let(:budget)        { create(:budget) }
+    let!(:checking)     { create(:account, budget: budget, name: "Checking") }
+    let!(:credit_card)  { create(:account, :credit, budget: budget, name: "Credit Card") }
 
     before do
       allow(TransferForm).to receive(:new).and_call_original
@@ -27,7 +27,7 @@ describe TransfersController do
       end
 
       it "assigns the budget accounts" do
-        expect(assigns(:accounts)).to eq([checking, savings])
+        expect(assigns(:accounts)).to eq([checking, credit_card])
       end
 
       it "assigns a transfer form" do
@@ -39,15 +39,27 @@ describe TransfersController do
       end
     end
 
-    context "with a known to_account_id" do
+    context "with a known credit to_account_id" do
       before do
-        get :new, params: { budget_id: budget.id, to_account_id: savings.id }
+        get :new, params: { budget_id: budget.id, to_account_id: credit_card.id }
       end
 
       it { is_expected.to respond_with(200) }
 
       it "initializes the form with the resolved destination account" do
-        expect(TransferForm).to have_received(:new).with(budget: budget, to_account: savings)
+        expect(TransferForm).to have_received(:new).with(budget: budget, to_account: credit_card)
+      end
+    end
+
+    context "with a cash to_account_id" do
+      before do
+        get :new, params: { budget_id: budget.id, to_account_id: checking.id }
+      end
+
+      it { is_expected.to respond_with(200) }
+
+      it "initializes the form without a destination account" do
+        expect(TransferForm).to have_received(:new).with(budget: budget, to_account: nil)
       end
     end
 
@@ -74,7 +86,7 @@ describe TransfersController do
     context "when valid" do
       let(:form)           { instance_double(TransferForm, save: true) }
       let(:from_account)   { create(:account, budget: budget, name: "Checking") }
-      let(:to_account)     { create(:account, budget: budget, name: "Savings") }
+      let(:to_account)     { create(:account, :credit, budget: budget, name: "Credit Card") }
 
       before do
         post :create, params: {
@@ -83,7 +95,7 @@ describe TransfersController do
             amount:          "50.00",
             date:            "2026-04-15",
             from_account_id: from_account.id,
-            memo:            "Move savings",
+            memo:            "Move money",
             to_account_id:   to_account.id
           }
         }
@@ -98,7 +110,7 @@ describe TransfersController do
           budget:       budget,
           date:         "2026-04-15",
           from_account: from_account,
-          memo:         "Move savings",
+          memo:         "Move money",
           to_account:   to_account
         )
       end
@@ -111,7 +123,7 @@ describe TransfersController do
     context "when invalid" do
       let(:form)           { instance_double(TransferForm, save: false) }
       let(:from_account)   { create(:account, budget: budget, name: "Checking") }
-      let(:to_account)     { create(:account, budget: budget, name: "Savings") }
+      let(:to_account)     { create(:account, :credit, budget: budget, name: "Credit Card") }
 
       before do
         post :create, params: {
@@ -120,7 +132,7 @@ describe TransfersController do
             amount:          "50.00",
             date:            "2026-04-15",
             from_account_id: from_account.id,
-            memo:            "Move savings",
+            memo:            "Move money",
             to_account_id:   to_account.id
           }
         }

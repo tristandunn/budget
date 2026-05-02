@@ -32,11 +32,11 @@ class TransfersController < ApplicationController
 
   # Return the default destination account from the query parameter, if present.
   #
-  # @return [Account] The requested destination account.
-  # @return [nil] When no destination account is provided or it does not exist.
+  # @return [Account] The requested credit destination account.
+  # @return [nil] When no destination account is provided or it does not resolve to a credit account.
   def default_to_account
     if params[:to_account_id].present?
-      budget.accounts.find_by(id: params[:to_account_id])
+      budget.accounts.credit.find_by(id: params[:to_account_id])
     end
   end
 
