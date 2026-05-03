@@ -65,6 +65,12 @@ describe "transactions/edit.html.erb" do
         "[data-controller='payee-picker category-picker account-picker frequency-picker']"
       )
     end
+
+    it "wires the category picker outlet on the payee picker" do
+      expect(html).to have_css(
+        "[data-payee-picker-category-picker-outlet=\"[data-controller~='category-picker']\"]"
+      )
+    end
   end
 
   context "when the transaction is a transfer" do

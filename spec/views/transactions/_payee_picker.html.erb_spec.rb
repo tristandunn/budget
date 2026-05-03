@@ -35,6 +35,16 @@ describe "transactions/_payee_picker.html.erb" do
     end
   end
 
+  it "renders the previous category url for each payee" do
+    payees.each do |payee|
+      expect(html).to have_css(
+        "li[data-payee-picker-target='item']" \
+        "[data-value='#{payee.name}']" \
+        "[data-previous-category-url='#{previous_category_budget_payee_path(budget, payee)}']"
+      )
+    end
+  end
+
   it "renders the create payee template" do
     expect(html).to have_css(
       "template[data-payee-picker-target='createPayeeTemplate']",

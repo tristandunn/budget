@@ -51,4 +51,10 @@ describe "transactions/new.html.erb" do
   it "renders the account picker partial" do
     expect(html).to include("ACCOUNT_PICKER_PARTIAL")
   end
+
+  it "wires the category picker outlet on the payee picker" do
+    expect(html).to have_css(
+      "[data-payee-picker-category-picker-outlet=\"[data-controller~='category-picker']\"]"
+    )
+  end
 end

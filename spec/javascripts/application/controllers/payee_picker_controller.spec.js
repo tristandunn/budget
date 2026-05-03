@@ -163,4 +163,85 @@ describe("PayeePickerController", () => {
       expect(picker.classList.contains("hidden")).to.be.false;
     });
   });
+
+  describe("#select with a previous category URL", () => {
+    let categoryPickerOutlet;
+
+    beforeEach(() => {
+      categoryPickerOutlet = {
+        "applyValue": sinon.fake(),
+        "hiddenFieldTarget": { "value": "" }
+      };
+
+      alpha.dataset.previousCategoryUrl  = "/payees/1/previous_category";
+      controller.hasCategoryPickerOutlet = true;
+      controller.categoryPickerOutlet    = categoryPickerOutlet;
+
+      globalThis.fetch = sinon.fake();
+    });
+
+    it("applies the fetched subcategory on the category picker outlet", async () => {
+      globalThis.fetch = sinon.fake.resolves({
+        "json": () => {
+          return Promise.resolve({ "subcategory_id": 42 });
+        },
+        "ok": true
+      });
+
+      await controller.select({ "currentTarget": alpha });
+
+      expect(globalThis.fetch).to.have.been.calledWith(
+        "/payees/1/previous_category",
+        { "headers": { "Accept": "application/json" } }
+      );
+      expect(categoryPickerOutlet.applyValue).to.have.been.calledWith(42);
+    });
+
+    it("does nothing when the response is not ok", async () => {
+      globalThis.fetch = sinon.fake.resolves({ "ok": false });
+
+      await controller.select({ "currentTarget": alpha });
+
+      expect(categoryPickerOutlet.applyValue).not.to.have.been.called;
+    });
+
+    it("does nothing when the response payload has no subcategory id", async () => {
+      globalThis.fetch = sinon.fake.resolves({
+        "json": () => {
+          return Promise.resolve({ "subcategory_id": null });
+        },
+        "ok": true
+      });
+
+      await controller.select({ "currentTarget": alpha });
+
+      expect(categoryPickerOutlet.applyValue).not.to.have.been.called;
+    });
+
+    it("does nothing when the item has no previous category url", async () => {
+      delete alpha.dataset.previousCategoryUrl;
+
+      await controller.select({ "currentTarget": alpha });
+
+      expect(globalThis.fetch).not.to.have.been.called;
+      expect(categoryPickerOutlet.applyValue).not.to.have.been.called;
+    });
+
+    it("does nothing when the category picker outlet is missing", async () => {
+      controller.hasCategoryPickerOutlet = false;
+
+      await controller.select({ "currentTarget": alpha });
+
+      expect(globalThis.fetch).not.to.have.been.called;
+    });
+
+    it("does nothing when a category is already selected", async () => {
+      categoryPickerOutlet.hiddenFieldTarget.value = "7";
+
+      await controller.select({ "currentTarget": alpha });
+
+      expect(globalThis.fetch).not.to.have.been.called;
+      expect(categoryPickerOutlet.applyValue).not.to.have.been.called;
+    });
+  });
 });

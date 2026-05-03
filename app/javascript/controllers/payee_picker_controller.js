@@ -6,7 +6,40 @@ import PickerController from "controllers/picker_controller";
  * payee, allowing a new payee to be created inline.
  */
 export default class extends PickerController {
+  static outlets = ["category-picker"];
+
   static targets = ["createPayeeTemplate"];
+
+  /*
+   * Fetch the default subcategory for the selected payee and apply it on the
+   * category picker outlet when one is returned. Skips the fetch when a
+   * category is already selected to avoid overwriting the user's choice.
+   */
+  async select(event) {
+    super.select(event);
+
+    const url = event.currentTarget.dataset.previousCategoryUrl;
+
+    if (!url || !this.hasCategoryPickerOutlet) {
+      return;
+    }
+
+    if (this.categoryPickerOutlet.hiddenFieldTarget.value !== "") {
+      return;
+    }
+
+    const response = await fetch(url, { "headers": { "Accept": "application/json" } });
+
+    if (!response.ok) {
+      return;
+    }
+
+    const data = await response.json();
+
+    if (data.subcategory_id) {
+      this.categoryPickerOutlet.applyValue(data.subcategory_id);
+    }
+  }
 
   /*
    * Insert, update, or remove the Create option based on the current query.

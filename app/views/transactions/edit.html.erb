@@ -1,7 +1,7 @@
 <%= turbo_frame_tag "transaction_dialog", class: "flex flex-col h-full" do %>
   <%= tag.div(
         class: "relative flex flex-col h-full overflow-x-clip",
-        data:  @transaction.transfer? ? {} : { controller: "payee-picker category-picker account-picker frequency-picker" }
+        data:  @transaction.transfer? ? {} : { controller: "payee-picker category-picker account-picker frequency-picker", "payee-picker-category-picker-outlet": "[data-controller~='category-picker']" }
       ) do %>
     <div>
       <header class="relative p-4">

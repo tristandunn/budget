@@ -7,4 +7,13 @@ class Payee < ApplicationRecord
 
   validates :name, presence:   true,
                    uniqueness: { scope: :budget_id }
+
+  # Return the subcategory id from the most recent categorized transaction for
+  # this payee.
+  #
+  # @return [Integer] The most recent subcategory id.
+  # @return [nil] When the payee has no categorized transactions.
+  def previous_subcategory_id
+    transactions.where.not(category_id: nil).reorder(date: :desc, id: :desc).pick(:category_id)
+  end
 end

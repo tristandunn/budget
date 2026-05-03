@@ -452,4 +452,26 @@ describe("PickerController", () => {
       }).not.to.throw();
     });
   });
+
+  describe("#applyValue", () => {
+    beforeEach(() => {
+      controller.open();
+    });
+
+    it("applies the matching item by value, updating the hidden field and display", () => {
+      controller.applyValue("2");
+
+      expect(hiddenField.value).to.eq("2");
+      expect(display.textContent).to.eq("Beta");
+      expect(beta.getAttribute("aria-selected")).to.eq("true");
+      expect(picker.classList.contains("hidden")).to.be.true;
+    });
+
+    it("is a no-op when no item matches", () => {
+      controller.applyValue("999");
+
+      expect(hiddenField.value).to.eq("");
+      expect(display.textContent).to.eq("");
+    });
+  });
 });

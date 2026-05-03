@@ -103,6 +103,17 @@ export default class extends Controller {
    */
   afterFilter() {}
 
+  // Apply a selection programmatically by value. No-op when no matching item exists.
+  applyValue(value) {
+    const item = this.itemTargets.find((candidate) => {
+      return candidate.dataset.value === value;
+    });
+
+    if (item) {
+      this.#applySelection(item.dataset.value, item.dataset.label);
+    }
+  }
+
   // Apply a selection to the form and close the picker.
   #applySelection(value, label) {
     const empty = value === "";
