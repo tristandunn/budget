@@ -1,0 +1,7 @@
+<%= turbo_frame_tag "category_dialog", class: "flex flex-col h-full" do %>
+  <%= render "details",
+             budget:                   @budget,
+             category:                 @category,
+             budget_snapshot:          @budget_snapshot,
+             previous_budget_snapshot: @previous_budget_snapshot %>
+<% end %>

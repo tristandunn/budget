@@ -48,9 +48,27 @@ describe "budgets/show.html.erb" do
     )
   end
 
-  it "renders the subcategory name as a link to edit" do
-    expect(html).to have_link(subcategory.name,
-                              href: edit_budget_category_path(subcategory.budget, subcategory))
+  it "renders the subcategory name as a link to its details" do
+    expect(html).to have_link(
+      subcategory.name,
+      href: budget_category_path(subcategory.budget, subcategory,
+                                 year:  budget_snapshot.date.year,
+                                 month: budget_snapshot.date.month)
+    )
+  end
+
+  it "identifies the subcategory name cell so it can be targeted by turbo streams" do
+    expect(html).to have_css("th##{dom_id(subcategory, :name)}", text: subcategory.name)
+  end
+
+  it "renders the category details dialog" do
+    expect(html).to have_css("dialog#category_dialog_modal turbo-frame#category_dialog")
+  end
+
+  it "renders the category rename dialog" do
+    expect(html).to have_css(
+      "dialog#category_rename_dialog_modal turbo-frame#category_rename_dialog"
+    )
   end
 
   it "renders the subcategory amount assigned as a link" do

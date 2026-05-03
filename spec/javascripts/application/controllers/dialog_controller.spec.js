@@ -34,6 +34,16 @@ describe("DialogController", () => {
     expect(dialog.classList.contains("open")).to.be.true;
   });
 
+  it("does not call showModal when the dialog is already open", () => {
+    Object.defineProperty(dialog, "open", { "configurable": true,
+      "value": true });
+
+    controller.open();
+
+    expect(dialog.showModal).not.to.have.been.called;
+    expect(dialog.classList.contains("open")).to.be.true;
+  });
+
   it("opens without reflow when prefers-reduced-motion is enabled", () => {
     sinon.stub(window, "matchMedia").returns({ "matches": true });
 
@@ -47,6 +57,61 @@ describe("DialogController", () => {
     controller.close();
 
     expect(dialog.classList.contains("closing")).to.be.true;
+  });
+
+  it("forces a reflow before adding the closing class on close", () => {
+    const order = [];
+
+    Object.defineProperty(dialog, "offsetHeight", {
+      "configurable": true,
+      "get": () => {
+        order.push("reflow");
+
+        return 0;
+      }
+    });
+
+    const originalAdd = dialog.classList.add.bind(dialog.classList);
+    sinon.stub(dialog.classList, "add").callsFake((...args) => {
+      order.push(`add:${args.join(",")}`);
+
+      return originalAdd(...args);
+    });
+
+    controller.close();
+
+    expect(order).to.eql(["reflow", "add:closing"]);
+  });
+
+  it("forces a reflow before adding the closing class on dismiss", () => {
+    const frame = dialog.querySelector("turbo-frame");
+    frame.innerHTML = "";
+    frame.src = "/redirected";
+    globalThis.Turbo = { "visit": sinon.fake() };
+
+    const order = [];
+
+    Object.defineProperty(dialog, "offsetHeight", {
+      "configurable": true,
+      "get": () => {
+        order.push("reflow");
+
+        return 0;
+      }
+    });
+
+    const originalAdd = dialog.classList.add.bind(dialog.classList);
+    sinon.stub(dialog.classList, "add").callsFake((...args) => {
+      order.push(`add:${args.join(",")}`);
+
+      return originalAdd(...args);
+    });
+
+    controller.open();
+
+    expect(order).to.eql(["reflow", "add:closing"]);
+
+    delete globalThis.Turbo;
   });
 
   it("closes the dialog after the transition ends", () => {

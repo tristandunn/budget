@@ -9,6 +9,7 @@ describe "Category editing" do
   before do
     visit budget_path(budget)
     click_on subcategory.name
+    click_on t("categories.show.rename")
   end
 
   it "updates the category name" do

@@ -19,7 +19,14 @@ export default class extends Controller {
       return;
     }
 
-    dialog.showModal();
+    /*
+     * Skip showModal when the dialog is already open. This happens when
+     * a turbo frame inside the open dialog loads new content, such as
+     * navigating from the details view to the rename form.
+     */
+    if (!dialog.open) {
+      dialog.showModal();
+    }
 
     /*
      * Force a reflow so the browser registers the off-screen position
@@ -27,7 +34,7 @@ export default class extends Controller {
      * Skip when the user prefers reduced motion since no transition runs.
      */
     if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      dialog.offsetHeight;
+      this.#forceReflow(dialog);
     }
 
     dialog.classList.add("open");
@@ -57,6 +64,13 @@ export default class extends Controller {
       { "once": true }
     );
 
+    /*
+     * Force a reflow so the browser registers the on-screen position before
+     * adding the closing class. Without this, a pending layout change (such as
+     * a turbo stream replacing the frame contents) can be batched with the
+     * class change and skip the slide-out transition entirely.
+     */
+    this.#forceReflow(dialog);
     dialog.classList.add("closing");
   }
 
@@ -94,7 +108,16 @@ export default class extends Controller {
       { "once": true }
     );
 
+    this.#forceReflow(dialog);
     dialog.classList.add("closing");
+  }
+
+  /*
+   * Read offsetHeight to force a synchronous layout flush, ensuring any
+   * pending style or DOM changes are applied before the next class change.
+   */
+  #forceReflow(dialog) {
+    return dialog.offsetHeight;
   }
 
   // Reset the dialog state and clear the frame content.

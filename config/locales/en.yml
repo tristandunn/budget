@@ -56,9 +56,18 @@ en:
     dialog:
       close: "Close dialog"
     edit:
+      cancel: "Cancel"
       enter_name: "Enter a name"
       submit: "Save Category"
-      title: "Edit Category"
+      title: "Rename Category"
+    show:
+      activity: "Activity"
+      assigned: "Assigned"
+      available: "Available"
+      balance: "Balance"
+      done: "Done"
+      rename: "Rename Category"
+      rollover: "Rollover"
 
   budgets:
     show:

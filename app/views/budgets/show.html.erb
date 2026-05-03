@@ -1,5 +1,5 @@
 <div class="flex flex-col min-h-screen">
-  <div data-controller="dialog">
+  <div data-controller="dialog" data-action="dialog:close->dialog#close">
     <dialog
       id="category_dialog_modal"
       class="dialog"
@@ -8,6 +8,18 @@
       data-action="click->dialog#backdropClose cancel->dialog#cancel"
     >
       <turbo-frame id="category_dialog" data-action="turbo:frame-load->dialog#open"></turbo-frame>
+    </dialog>
+  </div>
+
+  <div data-controller="dialog" data-action="dialog:close->dialog#close">
+    <dialog
+      id="category_rename_dialog_modal"
+      class="dialog"
+      aria-labelledby="category_rename_dialog_title"
+      data-dialog-target="dialog"
+      data-action="click->dialog#backdropClose cancel->dialog#cancel"
+    >
+      <turbo-frame id="category_rename_dialog" data-action="turbo:frame-load->dialog#open"></turbo-frame>
     </dialog>
   </div>
 
@@ -117,9 +129,15 @@
         >
           <% category.subcategories.sort_by(&:position).each do |subcategory| %>
             <tr class="bg-white border-b border-taupe-200">
-              <th scope="row" class="py-3 px-4 font-normal whitespace-nowrap">
+              <th
+                scope="row"
+                id="<%= dom_id(subcategory, :name) %>"
+                class="py-3 px-4 font-normal whitespace-nowrap"
+              >
                 <%= link_to subcategory.name,
-                            edit_budget_category_path(@budget, subcategory),
+                            budget_category_path(@budget, subcategory,
+                                                 year:  @budget_snapshot.date.year,
+                                                 month: @budget_snapshot.date.month),
                             class: "text-inherit no-underline",
                             data:  { turbo_frame: "category_dialog" } %>
               </th>

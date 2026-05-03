@@ -1,0 +1,20 @@
+<%= turbo_stream.update "category_dialog" do %>
+  <%= render "details",
+             budget:                   @budget,
+             category:                 @category,
+             budget_snapshot:          @budget_snapshot,
+             previous_budget_snapshot: @previous_budget_snapshot %>
+<% end %>
+
+<%= turbo_stream.update dom_id(@category, :name) do %>
+  <%= link_to @category.name,
+              budget_category_path(@budget, @category,
+                                   year:  @budget_snapshot.date.year,
+                                   month: @budget_snapshot.date.month),
+              class: "text-inherit no-underline",
+              data:  { turbo_frame: "category_dialog" } %>
+<% end %>
+
+<%= turbo_stream.update "category_rename_dialog" do %>
+  <div data-controller="dialog-dismisser"></div>
+<% end %>

@@ -1,19 +1,23 @@
-<%= turbo_frame_tag "category_dialog", class: "flex flex-col h-full" do %>
+<%= turbo_frame_tag "category_rename_dialog", class: "flex flex-col h-full" do %>
   <header class="relative p-4">
-    <h2 id="category_dialog_title" class="text-lg font-semibold text-center"><%= t(".title") %></h2>
+    <h2 id="category_rename_dialog_title" class="text-lg font-semibold text-center">
+      <%= t(".title") %>
+    </h2>
 
     <button
       type="button"
-      class="absolute top-4 right-4 text-2xl leading-none text-taupe-600 cursor-pointer"
       data-action="dialog#close"
-      aria-label="<%= t("categories.dialog.close") %>"
+      class="absolute top-4 left-4 text-sm text-taupe-600 cursor-pointer"
     >
-      &times;
+      <%= t(".cancel") %>
     </button>
   </header>
 
   <div class="self-center py-6 px-8 mx-auto w-full max-w-lg">
-    <%= form_with model: @form, url: budget_category_path(@budget, @category), method: :patch, class: "highlight-errors" do |f| %>
+    <%= form_with model:  @form,
+                  url:    budget_category_path(@budget, @category, year: params[:year], month: params[:month]),
+                  method: :patch,
+                  class:  "highlight-errors" do |f| %>
       <div class="bg-white rounded-xl">
         <div
           class="

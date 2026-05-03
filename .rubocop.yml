@@ -35,6 +35,7 @@ Metrics/ClassLength:
 
 Metrics/MethodLength:
   Enabled: true
+  Max: 12
   Exclude:
     - db/migrate/*
 
