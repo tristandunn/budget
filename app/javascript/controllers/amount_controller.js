@@ -1,6 +1,8 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
+  #handleSubmit;
+
   #positive = false;
 
   connect() {
@@ -8,102 +10,190 @@ export default class extends Controller {
       this.#positive = true;
     }
 
+    this.element.value = this.#format(this.element.value);
     this.#updateColor();
+
+    if (this.element.form) {
+      this.#handleSubmit = () => {
+        this.element.value = this.#unformat(this.element.value);
+      };
+
+      this.element.form.addEventListener("submit", this.#handleSubmit);
+    }
+  }
+
+  disconnect() {
+    if (this.element.form && this.#handleSubmit) {
+      this.element.form.removeEventListener("submit", this.#handleSubmit);
+    }
   }
 
   input() {
+    const oldValue   = this.element.value,
+          oldCursor  = this.element.selectionStart,
+          digitCount = this.#countTypedCharacters(oldValue.slice(0, oldCursor));
+
+    this.element.value = this.#format(oldValue);
+
+    this.#restoreCursor(digitCount);
     this.#updateColor();
   }
 
   paste(event) {
     event.preventDefault();
 
-    const pasted = event.clipboardData.getData("text/plain"),
+    const pasted  = event.clipboardData.getData("text/plain"),
           cleaned = pasted.replace(/[^\d.]/g, ""),
-          value = parseFloat(cleaned) || 0;
+          sign    = this.#positive
+            ? ""
+            : "-";
 
-    if (this.#positive) {
-      this.element.value = value.toFixed(2);
-    } else {
-      this.element.value = (-Math.abs(value)).toFixed(2);
-    }
-
+    this.element.value = this.#format(`${sign}${cleaned}`);
     this.#updateColor();
   }
 
   keydown(event) {
-    if (this.#positiveOnly() && (event.key === "-" || event.key === "+")) {
-      event.preventDefault();
+    if (this.#shouldDelegateToBrowser(event)) {
+      return;
+    }
 
+    event.preventDefault();
+
+    if (this.#positiveOnly() && (event.key === "-" || event.key === "+")) {
       return;
     }
 
     if (event.key === "-") {
-      event.preventDefault();
-
       this.#positive = false;
       this.#toggleSign();
     } else if (event.key === "+") {
-      event.preventDefault();
-
       this.#positive = true;
       this.#makePositive();
-    } else if (this.#isZero() && !this.#positive && (/^\d$/).test(event.key)) {
-      event.preventDefault();
+    } else if ((/^\d$/).test(event.key)) {
+      const sign = this.#positive
+        ? ""
+        : "-";
 
-      this.element.value = `-${event.key}`;
+      this.element.value = this.#format(`${sign}${event.key}`);
       this.#updateColor();
-    } else if (this.#isZero() && this.#positive && (/^\d$/).test(event.key)) {
-      event.preventDefault();
-
-      this.element.value = event.key;
-      this.#updateColor();
-    } else if (this.#isInvalidKey(event)) {
-      event.preventDefault();
     }
   }
 
-  #isInvalidKey(event) {
-    if (event.ctrlKey || event.metaKey || event.key.length !== 1) {
-      return false;
-    } else {
-      return !(/[\d.]/).test(event.key);
-    }
+  #countTypedCharacters(text) {
+    return (text.match(/[\d.]/g) || []).length;
   }
 
-  #makePositive() {
-    const value = Math.abs(parseFloat(this.element.value) || 0);
+  #format(value) {
+    const text       = String(value),
+          isNegative = text.startsWith("-"),
+          cleaned    = text.replace(/[^\d.]/g, "");
 
-    this.element.value = value.toFixed(2);
-    this.#updateColor();
+    if (cleaned === "" || cleaned === "." || cleaned === "0") {
+      return "$0.00";
+    }
+
+    const parts        = cleaned.split("."),
+          fractional   = parts.slice(1).join(""),
+          integerPart  = Number(parts[0] || "0").toLocaleString("en-US"),
+          decimalPart  = parts.length > 1
+            ? `.${fractional.slice(0, 2)}`
+            : "",
+          sign         = isNegative && parseFloat(cleaned)
+            ? "-"
+            : "";
+
+    return `${sign}$${integerPart}${decimalPart}`;
   }
 
   #isZero() {
-    return !parseFloat(this.element.value);
+    return !parseFloat(this.#unformat(this.element.value));
+  }
+
+  #makePositive() {
+    const text     = this.#unformat(this.element.value),
+          positive = text.startsWith("-")
+            ? text.slice(1)
+            : text;
+
+    this.element.value = this.#format(positive);
+    this.#updateColor();
   }
 
   #positiveOnly() {
     return this.element.dataset.amountPositiveValue === "true";
   }
 
-  #toggleSign() {
-    const value = parseFloat(this.element.value) || 0;
+  #restoreCursor(targetCount) {
+    const value = this.element.value;
 
-    this.element.value = (-value).toFixed(2);
-    this.#updateColor();
-  }
+    if (targetCount === 0) {
+      const offset = value.indexOf("$") + 1;
 
-  #updateColor() {
-    if (this.#positiveOnly()) {
-      this.element.classList.remove("text-red-700");
-      this.element.classList.add("text-black");
+      this.element.setSelectionRange(offset, offset);
 
       return;
     }
 
-    const isNegative = parseFloat(this.element.value) < 0;
+    let count = 0;
 
-    this.element.classList.toggle("text-red-700", isNegative);
-    this.element.classList.toggle("text-black", !isNegative);
+    for (let position = 0; position < value.length; position += 1) {
+      if ((/[\d.]/).test(value[position])) {
+        count += 1;
+
+        if (count === targetCount) {
+          this.element.setSelectionRange(position + 1, position + 1);
+
+          return;
+        }
+      }
+    }
+
+    this.element.setSelectionRange(value.length, value.length);
+  }
+
+  #shouldDelegateToBrowser(event) {
+    if (event.ctrlKey || event.metaKey || event.key.length !== 1) {
+      return true;
+    }
+
+    if (event.key === "-" || event.key === "+") {
+      return false;
+    }
+
+    if ((/^\d$/).test(event.key)) {
+      return !this.#isZero();
+    }
+
+    return event.key === ".";
+  }
+
+  #toggleSign() {
+    const text    = this.#unformat(this.element.value),
+          toggled = text.startsWith("-")
+            ? text.slice(1)
+            : `-${text}`;
+
+    this.element.value = this.#format(toggled);
+    this.#updateColor();
+  }
+
+  #unformat(value) {
+    return String(value).replace(/[$,]/g, "");
+  }
+
+  #updateColor() {
+    const classList = this.element.classList;
+
+    if (this.#positiveOnly()) {
+      classList.remove("text-red-700");
+      classList.add("text-black");
+
+      return;
+    }
+
+    const isNegative = parseFloat(this.#unformat(this.element.value)) < 0;
+
+    classList.toggle("text-red-700", isNegative);
+    classList.toggle("text-black", !isNegative);
   }
 }

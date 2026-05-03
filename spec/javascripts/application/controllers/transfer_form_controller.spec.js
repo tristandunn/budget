@@ -10,8 +10,8 @@ describe("TransferFormController", () => {
     toAccountPickerOutlet   = { "validate": sinon.fake.returns(true) };
 
     amount = document.createElement("input");
-    amount.type  = "number";
-    amount.value = "10";
+    amount.type  = "text";
+    amount.value = "$10.00";
     amount.classList.add("text-black");
 
     controller = new TransferFormController({
@@ -74,7 +74,7 @@ describe("TransferFormController", () => {
     });
 
     it("prevents the submit when the amount is zero", () => {
-      amount.value = "0.00";
+      amount.value = "$0.00";
 
       const event = { "preventDefault": sinon.fake() };
 
@@ -85,7 +85,7 @@ describe("TransferFormController", () => {
     });
 
     it("does not change the amount color when the amount is valid", () => {
-      amount.value = "10";
+      amount.value = "$10.00";
 
       controller.validate({ "preventDefault": sinon.fake() });
 
@@ -96,7 +96,7 @@ describe("TransferFormController", () => {
     it("validates every field even when an earlier field is invalid", () => {
       fromAccountPickerOutlet.validate = sinon.fake.returns(false);
       toAccountPickerOutlet.validate   = sinon.fake.returns(false);
-      amount.value                     = "0";
+      amount.value                     = "$0.00";
 
       controller.validate({ "preventDefault": sinon.fake() });
 

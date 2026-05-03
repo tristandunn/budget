@@ -11,8 +11,8 @@ describe("TransactionFormController", () => {
     accountPickerOutlet  = { "validate": sinon.fake.returns(true) };
 
     amount = document.createElement("input");
-    amount.type  = "number";
-    amount.value = "-10";
+    amount.type  = "text";
+    amount.value = "-$10.00";
     amount.classList.add("text-black");
 
     controller = new TransactionFormController({
@@ -89,7 +89,7 @@ describe("TransactionFormController", () => {
     });
 
     it("prevents the submit when the amount is zero", () => {
-      amount.value = "0.00";
+      amount.value = "$0.00";
 
       const event = { "preventDefault": sinon.fake() };
 
@@ -101,7 +101,7 @@ describe("TransactionFormController", () => {
     });
 
     it("does not change the amount color when the amount is valid", () => {
-      amount.value = "-10";
+      amount.value = "-$10.00";
 
       controller.validate({ "preventDefault": sinon.fake() });
 
@@ -113,7 +113,7 @@ describe("TransactionFormController", () => {
       payeePickerOutlet.validate    = sinon.fake.returns(false);
       categoryPickerOutlet.validate = sinon.fake.returns(false);
       accountPickerOutlet.validate  = sinon.fake.returns(false);
-      amount.value                  = "0";
+      amount.value                  = "$0.00";
 
       controller.validate({ "preventDefault": sinon.fake() });
 

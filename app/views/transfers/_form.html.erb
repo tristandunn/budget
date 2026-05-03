@@ -4,20 +4,19 @@
     <div>
       <%= f.label :amount, class: "sr-only" %>
 
-      <%= f.number_field :amount,
-                         autocomplete: false,
-                         autofocus:    true,
-                         class:        "w-full text-4xl font-semibold text-center bg-transparent outline-none no-spinner",
-                         data:         {
-                           action:                  "input->amount#input keydown->amount#keydown paste->amount#paste",
-                           "amount-positive-value": "true",
-                           controller:              "amount",
-                           "transfer-form-target":  "amount"
-                         },
-                         inputmode:    "decimal",
-                         required:     true,
-                         step:         0.01,
-                         value:        form.amount || "0.00" %>
+      <%= f.text_field :amount,
+                       autocomplete: false,
+                       autofocus:    true,
+                       class:        "w-full text-4xl font-semibold text-center bg-transparent outline-none",
+                       data:         {
+                         action:                  "input->amount#input keydown->amount#keydown paste->amount#paste",
+                         "amount-positive-value": "true",
+                         controller:              "amount",
+                         "transfer-form-target":  "amount"
+                       },
+                       inputmode:    "decimal",
+                       required:     true,
+                       value:        form.amount || "0" %>
     </div>
 
     <div class="mt-6 bg-white rounded-xl divide-y divide-taupe-200">

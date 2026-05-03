@@ -65,6 +65,65 @@ describe("AmountController", () => {
       expect(element.classList.contains("text-red-700")).to.eq(true);
       expect(element.classList.contains("text-black")).to.eq(false);
     });
+
+    it("preserves the cursor position when typing in the middle of the value", () => {
+      element.value = "$1,2534.56";
+      element.setSelectionRange(5, 5);
+
+      instance.input();
+
+      expect(element.value).to.eq("$12,534.56");
+      expect(element.selectionStart).to.eq(5);
+    });
+
+    it("preserves the cursor position when typing past a new comma", () => {
+      element.value = "$999,9999";
+      element.setSelectionRange(9, 9);
+
+      instance.input();
+
+      expect(element.value).to.eq("$9,999,999");
+      expect(element.selectionStart).to.eq(10);
+    });
+
+    it("places the cursor after the dollar sign when there are no digits before it", () => {
+      element.value = "$";
+      element.setSelectionRange(1, 1);
+
+      instance.input();
+
+      expect(element.value).to.eq("$0.00");
+      expect(element.selectionStart).to.eq(1);
+    });
+
+    it("places the cursor after the dollar sign for a negative value with no digits", () => {
+      element.value = "-$";
+      element.setSelectionRange(2, 2);
+
+      instance.input();
+
+      expect(element.value).to.eq("$0.00");
+      expect(element.selectionStart).to.eq(1);
+    });
+
+    it("places the cursor at the end when the formatted value has fewer typed characters", () => {
+      element.value = "00";
+      element.setSelectionRange(2, 2);
+
+      instance.input();
+
+      expect(element.value).to.eq("$0");
+      expect(element.selectionStart).to.eq(2);
+    });
+
+    it("truncates to two decimal places", () => {
+      element.value = "1.5678";
+      element.setSelectionRange(6, 6);
+
+      instance.input();
+
+      expect(element.value).to.eq("$1.56");
+    });
   });
 
   describe("#keydown", () => {
@@ -83,7 +142,7 @@ describe("AmountController", () => {
 
         instance.keydown(event);
 
-        expect(parseFloat(element.value)).to.eq(-42.5);
+        expect(element.value).to.eq("-$42.50");
       });
 
       it("toggles a negative value to positive", () => {
@@ -91,7 +150,7 @@ describe("AmountController", () => {
 
         instance.keydown(event);
 
-        expect(parseFloat(element.value)).to.eq(42.5);
+        expect(element.value).to.eq("$42.50");
       });
 
       it("keeps an empty value at zero", () => {
@@ -99,7 +158,7 @@ describe("AmountController", () => {
 
         instance.keydown(event);
 
-        expect(parseFloat(element.value)).to.eq(0);
+        expect(element.value).to.eq("$0.00");
       });
 
       it("prevents the default behavior", () => {
@@ -140,7 +199,7 @@ describe("AmountController", () => {
 
         instance.keydown(event);
 
-        expect(parseFloat(element.value)).to.eq(42.5);
+        expect(element.value).to.eq("$42.50");
       });
 
       it("keeps a positive value positive", () => {
@@ -148,7 +207,7 @@ describe("AmountController", () => {
 
         instance.keydown(event);
 
-        expect(parseFloat(element.value)).to.eq(42.5);
+        expect(element.value).to.eq("$42.50");
       });
 
       it("keeps an empty value at zero", () => {
@@ -156,7 +215,7 @@ describe("AmountController", () => {
 
         instance.keydown(event);
 
-        expect(parseFloat(element.value)).to.eq(0);
+        expect(element.value).to.eq("$0.00");
       });
 
       it("prevents the default behavior", () => {
@@ -188,7 +247,7 @@ describe("AmountController", () => {
       it("replaces the value with the negative digit", () => {
         instance.keydown(event);
 
-        expect(element.value).to.eq("-5");
+        expect(element.value).to.eq("-$5");
       });
 
       it("prevents the default behavior", () => {
@@ -219,7 +278,7 @@ describe("AmountController", () => {
       it("replaces the value with the negative digit", () => {
         instance.keydown(event);
 
-        expect(element.value).to.eq("-5");
+        expect(element.value).to.eq("-$5");
       });
 
       it("prevents the default behavior", () => {
@@ -253,7 +312,7 @@ describe("AmountController", () => {
 
         instance.keydown(digitEvent);
 
-        expect(element.value).to.eq("5");
+        expect(element.value).to.eq("$5");
       });
     });
 
@@ -358,7 +417,7 @@ describe("AmountController", () => {
 
         instance.paste(event);
 
-        expect(element.value).to.eq("-42.50");
+        expect(element.value).to.eq("-$42.50");
       });
 
       it("handles values with commas", () => {
@@ -366,7 +425,7 @@ describe("AmountController", () => {
 
         instance.paste(event);
 
-        expect(element.value).to.eq("-1234.56");
+        expect(element.value).to.eq("-$1,234.56");
       });
 
       it("handles plain numeric values", () => {
@@ -374,7 +433,7 @@ describe("AmountController", () => {
 
         instance.paste(event);
 
-        expect(element.value).to.eq("-99.99");
+        expect(element.value).to.eq("-$99.99");
       });
 
       it("handles values with no decimal", () => {
@@ -382,7 +441,7 @@ describe("AmountController", () => {
 
         instance.paste(event);
 
-        expect(element.value).to.eq("-50.00");
+        expect(element.value).to.eq("-$50");
       });
 
       it("keeps value positive when positive mode is active", () => {
@@ -397,7 +456,7 @@ describe("AmountController", () => {
 
         instance.paste(event);
 
-        expect(element.value).to.eq("42.50");
+        expect(element.value).to.eq("$42.50");
       });
 
       it("ignores non-numeric content", () => {
@@ -405,7 +464,7 @@ describe("AmountController", () => {
 
         instance.paste(event);
 
-        expect(element.value).to.eq("0.00");
+        expect(element.value).to.eq("$0.00");
       });
 
       it("prevents the default behavior", () => {
@@ -526,7 +585,7 @@ describe("AmountController", () => {
 
       instance.paste(event);
 
-      expect(element.value).to.eq("42.50");
+      expect(element.value).to.eq("$42.50");
     });
 
     it("uses the unsigned digit when pressing a digit on a zero value", () => {
@@ -539,7 +598,95 @@ describe("AmountController", () => {
 
       instance.keydown(event);
 
-      expect(element.value).to.eq("5");
+      expect(element.value).to.eq("$5");
+    });
+  });
+
+  describe("when the value is empty or only a sign", () => {
+    it("falls back to zero for an empty value", () => {
+      element.value = "";
+
+      instance.connect();
+
+      expect(element.value).to.eq("$0.00");
+    });
+
+    it("falls back to zero for a lone minus sign", () => {
+      element.value = "-";
+
+      instance.connect();
+
+      expect(element.value).to.eq("$0.00");
+    });
+  });
+
+  describe("when the value lacks an integer part", () => {
+    it("formats with a leading zero", () => {
+      element.value = ".5";
+
+      instance.connect();
+
+      expect(element.value).to.eq("$0.5");
+    });
+  });
+
+  describe("when the value has only the formatted prefix", () => {
+    it("falls back to zero for a positive value", () => {
+      element.value = "$";
+
+      instance.connect();
+
+      expect(element.value).to.eq("$0.00");
+    });
+
+    it("falls back to zero for a negative value", () => {
+      element.value = "-$";
+
+      instance.connect();
+
+      expect(element.value).to.eq("$0.00");
+    });
+  });
+
+  describe("when used inside a form", () => {
+    let form;
+
+    beforeEach(() => {
+      form = document.createElement("form");
+
+      form.appendChild(element);
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+      });
+
+      document.body.appendChild(form);
+    });
+
+    afterEach(() => {
+      document.body.removeChild(form);
+    });
+
+    it("unformats the value before form submission", () => {
+      element.value = "-1234.56";
+
+      instance.connect();
+
+      form.dispatchEvent(new window.Event("submit", { "bubbles": true,
+        "cancelable": true }));
+
+      expect(element.value).to.eq("-1234.56");
+    });
+
+    it("removes the submit listener on disconnect", () => {
+      element.value = "-1234.56";
+
+      instance.connect();
+      instance.disconnect();
+
+      form.dispatchEvent(new window.Event("submit", { "bubbles": true,
+        "cancelable": true }));
+
+      expect(element.value).to.eq("-$1,234.56");
     });
   });
 });

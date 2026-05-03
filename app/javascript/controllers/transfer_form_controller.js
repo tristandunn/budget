@@ -24,7 +24,7 @@ export default class extends Controller {
   }
 
   #validateAmount() {
-    const value = parseFloat(this.amountTarget.value);
+    const value = parseFloat(this.amountTarget.value.replace(/[$,]/g, ""));
     const valid = !isNaN(value) && value !== 0;
 
     if (!valid) {
