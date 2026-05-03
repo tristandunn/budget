@@ -346,6 +346,20 @@ describe("PickerController", () => {
       expect(icon.classList.contains("text-taupe-400")).to.be.true;
       expect(icon.classList.contains("text-indigo-600")).to.be.false;
     });
+
+    it("clears the error color from the icon", () => {
+      icon.classList.remove("text-taupe-400");
+      icon.classList.add("text-red-700");
+
+      controller.select({
+        "currentTarget": {
+          "dataset": { "label": "Alpha",
+            "value": "1" }
+        }
+      });
+
+      expect(icon.classList.contains("text-red-700")).to.be.false;
+    });
   });
 
   describe("#selectOnKey", () => {
@@ -450,6 +464,41 @@ describe("PickerController", () => {
       expect(() => {
         return controller.afterFilter("anything");
       }).not.to.throw();
+    });
+  });
+
+  describe("#validate", () => {
+    it("returns true and clears the error color when the hidden field has a value", () => {
+      hiddenField.value = "1";
+      icon.classList.add("text-red-700");
+
+      const result = controller.validate();
+
+      expect(result).to.be.true;
+      expect(icon.classList.contains("text-red-700")).to.be.false;
+    });
+
+    it("returns false and marks the icon with the error color when the hidden field is empty", () => {
+      hiddenField.value = "";
+      icon.classList.add("text-taupe-400");
+
+      const result = controller.validate();
+
+      expect(result).to.be.false;
+      expect(icon.classList.contains("text-red-700")).to.be.true;
+      expect(icon.classList.contains("text-taupe-400")).to.be.false;
+      expect(icon.classList.contains("text-indigo-600")).to.be.false;
+    });
+
+    it("removes the indigo color when marking an empty picker as invalid", () => {
+      hiddenField.value = "";
+      icon.classList.remove("text-taupe-400");
+      icon.classList.add("text-indigo-600");
+
+      controller.validate();
+
+      expect(icon.classList.contains("text-indigo-600")).to.be.false;
+      expect(icon.classList.contains("text-red-700")).to.be.true;
     });
   });
 

@@ -1,16 +1,9 @@
 <%# locals: (form:, method:, url:) %>
 <div class="self-center py-6 px-8 mx-auto w-full max-w-lg">
-  <%= form_with model: form, url: url, method: method, id: "transaction_form", class: "highlight-errors" do |f| %>
+  <%= form_with model: form, url: url, method: method, id: "transaction_form", class: "highlight-errors", data: { controller: "transaction-form", action: "submit->transaction-form#validate", transaction_form_payee_picker_outlet: "[data-controller~='payee-picker']", transaction_form_category_picker_outlet: "[data-controller~='category-picker']", transaction_form_account_picker_outlet: "[data-controller~='account-picker']" } do |f| %>
     <div>
       <%= f.label :amount, class: "sr-only" %>
-      <%= f.number_field :amount, autocomplete: false, autofocus: true, class: "w-full text-4xl font-semibold text-center bg-transparent outline-none no-spinner", required: true, inputmode: "decimal", step: 0.01, value: form.amount || "0.00", data: { controller: "amount", action: "input->amount#input keydown->amount#keydown paste->amount#paste" } %>
-
-      <% if form.errors[:amount].present? %>
-        <p class="mt-2 text-xs text-red-700">
-          <%= TransactionForm.human_attribute_name(:amount).humanize %>
-          <%= form.errors[:amount].first %>.
-        </p>
-      <% end %>
+      <%= f.number_field :amount, autocomplete: false, autofocus: true, class: "w-full text-4xl font-semibold text-center bg-transparent outline-none no-spinner", required: true, inputmode: "decimal", step: 0.01, value: form.amount || "0.00", data: { controller: "amount", action: "input->amount#input keydown->amount#keydown paste->amount#paste", "transaction-form-target": "amount" } %>
     </div>
 
     <div class="mt-6 bg-white rounded-xl divide-y divide-taupe-200">
@@ -46,13 +39,6 @@
           >
             <%= form.payee.presence || t(".enter_payee") %>
           </span>
-
-          <% if form.errors[:payee].present? %>
-            <p class="mt-2 text-xs text-red-700">
-              <%= TransactionForm.human_attribute_name(:payee).humanize %>
-              <%= form.errors[:payee].first %>.
-            </p>
-          <% end %>
         </div>
 
         <svg
@@ -101,13 +87,6 @@
           >
             <%= form.subcategory&.name || t(".select_subcategory") %>
           </span>
-
-          <% if form.errors[:subcategory].present? %>
-            <p class="mt-2 text-xs text-red-700">
-              <%= TransactionForm.human_attribute_name(:subcategory_id).humanize %>
-              <%= form.errors[:subcategory].first %>.
-            </p>
-          <% end %>
         </div>
 
         <svg
@@ -156,13 +135,6 @@
           >
             <%= form.account&.name || t(".select_account") %>
           </span>
-
-          <% if form.errors[:account].present? %>
-            <p class="mt-2 text-xs text-red-700">
-              <%= TransactionForm.human_attribute_name(:account_id).humanize %>
-              <%= form.errors[:account].first %>.
-            </p>
-          <% end %>
         </div>
 
         <svg
@@ -200,13 +172,6 @@
           <span class="sr-only"><%= TransactionForm.human_attribute_name(:date) %></span>
 
           <%= f.date_field :date, class: "w-full bg-transparent border-none outline-none text-base placeholder:text-taupe-400 focus:ring-0", required: true, value: form.date %>
-
-          <% if form.errors[:date].present? %>
-            <p class="mt-2 text-xs text-red-700">
-              <%= TransactionForm.human_attribute_name(:date).humanize %>
-              <%= form.errors[:date].first %>.
-            </p>
-          <% end %>
         </div>
       </label>
 

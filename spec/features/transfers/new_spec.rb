@@ -23,16 +23,6 @@ describe "Transfer" do
     expect(page).to have_css("li", text: "#{t("transfers.payee.from", account: checking.name)} $50.00")
   end
 
-  it "shows an inline error when the form is invalid" do
-    fill_in TransferForm.human_attribute_name(:amount), with: "0"
-    click_on t("transfers.new.submit")
-
-    expect(page).to have_text(
-      "#{TransferForm.human_attribute_name(:amount)} " \
-      "#{t("errors.messages.greater_than", count: 0)}"
-    )
-  end
-
   context "with a to_account_id in the URL" do
     before do
       visit new_budget_transfer_path(budget, to_account_id: credit_card.id)

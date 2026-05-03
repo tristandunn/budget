@@ -1,6 +1,6 @@
 <%# locals: (form:, method:, url:) %>
 <div class="self-center py-6 px-8 mx-auto w-full max-w-lg">
-  <%= form_with model: form, url: url, method: method, id: "transaction_form", class: "highlight-errors" do |f| %>
+  <%= form_with model: form, url: url, method: method, id: "transaction_form", class: "highlight-errors", data: { controller: "transfer-form", action: "submit->transfer-form#validate", transfer_form_from_account_picker_outlet: "[data-controller~='from-account-picker']", transfer_form_to_account_picker_outlet: "[data-controller~='to-account-picker']" } do |f| %>
     <div>
       <%= f.label :amount, class: "sr-only" %>
 
@@ -11,18 +11,13 @@
                          data:         {
                            action:                  "input->amount#input keydown->amount#keydown paste->amount#paste",
                            "amount-positive-value": "true",
-                           controller:              "amount"
+                           controller:              "amount",
+                           "transfer-form-target":  "amount"
                          },
                          inputmode:    "decimal",
                          required:     true,
                          step:         0.01,
                          value:        form.amount || "0.00" %>
-
-      <% if form.errors[:amount].present? %>
-        <p class="mt-2 text-xs text-red-700">
-          <%= TransferForm.human_attribute_name(:amount) %> <%= form.errors[:amount].first %>.
-        </p>
-      <% end %>
     </div>
 
     <div class="mt-6 bg-white rounded-xl divide-y divide-taupe-200">
@@ -58,13 +53,6 @@
           >
             <%= form.from_account&.name || TransferForm.human_attribute_name(:from_account) %>
           </span>
-
-          <% if form.errors[:from_account].present? %>
-            <p class="mt-2 text-xs text-red-700">
-              <%= TransferForm.human_attribute_name(:from_account) %>
-              <%= form.errors[:from_account].first %>.
-            </p>
-          <% end %>
         </div>
 
         <svg
@@ -113,13 +101,6 @@
           >
             <%= form.to_account&.name || TransferForm.human_attribute_name(:to_account) %>
           </span>
-
-          <% if form.errors[:to_account].present? %>
-            <p class="mt-2 text-xs text-red-700">
-              <%= TransferForm.human_attribute_name(:to_account) %>
-              <%= form.errors[:to_account].first %>.
-            </p>
-          <% end %>
         </div>
 
         <svg
@@ -157,12 +138,6 @@
           <span class="sr-only"><%= TransferForm.human_attribute_name(:date) %></span>
 
           <%= f.date_field :date, class: "w-full bg-transparent border-none outline-none text-base placeholder:text-taupe-400 focus:ring-0", max: Date.current, required: true, value: form.date %>
-
-          <% if form.errors[:date].present? %>
-            <p class="mt-2 text-xs text-red-700">
-              <%= TransferForm.human_attribute_name(:date) %> <%= form.errors[:date].first %>.
-            </p>
-          <% end %>
         </div>
       </label>
     </div>

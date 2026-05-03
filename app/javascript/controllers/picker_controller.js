@@ -114,6 +114,24 @@ export default class extends Controller {
     }
   }
 
+  /*
+   * Return whether the picker has a selected value. Marks the icon with the
+   * error color when empty so the user can see which picker is missing, and
+   * clears the error color when a value is present.
+   */
+  validate() {
+    const valid = this.hiddenFieldTarget.value !== "";
+
+    if (valid) {
+      this.iconTarget.classList.remove("text-red-700");
+    } else {
+      this.iconTarget.classList.remove("text-taupe-400", "text-indigo-600");
+      this.iconTarget.classList.add("text-red-700");
+    }
+
+    return valid;
+  }
+
   // Apply a selection to the form and close the picker.
   #applySelection(value, label) {
     const empty = value === "";
@@ -124,6 +142,7 @@ export default class extends Controller {
     this.displayTarget.classList.toggle("text-taupe-800", !empty);
     this.iconTarget.classList.toggle("text-taupe-400", empty);
     this.iconTarget.classList.toggle("text-indigo-600", !empty);
+    this.iconTarget.classList.remove("text-red-700");
 
     for (const item of this.itemTargets) {
       item.setAttribute("aria-selected", item.dataset.value === value);

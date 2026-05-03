@@ -65,48 +65,4 @@ describe "transfers/_form.html.erb" do
   it "renders the form with the shared transaction_form id" do
     expect(html).to have_css("form#transaction_form")
   end
-
-  context "with an amount greater_than error" do
-    before do
-      form.errors.add(:amount, :greater_than, count: 0)
-    end
-
-    it "displays the amount error message" do
-      expect(html).to have_css(
-        "p",
-        normalize_ws: true,
-        text:         "#{TransferForm.human_attribute_name(:amount)} " \
-                      "#{t("errors.messages.greater_than", count: 0)}."
-      )
-    end
-  end
-
-  context "with a from_account presence error" do
-    before do
-      form.errors.add(:from_account, :blank)
-    end
-
-    it "displays the from-account error message" do
-      expect(html).to have_css(
-        "p",
-        normalize_ws: true,
-        text:         "#{TransferForm.human_attribute_name(:from_account)} #{t("errors.messages.blank")}."
-      )
-    end
-  end
-
-  context "with a to_account must-not-match error" do
-    before do
-      form.errors.add(:to_account, :must_not_match_source)
-    end
-
-    it "displays the must-not-match message" do
-      expect(html).to have_css(
-        "p",
-        normalize_ws: true,
-        text:         "#{TransferForm.human_attribute_name(:to_account)} " \
-                      "#{t("activemodel.errors.models.transfer_form.attributes.to_account.must_not_match_source")}."
-      )
-    end
-  end
 end
