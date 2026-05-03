@@ -36,6 +36,13 @@ describe "transactions/new.html.erb" do
     )
   end
 
+  it "renders a submit button targeting the transaction form" do
+    expect(html).to have_css(
+      "button[type='submit'][form='transaction_form']",
+      text: I18n.t("transactions.new.submit")
+    )
+  end
+
   it "renders the form partial" do
     expect(html).to include("FORM_PARTIAL")
   end

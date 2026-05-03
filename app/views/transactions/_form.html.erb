@@ -1,6 +1,6 @@
-<%# locals: (form:, method:, submit_label:, url:) %>
+<%# locals: (form:, method:, url:) %>
 <div class="self-center py-6 px-8 mx-auto w-full max-w-lg">
-  <%= form_with model: form, url: url, method: method, class: "highlight-errors" do |f| %>
+  <%= form_with model: form, url: url, method: method, id: "transaction_form", class: "highlight-errors" do |f| %>
     <div>
       <%= f.label :amount, class: "sr-only" %>
       <%= f.number_field :amount, autocomplete: false, autofocus: true, class: "w-full text-4xl font-semibold text-center bg-transparent outline-none no-spinner", required: true, inputmode: "decimal", step: 0.01, value: form.amount || "0.00", data: { controller: "amount", action: "input->amount#input keydown->amount#keydown paste->amount#paste" } %>
@@ -287,17 +287,5 @@
         </div>
       </label>
     </div>
-
-    <button
-      class="
-        block p-4 mx-auto mt-6 w-4/5 text-lg font-semibold text-center text-white bg-indigo-600
-        rounded-lg hover:bg-indigo-500 focus-visible:outline-none focus-visible:ring-2
-        focus-visible:ring-indigo-500 focus-visible:ring-offset-2
-        focus-visible:ring-offset-taupe-50
-      "
-      type="submit"
-    >
-      <%= submit_label %>
-    </button>
   <% end %>
 </div>

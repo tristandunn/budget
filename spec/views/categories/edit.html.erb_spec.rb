@@ -27,8 +27,11 @@ describe "categories/edit.html.erb" do
     expect(html).to have_field("category_form_name", with: subcategory.name)
   end
 
-  it "renders a save button" do
-    expect(html).to have_button(t("categories.edit.submit"))
+  it "renders a submit button targeting the category form" do
+    expect(html).to have_css(
+      "button[type='submit'][form='category_form']",
+      text: t("categories.edit.submit")
+    )
   end
 
   it "renders a cancel button that closes the dialog" do

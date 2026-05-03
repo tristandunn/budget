@@ -15,13 +15,20 @@
         >
           <%= t(".cancel") %>
         </button>
+
+        <button
+          type="submit"
+          form="transaction_form"
+          class="absolute top-4 right-4 text-sm font-semibold text-indigo-600 cursor-pointer"
+        >
+          <%= t(".submit") %>
+        </button>
       </header>
 
       <%= render "form",
-                 form:         @form,
-                 method:       :post,
-                 submit_label: t(".submit"),
-                 url:          budget_transactions_path(@form.budget) %>
+                 form:   @form,
+                 method: :post,
+                 url:    budget_transactions_path(@form.budget) %>
     </div>
 
     <%= render "accounts/picker",

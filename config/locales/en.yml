@@ -15,10 +15,9 @@ en:
     yesterday: "Yesterday"
 
   accounts:
-    dialog:
-      close: "Close dialog"
     edit:
-      submit: "Save Account"
+      cancel: "Cancel"
+      submit: "Save"
       title: "Edit Account"
     form:
       cash: "Cash"
@@ -35,7 +34,8 @@ en:
       owed: "Owed"
       title: "Accounts"
     new:
-      submit: "Add Account"
+      cancel: "Cancel"
+      submit: "Save"
       title: "New Account"
     transactions:
       actions:
@@ -58,7 +58,7 @@ en:
     edit:
       cancel: "Cancel"
       enter_name: "Enter a name"
-      submit: "Save Category"
+      submit: "Save"
       title: "Rename Category"
     show:
       activity: "Activity"
@@ -151,9 +151,10 @@ en:
         weekly: "Weekly"
         yearly: "Yearly"
     edit:
+      cancel: "Cancel"
       delete:
         confirmation: "Are you sure you want to delete this transaction?"
-        submit: "Delete"
+        submit: "Delete Transaction"
       submit: "Save"
       title: "Edit Transaction"
       transfer_title: "Payment"

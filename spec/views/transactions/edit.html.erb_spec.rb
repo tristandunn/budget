@@ -27,8 +27,11 @@ describe "transactions/edit.html.erb" do
     expect(html).to have_css("turbo-frame#transaction_dialog")
   end
 
-  it "renders a close button" do
-    expect(html).to have_css("button[data-action='dialog#close']")
+  it "renders a cancel button" do
+    expect(html).to have_css(
+      "button[data-action='dialog#close']",
+      text: I18n.t("transactions.edit.cancel")
+    )
   end
 
   context "when the transaction is not a transfer" do
@@ -38,6 +41,13 @@ describe "transactions/edit.html.erb" do
 
     it "does not render the payment title" do
       expect(html).to have_no_css("h2", text: I18n.t("transactions.edit.transfer_title"))
+    end
+
+    it "renders a submit button targeting the transaction form" do
+      expect(html).to have_css(
+        "button[type='submit'][form='transaction_form']",
+        text: I18n.t("transactions.edit.submit")
+      )
     end
 
     it "renders the form partial" do
@@ -86,6 +96,10 @@ describe "transactions/edit.html.erb" do
 
     it "does not render a delete button" do
       expect(html).to have_no_button("Delete")
+    end
+
+    it "does not render a submit button" do
+      expect(html).to have_no_css("button[type='submit'][form='transaction_form']")
     end
 
     it "does not render the payee picker partial" do

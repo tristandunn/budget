@@ -5,10 +5,9 @@ require "rails_helper"
 describe "transactions/_form.html.erb" do
   subject(:html) do
     render partial: "transactions/form", locals: {
-      form:         form,
-      method:       :post,
-      submit_label: "Save",
-      url:          "/test"
+      form:   form,
+      method: :post,
+      url:    "/test"
     }
 
     rendered
@@ -77,10 +76,6 @@ describe "transactions/_form.html.erb" do
 
   it "renders the memo field" do
     expect(html).to have_field("transaction_form_memo")
-  end
-
-  it "renders the submit button with the provided label" do
-    expect(html).to have_button("Save")
   end
 
   context "when prepopulated from a transaction" do

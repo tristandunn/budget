@@ -11,28 +11,57 @@
 
         <button
           type="button"
-          class="absolute top-4 right-4 text-2xl leading-none text-taupe-600 cursor-pointer"
+          class="absolute top-4 left-4 text-sm cursor-pointer"
           data-action="dialog#close"
-          aria-label="Close dialog"
         >
-          &times;
+          <%= t(".cancel") %>
         </button>
+
+        <% unless @transaction.transfer? %>
+          <button
+            type="submit"
+            form="transaction_form"
+            class="absolute top-4 right-4 text-sm font-semibold text-indigo-600 cursor-pointer"
+          >
+            <%= t(".submit") %>
+          </button>
+        <% end %>
       </header>
 
       <% if @transaction.transfer? %>
         <%= render "transfers/show", transaction: @transaction %>
       <% else %>
         <%= render "form",
-                   form:         @form,
-                   method:       :patch,
-                   submit_label: t(".submit"),
-                   url:          budget_transaction_path(@form.budget, @transaction) %>
-        <div class="self-center px-8 pt-1 pb-12 mx-auto w-full max-w-lg text-center">
-          <%= button_to t(".delete.submit"),
-                        budget_transaction_path(@form.budget, @transaction),
-                        method: :delete,
-                        data:   { turbo_confirm: t(".delete.confirmation") },
-                        class:  "mx-auto text-sm text-red-600 underline cursor-pointer hover:text-red-500" %>
+                   form:   @form,
+                   method: :patch,
+                   url:    budget_transaction_path(@form.budget, @transaction) %>
+        <div class="self-center px-8 pb-12 mx-auto w-full max-w-lg">
+          <%= button_to budget_transaction_path(@form.budget, @transaction),
+                        method:     :delete,
+                        data:       { turbo_confirm: t(".delete.confirmation") },
+                        form_class: "w-full",
+                        class:      "
+                          flex items-center justify-center gap-2 p-3 w-full text-sm font-medium
+                          text-red-700 bg-taupe-200 rounded-lg hover:bg-taupe-300
+                          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600
+                          focus-visible:ring-offset-2 focus-visible:ring-offset-taupe-50
+                          cursor-pointer
+                        " do %>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-4 h-4"
+              viewBox="0 0 16 16"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M5 3.25V4H2.75a.75.75 0 0 0 0 1.5h.3l.815 8.15A1.5 1.5 0 0 0 5.357 15h5.285a1.5 1.5 0 0 0 1.493-1.35l.815-8.15h.3a.75.75 0 0 0 0-1.5H11v-.75A2.25 2.25 0 0 0 8.75 1h-1.5A2.25 2.25 0 0 0 5 3.25Zm2.25-.75a.75.75 0 0 0-.75.75V4h3v-.75a.75.75 0 0 0-.75-.75h-1.5ZM6.05 6a.75.75 0 0 1 .787.713l.275 5.5a.75.75 0 0 1-1.498.075l-.275-5.5A.75.75 0 0 1 6.05 6Zm3.9 0a.75.75 0 0 1 .712.787l-.275 5.5a.75.75 0 0 1-1.498-.075l.275-5.5a.75.75 0 0 1 .786-.711Z"
+                clip-rule="evenodd"
+              />
+            </svg>
+
+            <%= t(".delete.submit") %>
+          <% end %>
         </div>
       <% end %>
     </div>

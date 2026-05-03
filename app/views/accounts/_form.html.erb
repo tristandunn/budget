@@ -1,6 +1,6 @@
-<%# locals: (budget:, form:, method:, submit_label:, url:) %>
+<%# locals: (budget:, form:, method:, url:) %>
 <div class="self-center py-6 px-8 mx-auto w-full max-w-lg">
-  <%= form_with model: form, url: url, method: method, class: "highlight-errors" do |f| %>
+  <%= form_with model: form, url: url, method: method, id: "account_form", class: "highlight-errors" do |f| %>
     <div class="bg-white rounded-xl">
       <div
         class="
@@ -42,18 +42,6 @@
       <%= label_tag :account_form_credit_true, t(".credit"),
                     class: "flex-1 cursor-pointer rounded-lg p-3 text-center text-base font-medium text-taupe-500 transition peer-checked/credit:bg-white peer-checked/credit:text-taupe-800 peer-checked/credit:shadow peer-focus-visible/credit:ring-2 peer-focus-visible/credit:ring-taupe-500" %>
     </div>
-
-    <button
-      class="
-        block p-4 mx-auto mt-6 w-4/5 text-lg font-semibold text-center text-white bg-indigo-600
-        rounded-lg hover:bg-indigo-500 focus-visible:outline-none focus-visible:ring-2
-        focus-visible:ring-indigo-500 focus-visible:ring-offset-2
-        focus-visible:ring-offset-taupe-50
-      "
-      type="submit"
-    >
-      <%= submit_label %>
-    </button>
   <% end %>
 
   <% if form.persisted? && form.account.transactions.empty? %>

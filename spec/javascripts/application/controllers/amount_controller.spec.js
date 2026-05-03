@@ -25,7 +25,7 @@ describe("AmountController", () => {
       instance.connect();
 
       expect(element.classList.contains("text-black")).to.eq(true);
-      expect(element.classList.contains("text-red-600")).to.eq(false);
+      expect(element.classList.contains("text-red-700")).to.eq(false);
     });
 
     it("applies black text when value is positive", () => {
@@ -34,7 +34,7 @@ describe("AmountController", () => {
       instance.connect();
 
       expect(element.classList.contains("text-black")).to.eq(true);
-      expect(element.classList.contains("text-red-600")).to.eq(false);
+      expect(element.classList.contains("text-red-700")).to.eq(false);
     });
 
     it("applies red text when value is negative", () => {
@@ -42,7 +42,7 @@ describe("AmountController", () => {
 
       instance.connect();
 
-      expect(element.classList.contains("text-red-600")).to.eq(true);
+      expect(element.classList.contains("text-red-700")).to.eq(true);
       expect(element.classList.contains("text-black")).to.eq(false);
     });
   });
@@ -54,7 +54,7 @@ describe("AmountController", () => {
       instance.input();
 
       expect(element.classList.contains("text-black")).to.eq(true);
-      expect(element.classList.contains("text-red-600")).to.eq(false);
+      expect(element.classList.contains("text-red-700")).to.eq(false);
     });
 
     it("applies red text when value is negative", () => {
@@ -62,7 +62,7 @@ describe("AmountController", () => {
 
       instance.input();
 
-      expect(element.classList.contains("text-red-600")).to.eq(true);
+      expect(element.classList.contains("text-red-700")).to.eq(true);
       expect(element.classList.contains("text-black")).to.eq(false);
     });
   });
@@ -113,7 +113,7 @@ describe("AmountController", () => {
 
         instance.keydown(event);
 
-        expect(element.classList.contains("text-red-600")).to.eq(true);
+        expect(element.classList.contains("text-red-700")).to.eq(true);
       });
 
       it("applies black text when toggled to positive", () => {
@@ -171,7 +171,7 @@ describe("AmountController", () => {
         instance.keydown(event);
 
         expect(element.classList.contains("text-black")).to.eq(true);
-        expect(element.classList.contains("text-red-600")).to.eq(false);
+        expect(element.classList.contains("text-red-700")).to.eq(false);
       });
     });
 
@@ -200,7 +200,7 @@ describe("AmountController", () => {
       it("applies red text after replacing", () => {
         instance.keydown(event);
 
-        expect(element.classList.contains("text-red-600")).to.eq(true);
+        expect(element.classList.contains("text-red-700")).to.eq(true);
       });
     });
 
@@ -231,7 +231,7 @@ describe("AmountController", () => {
       it("applies red text after replacing", () => {
         instance.keydown(event);
 
-        expect(element.classList.contains("text-red-600")).to.eq(true);
+        expect(element.classList.contains("text-red-700")).to.eq(true);
       });
     });
 
@@ -421,7 +421,7 @@ describe("AmountController", () => {
 
         instance.paste(event);
 
-        expect(element.classList.contains("text-red-600")).to.eq(true);
+        expect(element.classList.contains("text-red-700")).to.eq(true);
         expect(element.classList.contains("text-black")).to.eq(false);
       });
 
@@ -438,7 +438,7 @@ describe("AmountController", () => {
         instance.paste(event);
 
         expect(element.classList.contains("text-black")).to.eq(true);
-        expect(element.classList.contains("text-red-600")).to.eq(false);
+        expect(element.classList.contains("text-red-700")).to.eq(false);
       });
     });
 
@@ -506,7 +506,7 @@ describe("AmountController", () => {
 
       instance.connect();
 
-      expect(element.classList.contains("text-red-600")).to.eq(false);
+      expect(element.classList.contains("text-red-700")).to.eq(false);
       expect(element.classList.contains("text-black")).to.eq(true);
     });
 
@@ -515,7 +515,7 @@ describe("AmountController", () => {
 
       instance.input();
 
-      expect(element.classList.contains("text-red-600")).to.eq(false);
+      expect(element.classList.contains("text-red-700")).to.eq(false);
       expect(element.classList.contains("text-black")).to.eq(true);
     });
 

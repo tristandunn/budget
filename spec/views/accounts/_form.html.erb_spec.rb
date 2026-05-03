@@ -5,11 +5,10 @@ require "rails_helper"
 describe "accounts/_form.html.erb" do
   subject(:html) do
     render partial: "accounts/form", locals: {
-      budget:       budget,
-      form:         form,
-      method:       method,
-      submit_label: "Submit",
-      url:          url
+      budget: budget,
+      form:   form,
+      method: method,
+      url:    url
     }
 
     rendered
@@ -47,10 +46,6 @@ describe "accounts/_form.html.erb" do
         "input[type='radio'][name='account_form[credit]'][value='true']:not([checked])",
         visible: :all
       )
-    end
-
-    it "renders the submit button" do
-      expect(html).to have_button("Submit")
     end
 
     it "does not render the delete button" do

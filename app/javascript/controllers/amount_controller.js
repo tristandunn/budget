@@ -95,7 +95,7 @@ export default class extends Controller {
 
   #updateColor() {
     if (this.#positiveOnly()) {
-      this.element.classList.remove("text-red-600");
+      this.element.classList.remove("text-red-700");
       this.element.classList.add("text-black");
 
       return;
@@ -103,7 +103,7 @@ export default class extends Controller {
 
     const isNegative = parseFloat(this.element.value) < 0;
 
-    this.element.classList.toggle("text-red-600", isNegative);
+    this.element.classList.toggle("text-red-700", isNegative);
     this.element.classList.toggle("text-black", !isNegative);
   }
 }
