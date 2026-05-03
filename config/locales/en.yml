@@ -171,7 +171,8 @@ en:
     form:
       enter_memo: "Enter a memo..."
     new:
-      submit: "Record Payment"
+      cancel: "Cancel"
+      submit: "Save"
       title: "Record Payment"
     payee:
       from: "Payment from %{account}"

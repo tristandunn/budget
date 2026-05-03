@@ -5,10 +5,9 @@ require "rails_helper"
 describe "transfers/_form.html.erb" do
   subject(:html) do
     render partial: "transfers/form", locals: {
-      form:         form,
-      method:       :post,
-      submit_label: "Transfer",
-      url:          "/test"
+      form:   form,
+      method: :post,
+      url:    "/test"
     }
 
     rendered
@@ -63,8 +62,8 @@ describe "transfers/_form.html.erb" do
     expect(html).to have_field("transfer_form_memo")
   end
 
-  it "renders the submit button with the provided label" do
-    expect(html).to have_button("Transfer")
+  it "renders the form with the shared transaction_form id" do
+    expect(html).to have_css("form#transaction_form")
   end
 
   context "with an amount greater_than error" do

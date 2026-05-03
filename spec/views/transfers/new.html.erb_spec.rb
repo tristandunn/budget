@@ -29,6 +29,20 @@ describe "transfers/new.html.erb" do
     expect(html).to have_css("turbo-frame#transaction_dialog")
   end
 
+  it "renders a cancel button" do
+    expect(html).to have_css(
+      "button[data-action='dialog#close']",
+      text: I18n.t("transfers.new.cancel")
+    )
+  end
+
+  it "renders a submit button targeting the transaction form" do
+    expect(html).to have_css(
+      "button[type='submit'][form='transaction_form']",
+      text: I18n.t("transfers.new.submit")
+    )
+  end
+
   it "renders the form partial" do
     expect(html).to include("FORM_PARTIAL")
   end
