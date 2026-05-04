@@ -22,7 +22,7 @@ describe "transactions/_payee_picker.html.erb" do
   it "renders the search input" do
     expect(html).to have_css(
       "input[data-payee-picker-target='search']" \
-      "[data-action='input->payee-picker#filter keydown->payee-picker#selectOnKey']"
+      "[data-action='input->payee-picker#filter search->payee-picker#filter keydown->payee-picker#selectOnKey']"
     )
   end
 

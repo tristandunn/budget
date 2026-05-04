@@ -30,7 +30,8 @@ describe "transactions/_category_picker.html.erb" do
   it "renders the search input" do
     expect(html).to have_css(
       "input[data-category-picker-target='search']" \
-      "[data-action='input->category-picker#filter keydown->category-picker#selectOnKey']"
+      "[data-action='input->category-picker#filter " \
+      "search->category-picker#filter keydown->category-picker#selectOnKey']"
     )
   end
 

@@ -32,7 +32,7 @@ describe "shared/_picker.html.erb" do
     it "renders the search input wired to the controller" do
       expect(html).to have_css(
         "input[data-example-picker-target='search']" \
-        "[data-action='input->example-picker#filter keydown->example-picker#selectOnKey']"
+        "[data-action='input->example-picker#filter search->example-picker#filter keydown->example-picker#selectOnKey']"
       )
     end
 

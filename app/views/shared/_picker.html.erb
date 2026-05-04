@@ -43,15 +43,18 @@
         </svg>
 
         <%= tag.input(
-              "aria-label": placeholder,
-              autocomplete: "off",
-              class:        "grow bg-transparent border-none outline-none text-base placeholder:text-taupe-400 focus:ring-0 p-0",
-              data:         {
-                action:                 "input->#{controller}#filter keydown->#{controller}#selectOnKey",
+              "aria-label":   placeholder,
+              autocapitalize: "words",
+              autocomplete:   "off",
+              autocorrect:    "off",
+              class:          "grow bg-transparent border-none outline-none text-base placeholder:text-taupe-400 focus:ring-0 p-0",
+              data:           {
+                action:                 "input->#{controller}#filter search->#{controller}#filter keydown->#{controller}#selectOnKey",
                 "#{controller}-target": "search"
               },
-              placeholder:  placeholder,
-              type:         "search"
+              enterkeyhint:   "search",
+              placeholder:    placeholder,
+              type:           "search"
             ) %>
       </div>
     </div>

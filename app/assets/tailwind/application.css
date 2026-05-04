@@ -9,7 +9,7 @@
   .dialog {
     @apply bg-taupe-100 fixed inset-x-0 mx-auto w-full max-w-md overflow-y-auto overscroll-contain rounded-t-xl p-0 shadow-xl;
 
-    top: 2rem;
+    top: max(2rem, env(safe-area-inset-top));
     bottom: 0;
     height: auto;
     max-height: none;
