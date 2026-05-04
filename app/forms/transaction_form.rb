@@ -140,13 +140,15 @@ class TransactionForm < BaseForm
     end
   end
 
-  # Return the Payee record for the given payee name, creating one if needed.
+  # Return the Payee record for the given payee name, initializing one if needed.
+  # Initialization is deferred to autosave when the parent transaction saves so
+  # failed validations do not leak orphan payees.
   #
-  # @return [Payee] The found or created payee record.
+  # @return [Payee] The found or initialized payee record.
   # @return [nil] When the payee name is blank.
   def payee_record
     if payee.present?
-      Payee.find_or_create_by!(budget: budget, name: payee)
+      Payee.find_or_initialize_by(budget: budget, name: payee)
     end
   end
 

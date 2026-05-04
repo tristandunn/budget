@@ -337,6 +337,10 @@ describe TransactionForm, type: :form do
       expect(transaction.subcategory).to eq(subcategory)
     end
 
+    it "does not persist a new payee" do
+      expect { transaction }.not_to change(Payee, :count)
+    end
+
     context "with frequency" do
       let(:form) { described_class.new(**attributes, frequency: "monthly") }
 
