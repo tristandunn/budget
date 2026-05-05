@@ -26,6 +26,11 @@ FactoryBot.define do
       with_snapshot { false }
     end
 
+    trait :with_monthly_spending_target do
+      target_type   { :monthly_spending }
+      target_amount { 200_00 }
+    end
+
     after(:create) do |category, context|
       if context.with_snapshot
         create(:category_snapshot, category: category, budget: category.budget)

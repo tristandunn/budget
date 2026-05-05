@@ -48,6 +48,130 @@
     </div>
   </section>
 
+  <section class="mt-6">
+    <h3 class="px-4 mb-2 text-sm font-medium text-taupe-600 uppercase tracking-wide">
+      <%= t("categories.show.target.heading") %>
+    </h3>
+
+    <% if category.target_type? %>
+      <% budget_snapshot.target_progress_for(category).tap do |progress| %>
+        <div class="bg-white rounded-xl p-4">
+          <div class="flex justify-center mb-2">
+            <svg
+              class="w-20 h-20 <%= progress_color(progress) %>"
+              viewBox="0 0 36 36"
+              role="img"
+              aria-labelledby="<%= dom_id(category, :target_progress_title) %>"
+            >
+              <title id="<%= dom_id(category, :target_progress_title) %>"><%= progress_label(progress) %></title>
+
+              <circle
+                cx="18"
+                cy="18"
+                r="16"
+                fill="none"
+                stroke="#e5e7eb"
+                stroke-width="3"
+              />
+
+              <circle
+                cx="18"
+                cy="18"
+                r="16"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                pathLength="100"
+                stroke-dasharray="<%= progress.funded_percentage %> 100"
+                transform="rotate(-90 18 18)"
+              />
+
+              <% if progress.funded? %>
+                <circle
+                  cx="18"
+                  cy="18"
+                  r="11"
+                  fill="currentColor"
+                />
+                <path
+                  d="M 13 18 L 16.5 21.5 L 23 14"
+                  fill="none"
+                  stroke="white"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              <% else %>
+                <text
+                  x="18"
+                  y="18"
+                  text-anchor="middle"
+                  dominant-baseline="central"
+                  font-size="8"
+                  font-weight="600"
+                  fill="black"
+                >
+                  <%= progress.funded_percentage %>%
+                </text>
+              <% end %>
+            </svg>
+          </div>
+
+          <div class="divide-y divide-taupe-200 text-sm">
+            <div class="flex items-center justify-between py-2">
+              <span><%= t("categories.show.target.needed") %></span>
+              <span><%= number_to_money category.target_amount %></span>
+            </div>
+
+            <div class="flex items-center justify-between py-2">
+              <span><%= t("categories.show.target.funded") %></span>
+              <span><%= number_to_money progress.funded_amount %></span>
+            </div>
+
+            <div class="flex items-center justify-between py-2">
+              <span><%= t("categories.show.target.to_go") %></span>
+              <span><%= number_to_money progress.underfunded %></span>
+            </div>
+          </div>
+
+          <%= link_to t("categories.show.target.edit"),
+                      edit_budget_category_target_path(budget, category,
+                                                       year:  budget_snapshot.date.year,
+                                                       month: budget_snapshot.date.month),
+                      class: "
+                        flex items-center justify-center gap-2 mt-2 p-3 w-full text-sm font-medium
+                        text-white bg-indigo-600 rounded-lg hover:bg-indigo-700
+                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500
+                        focus-visible:ring-offset-2 focus-visible:ring-offset-taupe-50 no-underline
+                      ",
+                      data:  { turbo_frame: "category_target_dialog" } %>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="bg-white rounded-xl p-4">
+        <p class="px-2 pb-2 text-center font-bold">
+          <%= t("categories.show.target.question", name: category.name) %>
+        </p>
+
+        <p class="px-2 pb-3 text-sm text-center text-taupe-600">
+          <%= t("categories.show.target.description") %>
+        </p>
+
+        <%= link_to t("categories.show.target.create"),
+                    edit_budget_category_target_path(budget, category,
+                                                     year:  budget_snapshot.date.year,
+                                                     month: budget_snapshot.date.month),
+                    class: "
+                      flex items-center justify-center gap-2 mt-2 p-3 w-full text-sm font-medium
+                      text-white bg-indigo-600 rounded-lg hover:bg-indigo-700
+                      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500
+                      focus-visible:ring-offset-2 focus-visible:ring-offset-taupe-50 no-underline
+                    ",
+                    data:  { turbo_frame: "category_target_dialog" } %>
+      </div>
+    <% end %>
+  </section>
+
   <%= link_to edit_budget_category_path(budget, category,
                                         year:  budget_snapshot.date.year,
                                         month: budget_snapshot.date.month),

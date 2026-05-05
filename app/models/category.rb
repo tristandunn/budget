@@ -12,9 +12,17 @@ class Category < ApplicationRecord
   has_many :subcategories, class_name: "Category", foreign_key: :parent_id, inverse_of: :parent, dependent: :destroy
   has_many :transactions, inverse_of: :subcategory, dependent: :nullify
 
-  validates :name, presence:   true,
-                   uniqueness: { case_sensitive: false, scope: %i(budget_id parent_id) }
-  validates :position, presence: true, numericality: { only_integer: true }
+  enum :target_type, { monthly_spending: 0 },
+       prefix:   :target_type,
+       validate: { allow_nil: true }
+
+  validates :name,          presence:   true,
+                            uniqueness: { case_sensitive: false, scope: %i(budget_id parent_id) }
+  validates :position,      presence:     true,
+                            numericality: { only_integer: true }
+  validates :target_amount, presence:     true,
+                            numericality: { greater_than: 0, only_integer: true },
+                            if:           :target_type?
 
   # Returns true if this category is an inflow category.
   #

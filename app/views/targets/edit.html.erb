@@ -1,0 +1,83 @@
+<%= turbo_frame_tag "category_target_dialog", class: "flex flex-col h-full" do %>
+  <header class="relative p-4">
+    <h2 id="category_target_dialog_title" class="text-lg font-semibold text-center">
+      <%= @category.target_type? ? t(".edit_title") : t(".create_title") %>
+    </h2>
+
+    <button
+      type="button"
+      data-action="dialog#close"
+      class="absolute top-4 left-4 text-sm cursor-pointer"
+    >
+      <%= t(".cancel") %>
+    </button>
+
+    <button
+      type="submit"
+      form="target_form"
+      class="absolute top-4 right-4 text-sm font-semibold text-indigo-600 cursor-pointer"
+    >
+      <%= t(".submit") %>
+    </button>
+  </header>
+
+  <div class="self-center py-6 px-8 mx-auto w-full max-w-lg">
+    <%= form_with model:  @form,
+                  url:    budget_category_target_path(@budget, @category,
+                                                      year:  @budget_snapshot.date.year,
+                                                      month: @budget_snapshot.date.month),
+                  method: :patch,
+                  id:     "target_form",
+                  class:  "highlight-errors" do |f| %>
+      <%= f.hidden_field :target_type %>
+
+      <div class="bg-white rounded-xl">
+        <div
+          class="
+            flex items-center gap-3 px-4 py-4 rounded-xl focus-within:outline-none
+            focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-inset
+          "
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-4 h-4 shrink-0 text-indigo-600"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM10.75 5.75a.75.75 0 0 0-1.5 0v.5h-.5c-1.379 0-2.5 1.121-2.5 2.5s1.121 2.5 2.5 2.5h2c.554 0 1 .446 1 1s-.446 1-1 1h-3.5a.75.75 0 0 0 0 1.5h2v.5a.75.75 0 0 0 1.5 0v-.5h.5c1.379 0 2.5-1.121 2.5-2.5s-1.121-2.5-2.5-2.5h-2c-.554 0-1-.446-1-1s.446-1 1-1h3.5a.75.75 0 0 0 0-1.5h-2v-.5Z"
+              clip-rule="evenodd"
+            />
+          </svg>
+
+          <%= f.label :target_amount_input, class: "sr-only" %>
+
+          <%= f.text_field :target_amount_input,
+                           autocomplete: "off",
+                           autofocus:    true,
+                           class:        "flex-1 bg-transparent border-none outline-none placeholder:text-taupe-400 focus:ring-0",
+                           inputmode:    "decimal",
+                           placeholder:  t(".amount_placeholder"),
+                           required:     true %>
+        </div>
+      </div>
+    <% end %>
+
+    <% if @category.target_type_in_database.present? %>
+      <%= button_to budget_category_target_path(@budget, @category,
+                                                year:  @budget_snapshot.date.year,
+                                                month: @budget_snapshot.date.month),
+                    method: :delete,
+                    form:   { data: { turbo_confirm: t(".delete_confirmation") } },
+                    class:  "
+                      flex items-center justify-center gap-2 mt-6 p-3 w-full text-sm font-medium
+                      text-red-600 bg-taupe-200 rounded-lg hover:bg-taupe-300
+                      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500
+                      focus-visible:ring-offset-2 focus-visible:ring-offset-taupe-50 no-underline cursor-pointer
+                    " do %>
+        <%= t(".delete") %>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>

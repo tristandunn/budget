@@ -1,0 +1,7 @@
+<%# locals: (category:, budget_snapshot:) %>
+<div
+  id="<%= dom_id(category, :available) %>"
+  class="inline-block py-0.5 px-2 -my-0.5 -mx-2 rounded-full <%= available_color(category, budget_snapshot) %>"
+>
+  <%= number_to_money budget_snapshot.available_for(category) %>
+</div>

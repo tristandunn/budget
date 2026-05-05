@@ -25,6 +25,33 @@ describe BudgetHelper do
     end
   end
 
+  describe "#available_color" do
+    subject { helper.available_color(category, budget_snapshot) }
+
+    let(:available) { 100_00 }
+    let(:category)  { build_stubbed(:category, :subcategory) }
+
+    let(:budget_snapshot) do
+      instance_double(BudgetSnapshot, available_for: available, underfunded?: underfunded)
+    end
+
+    before do
+      allow(helper).to receive(:amount_color).with(available).and_return("AMOUNT_COLOR")
+    end
+
+    context "when the category is underfunded" do
+      let(:underfunded) { true }
+
+      it { is_expected.to eq("bg-yellow-200 text-yellow-950") }
+    end
+
+    context "when the category is not underfunded" do
+      let(:underfunded) { false }
+
+      it { is_expected.to eq("AMOUNT_COLOR") }
+    end
+  end
+
   describe "#navigation_arrow_class" do
     subject { helper.navigation_arrow_class(disabled) }
 
@@ -60,6 +87,42 @@ describe BudgetHelper do
       let(:amount) { 1 }
 
       it { is_expected.to eq("text-green-600") }
+    end
+  end
+
+  describe "#progress_color" do
+    subject { helper.progress_color(progress) }
+
+    let(:progress) { instance_double(TargetProgress, funded?: funded) }
+
+    context "when the progress is funded" do
+      let(:funded) { true }
+
+      it { is_expected.to eq("text-lime-500") }
+    end
+
+    context "when the progress is not funded" do
+      let(:funded) { false }
+
+      it { is_expected.to eq("text-yellow-500") }
+    end
+  end
+
+  describe "#progress_label" do
+    subject { helper.progress_label(progress) }
+
+    let(:progress) { instance_double(TargetProgress, funded?: funded, funded_percentage: 75) }
+
+    context "when the progress is funded" do
+      let(:funded) { true }
+
+      it { is_expected.to eq(t("categories.show.target.funded_label")) }
+    end
+
+    context "when the progress is not funded" do
+      let(:funded) { false }
+
+      it { is_expected.to eq(t("categories.show.target.percent_funded", percentage: 75)) }
     end
   end
 end

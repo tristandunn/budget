@@ -68,6 +68,17 @@ en:
       done: "Done"
       rename: "Rename Category"
       rollover: "Rollover"
+      target:
+        create: "Create Target"
+        description: "Set a target to know how much to put aside each month to stay on track."
+        edit: "Edit Target"
+        funded: "Funded"
+        funded_label: "Target fully funded."
+        heading: "Target"
+        needed: "Needed this month"
+        percent_funded: "Target %{percentage}% funded."
+        question: "How much do you need for %{name}?"
+        to_go: "To go"
 
   budgets:
     show:
@@ -91,6 +102,8 @@ en:
         name: "Name"
       category_form:
         name: "Name"
+      target_form:
+        target_amount_input: "Amount"
       transaction_form:
         account_id: "Account"
         amount: "Amount"
@@ -166,6 +179,16 @@ en:
       cancel: "Cancel"
       submit: "Save"
       title: "Add Transaction"
+
+  targets:
+    edit:
+      amount_placeholder: "0.00"
+      cancel: "Cancel"
+      create_title: "Create Target"
+      delete: "Delete Target"
+      delete_confirmation: "Are you sure you want to delete this target?"
+      edit_title: "Edit Target"
+      submit: "Save"
 
   transfers:
     form:

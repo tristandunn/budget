@@ -291,4 +291,74 @@ describe BudgetSnapshot do
       end
     end
   end
+
+  describe "#target_progress_for" do
+    subject { instance.target_progress_for(subcategory) }
+
+    let(:instance)    { described_class.new(budget) }
+    let(:progress)    { instance_double(TargetProgress) }
+    let(:subcategory) { create(:category, :subcategory, budget: budget) }
+
+    before do
+      allow(TargetProgress).to receive(:new)
+        .with(category: subcategory, snapshot: instance.snapshot_for(subcategory.id))
+        .and_return(progress)
+    end
+
+    it { is_expected.to eq(progress) }
+  end
+
+  describe "#underfunded?" do
+    subject(:underfunded?) { instance.underfunded?(subcategory) }
+
+    let(:instance)    { described_class.new(budget) }
+    let(:subcategory) do
+      create(:category, :subcategory, :with_monthly_spending_target, budget: budget, with_snapshot: false)
+    end
+
+    context "without a target" do
+      let(:subcategory) { create(:category, :subcategory, budget: budget) }
+
+      it { is_expected.to be(false) }
+    end
+
+    context "with a monthly_spending target where assigned is below the target and available is positive" do
+      before do
+        create(:category_snapshot,
+               budget:          budget,
+               category:        subcategory,
+               amount_assigned: subcategory.target_amount - 1,
+               amount_used:     0,
+               date:            Date.current.beginning_of_month)
+      end
+
+      it { is_expected.to be(true) }
+    end
+
+    context "with a monthly_spending target where assigned matches the target" do
+      before do
+        create(:category_snapshot,
+               budget:          budget,
+               category:        subcategory,
+               amount_assigned: subcategory.target_amount,
+               amount_used:     0,
+               date:            Date.current.beginning_of_month)
+      end
+
+      it { is_expected.to be(false) }
+    end
+
+    context "with a monthly_spending target where assigned is below the target but available is overspent" do
+      before do
+        create(:category_snapshot,
+               budget:          budget,
+               category:        subcategory,
+               amount_assigned: subcategory.target_amount - 1,
+               amount_used:     subcategory.target_amount,
+               date:            Date.current.beginning_of_month)
+      end
+
+      it { is_expected.to be(false) }
+    end
+  end
 end

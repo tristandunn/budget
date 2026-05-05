@@ -25,13 +25,33 @@ describe Category do
   end
 
   describe "validations" do
-    subject { create(:category) }
+    subject(:category) { create(:category) }
 
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_uniqueness_of(:name).scoped_to(:budget_id, :parent_id).case_insensitive }
 
     it { is_expected.to validate_presence_of(:position) }
     it { is_expected.to validate_numericality_of(:position).only_integer }
+
+    context "when target_type is set" do
+      subject { build(:category, :subcategory, target_type: :monthly_spending, target_amount: 100_00) }
+
+      it { is_expected.to validate_presence_of(:target_amount) }
+      it { is_expected.to validate_numericality_of(:target_amount).only_integer.is_greater_than(0) }
+    end
+
+    context "when target_type is blank" do
+      subject { build(:category, :subcategory, target_type: nil, target_amount: nil) }
+
+      it { is_expected.to be_valid }
+    end
+
+    it "defines and validates a target_type enum" do
+      expect(category).to define_enum_for(:target_type)
+        .with_values(monthly_spending: 0)
+        .with_prefix(:target_type)
+        .validating(allowing_nil: true)
+    end
   end
 
   describe "#inflow?" do

@@ -13,7 +13,8 @@ describe "budgets/show.html.erb" do
   let(:subcategory)     { create(:category, :subcategory) }
 
   before do
-    stub_template("shared/_toolbar.html.erb" => "TOOLBAR_PARTIAL")
+    stub_template("categories/_available.html.erb" => "AVAILABLE_PARTIAL")
+    stub_template("shared/_toolbar.html.erb"       => "TOOLBAR_PARTIAL")
 
     assign :budget,          subcategory.budget
     assign :budget_snapshot, budget_snapshot
@@ -80,11 +81,8 @@ describe "budgets/show.html.erb" do
     )
   end
 
-  it "renders the subcategory cumulative available" do
-    expect(html).to have_css(
-      "tbody td",
-      text: number_to_money(budget_snapshot.available_for(subcategory))
-    )
+  it "renders the subcategory available partial" do
+    expect(html).to include("AVAILABLE_PARTIAL")
   end
 
   it "wraps the subcategory assigned amount in a turbo frame" do

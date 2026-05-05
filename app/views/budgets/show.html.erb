@@ -23,6 +23,18 @@
     </dialog>
   </div>
 
+  <div data-controller="dialog" data-action="dialog:close->dialog#close">
+    <dialog
+      id="category_target_dialog_modal"
+      class="dialog"
+      aria-labelledby="category_target_dialog_title"
+      data-dialog-target="dialog"
+      data-action="click->dialog#backdropClose cancel->dialog#cancel"
+    >
+      <turbo-frame id="category_target_dialog" data-action="turbo:frame-load->dialog#open"></turbo-frame>
+    </dialog>
+  </div>
+
   <header class="sticky top-0 z-10 flex items-center justify-between bg-white p-4">
     <div class="flex items-center gap-2">
       <%= link_to(
@@ -155,13 +167,11 @@
                   <% end %>
                 </td>
 
-                <% @budget_snapshot.available_for(subcategory).tap do |available| %>
-                  <td class="py-3 px-4 font-semibold text-right whitespace-nowrap">
-                    <div class="inline-block py-0.5 px-2 -my-0.5 -mx-2 rounded-full <%= amount_color(available) %>">
-                      <%= number_to_money available %>
-                    </div>
-                  </td>
-                <% end %>
+                <td class="py-3 px-4 font-semibold text-right whitespace-nowrap">
+                  <%= render "categories/available",
+                             category:        subcategory,
+                             budget_snapshot: @budget_snapshot %>
+                </td>
               <% end %>
             </tr>
           <% end %>

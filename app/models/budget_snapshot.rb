@@ -95,6 +95,26 @@ class BudgetSnapshot
     end
   end
 
+  # Returns the target progress for the given category.
+  #
+  # @param category [Category] The category to evaluate.
+  # @return [TargetProgress] The target progress for the category.
+  def target_progress_for(category)
+    TargetProgress.new(category: category, snapshot: snapshot_for(category.id))
+  end
+
+  # Returns true when the category has a monthly spending target that has not
+  # yet been fully funded for the displayed month and the available amount has
+  # not gone overspent.
+  #
+  # @param category [Category] The category to evaluate.
+  # @return [Boolean] Whether the category is underfunded.
+  def underfunded?(category)
+    category.target_type_monthly_spending? &&
+      available_for(category).positive? &&
+      target_progress_for(category).underfunded?
+  end
+
   private
 
   attr_reader :budget, :month, :year
