@@ -9,7 +9,7 @@ describe "transactions/index.html.erb" do
     rendered
   end
 
-  let(:budget) { create(:budget) }
+  let(:budget) { build_stubbed(:budget) }
 
   before do
     stub_template("shared/_toolbar.html.erb" => "TOOLBAR_PARTIAL")

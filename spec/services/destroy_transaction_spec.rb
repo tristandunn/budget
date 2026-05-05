@@ -173,9 +173,8 @@ describe DestroyTransaction do
       end
 
       it "does not touch category snapshots" do
-        described_class.call(transaction: transaction)
-
-        expect(CategorySnapshot.count).to eq(0)
+        expect { described_class.call(transaction: transaction) }
+          .not_to change(CategorySnapshot, :count).from(0)
       end
 
       it "destroys the transaction" do

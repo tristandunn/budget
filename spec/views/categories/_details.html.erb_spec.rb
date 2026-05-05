@@ -31,15 +31,15 @@ describe "categories/_details.html.erb" do
   end
 
   it "renders the rollover amount" do
-    expect(html).to have_css("div", text: /#{Regexp.escape(t("categories.show.rollover"))}\s*\$200\.00/)
+    expect(html).to have_css("div", normalize_ws: true, text: "#{t("categories.show.rollover")} $200.00")
   end
 
   it "renders the assigned amount" do
-    expect(html).to have_css("div", text: /#{Regexp.escape(t("categories.show.assigned"))}\s*\$400\.00/)
+    expect(html).to have_css("div", normalize_ws: true, text: "#{t("categories.show.assigned")} $400.00")
   end
 
   it "renders the activity as the negation of amount used" do
-    expect(html).to have_css("div", text: /#{Regexp.escape(t("categories.show.activity"))}\s*-\$100\.00/)
+    expect(html).to have_css("div", normalize_ws: true, text: "#{t("categories.show.activity")} -$100.00")
   end
 
   it "renders the available amount in a colored pill" do
@@ -68,7 +68,7 @@ describe "categories/_details.html.erb" do
     let(:previous_budget_snapshot) { nil }
 
     it "renders a zero rollover amount" do
-      expect(html).to have_css("div", text: /#{Regexp.escape(t("categories.show.rollover"))}\s*\$0\.00/)
+      expect(html).to have_css("div", normalize_ws: true, text: "#{t("categories.show.rollover")} $0.00")
     end
   end
 end

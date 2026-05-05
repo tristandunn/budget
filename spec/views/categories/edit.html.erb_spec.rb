@@ -60,10 +60,11 @@ describe "categories/edit.html.erb" do
     end
 
     it "displays the name error message" do
-      expect(html).to have_css("p", text: Regexp.new([
-        CategoryForm.human_attribute_name(:name).humanize,
-        t("errors.messages.blank")
-      ].join('\s+'), Regexp::IGNORECASE))
+      expect(html).to have_css(
+        "p",
+        normalize_ws: true,
+        text:         "#{CategoryForm.human_attribute_name(:name).humanize} #{t("errors.messages.blank")}."
+      )
     end
   end
 end

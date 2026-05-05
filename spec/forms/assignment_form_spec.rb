@@ -106,7 +106,7 @@ describe AssignmentForm, type: :form do
 
     let(:budget)      { subcategory.budget }
     let(:date)        { Date.current.beginning_of_month }
-    let(:subcategory) { create(:category, :subcategory) }
+    let(:subcategory) { build_stubbed(:category, :subcategory) }
 
     context "when valid" do
       let(:form) do

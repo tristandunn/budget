@@ -35,14 +35,14 @@ describe "accounts/edit.html.erb" do
   it "renders a cancel button" do
     expect(html).to have_css(
       "button[data-action='dialog#close']",
-      text: I18n.t("accounts.edit.cancel")
+      text: t("accounts.edit.cancel")
     )
   end
 
   it "renders a submit button targeting the account form" do
     expect(html).to have_css(
       "button[type='submit'][form='account_form']",
-      text: I18n.t("accounts.edit.submit")
+      text: t("accounts.edit.submit")
     )
   end
 end

@@ -11,41 +11,13 @@ describe AccountForm, type: :form do
     context "with a cash account" do
       let(:account) { build(:account, name: "Checking") }
 
-      it "sets the account" do
-        expect(form.account).to eq(account)
-      end
-
-      it "sets the budget" do
-        expect(form.budget).to eq(account.budget)
-      end
-
-      it "sets the credit value" do
-        expect(form.credit).to be(false)
-      end
-
-      it "sets the name" do
-        expect(form.name).to eq("Checking")
-      end
+      it { is_expected.to have_attributes(account: account, budget: account.budget, credit: false, name: "Checking") }
     end
 
     context "with a credit account" do
       let(:account) { build(:account, :credit, name: "Visa") }
 
-      it "sets the account" do
-        expect(form.account).to eq(account)
-      end
-
-      it "sets the budget" do
-        expect(form.budget).to eq(account.budget)
-      end
-
-      it "sets the credit value" do
-        expect(form.credit).to be(true)
-      end
-
-      it "sets the name" do
-        expect(form.name).to eq("Visa")
-      end
+      it { is_expected.to have_attributes(account: account, budget: account.budget, credit: true, name: "Visa") }
     end
   end
 
@@ -152,19 +124,19 @@ describe AccountForm, type: :form do
       let(:form) { described_class.new(account: account, budget: account.budget, name: "New", credit: "false") }
 
       it "renames the inflow-side transfer payee" do
-        payee = create(:payee, budget: account.budget, name: I18n.t("transfers.payee.from", account: "Old"))
+        payee = create(:payee, budget: account.budget, name: t("transfers.payee.from", account: "Old"))
 
         update
 
-        expect(payee.reload.name).to eq(I18n.t("transfers.payee.from", account: "New"))
+        expect(payee.reload.name).to eq(t("transfers.payee.from", account: "New"))
       end
 
       it "renames the outflow-side transfer payee" do
-        payee = create(:payee, budget: account.budget, name: I18n.t("transfers.payee.to", account: "Old"))
+        payee = create(:payee, budget: account.budget, name: t("transfers.payee.to", account: "Old"))
 
         update
 
-        expect(payee.reload.name).to eq(I18n.t("transfers.payee.to", account: "New"))
+        expect(payee.reload.name).to eq(t("transfers.payee.to", account: "New"))
       end
 
       it "does not rename unrelated payees in the budget" do
@@ -176,11 +148,11 @@ describe AccountForm, type: :form do
       end
 
       it "does not rename matching payees in other budgets" do
-        payee = create(:payee, name: I18n.t("transfers.payee.from", account: "Old"))
+        payee = create(:payee, name: t("transfers.payee.from", account: "Old"))
 
         update
 
-        expect(payee.reload.name).to eq(I18n.t("transfers.payee.from", account: "Old"))
+        expect(payee.reload.name).to eq(t("transfers.payee.from", account: "Old"))
       end
     end
 
@@ -188,11 +160,11 @@ describe AccountForm, type: :form do
       let(:form) { described_class.new(account: account, budget: account.budget, name: "Old", credit: "true") }
 
       it "does not rename matching transfer payees" do
-        payee = create(:payee, budget: account.budget, name: I18n.t("transfers.payee.from", account: "Old"))
+        payee = create(:payee, budget: account.budget, name: t("transfers.payee.from", account: "Old"))
 
         update
 
-        expect(payee.reload.name).to eq(I18n.t("transfers.payee.from", account: "Old"))
+        expect(payee.reload.name).to eq(t("transfers.payee.from", account: "Old"))
       end
     end
 

@@ -10,8 +10,8 @@ describe "accounts/transactions/_actions.html.erb" do
     rendered
   end
 
-  let(:account) { create(:account, budget: budget) }
-  let(:budget)  { create(:budget) }
+  let(:account) { build_stubbed(:account, budget: budget) }
+  let(:budget)  { build_stubbed(:budget) }
 
   before do
     stub_template("shared/transactions/_hide_reconciled.html.erb" => "HIDE_RECONCILED_PARTIAL")
@@ -19,12 +19,12 @@ describe "accounts/transactions/_actions.html.erb" do
 
   it "renders a popover trigger button" do
     expect(html).to have_css(
-      "button[aria-label='#{I18n.t("transactions.index.actions")}']"
+      "button[aria-label='#{t("transactions.index.actions")}']"
     )
   end
 
   it "renders a reconcile button" do
-    expect(html).to have_button(I18n.t("accounts.transactions.actions.reconcile"))
+    expect(html).to have_button(t("accounts.transactions.actions.reconcile"))
   end
 
   it "renders a confirmation dialog" do
@@ -36,7 +36,7 @@ describe "accounts/transactions/_actions.html.erb" do
   end
 
   it "renders an edit account link targeting the account dialog" do
-    expect(html).to have_link(I18n.t("accounts.transactions.actions.edit"),
+    expect(html).to have_link(t("accounts.transactions.actions.edit"),
                               href: edit_budget_account_path(budget, account))
   end
 
@@ -47,11 +47,11 @@ describe "accounts/transactions/_actions.html.erb" do
   end
 
   context "when the account is a credit account" do
-    let(:account) { create(:account, :credit, budget: budget) }
+    let(:account) { build_stubbed(:account, :credit, budget: budget) }
 
     it "renders a record payment link targeting the transaction dialog" do
       expect(html).to have_link(
-        I18n.t("accounts.transactions.actions.record_payment"),
+        t("accounts.transactions.actions.record_payment"),
         href: new_budget_transfer_path(budget, to_account_id: account.id)
       )
     end
@@ -59,11 +59,14 @@ describe "accounts/transactions/_actions.html.erb" do
 
   context "when the account is not a credit account" do
     it "does not render a record payment link" do
-      expect(html).to have_no_link(I18n.t("accounts.transactions.actions.record_payment"))
+      expect(html).to have_no_link(t("accounts.transactions.actions.record_payment"))
     end
   end
 
   context "when the account has been reconciled" do
+    let(:account) { create(:account, budget: budget) }
+    let(:budget)  { create(:budget) }
+
     before do
       create(:transaction, account: account, status: :reconciled)
     end
@@ -75,7 +78,7 @@ describe "accounts/transactions/_actions.html.erb" do
 
   context "when the account has never been reconciled" do
     it "renders reconciled never" do
-      expect(html).to have_text(I18n.t("accounts.transactions.actions.reconciled_never"))
+      expect(html).to have_text(t("accounts.transactions.actions.reconciled_never"))
     end
   end
 end

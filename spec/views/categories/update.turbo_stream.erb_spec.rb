@@ -11,7 +11,7 @@ describe "categories/update.turbo_stream.erb" do
 
   let(:budget)          { subcategory.budget }
   let(:budget_snapshot) { BudgetSnapshot.new(budget) }
-  let(:subcategory)     { create(:category, :subcategory) }
+  let(:subcategory)     { build_stubbed(:category, :subcategory) }
 
   before do
     stub_template("categories/_details.html.erb" => "DETAILS_PARTIAL")

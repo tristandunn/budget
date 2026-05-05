@@ -5,41 +5,26 @@ require "rails_helper"
 describe TransactionForm, type: :form do
   it { is_expected.to be_a(BaseForm) }
 
+  describe "validations" do
+    it { is_expected.to validate_presence_of(:subcategory) }
+  end
+
   describe ".from" do
     subject(:form) { described_class.from(transaction: transaction) }
 
     let(:transaction) { create(:transaction, amount: -1500, frequency: :monthly, memo: "Lunch") }
 
-    it "sets the account" do
-      expect(form.account).to eq(transaction.account)
-    end
-
-    it "sets the amount as a decimal string" do
-      expect(form.amount).to eq(Money.from_amount(BigDecimal("-15.00")))
-    end
-
-    it "sets the budget" do
-      expect(form.budget).to eq(transaction.budget)
-    end
-
-    it "sets the date" do
-      expect(form.date).to eq(transaction.date)
-    end
-
-    it "sets the frequency" do
-      expect(form.frequency).to eq("monthly")
-    end
-
-    it "sets the memo" do
-      expect(form.memo).to eq("Lunch")
-    end
-
-    it "sets the payee" do
-      expect(form.payee).to eq(transaction.payee.name)
-    end
-
-    it "sets the subcategory" do
-      expect(form.subcategory).to eq(transaction.subcategory)
+    it do
+      expect(form).to have_attributes(
+        account:     transaction.account,
+        amount:      Money.from_amount(BigDecimal("-15.00")),
+        budget:      transaction.budget,
+        date:        transaction.date,
+        frequency:   "monthly",
+        memo:        "Lunch",
+        payee:       transaction.payee.name,
+        subcategory: transaction.subcategory
+      )
     end
   end
 
@@ -194,7 +179,7 @@ describe TransactionForm, type: :form do
       it "adds a presence error to subcategory" do
         save
 
-        expect(form.errors[:subcategory]).to include(I18n.t("errors.messages.blank"))
+        expect(form.errors[:subcategory]).to include(t("errors.messages.blank"))
       end
 
       it "does not create a transaction" do
@@ -299,42 +284,23 @@ describe TransactionForm, type: :form do
 
     it { is_expected.to be_a(Transaction) }
 
-    it "sets the account" do
-      expect(transaction.account).to eq(account)
-    end
-
-    it "sets the amount in cents" do
-      expect(transaction.amount).to eq(1500)
-    end
-
-    it "sets the budget" do
-      expect(transaction.budget).to eq(subcategory.budget)
-    end
-
-    it "sets the date" do
-      expect(transaction.date).to eq(Date.new(2026, 3, 18))
-    end
-
-    it "sets the frequency" do
-      expect(transaction.frequency).to be_nil
-    end
-
-    it "sets the memo" do
-      expect(transaction.memo).to eq("Lunch")
-    end
-
-    it "sets the payee" do
-      expect(transaction.payee.name).to eq("Test Payee")
+    it do
+      expect(transaction).to have_attributes(
+        account:     account,
+        amount:      1500,
+        budget:      subcategory.budget,
+        date:        Date.new(2026, 3, 18),
+        frequency:   nil,
+        memo:        "Lunch",
+        payee:       have_attributes(name: "Test Payee"),
+        subcategory: subcategory
+      )
     end
 
     it "reuses an existing payee" do
       existing = create(:payee, budget: subcategory.budget, name: "Test Payee")
 
       expect(transaction.payee).to eq(existing)
-    end
-
-    it "sets the subcategory" do
-      expect(transaction.subcategory).to eq(subcategory)
     end
 
     it "does not persist a new payee" do

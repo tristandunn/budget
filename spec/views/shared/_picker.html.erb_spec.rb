@@ -14,7 +14,7 @@ describe "shared/_picker.html.erb" do
   let(:locals) { { controller: "example-picker" } }
 
   it "renders the back button" do
-    expect(html).to have_button(I18n.t("shared.picker.back"))
+    expect(html).to have_button(t("shared.picker.back"))
   end
 
   it "wires the back button to the controller" do

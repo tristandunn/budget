@@ -81,11 +81,11 @@ describe TransactionsController do
     end
 
     it "assigns the payees" do
-      expect(assigns(:payees)).to eq([])
+      expect(assigns(:payees)).to be_empty
     end
 
     it "assigns the accounts" do
-      expect(assigns(:accounts)).to eq([])
+      expect(assigns(:accounts)).to be_empty
     end
 
     it "assigns the category picker" do
@@ -258,11 +258,11 @@ describe TransactionsController do
       end
 
       it "assigns the payees" do
-        expect(assigns(:payees)).to eq([])
+        expect(assigns(:payees)).to be_empty
       end
 
       it "assigns the accounts" do
-        expect(assigns(:accounts)).to eq([])
+        expect(assigns(:accounts)).to be_empty
       end
 
       it "assigns the category picker" do

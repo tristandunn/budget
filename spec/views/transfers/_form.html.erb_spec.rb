@@ -13,7 +13,7 @@ describe "transfers/_form.html.erb" do
     rendered
   end
 
-  let(:budget) { create(:budget) }
+  let(:budget) { build_stubbed(:budget) }
   let(:form)   { TransferForm.new(budget: budget) }
 
   it "renders the from-account picker opener with a hidden field" do

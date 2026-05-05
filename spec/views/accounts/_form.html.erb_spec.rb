@@ -14,7 +14,7 @@ describe "accounts/_form.html.erb" do
     rendered
   end
 
-  let(:budget) { create(:budget) }
+  let(:budget) { build_stubbed(:budget) }
   let(:form)   { AccountForm.new(account: account, budget: budget, name: account.name, credit: account.credit) }
   let(:method) { :post }
   let(:url)    { budget_accounts_path(budget) }
@@ -54,7 +54,7 @@ describe "accounts/_form.html.erb" do
   end
 
   context "with a persisted cash account" do
-    let(:account) { create(:account, budget: budget) }
+    let(:account) { build_stubbed(:account, budget: budget) }
     let(:method)  { :patch }
     let(:url)     { budget_account_path(budget, account) }
 
@@ -74,7 +74,7 @@ describe "accounts/_form.html.erb" do
   end
 
   context "with a persisted credit account" do
-    let(:account) { create(:account, :credit, budget: budget) }
+    let(:account) { build_stubbed(:account, :credit, budget: budget) }
     let(:method)  { :patch }
     let(:url)     { budget_account_path(budget, account) }
 
@@ -94,7 +94,7 @@ describe "accounts/_form.html.erb" do
   end
 
   context "with a persisted account that has no transactions" do
-    let(:account) { create(:account, budget: budget) }
+    let(:account) { build_stubbed(:account, budget: budget) }
     let(:method)  { :patch }
     let(:url)     { budget_account_path(budget, account) }
 
@@ -105,6 +105,7 @@ describe "accounts/_form.html.erb" do
 
   context "with a persisted account that has transactions" do
     let(:account) { create(:account, budget: budget) }
+    let(:budget)  { create(:budget) }
     let(:method)  { :patch }
     let(:url)     { budget_account_path(budget, account) }
 

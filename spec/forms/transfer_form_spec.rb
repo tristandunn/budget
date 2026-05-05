@@ -4,10 +4,13 @@ require "rails_helper"
 
 describe TransferForm, type: :form do
   it { is_expected.to be_a(BaseForm) }
-  it { is_expected.to validate_presence_of(:amount) }
-  it { is_expected.to validate_presence_of(:from_account) }
-  it { is_expected.to validate_presence_of(:to_account) }
-  it { is_expected.to validate_numericality_of(:amount).is_greater_than(0).allow_blank }
+
+  describe "validations" do
+    it { is_expected.to validate_presence_of(:amount) }
+    it { is_expected.to validate_presence_of(:from_account) }
+    it { is_expected.to validate_presence_of(:to_account) }
+    it { is_expected.to validate_numericality_of(:amount).is_greater_than(0).allow_blank }
+  end
 
   describe "#date" do
     subject { form.date }

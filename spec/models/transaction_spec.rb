@@ -6,10 +6,20 @@ describe Transaction do
   it { is_expected.to be_a(ApplicationRecord) }
 
   describe "associations" do
+    subject(:transaction) { build(:transaction) }
+
     it { is_expected.to belong_to(:account) }
     it { is_expected.to belong_to(:budget) }
     it { is_expected.to belong_to(:payee) }
-    it { is_expected.to belong_to(:subcategory).class_name("Category").optional }
+
+    it "belongs to a subcategory" do
+      expect(transaction).to belong_to(:subcategory)
+        .class_name("Category")
+        .with_foreign_key(:category_id)
+        .inverse_of(:transactions)
+        .optional
+    end
+
     it { is_expected.to belong_to(:transfer_pair).class_name("Transaction").optional }
   end
 
@@ -33,6 +43,7 @@ describe Transaction do
     it "defines a frequency enum" do
       expect(transaction).to define_enum_for(:frequency)
         .with_values(daily: 1, weekly: 7, every_other_week: 14, monthly: 30, yearly: 365)
+        .validating(allowing_nil: true)
     end
 
     it "allows a nil frequency" do
@@ -308,7 +319,7 @@ describe Transaction do
         transaction.valid?
 
         expect(transaction.errors[:subcategory]).to include(
-          I18n.t("activerecord.errors.models.transaction.attributes.subcategory.not_a_subcategory")
+          t("activerecord.errors.models.transaction.attributes.subcategory.not_a_subcategory")
         )
       end
     end

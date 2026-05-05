@@ -135,9 +135,8 @@ describe SuspendTransaction do
       end
 
       it "does not touch category snapshots" do
-        described_class.call(attributes: new_attributes, transaction: transaction)
-
-        expect(CategorySnapshot.count).to eq(0)
+        expect { described_class.call(attributes: new_attributes, transaction: transaction) }
+          .not_to change(CategorySnapshot, :count).from(0)
       end
 
       it "updates the transaction with the new attributes" do

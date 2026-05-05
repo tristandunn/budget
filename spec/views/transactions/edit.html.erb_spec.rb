@@ -30,23 +30,23 @@ describe "transactions/edit.html.erb" do
   it "renders a cancel button" do
     expect(html).to have_css(
       "button[data-action='dialog#close']",
-      text: I18n.t("transactions.edit.cancel")
+      text: t("transactions.edit.cancel")
     )
   end
 
   context "when the transaction is not a transfer" do
     it "renders the edit transaction title" do
-      expect(html).to have_css("h2", text: I18n.t("transactions.edit.title"))
+      expect(html).to have_css("h2", text: t("transactions.edit.title"))
     end
 
     it "does not render the payment title" do
-      expect(html).to have_no_css("h2", text: I18n.t("transactions.edit.transfer_title"))
+      expect(html).to have_no_css("h2", text: t("transactions.edit.transfer_title"))
     end
 
     it "renders a submit button targeting the transaction form" do
       expect(html).to have_css(
         "button[type='submit'][form='transaction_form']",
-        text: I18n.t("transactions.edit.submit")
+        text: t("transactions.edit.submit")
       )
     end
 
@@ -119,11 +119,11 @@ describe "transactions/edit.html.erb" do
     end
 
     it "renders the payment title" do
-      expect(html).to have_css("h2", text: I18n.t("transactions.edit.transfer_title"))
+      expect(html).to have_css("h2", text: t("transactions.edit.transfer_title"))
     end
 
     it "does not render the edit transaction title" do
-      expect(html).to have_no_css("h2", text: I18n.t("transactions.edit.title"))
+      expect(html).to have_no_css("h2", text: t("transactions.edit.title"))
     end
   end
 end

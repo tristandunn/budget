@@ -18,7 +18,7 @@ describe "transactions/_actions.html.erb" do
 
   it "renders a popover trigger button" do
     expect(html).to have_css(
-      "button[aria-label='#{I18n.t("transactions.index.actions")}']"
+      "button[aria-label='#{t("transactions.index.actions")}']"
     )
   end
 

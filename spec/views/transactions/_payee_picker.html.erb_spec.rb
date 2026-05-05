@@ -9,13 +9,13 @@ describe "transactions/_payee_picker.html.erb" do
     rendered
   end
 
-  let(:budget) { create(:budget) }
+  let(:budget) { build_stubbed(:budget) }
   let(:form)   { TransactionForm.new(budget: budget) }
 
   let(:payees) do
     [
-      create(:payee, budget: budget, name: "Alpha"),
-      create(:payee, budget: budget, name: "Beta")
+      build_stubbed(:payee, budget: budget, name: "Alpha"),
+      build_stubbed(:payee, budget: budget, name: "Beta")
     ]
   end
 

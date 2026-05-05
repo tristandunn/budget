@@ -33,7 +33,7 @@ describe "Account creation", :js do
 
     expect(page).to have_css(
       "[role='alert']",
-      text: "#{AccountForm.human_attribute_name(:name)} #{I18n.t("errors.messages.taken")}."
+      text: "#{AccountForm.human_attribute_name(:name)} #{t("errors.messages.taken")}."
     )
   end
 

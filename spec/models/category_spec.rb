@@ -6,11 +6,21 @@ describe Category do
   it { is_expected.to be_a(ApplicationRecord) }
 
   describe "associations" do
+    subject(:category) { build(:category) }
+
     it { is_expected.to belong_to(:budget) }
     it { is_expected.to belong_to(:parent).class_name("Category").optional(true) }
 
     it { is_expected.to have_many(:snapshots).class_name("CategorySnapshot").dependent(:destroy) }
-    it { is_expected.to have_many(:subcategories).class_name("Category").inverse_of(:parent).dependent(:destroy) }
+
+    it "has many subcategories" do
+      expect(category).to have_many(:subcategories)
+        .class_name("Category")
+        .with_foreign_key(:parent_id)
+        .inverse_of(:parent)
+        .dependent(:destroy)
+    end
+
     it { is_expected.to have_many(:transactions).inverse_of(:subcategory).dependent(:nullify) }
   end
 

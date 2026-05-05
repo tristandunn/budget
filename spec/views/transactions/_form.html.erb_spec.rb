@@ -14,7 +14,7 @@ describe "transactions/_form.html.erb" do
   end
 
   let(:form)        { TransactionForm.new(budget: subcategory.budget, subcategory: subcategory) }
-  let(:subcategory) { create(:category, :subcategory) }
+  let(:subcategory) { build_stubbed(:category, :subcategory) }
 
   it "renders the amount field" do
     expect(html).to have_field("transaction_form_amount")
@@ -79,7 +79,8 @@ describe "transactions/_form.html.erb" do
   end
 
   context "when prepopulated from a transaction" do
-    let(:form) { TransactionForm.from(transaction: transaction) }
+    let(:form)        { TransactionForm.from(transaction: transaction) }
+    let(:subcategory) { create(:category, :subcategory) }
 
     let(:transaction) do
       create(:transaction, budget: subcategory.budget, frequency: :monthly, memo: "Memo", subcategory: subcategory)

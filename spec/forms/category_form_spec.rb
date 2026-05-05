@@ -6,17 +6,11 @@ describe CategoryForm, type: :form do
   it { is_expected.to be_a(BaseForm) }
 
   describe ".from" do
-    subject(:form) { described_class.from(category: category) }
+    subject { described_class.from(category: category) }
 
     let(:category) { build(:category, :subcategory, name: "Groceries") }
 
-    it "sets the category" do
-      expect(form.category).to eq(category)
-    end
-
-    it "sets the name" do
-      expect(form.name).to eq("Groceries")
-    end
+    it { is_expected.to have_attributes(category: category, name: "Groceries") }
   end
 
   describe "#update" do
