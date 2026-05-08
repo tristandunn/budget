@@ -3,7 +3,7 @@
 module Transactions
   class CategoryPicker
     Group = Data.define(:name, :items)
-    Item  = Data.define(:id, :name, :amount_remaining, :selected)
+    Item  = Data.define(:id, :name, :amount_available, :selected)
 
     attr_reader :groups
 
@@ -54,7 +54,7 @@ module Transactions
     # @return [Item] The item for display in the picker.
     def item_from(subcategory)
       Item.new(
-        amount_remaining: budget_snapshot.snapshot_for(subcategory.id).amount_remaining,
+        amount_available: budget_snapshot.available_for(subcategory),
         id:               subcategory.id,
         name:             subcategory.name,
         selected:         form.subcategory == subcategory

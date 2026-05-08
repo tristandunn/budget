@@ -9,7 +9,7 @@ describe "transactions/_category_picker.html.erb" do
     rendered
   end
 
-  let(:amount_remaining) { 0 }
+  let(:amount_available) { 0 }
   let(:picker)           { instance_double(Transactions::CategoryPicker, groups: [group]) }
   let(:selected)         { false }
 
@@ -17,7 +17,7 @@ describe "transactions/_category_picker.html.erb" do
     Transactions::CategoryPicker::Group.new(
       items: [
         Transactions::CategoryPicker::Item.new(
-          amount_remaining: amount_remaining,
+          amount_available: amount_available,
           id:               1,
           name:             "Groceries",
           selected:         selected
@@ -46,24 +46,24 @@ describe "transactions/_category_picker.html.erb" do
     )
   end
 
-  context "with a positive amount remaining" do
-    let(:amount_remaining) { 7_500 }
+  context "with a positive amount available" do
+    let(:amount_available) { 7_500 }
 
     it "renders the amount in bold green" do
       expect(html).to have_css("li[data-value='1'] span.font-bold.text-green-600", text: "$75.00")
     end
   end
 
-  context "with a zero amount remaining" do
-    let(:amount_remaining) { 0 }
+  context "with a zero amount available" do
+    let(:amount_available) { 0 }
 
     it "renders the amount in bold grey" do
       expect(html).to have_css("li[data-value='1'] span.font-bold.text-gray-400", text: "$0.00")
     end
   end
 
-  context "with a negative amount remaining" do
-    let(:amount_remaining) { -1_500 }
+  context "with a negative amount available" do
+    let(:amount_available) { -1_500 }
 
     it "renders the amount in bold dark gray" do
       expect(html).to have_css("li[data-value='1'] span.font-bold.text-gray-900", text: "-$15.00")

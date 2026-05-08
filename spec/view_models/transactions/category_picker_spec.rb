@@ -33,7 +33,7 @@ describe Transactions::CategoryPicker do
     it "returns an item per subcategory" do
       expect(groups.first.items).to contain_exactly(
         an_object_having_attributes(
-          amount_remaining: 0,
+          amount_available: 0,
           id:               groceries.id,
           name:             "Groceries",
           selected:         false
@@ -41,19 +41,28 @@ describe Transactions::CategoryPicker do
       )
     end
 
-    context "with a snapshot for the subcategory" do
+    context "with snapshots across multiple months for the subcategory" do
       before do
         create(
           :category_snapshot,
           amount_assigned: 10_000,
           amount_used:     2_500,
           budget:          budget,
-          category:        groceries
+          category:        groceries,
+          date:            Date.current.beginning_of_month
+        )
+        create(
+          :category_snapshot,
+          amount_assigned: 5_000,
+          amount_used:     3_000,
+          budget:          budget,
+          category:        groceries,
+          date:            1.month.ago.beginning_of_month
         )
       end
 
-      it "returns the remaining amount on the item" do
-        expect(groups.first.items).to contain_exactly(an_object_having_attributes(amount_remaining: 7_500))
+      it "returns the available amount summed across months on the item" do
+        expect(groups.first.items).to contain_exactly(an_object_having_attributes(amount_available: 9_500))
       end
     end
 

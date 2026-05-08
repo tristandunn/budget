@@ -22,8 +22,8 @@
                 ) do %>
               <%= item.name %>
 
-              <span class="ml-auto font-bold <%= picker_amount_class(item.amount_remaining) %>">
-                <%= number_to_money item.amount_remaining %>
+              <span class="ml-auto font-bold <%= picker_amount_class(item.amount_available) %>">
+                <%= number_to_money item.amount_available %>
               </span>
             <% end %>
           <% end %>
