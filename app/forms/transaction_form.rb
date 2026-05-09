@@ -166,14 +166,15 @@ class TransactionForm < BaseForm
     end
   end
 
-  # Return whether the transaction is being posted from an upcoming recurring
-  # transaction to a non-future date while keeping the frequency.
+  # Return whether the transaction is being posted from an upcoming transaction
+  # to a non-future date with a frequency. Covers both already-recurring
+  # upcoming transactions and non-recurring upcoming transactions that are
+  # gaining a frequency on this update.
   #
   # @param transaction [Transaction] The existing transaction to check.
   # @return [Boolean] Whether the transaction is being posted.
   def posting?(transaction)
     transaction.upcoming? &&
-      transaction.recurring_scheduled? &&
       frequency.present? &&
       !recurring_scheduled?
   end

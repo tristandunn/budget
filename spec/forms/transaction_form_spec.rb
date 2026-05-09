@@ -723,19 +723,44 @@ describe TransactionForm, type: :form do
       end
     end
 
-    context "when recurring but not scheduled" do
+    context "when posting an upcoming non-recurring transaction with a frequency" do
       let(:form) do
         described_class.new(**attributes, date: Date.current.to_s, frequency: "monthly")
       end
 
-      let(:transaction) { create(:transaction, :recurring, date: Date.current) }
+      let(:transaction) { create(:transaction, :upcoming) }
+
+      before do
+        allow(transaction).to receive(:update!).and_call_original
+      end
 
       it { is_expected.to be(true) }
 
-      it "calls ActivateTransaction" do
+      it "updates the transaction with the form attributes" do
         update
 
-        expect(ActivateTransaction).to have_received(:call)
+        expect(transaction).to have_received(:update!).with(
+          attributes.except(:budget, :payee).merge(
+            amount:    2500,
+            date:      Date.current,
+            frequency: "monthly",
+            payee:     an_object_having_attributes(name: "Test Payee")
+          )
+        )
+      end
+
+      it "calls PostRecurringTransaction" do
+        update
+
+        expect(PostRecurringTransaction).to have_received(:call).with(
+          transaction: transaction
+        )
+      end
+
+      it "does not call ActivateTransaction" do
+        update
+
+        expect(ActivateTransaction).not_to have_received(:call)
       end
 
       it "does not call ConvertToRecurringTransaction" do
@@ -750,10 +775,69 @@ describe TransactionForm, type: :form do
         expect(DirectUpdateTransaction).not_to have_received(:call)
       end
 
-      it "does not call PostRecurringTransaction" do
+      it "does not call SuspendTransaction" do
         update
 
-        expect(PostRecurringTransaction).not_to have_received(:call)
+        expect(SuspendTransaction).not_to have_received(:call)
+      end
+
+      it "does not call UpdateTransaction" do
+        update
+
+        expect(UpdateTransaction).not_to have_received(:call)
+      end
+    end
+
+    context "when recurring but not scheduled" do
+      let(:form) do
+        described_class.new(**attributes, date: Date.current.to_s, frequency: "monthly")
+      end
+
+      let(:transaction) { create(:transaction, :recurring, date: Date.current) }
+
+      before do
+        allow(transaction).to receive(:update!).and_call_original
+      end
+
+      it { is_expected.to be(true) }
+
+      it "updates the transaction with the form attributes" do
+        update
+
+        expect(transaction).to have_received(:update!).with(
+          attributes.except(:budget, :payee).merge(
+            amount:    2500,
+            date:      Date.current,
+            frequency: "monthly",
+            payee:     an_object_having_attributes(name: "Test Payee")
+          )
+        )
+      end
+
+      it "calls PostRecurringTransaction" do
+        update
+
+        expect(PostRecurringTransaction).to have_received(:call).with(
+          transaction: transaction
+        )
+      end
+
+      it "does not call ActivateTransaction" do
+        update
+
+        expect(ActivateTransaction).not_to have_received(:call)
+      end
+
+      it "does not call ConvertToRecurringTransaction" do
+        update
+
+        expect(ConvertToRecurringTransaction).not_to have_received(:call)
+      end
+
+      it "does not call DirectUpdateTransaction" do
+        update
+
+        expect(DirectUpdateTransaction).not_to have_received(:call)
       end
 
       it "does not call SuspendTransaction" do
