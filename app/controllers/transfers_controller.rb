@@ -27,7 +27,7 @@ class TransfersController < ApplicationController
   #
   # @return [Budget] The requested budget.
   def budget
-    @budget ||= Budget.find(params[:budget_id])
+    @budget ||= Budget.find(params.expect(:budget_id))
   end
 
   # Return the default destination account from the query parameter, if present.

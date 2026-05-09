@@ -41,15 +41,15 @@ class AssignmentsController < ApplicationController
   #
   # @return [Budget] The requested budget.
   def budget
-    @budget ||= Budget.find(params[:budget_id])
+    @budget ||= Budget.find(params.expect(:budget_id))
   end
 
   # Parse the year and month parameters, falling back to the current month.
   #
   # @return [Date] The parsed date, or the current month if parsing fails.
   def date
-    @date ||= Date.new(params[:year].to_i, params[:month].to_i)
-  rescue Date::Error
+    @date ||= Date.new(params.expect(:year).to_i, params.expect(:month).to_i)
+  rescue ActionController::ParameterMissing, Date::Error
     @date = Date.current.beginning_of_month
   end
 
@@ -64,7 +64,7 @@ class AssignmentsController < ApplicationController
   #
   # @return [Category] The requested subcategory.
   def subcategory
-    @subcategory ||= budget.subcategories.find(params[:category_id])
+    @subcategory ||= budget.subcategories.find(params.expect(:category_id))
   end
 
   # Return the current category snapshot for the subcategory.

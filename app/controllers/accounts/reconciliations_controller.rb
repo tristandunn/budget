@@ -17,14 +17,14 @@ module Accounts
     #
     # @return [Account] The requested account.
     def account
-      @account ||= budget.accounts.find(params[:account_id])
+      @account ||= budget.accounts.find(params.expect(:account_id))
     end
 
     # Return the budget for the given `budget_id` parameter.
     #
     # @return [Budget] The requested budget.
     def budget
-      @budget ||= Budget.find(params[:budget_id])
+      @budget ||= Budget.find(params.expect(:budget_id))
     end
   end
 end

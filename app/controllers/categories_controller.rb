@@ -40,7 +40,7 @@ class CategoriesController < ApplicationController
   #
   # @return [Budget] The requested budget.
   def budget
-    @budget ||= Budget.find(params[:budget_id])
+    @budget ||= Budget.find(params.expect(:budget_id))
   end
 
   # Return the budget snapshot for the displayed month.
@@ -54,7 +54,7 @@ class CategoriesController < ApplicationController
   #
   # @return [Category] The requested category.
   def category
-    @category ||= budget.subcategories.find(params[:id])
+    @category ||= budget.subcategories.find(params.expect(:id))
   end
 
   # Return the permitted form parameters.

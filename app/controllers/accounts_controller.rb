@@ -62,14 +62,14 @@ class AccountsController < ApplicationController
   #
   # @return [Account] The requested account.
   def account
-    @account ||= budget.accounts.find(params[:id])
+    @account ||= budget.accounts.find(params.expect(:id))
   end
 
   # Return the budget for the given budget_id parameter.
   #
   # @return [Budget] The requested budget.
   def budget
-    @budget ||= Budget.find(params[:budget_id])
+    @budget ||= Budget.find(params.expect(:budget_id))
   end
 
   # Return the permitted form parameters.

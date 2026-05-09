@@ -12,6 +12,6 @@ class PayeesController < ApplicationController
   #
   # @return [Payee] The requested payee.
   def payee
-    @payee ||= current_budget.payees.find(params[:id])
+    @payee ||= current_budget.payees.find(params.expect(:id))
   end
 end

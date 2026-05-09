@@ -53,7 +53,7 @@ class TargetsController < ApplicationController
   #
   # @return [Budget] The requested budget.
   def budget
-    @budget ||= Budget.find(params[:budget_id])
+    @budget ||= Budget.find(params.expect(:budget_id))
   end
 
   # Return the budget snapshot for the displayed month.
@@ -67,7 +67,7 @@ class TargetsController < ApplicationController
   #
   # @return [Category] The requested category.
   def category
-    @category ||= budget.subcategories.find(params[:category_id])
+    @category ||= budget.subcategories.find(params.expect(:category_id))
   end
 
   # Return the budget path for the displayed month.

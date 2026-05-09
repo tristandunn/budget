@@ -109,7 +109,7 @@ class TransactionsController < ApplicationController
   #
   # @return [Budget] The requested budget.
   def budget
-    @budget ||= Budget.find(params[:budget_id])
+    @budget ||= Budget.find(params.expect(:budget_id))
   end
 
   # Return the default account from the query parameter, if present.
@@ -118,7 +118,7 @@ class TransactionsController < ApplicationController
   # @return [nil] When no account is provided.
   def default_account
     if params[:account_id].present?
-      budget.accounts.find(params[:account_id])
+      budget.accounts.find(params.expect(:account_id))
     end
   end
 
@@ -194,7 +194,9 @@ class TransactionsController < ApplicationController
   #
   # @return [Transaction] The requested transaction.
   def transaction
-    @transaction ||= budget.transactions.includes(:account, :budget, :payee, transfer_pair: :account).find(params[:id])
+    @transaction ||= budget.transactions
+                           .includes(:account, :budget, :payee, transfer_pair: :account)
+                           .find(params.expect(:id))
   end
 
   # Return the permitted parameters with budget and subcategory.

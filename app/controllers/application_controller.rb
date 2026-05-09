@@ -20,6 +20,6 @@ class ApplicationController < ActionController::Base
   #
   # @return [Budget] The budget for the request.
   def current_budget
-    @current_budget ||= Budget.find(params[:budget_id])
+    @current_budget ||= Budget.find(params.expect(:budget_id))
   end
 end
