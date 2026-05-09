@@ -501,6 +501,58 @@ describe TransactionForm, type: :form do
       end
     end
 
+    context "when suspending" do
+      let(:form) do
+        described_class.new(**attributes, date: 1.month.from_now.to_date.to_s)
+      end
+
+      it { is_expected.to be(true) }
+
+      it "calls SuspendTransaction" do
+        update
+
+        expect(SuspendTransaction).to have_received(:call).with(
+          attributes:  attributes.except(:budget, :payee).merge(
+            amount:    2500,
+            date:      1.month.from_now.to_date,
+            frequency: nil,
+            payee:     an_object_having_attributes(name: "Test Payee")
+          ),
+          transaction: transaction
+        )
+      end
+
+      it "does not call ActivateTransaction" do
+        update
+
+        expect(ActivateTransaction).not_to have_received(:call)
+      end
+
+      it "does not call ConvertToRecurringTransaction" do
+        update
+
+        expect(ConvertToRecurringTransaction).not_to have_received(:call)
+      end
+
+      it "does not call DirectUpdateTransaction" do
+        update
+
+        expect(DirectUpdateTransaction).not_to have_received(:call)
+      end
+
+      it "does not call PostRecurringTransaction" do
+        update
+
+        expect(PostRecurringTransaction).not_to have_received(:call)
+      end
+
+      it "does not call UpdateTransaction" do
+        update
+
+        expect(UpdateTransaction).not_to have_received(:call)
+      end
+    end
+
     context "when becoming recurring now" do
       let(:form) do
         described_class.new(**attributes, date: Date.current.to_s, frequency: "monthly")

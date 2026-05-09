@@ -149,5 +149,49 @@ describe SuspendTransaction do
         )
       end
     end
+
+    context "without a frequency" do
+      let(:subcategory) { create(:category, :subcategory) }
+
+      let(:transaction) do
+        build(:transaction, account:     account,
+                            subcategory: subcategory,
+                            budget:      subcategory.budget,
+                            amount:      1000)
+      end
+
+      def new_attributes
+        super.merge(frequency: nil)
+      end
+
+      before do
+        CreateTransaction.call(transaction: transaction)
+      end
+
+      it "decrements the account balance" do
+        expect { described_class.call(attributes: new_attributes, transaction: transaction) }
+          .to change { account.reload.balance }.from(11_000).to(10_000)
+      end
+
+      it "decrements the amount assigned in the category snapshot" do
+        expect { described_class.call(attributes: new_attributes, transaction: transaction) }
+          .to change { category_snapshot.reload.amount_assigned }.by(-1000)
+      end
+
+      it "decrements the amount assigned in the subcategory snapshot" do
+        expect { described_class.call(attributes: new_attributes, transaction: transaction) }
+          .to change { subcategory_snapshot.reload.amount_assigned }.by(-1000)
+      end
+
+      it "updates the transaction with the new attributes" do
+        described_class.call(attributes: new_attributes, transaction: transaction)
+
+        expect(transaction.reload).to have_attributes(
+          date:      1.month.from_now.to_date,
+          frequency: nil,
+          status:    "upcoming"
+        )
+      end
+    end
   end
 end

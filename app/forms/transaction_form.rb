@@ -179,6 +179,16 @@ class TransactionForm < BaseForm
       !recurring_scheduled?
   end
 
+  # Return whether the transaction is being suspended from a regular
+  # transaction to an upcoming one. This is true when the existing
+  # transaction is not upcoming and the form date is in the future.
+  #
+  # @param transaction [Transaction] The existing transaction to check.
+  # @return [Boolean] Whether the transaction is being suspended.
+  def suspending?(transaction)
+    !transaction.upcoming? && self.transaction.scheduled?
+  end
+
   # Return the appropriate service class for updating a transaction.
   #
   # @param transaction [Transaction] The existing transaction being updated.
@@ -188,6 +198,8 @@ class TransactionForm < BaseForm
       becoming_recurring_service_class(transaction)
     elsif activating?(transaction)
       ActivateTransaction
+    elsif suspending?(transaction)
+      SuspendTransaction
     elsif transaction.upcoming?
       DirectUpdateTransaction
     else
