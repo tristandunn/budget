@@ -243,5 +243,28 @@ describe("PayeePickerController", () => {
       expect(globalThis.fetch).not.to.have.been.called;
       expect(categoryPickerOutlet.applyValue).not.to.have.been.called;
     });
+
+    it("applies the fetched subcategory when selecting via Enter on an exact match", async () => {
+      globalThis.fetch = sinon.fake.resolves({
+        "json": () => {
+          return Promise.resolve({ "subcategory_id": 42 });
+        },
+        "ok": true
+      });
+
+      controller.open();
+      search.value = "Alpha";
+
+      await controller.selectOnKey({
+        "key": "Enter",
+        "preventDefault": sinon.fake()
+      });
+
+      expect(globalThis.fetch).to.have.been.calledWith(
+        "/payees/1/previous_category",
+        { "headers": { "Accept": "application/json" } }
+      );
+      expect(categoryPickerOutlet.applyValue).to.have.been.calledWith(42);
+    });
   });
 });

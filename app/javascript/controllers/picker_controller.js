@@ -93,7 +93,7 @@ export default class extends Controller {
     });
 
     if (match) {
-      this.#applySelection(match.dataset.value, match.dataset.label);
+      return this.select({ "currentTarget": match });
     }
   }
 
