@@ -9,6 +9,8 @@ class Account < ApplicationRecord
   validates :name,    presence:   true,
                       uniqueness: { case_sensitive: false, scope: :budget_id }
 
+  normalizes :name, with: ->(value) { value.strip }
+
   default_scope { order(:name) }
 
   scope :cash,   -> { where(credit: false) }

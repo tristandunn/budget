@@ -60,4 +60,12 @@ describe Payee do
       expect(payee.previous_subcategory_id).to eq(categorized.id)
     end
   end
+
+  describe "normalizations" do
+    it "strips whitespace from the name" do
+      payee = build(:payee, name: "  Grocery Store  ")
+
+      expect(payee.name).to eq("Grocery Store")
+    end
+  end
 end

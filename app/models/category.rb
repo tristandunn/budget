@@ -16,6 +16,8 @@ class Category < ApplicationRecord
        prefix:   :target_type,
        validate: { allow_nil: true }
 
+  normalizes :name, with: ->(value) { value.strip }
+
   validates :name,          presence:   true,
                             uniqueness: { case_sensitive: false, scope: %i(budget_id parent_id) }
   validates :position,      presence:     true,

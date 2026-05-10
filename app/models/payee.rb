@@ -8,6 +8,8 @@ class Payee < ApplicationRecord
   validates :name, presence:   true,
                    uniqueness: { scope: :budget_id }
 
+  normalizes :name, with: ->(value) { value.strip }
+
   # Return the subcategory id from the most recent categorized transaction for
   # this payee.
   #

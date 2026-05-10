@@ -125,4 +125,12 @@ describe Account do
       expect(account.uncleared_balance).to eq(-5000)
     end
   end
+
+  describe "normalizations" do
+    it "strips whitespace from the name" do
+      account = build(:account, name: "  Checking  ")
+
+      expect(account.name).to eq("Checking")
+    end
+  end
 end

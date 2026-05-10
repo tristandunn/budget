@@ -79,4 +79,12 @@ describe Category do
       expect(category.subcategories_by_position).to eq([first, second])
     end
   end
+
+  describe "normalizations" do
+    it "strips whitespace from the name" do
+      category = build(:category, name: "  Groceries  ")
+
+      expect(category.name).to eq("Groceries")
+    end
+  end
 end

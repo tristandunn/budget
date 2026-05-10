@@ -330,4 +330,12 @@ describe Transaction do
       it { is_expected.to be_valid }
     end
   end
+
+  describe "normalizations" do
+    it "strips whitespace from the memo" do
+      transaction = build(:transaction, memo: "  A note  ")
+
+      expect(transaction.memo).to eq("A note")
+    end
+  end
 end
