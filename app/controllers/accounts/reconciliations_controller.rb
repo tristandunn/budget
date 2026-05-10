@@ -8,7 +8,7 @@ module Accounts
         transaction.update!(status: :reconciled)
       end
 
-      redirect_to budget_account_transactions_path(budget, account)
+      redirect_to budget_account_transactions_path(current_budget, account)
     end
 
     private
@@ -17,14 +17,7 @@ module Accounts
     #
     # @return [Account] The requested account.
     def account
-      @account ||= budget.accounts.find(params.expect(:account_id))
-    end
-
-    # Return the budget for the given `budget_id` parameter.
-    #
-    # @return [Budget] The requested budget.
-    def budget
-      @budget ||= Budget.find(params.expect(:budget_id))
+      @account ||= current_budget.accounts.find(params.expect(:account_id))
     end
   end
 end

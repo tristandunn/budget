@@ -3,21 +3,21 @@
 class AssignmentsController < ApplicationController
   # Render the inline assignment edit form.
   def edit
-    @budget               = budget
+    @budget               = current_budget
     @subcategory          = subcategory
     @subcategory_snapshot = subcategory_snapshot
-    @form                 = AssignmentForm.new(budget: budget, subcategory: subcategory, date: date)
+    @form                 = AssignmentForm.new(budget: current_budget, subcategory: subcategory, date: date)
   end
 
   # Update the assignment for the subcategory.
   def update
-    @budget               = budget
+    @budget               = current_budget
     @subcategory          = subcategory
     @subcategory_snapshot = subcategory_snapshot
     @form                 = AssignmentForm.new(assignment_parameters)
 
     if @form.save
-      redirect_to month_budget_path(budget, month: date.month, year: date.year)
+      redirect_to month_budget_path(current_budget, month: date.month, year: date.year)
     else
       render :edit, status: :unprocessable_content
     end
@@ -31,17 +31,10 @@ class AssignmentsController < ApplicationController
   def assignment_parameters
     {
       amount:      parameters[:amount],
-      budget:      budget,
+      budget:      current_budget,
       date:        date,
       subcategory: subcategory
     }
-  end
-
-  # Return the budget for the given budget_id parameter.
-  #
-  # @return [Budget] The requested budget.
-  def budget
-    @budget ||= Budget.find(params.expect(:budget_id))
   end
 
   # Parse the year and month parameters, falling back to the current month.
@@ -64,13 +57,13 @@ class AssignmentsController < ApplicationController
   #
   # @return [Category] The requested subcategory.
   def subcategory
-    @subcategory ||= budget.subcategories.find(params.expect(:category_id))
+    @subcategory ||= current_budget.subcategories.find(params.expect(:category_id))
   end
 
   # Return the current category snapshot for the subcategory.
   #
   # @return [CategorySnapshot] The snapshot for the current month.
   def subcategory_snapshot
-    @subcategory_snapshot ||= subcategory.snapshots.find_or_initialize_by(budget: budget, date: date)
+    @subcategory_snapshot ||= subcategory.snapshots.find_or_initialize_by(budget: current_budget, date: date)
   end
 end

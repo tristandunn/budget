@@ -19,10 +19,10 @@ class BudgetsController < ApplicationController
   #
   # @return [Budget] The budget for the request.
   def current_budget
-    @current_budget ||= if params[:id]
-                          Budget.includes(categories: :subcategories).find(params.expect(:id))
-                        else
-                          Budget.first!
-                        end
+    Current.budget ||= if params[:id]
+                         Budget.includes(categories: :subcategories).find(params.expect(:id))
+                       else
+                         Budget.first!
+                       end
   end
 end

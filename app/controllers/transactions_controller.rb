@@ -8,13 +8,13 @@ class TransactionsController < ApplicationController
 
   # Render all transactions grouped by date.
   def index
-    @budget = budget
+    @budget = current_budget
     @scheduled_transactions, @current_transactions = filtered_transactions
   end
 
   # Render the new transaction form.
   def new
-    @form = TransactionForm.new(account: default_account, budget: budget)
+    @form = TransactionForm.new(account: default_account, budget: current_budget)
 
     assign_form_collections
   end
@@ -92,7 +92,7 @@ class TransactionsController < ApplicationController
   # @return [nil] When no account is provided.
   def account
     if parameters[:account_id].present?
-      @account ||= budget.accounts.find(parameters[:account_id])
+      @account ||= current_budget.accounts.find(parameters[:account_id])
     end
   end
 
@@ -100,16 +100,9 @@ class TransactionsController < ApplicationController
   #
   # @return [void]
   def assign_form_collections
-    @accounts        = budget.accounts.to_a
-    @payees          = budget.payees.order(:name).to_a
+    @accounts        = current_budget.accounts.to_a
+    @payees          = current_budget.payees.order(:name).to_a
     @category_picker = Transactions::CategoryPicker.new(form: @form)
-  end
-
-  # Return the budget for the given `budget_id` parameter.
-  #
-  # @return [Budget] The requested budget.
-  def budget
-    @budget ||= Budget.find(params.expect(:budget_id))
   end
 
   # Return the default account from the query parameter, if present.
@@ -118,7 +111,7 @@ class TransactionsController < ApplicationController
   # @return [nil] When no account is provided.
   def default_account
     if params[:account_id].present?
-      budget.accounts.find(params.expect(:account_id))
+      current_budget.accounts.find(params.expect(:account_id))
     end
   end
 
@@ -127,8 +120,8 @@ class TransactionsController < ApplicationController
   #
   # @return [Array(Array<Transaction>, Array<Transaction>)] The upcoming and current transactions.
   def filtered_transactions
-    transactions = budget.transactions.recent.includes(:account, :payee, :subcategory)
-    transactions = transactions.where.not(status: :reconciled) if budget.settings.hide_reconciled?
+    transactions = current_budget.transactions.recent.includes(:account, :payee, :subcategory)
+    transactions = transactions.where.not(status: :reconciled) if current_budget.settings.hide_reconciled?
     transactions.partition(&:upcoming?)
   end
 
@@ -172,7 +165,7 @@ class TransactionsController < ApplicationController
   #
   # @return [String] The URL to redirect to after a successful update.
   def return_location
-    session.delete(:return_to) || budget_transactions_path(budget)
+    session.delete(:return_to) || budget_transactions_path(current_budget)
   end
 
   # Store the referer in the session.
@@ -187,16 +180,16 @@ class TransactionsController < ApplicationController
   # @return [Category] The requested subcategory.
   # @return [nil] When no subcategory is provided.
   def subcategory
-    @subcategory ||= budget.subcategories.find(parameters[:subcategory_id])
+    @subcategory ||= current_budget.subcategories.find(parameters[:subcategory_id])
   end
 
   # Return the transaction for the given `id` parameter.
   #
   # @return [Transaction] The requested transaction.
   def transaction
-    @transaction ||= budget.transactions
-                           .includes(:account, :budget, :payee, transfer_pair: :account)
-                           .find(params.expect(:id))
+    @transaction ||= current_budget.transactions
+                                   .includes(:account, :budget, :payee, transfer_pair: :account)
+                                   .find(params.expect(:id))
   end
 
   # Return the permitted parameters with budget and subcategory.
@@ -206,7 +199,7 @@ class TransactionsController < ApplicationController
     {
       account:     account,
       amount:      parameters[:amount],
-      budget:      budget,
+      budget:      current_budget,
       date:        parameters[:date],
       frequency:   parameters[:frequency],
       memo:        parameters[:memo],

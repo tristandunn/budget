@@ -3,30 +3,30 @@
 class AccountsController < ApplicationController
   # Render the accounts index.
   def index
-    @budget          = budget
-    @cash_accounts   = budget.accounts.cash.load
-    @credit_accounts = budget.accounts.credit.load
+    @budget          = current_budget
+    @cash_accounts   = current_budget.accounts.cash.load
+    @credit_accounts = current_budget.accounts.credit.load
   end
 
   # Render the new account form.
   def new
-    @budget = budget
-    @form   = AccountForm.new(budget: budget)
+    @budget = current_budget
+    @form   = AccountForm.new(budget: current_budget)
   end
 
   # Render the account edit form.
   def edit
-    @budget = budget
+    @budget = current_budget
     @form   = AccountForm.from(account: account)
   end
 
   # Create a new account from form parameters.
   def create
-    @budget = budget
-    @form   = AccountForm.new(budget: budget, **form_parameters)
+    @budget = current_budget
+    @form   = AccountForm.new(budget: current_budget, **form_parameters)
 
     if @form.save
-      redirect_to budget_accounts_path(budget), status: :see_other
+      redirect_to budget_accounts_path(current_budget), status: :see_other
     else
       render :new, status: :unprocessable_content
     end
@@ -34,11 +34,11 @@ class AccountsController < ApplicationController
 
   # Update the account from form parameters.
   def update
-    @budget = budget
-    @form   = AccountForm.new(account: account, budget: budget, **update_form_parameters)
+    @budget = current_budget
+    @form   = AccountForm.new(account: account, budget: current_budget, **update_form_parameters)
 
     if @form.update
-      redirect_to budget_account_transactions_path(budget, account), status: :see_other
+      redirect_to budget_account_transactions_path(current_budget, account), status: :see_other
     else
       render :edit, status: :unprocessable_content
     end
@@ -48,11 +48,11 @@ class AccountsController < ApplicationController
   # redirect back to its transactions without deleting anything.
   def destroy
     if account.transactions.exists?
-      redirect_to budget_account_transactions_path(budget, account), status: :see_other
+      redirect_to budget_account_transactions_path(current_budget, account), status: :see_other
     else
       account.destroy!
 
-      redirect_to budget_accounts_path(budget), status: :see_other
+      redirect_to budget_accounts_path(current_budget), status: :see_other
     end
   end
 
@@ -62,14 +62,7 @@ class AccountsController < ApplicationController
   #
   # @return [Account] The requested account.
   def account
-    @account ||= budget.accounts.find(params.expect(:id))
-  end
-
-  # Return the budget for the given budget_id parameter.
-  #
-  # @return [Budget] The requested budget.
-  def budget
-    @budget ||= Budget.find(params.expect(:budget_id))
+    @account ||= current_budget.accounts.find(params.expect(:id))
   end
 
   # Return the permitted form parameters.

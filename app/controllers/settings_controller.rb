@@ -3,10 +3,9 @@
 class SettingsController < ApplicationController
   # Update budget settings.
   def update
-    budget = Budget.find(params.expect(:budget_id))
-    budget.settings.update(settings_parameters)
+    current_budget.settings.update(settings_parameters)
 
-    redirect_back_or_to budget_transactions_path(budget)
+    redirect_back_or_to budget_transactions_path(current_budget)
   end
 
   private

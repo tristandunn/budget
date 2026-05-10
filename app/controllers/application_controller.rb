@@ -5,21 +5,14 @@ class ApplicationController < ActionController::Base
   # maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
 
-  before_action :assign_current_budget
+  before_action :current_budget
 
   private
-
-  # Assign the resolved budget as the current budget.
-  #
-  # @return [void]
-  def assign_current_budget
-    Current.budget = current_budget
-  end
 
   # Return the budget for the current request, resolved from route params.
   #
   # @return [Budget] The budget for the request.
   def current_budget
-    @current_budget ||= Budget.find(params.expect(:budget_id))
+    Current.budget ||= Budget.find(params.expect(:budget_id))
   end
 end
