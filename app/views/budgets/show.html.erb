@@ -35,8 +35,17 @@
     </dialog>
   </div>
 
-  <header class="sticky top-0 z-10 flex items-center justify-between bg-white p-4">
-    <div class="flex items-center gap-2">
+  <header class="sticky top-0 z-10 grid grid-cols-3 items-center whitespace-nowrap bg-white p-4">
+    <div class="leading-tight justify-self-start">
+      <div
+        class="text-sm font-medium inline-block rounded-full px-2.5 py-0.5 <%= amount_color(@budget.available_to_assign) %>"
+        title="<%= t(".available_to_assign") %>"
+      >
+        <%= number_to_money @budget.available_to_assign %>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-2 justify-self-center">
       <%= link_to(
             month_budget_path(@budget, year: @budget_snapshot.previous_date.year, month: @budget_snapshot.previous_date.month),
             aria:  { label: t(".previous_month"), disabled: @budget_snapshot.first_month? || nil },
@@ -88,14 +97,7 @@
       <% end %>
     </div>
 
-    <div class="text-right leading-tight">
-      <div
-        class="text-sm font-medium inline-block rounded-full px-2.5 py-0.5 <%= amount_color(@budget.available_to_assign) %>"
-        title="<%= t(".available_to_assign") %>"
-      >
-        <%= number_to_money @budget.available_to_assign %>
-      </div>
-    </div>
+    <div></div>
   </header>
 
   <section class="flex-1">

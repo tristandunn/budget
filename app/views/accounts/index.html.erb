@@ -11,13 +11,15 @@
     </dialog>
   </div>
 
-  <header class="flex items-center justify-between bg-white px-4 py-4">
-    <h1 class="text-lg font-semibold"><%= t(".title") %></h1>
+  <header class="grid grid-cols-3 items-center whitespace-nowrap bg-white px-4 py-4">
+    <div></div>
+
+    <h1 class="text-lg font-semibold justify-self-center"><%= t(".title") %></h1>
 
     <%= link_to new_budget_account_path(@budget),
                 aria:  { label: t(".new") },
                 data:  { turbo_frame: "account_dialog" },
-                class: "m-0.5 flex h-6 w-6 items-center justify-center rounded-full border-2 border-taupe-800 leading-none text-taupe-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2" do %>
+                class: "m-0.5 flex h-6 w-6 items-center justify-center justify-self-end rounded-full border-2 border-taupe-800 leading-none text-taupe-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2" do %>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 16 16"

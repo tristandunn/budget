@@ -1,8 +1,12 @@
 <div class="flex flex-col min-h-dvh">
-  <header class="flex items-center justify-between bg-white p-4">
-    <h1 class="text-lg font-semibold"><%= t(".title") %></h1>
+  <header class="grid grid-cols-3 items-center whitespace-nowrap bg-white p-4">
+    <div></div>
 
-    <%= render "transactions/actions", budget: @budget %>
+    <h1 class="text-lg font-semibold justify-self-center"><%= t(".title") %></h1>
+
+    <div class="justify-self-end">
+      <%= render "transactions/actions", budget: @budget %>
+    </div>
   </header>
 
   <section class="flex-1">
