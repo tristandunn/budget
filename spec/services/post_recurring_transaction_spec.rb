@@ -30,5 +30,25 @@ describe PostRecurringTransaction do
     it "calls CreateTransaction" do
       expect(CreateTransaction).to have_received(:call).with(transaction: transaction)
     end
+
+    context "with an unpersisted transaction and a new payee" do
+      let(:account)     { create(:account) }
+      let(:payee)       { Payee.new(budget: account.budget, name: "New Payee") }
+      let(:transaction) do
+        Transaction.new(
+          account:     account,
+          amount:      -1500,
+          budget:      account.budget,
+          date:        Date.current,
+          frequency:   :monthly,
+          payee:       payee,
+          subcategory: create(:category, :subcategory, budget: account.budget)
+        )
+      end
+
+      it "creates the next occurrence with the new payee" do
+        expect(next_occurrence.payee).to eq(payee)
+      end
+    end
   end
 end

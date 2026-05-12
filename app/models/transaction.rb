@@ -33,11 +33,15 @@ class Transaction < ApplicationRecord
   scope :activation_due, -> { upcoming.where(date: ..Date.current) }
   scope :recent,         -> { where(date: 30.days.ago.to_date..) }
 
-  # Returns the attributes to copy when creating a new occurrence.
+  # Returns the attributes to copy when creating a new occurrence. The payee
+  # association is included in place of its foreign key so an unsaved new payee
+  # is carried over and autosaved with the copy.
   #
   # @return [Hash]
   def copyable_attributes
-    attributes.symbolize_keys.slice(:account_id, :amount, :budget_id, :category_id, :memo, :payee_id)
+    attributes.symbolize_keys
+              .slice(:account_id, :amount, :budget_id, :category_id, :memo)
+              .merge(payee: payee)
   end
 
   # Returns true when this transaction may be destroyed. Both the

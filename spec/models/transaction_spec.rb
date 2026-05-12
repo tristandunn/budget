@@ -135,7 +135,7 @@ describe Transaction do
         budget_id:   transaction.budget_id,
         category_id: transaction.category_id,
         memo:        transaction.memo,
-        payee_id:    transaction.payee_id
+        payee:       transaction.payee
       )
     end
   end

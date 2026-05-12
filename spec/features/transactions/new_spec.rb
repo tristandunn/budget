@@ -29,6 +29,15 @@ describe "Transaction" do
     expect(page).to have_text(t("transactions.list.scheduled")).and(have_text("Test Payee"))
   end
 
+  it "posts a recurring transaction with a new payee" do
+    fill_in_frequency(:monthly)
+    fill_in_transaction_and_submit(account: account, subcategory: subcategory)
+
+    expect(page).to have_text(t("transactions.list.scheduled"))
+      .and(have_text("Test Payee"))
+      .and(have_text("$100.00"))
+  end
+
   protected
 
   def fill_in_transaction_and_submit(account:, subcategory:, amount: -100)
