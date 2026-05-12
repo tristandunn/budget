@@ -15,7 +15,7 @@ Rails.application.routes.draw do
       resource :assignment, only: %i(edit update)
       resource :target, only: %i(edit update destroy)
     end
-    resources :payees, only: [] do
+    resources :payees, only: %i(index edit update) do
       member do
         get :previous_category
       end

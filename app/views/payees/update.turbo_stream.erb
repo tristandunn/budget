@@ -1,0 +1,7 @@
+<%= turbo_stream.update "payees_list" do %>
+  <%= render "list", budget: @budget, payees: @payees %>
+<% end %>
+
+<%= turbo_stream.update "payee_rename_dialog" do %>
+  <div data-controller="dialog-dismisser"></div>
+<% end %>

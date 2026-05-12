@@ -85,6 +85,8 @@ en:
       assigned: "Assigned"
       available: "Available"
       available_to_assign: "Available to Assign"
+      manage_payees: "Manage Payees"
+      menu: "Menu"
       next_month: "Next month"
       previous_month: "Previous month"
 
@@ -101,6 +103,8 @@ en:
       account_form:
         name: "Name"
       category_form:
+        name: "Name"
+      payee_form:
         name: "Name"
       target_form:
         target_amount_input: "Amount"
@@ -179,6 +183,19 @@ en:
       cancel: "Cancel"
       submit: "Save"
       title: "Add Transaction"
+
+  payees:
+    edit:
+      cancel: "Cancel"
+      enter_name: "Enter a name"
+      submit: "Save"
+      title: "Rename Payee"
+    index:
+      done: "Done"
+      empty: "No payees yet."
+      no_matches: "No payees match your search."
+      search: "Find a payee"
+      title: "Payees"
 
   targets:
     edit:

@@ -72,6 +72,33 @@ describe "budgets/show.html.erb" do
     )
   end
 
+  it "renders the payees dialog" do
+    expect(html).to have_css("dialog#payees_dialog_modal turbo-frame#payees_dialog")
+  end
+
+  it "renders the payee rename dialog" do
+    expect(html).to have_css(
+      "dialog#payee_rename_dialog_modal turbo-frame#payee_rename_dialog"
+    )
+  end
+
+  it "renders the budget menu button" do
+    expect(html).to have_css("button[aria-label='#{t("budgets.show.menu")}']")
+  end
+
+  it "renders the manage payees link in the menu" do
+    expect(html).to have_link(
+      t("budgets.show.manage_payees"),
+      href: budget_payees_path(subcategory.budget)
+    )
+  end
+
+  it "targets the payees dialog frame from the manage payees link" do
+    expect(html).to have_css(
+      "a[data-turbo-frame='payees_dialog']", text: t("budgets.show.manage_payees")
+    )
+  end
+
   it "renders the subcategory amount assigned as a link" do
     subcategory_snapshot = budget_snapshot.snapshot_for(subcategory.id)
 

@@ -1,0 +1,20 @@
+<%# locals: (budget:, payees:) %>
+<% if payees.any? %>
+  <ul class="bg-white rounded-xl divide-y divide-taupe-200" role="list">
+    <% payees.each do |payee| %>
+      <%= tag.li(
+            data: {
+              label:                payee.name,
+              payee_manager_target: "item"
+            }
+          ) do %>
+        <%= link_to payee.name,
+                    edit_budget_payee_path(budget, payee),
+                    data:  { turbo_frame: "payee_rename_dialog" },
+                    class: "flex items-center gap-3 px-4 py-3 text-base text-inherit no-underline" %>
+      <% end %>
+    <% end %>
+  </ul>
+<% else %>
+  <p class="px-4 py-6 text-center text-taupe-600"><%= t("payees.index.empty") %></p>
+<% end %>
