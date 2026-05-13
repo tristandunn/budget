@@ -18,9 +18,7 @@ describe "transactions/clear.turbo_stream.erb" do
   end
 
   it "replaces the status indicator" do
-    expect(html).to have_css(
-      "turbo-stream[action='replace'][target='#{dom_id(transaction, :status)}']"
-    )
+    expect(html).to have_turbo_stream_element(action: "replace", target: dom_id(transaction, :status))
   end
 
   it "renders the status indicator" do
@@ -28,7 +26,7 @@ describe "transactions/clear.turbo_stream.erb" do
   end
 
   it "replaces the cleared balance" do
-    expect(html).to have_css("turbo-stream[action='replace'][target='cleared_balance']")
+    expect(html).to have_turbo_stream_element(action: "replace", target: "cleared_balance")
   end
 
   it "renders the cleared balance" do
@@ -38,7 +36,7 @@ describe "transactions/clear.turbo_stream.erb" do
   end
 
   it "replaces the uncleared balance" do
-    expect(html).to have_css("turbo-stream[action='replace'][target='uncleared_balance']")
+    expect(html).to have_turbo_stream_element(action: "replace", target: "uncleared_balance")
   end
 
   it "renders the uncleared balance" do

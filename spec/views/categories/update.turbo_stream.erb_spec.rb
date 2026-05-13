@@ -22,7 +22,7 @@ describe "categories/update.turbo_stream.erb" do
   end
 
   it "updates the category dialog frame" do
-    expect(html).to have_css("turbo-stream[action='update'][target='category_dialog']")
+    expect(html).to have_turbo_stream_element(action: "update", target: "category_dialog")
   end
 
   it "renders the details partial inside the category dialog stream" do
@@ -30,9 +30,7 @@ describe "categories/update.turbo_stream.erb" do
   end
 
   it "updates the subcategory name in the budget table" do
-    expect(html).to have_css(
-      "turbo-stream[action='update'][target='#{dom_id(subcategory, :name)}']"
-    )
+    expect(html).to have_turbo_stream_element(action: "update", target: dom_id(subcategory, :name))
   end
 
   it "renders the new subcategory link with month and year" do
@@ -44,7 +42,7 @@ describe "categories/update.turbo_stream.erb" do
   end
 
   it "updates the rename dialog frame" do
-    expect(html).to have_css("turbo-stream[action='update'][target='category_rename_dialog']")
+    expect(html).to have_turbo_stream_element(action: "update", target: "category_rename_dialog")
   end
 
   it "renders the dismisser controller inside the rename dialog stream" do

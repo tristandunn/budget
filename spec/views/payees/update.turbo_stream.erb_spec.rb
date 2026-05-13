@@ -20,7 +20,7 @@ describe "payees/update.turbo_stream.erb" do
   end
 
   it "updates the payees list frame" do
-    expect(html).to have_css("turbo-stream[action='update'][target='payees_list']")
+    expect(html).to have_turbo_stream_element(action: "update", target: "payees_list")
   end
 
   it "renders the list partial inside the payees list stream" do
@@ -28,7 +28,7 @@ describe "payees/update.turbo_stream.erb" do
   end
 
   it "updates the rename dialog frame" do
-    expect(html).to have_css("turbo-stream[action='update'][target='payee_rename_dialog']")
+    expect(html).to have_turbo_stream_element(action: "update", target: "payee_rename_dialog")
   end
 
   it "renders the dismisser controller inside the rename dialog stream" do

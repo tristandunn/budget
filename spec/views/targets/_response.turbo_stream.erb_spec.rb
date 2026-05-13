@@ -28,7 +28,7 @@ describe "targets/_response.turbo_stream.erb" do
   end
 
   it "updates the category dialog frame" do
-    expect(html).to have_css("turbo-stream[action='update'][target='category_dialog']")
+    expect(html).to have_turbo_stream_element(action: "update", target: "category_dialog")
   end
 
   it "renders the details partial inside the category dialog stream" do
@@ -36,9 +36,7 @@ describe "targets/_response.turbo_stream.erb" do
   end
 
   it "replaces the subcategory available badge" do
-    expect(html).to have_css(
-      "turbo-stream[action='replace'][target='#{dom_id(subcategory, :available)}']"
-    )
+    expect(html).to have_turbo_stream_element(action: "replace", target: dom_id(subcategory, :available))
   end
 
   it "renders the available partial inside the available badge stream" do
@@ -46,7 +44,7 @@ describe "targets/_response.turbo_stream.erb" do
   end
 
   it "updates the target dialog frame" do
-    expect(html).to have_css("turbo-stream[action='update'][target='category_target_dialog']")
+    expect(html).to have_turbo_stream_element(action: "update", target: "category_target_dialog")
   end
 
   it "renders the dismisser controller inside the target dialog stream" do
