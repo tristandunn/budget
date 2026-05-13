@@ -1,11 +1,11 @@
 <%# locals: (category:, budget_snapshot:) %>
 <div
   id="<%= dom_id(category, :available) %>"
-  class="inline-flex items-center gap-1 py-0.5 px-2 -my-0.5 -mx-2 rounded-full <%= available_color(category, budget_snapshot) %>"
+  class="inline-flex items-baseline gap-1 py-0.5 px-2 -my-0.5 -mx-2 rounded-full <%= available_color(category, budget_snapshot) %>"
 >
   <% if category.target_type? && budget_snapshot.available_for(category) >= 0 %>
     <% budget_snapshot.target_progress_for(category).tap do |progress| %>
-      <svg class="w-4 h-4 -ml-0.5" viewBox="0 0 20 20" role="img">
+      <svg class="w-4 h-4 -ml-0.5 self-center" viewBox="0 0 20 20" role="img">
         <title><%= progress_label(progress) %></title>
 
         <circle
