@@ -1,0 +1,8 @@
+<%# locals: (budget:) %>
+<div
+  id="available_to_assign"
+  class="text-sm font-medium inline-block rounded-full px-2.5 py-0.5 <%= amount_color(budget.available_to_assign) %>"
+  title="<%= t(".title") %>"
+>
+  <%= number_to_money budget.available_to_assign %>
+</div>

@@ -53,6 +53,9 @@ en:
         working_balance: "Working Balance"
 
   categories:
+    category_header:
+      assigned: "Assigned"
+      available: "Available"
     dialog:
       close: "Close dialog"
     edit:
@@ -81,10 +84,9 @@ en:
         to_go: "To go"
 
   budgets:
+    available_to_assign:
+      title: "Available to Assign"
     show:
-      assigned: "Assigned"
-      available: "Available"
-      available_to_assign: "Available to Assign"
       manage_payees: "Manage Payees"
       menu: "Menu"
       next_month: "Next month"

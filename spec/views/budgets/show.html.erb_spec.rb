@@ -13,8 +13,10 @@ describe "budgets/show.html.erb" do
   let(:subcategory)     { create(:category, :subcategory) }
 
   before do
-    stub_template("categories/_available.html.erb" => "AVAILABLE_PARTIAL")
-    stub_template("shared/_toolbar.html.erb"       => "TOOLBAR_PARTIAL")
+    stub_template("budgets/_available_to_assign.html.erb" => "AVAILABLE_TO_ASSIGN_PARTIAL")
+    stub_template("categories/_category_header.html.erb"  => "CATEGORY_HEADER_PARTIAL")
+    stub_template("categories/_subcategory_row.html.erb"  => "SUBCATEGORY_ROW_PARTIAL")
+    stub_template("shared/_toolbar.html.erb"              => "TOOLBAR_PARTIAL")
 
     assign :budget,          subcategory.budget
     assign :budget_snapshot, budget_snapshot
@@ -24,42 +26,16 @@ describe "budgets/show.html.erb" do
     expect(html).to have_css("h1", text: Date.current.beginning_of_month.strftime("%b %Y"))
   end
 
-  it "renders the available to assign amount" do
-    expect(html).to have_css(
-      "header", text: number_to_money(subcategory.budget.available_to_assign)
-    )
+  it "renders the available to assign partial" do
+    expect(html).to include("AVAILABLE_TO_ASSIGN_PARTIAL")
   end
 
-  it "renders the parent category name" do
-    expect(html).to have_css("thead th", text: subcategory.parent.name)
+  it "renders the category header partial" do
+    expect(html).to include("CATEGORY_HEADER_PARTIAL")
   end
 
-  it "renders the parent category amount assigned" do
-    parent_snapshot = budget_snapshot.snapshot_for(subcategory.parent_id)
-
-    expect(html).to have_css(
-      "thead th", text: number_to_money(parent_snapshot.amount_assigned)
-    )
-  end
-
-  it "renders the parent category cumulative available" do
-    expect(html).to have_css(
-      "thead th",
-      text: number_to_money(budget_snapshot.available_for(subcategory.parent))
-    )
-  end
-
-  it "renders the subcategory name as a link to its details" do
-    expect(html).to have_link(
-      subcategory.name,
-      href: budget_category_path(subcategory.budget, subcategory,
-                                 year:  budget_snapshot.date.year,
-                                 month: budget_snapshot.date.month)
-    )
-  end
-
-  it "identifies the subcategory name cell so it can be targeted by turbo streams" do
-    expect(html).to have_css("th##{dom_id(subcategory, :name)}", text: subcategory.name)
+  it "renders the subcategory row partial" do
+    expect(html).to include("SUBCATEGORY_ROW_PARTIAL")
   end
 
   it "renders the category details dialog" do
@@ -97,23 +73,6 @@ describe "budgets/show.html.erb" do
     expect(html).to have_css(
       "a[data-turbo-frame='payees_dialog']", text: t("budgets.show.manage_payees")
     )
-  end
-
-  it "renders the subcategory amount assigned as a link" do
-    subcategory_snapshot = budget_snapshot.snapshot_for(subcategory.id)
-
-    expect(html).to have_css(
-      "tbody td a",
-      text: number_to_money(subcategory_snapshot.amount_assigned)
-    )
-  end
-
-  it "renders the subcategory available partial" do
-    expect(html).to include("AVAILABLE_PARTIAL")
-  end
-
-  it "wraps the subcategory assigned amount in a turbo frame" do
-    expect(html).to have_css("tbody td turbo-frame##{dom_id(subcategory, :assignment)}")
   end
 
   it "renders the toolbar" do

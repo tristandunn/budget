@@ -62,7 +62,7 @@ describe AssignmentsController do
   end
 
   describe "#update" do
-    context "when valid" do
+    context "when valid with the html format" do
       let(:budget)      { subcategory.budget }
       let(:form)        { instance_double(AssignmentForm, save: true) }
       let(:subcategory) { create(:category, :subcategory) }
@@ -90,6 +90,31 @@ describe AssignmentsController do
         expect(response).to redirect_to(
           month_budget_url(budget, month: Date.current.month, year: Date.current.year)
         )
+      end
+    end
+
+    context "when valid with the turbo_stream format" do
+      let(:budget)      { subcategory.budget }
+      let(:form)        { instance_double(AssignmentForm, save: true) }
+      let(:subcategory) { create(:category, :subcategory) }
+
+      before do
+        allow(AssignmentForm).to receive(:new).and_return(form)
+
+        patch :update,
+              params: {
+                budget_id:       budget.id,
+                category_id:     subcategory.id,
+                assignment_form: { amount: "100.00" }
+              },
+              format: :turbo_stream
+      end
+
+      it { is_expected.to respond_with(200) }
+      it { is_expected.to render_template(:update) }
+
+      it "assigns the budget snapshot" do
+        expect(assigns(:budget_snapshot)).to be_a(BudgetSnapshot)
       end
     end
 
@@ -123,7 +148,7 @@ describe AssignmentsController do
       end
     end
 
-    context "when invalid" do
+    context "when invalid with the html format" do
       let(:budget)      { subcategory.budget }
       let(:form)        { instance_double(AssignmentForm, save: false) }
       let(:subcategory) { create(:category, :subcategory) }
@@ -161,6 +186,27 @@ describe AssignmentsController do
       it "assigns the form" do
         expect(assigns(:form)).to eq(form)
       end
+    end
+
+    context "when invalid with the turbo_stream format" do
+      let(:budget)      { subcategory.budget }
+      let(:form)        { instance_double(AssignmentForm, save: false) }
+      let(:subcategory) { create(:category, :subcategory) }
+
+      before do
+        allow(AssignmentForm).to receive(:new).and_return(form)
+
+        patch :update,
+              params: {
+                budget_id:       budget.id,
+                category_id:     subcategory.id,
+                assignment_form: { amount: "invalid" }
+              },
+              format: :turbo_stream
+      end
+
+      it { is_expected.to respond_with(422) }
+      it { is_expected.to render_template(:edit) }
     end
   end
 end

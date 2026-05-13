@@ -17,9 +17,14 @@ class AssignmentsController < ApplicationController
     @form                 = AssignmentForm.new(assignment_parameters)
 
     if @form.save
-      redirect_to month_budget_path(current_budget, month: date.month, year: date.year)
+      @budget_snapshot = budget_snapshot
+
+      respond_to do |format|
+        format.html { redirect_to displayed_budget_path }
+        format.turbo_stream
+      end
     else
-      render :edit, status: :unprocessable_content
+      render :edit, status: :unprocessable_content, formats: [:html]
     end
   end
 
@@ -37,6 +42,13 @@ class AssignmentsController < ApplicationController
     }
   end
 
+  # Return the budget snapshot for the displayed month.
+  #
+  # @return [BudgetSnapshot] The current budget snapshot.
+  def budget_snapshot
+    @budget_snapshot ||= BudgetSnapshot.new(current_budget, month: date.month, year: date.year)
+  end
+
   # Parse the year and month parameters, falling back to the current month.
   #
   # @return [Date] The parsed date, or the current month if parsing fails.
@@ -44,6 +56,13 @@ class AssignmentsController < ApplicationController
     @date ||= Date.new(params.expect(:year).to_i, params.expect(:month).to_i)
   rescue ActionController::ParameterMissing, Date::Error
     @date = Date.current.beginning_of_month
+  end
+
+  # Return the budget path for the displayed month.
+  #
+  # @return [String] The path to the budget for the displayed month.
+  def displayed_budget_path
+    month_budget_path(current_budget, month: date.month, year: date.year)
   end
 
   # Return the permitted form parameters.

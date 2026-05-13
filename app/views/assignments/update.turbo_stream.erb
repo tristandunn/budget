@@ -1,0 +1,16 @@
+<%= turbo_stream.replace dom_id(@subcategory, :row) do %>
+  <%= render "categories/subcategory_row",
+             budget:          @budget,
+             subcategory:     @subcategory,
+             budget_snapshot: @budget_snapshot %>
+<% end %>
+
+<%= turbo_stream.replace dom_id(@subcategory.parent, :header) do %>
+  <%= render "categories/category_header",
+             category:        @subcategory.parent,
+             budget_snapshot: @budget_snapshot %>
+<% end %>
+
+<%= turbo_stream.replace "available_to_assign" do %>
+  <%= render "budgets/available_to_assign", budget: @budget %>
+<% end %>

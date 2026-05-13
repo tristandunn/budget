@@ -61,12 +61,7 @@
 
   <header class="sticky top-0 z-10 grid grid-cols-3 items-center whitespace-nowrap bg-white p-4">
     <div class="leading-tight justify-self-start">
-      <div
-        class="text-sm font-medium inline-block rounded-full px-2.5 py-0.5 <%= amount_color(@budget.available_to_assign) %>"
-        title="<%= t(".available_to_assign") %>"
-      >
-        <%= number_to_money @budget.available_to_assign %>
-      </div>
+      <%= render "available_to_assign", budget: @budget %>
     </div>
 
     <div class="flex items-center gap-2 justify-self-center">
@@ -175,79 +170,19 @@
   <section class="flex-1">
     <table class="w-full text-left">
       <% @budget.categories.reject(&:inflow?).sort_by(&:position).each do |category| %>
-        <thead
-          class="group bg-taupe-100 border-y border-taupe-200"
-          data-controller="collapsible"
-          data-collapsible-id-value="category-<%= category.id %>"
-        >
-          <tr class="cursor-pointer" data-action="click->collapsible#toggle">
-            <th scope="col" class="py-2 px-4 text-lg truncate max-w-px">
-              <div
-                class="
-                  inline-block relative -inset-y-1 mr-2 w-3 h-3 border-r-2 border-b-2 rotate-45
-                  border-taupe-500 group-[.collapsed]:inset-y-0
-                  group-[.collapsed]:translate-x-(--collapsible-arrow-shift)
-                  group-[.collapsed]:-rotate-45
-                "
-                data-collapsible-arrow
-              ></div>
-
-              <%= category.name %>
-            </th>
-
-            <% @budget_snapshot.snapshot_for(category.id).tap do |snapshot| %>
-              <th scope="col" class="py-2 px-4 w-1/4 text-right whitespace-nowrap">
-                <div class="text-sm font-normal"><%= t(".assigned") %></div>
-                <div><%= number_to_money snapshot.amount_assigned %></div>
-              </th>
-            <% end %>
-
-            <th scope="col" class="py-2 px-4 w-1/4 text-right whitespace-nowrap">
-              <div class="text-sm font-normal"><%= t(".available") %></div>
-              <div><%= number_to_money @budget_snapshot.available_for(category) %></div>
-            </th>
-          </tr>
-        </thead>
+        <%= render "categories/category_header",
+                   category:        category,
+                   budget_snapshot: @budget_snapshot %>
 
         <tbody
           class="[.group.collapsed+&]:hidden"
           data-collapsible-content="collapsible-category-<%= category.id %>"
         >
           <% category.subcategories.sort_by(&:position).each do |subcategory| %>
-            <tr class="bg-white border-b border-taupe-200">
-              <th
-                scope="row"
-                id="<%= dom_id(subcategory, :name) %>"
-                class="py-3 px-4 font-normal whitespace-nowrap"
-              >
-                <%= link_to subcategory.name,
-                            budget_category_path(@budget, subcategory,
-                                                 year:  @budget_snapshot.date.year,
-                                                 month: @budget_snapshot.date.month),
-                            class: "text-inherit no-underline",
-                            data:  { turbo_frame: "category_dialog" } %>
-              </th>
-
-              <% @budget_snapshot.snapshot_for(subcategory.id).tap do |snapshot| %>
-                <td
-                  class="py-3 px-4 font-semibold text-right whitespace-nowrap"
-                  data-controller="inline-edit"
-                >
-                  <%= turbo_frame_tag dom_id(subcategory, :assignment) do %>
-                    <%= link_to number_to_money(snapshot.amount_assigned),
-                                edit_budget_category_assignment_path(@budget, subcategory, year: @budget_snapshot.date.year, month: @budget_snapshot.date.month),
-                                class: "text-inherit no-underline cursor-text",
-                                data:  { action: "click->inline-edit#prefocus", turbo_prefetch: false } %>
-                  <% end %>
-                </td>
-
-                <td class="py-3 px-4 font-semibold text-right whitespace-nowrap">
-                  <%= render "categories/available",
-                             category:        subcategory,
-                             budget_snapshot: @budget_snapshot %>
-                </td>
-              <% end %>
-            </tr>
+            <%= render "categories/subcategory_row",
+                       budget:          @budget,
+                       subcategory:     subcategory,
+                       budget_snapshot: @budget_snapshot %>
           <% end %>
         </tbody>
       <% end %>
