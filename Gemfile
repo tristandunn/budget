@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-ruby   "4.0.2"
+ruby   "4.0.4"
 source "https://rubygems.org"
 
 gem "bcrypt",            "3.1.22"
@@ -52,7 +52,7 @@ group :test do
   gem "factory_bot_rails",        "6.5.1"
   gem "faker",                    "3.8.0"
   gem "rails-controller-testing", "1.0.5"
-  gem "selenium-webdriver",       "4.43.0"
+  gem "selenium-webdriver",       "4.44.0"
   gem "shoulda-matchers",         "7.0.1"
   gem "simplecov-console",        "0.9.5", require: false
 end

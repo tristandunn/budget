@@ -2,7 +2,7 @@
 # Manual changes might be lost - proceed with caution!
 
 __metadata:
-  version: 8
+  version: 9
   cacheKey: 10c0
 
 "@asamuzakjp/css-color@npm:^5.1.11":
@@ -614,9 +614,9 @@ __metadata:
   linkType: hard
 
 "@typescript-eslint/types@npm:^8.56.0":
-  version: 8.59.2
-  resolution: "@typescript-eslint/types@npm:8.59.2"
-  checksum: 10c0/ee6889a22b237ef426c45f11dc167f7f220007c2a8f77c8b1ab9e57ac32a2b47fad29f53c4230847cbe49bcd30a35fc2f276e01611d0dab9918d7ef72334f423
+  version: 8.59.3
+  resolution: "@typescript-eslint/types@npm:8.59.3"
+  checksum: 10c0/3f7836ce108c3098935180221abce6d9dbf3583216b895525b0a1fc8d0207ebe1ba9e571dbb45eddacd14ef99563350b9b51df3091258211f8d267f02b9a80c1
   languageName: node
   linkType: hard
 
@@ -2995,11 +2995,11 @@ __metadata:
   linkType: hard
 
 "yaml@npm:^2.8.3":
-  version: 2.8.4
-  resolution: "yaml@npm:2.8.4"
+  version: 2.9.0
+  resolution: "yaml@npm:2.9.0"
   bin:
     yaml: bin.mjs
-  checksum: 10c0/0a33a1fa28d4bc79f61a12ec7ef7a2bce0ce5f8e80c6eaecfb4a0c88c08767dd1ede372b6a3bcd70891213b8c9f3169b355c97e77026d3b3459e10d2cccaef1e
+  checksum: 10c0/f340718df45e97a9551b9bf9dac61c80050bc464513b710debfb5067c380c8472e3b67809cffacb4ab5ffb5e66ef9310816c88b05f371cec60abfedd8c88e0a2
   languageName: node
   linkType: hard
 
