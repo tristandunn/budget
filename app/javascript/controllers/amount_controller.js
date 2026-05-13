@@ -8,6 +8,12 @@ export default class extends Controller {
   connect() {
     if (this.#positiveOnly()) {
       this.#positive = true;
+    } else {
+      const initial = parseFloat(this.#unformat(this.element.value));
+
+      if (!isNaN(initial) && initial > 0) {
+        this.#positive = true;
+      }
     }
 
     this.element.value = this.#format(this.element.value);
@@ -43,10 +49,23 @@ export default class extends Controller {
     event.preventDefault();
 
     const pasted  = event.clipboardData.getData("text/plain"),
-          cleaned = pasted.replace(/[^\d.]/g, ""),
-          sign    = this.#positive
-            ? ""
-            : "-";
+          cleaned = pasted.replace(/[^\d.]/g, "");
+
+    let sign;
+
+    if (this.#positiveOnly()) {
+      sign = "";
+    } else if (pasted.includes("-")) {
+      this.#positive = false;
+      sign = "-";
+    } else if (pasted.includes("+")) {
+      this.#positive = true;
+      sign = "";
+    } else {
+      sign = this.#positive
+        ? ""
+        : "-";
+    }
 
     this.element.value = this.#format(`${sign}${cleaned}`);
     this.#updateColor();
@@ -105,6 +124,12 @@ export default class extends Controller {
     return `${sign}$${integerPart}${decimalPart}`;
   }
 
+  #isAllSelected() {
+    return this.element.value.length > 0 &&
+      this.element.selectionStart === 0 &&
+      this.element.selectionEnd === this.element.value.length;
+  }
+
   #isZero() {
     return !parseFloat(this.#unformat(this.element.value));
   }
@@ -161,7 +186,11 @@ export default class extends Controller {
     }
 
     if ((/^\d$/).test(event.key)) {
-      return !this.#isZero();
+      if (this.#isZero() || this.#isAllSelected()) {
+        return false;
+      }
+
+      return true;
     }
 
     return event.key === ".";

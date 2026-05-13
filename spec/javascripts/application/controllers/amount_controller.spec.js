@@ -45,6 +45,51 @@ describe("AmountController", () => {
       expect(element.classList.contains("text-red-700")).to.eq(true);
       expect(element.classList.contains("text-black")).to.eq(false);
     });
+
+    it("preserves the positive sign on a subsequent paste", () => {
+      element.value = "42.50";
+
+      instance.connect();
+
+      const event = createPasteEvent("1234");
+
+      instance.paste(event);
+
+      expect(element.value).to.eq("$1,234");
+    });
+
+    it("preserves the positive sign when clearing and typing a digit", () => {
+      element.value = "42.50";
+
+      instance.connect();
+
+      element.value = "";
+
+      const event = new window.KeyboardEvent("keydown", {
+        "cancelable": true,
+        "key": "5"
+      });
+
+      instance.keydown(event);
+
+      expect(element.value).to.eq("$5");
+    });
+
+    it("preserves the negative sign when selecting all and typing a digit", () => {
+      element.value = "-42.50";
+
+      instance.connect();
+      instance.element.setSelectionRange(0, instance.element.value.length);
+
+      const event = new window.KeyboardEvent("keydown", {
+        "cancelable": true,
+        "key": "5"
+      });
+
+      instance.keydown(event);
+
+      expect(element.value).to.eq("-$5");
+    });
   });
 
   describe("#input", () => {
@@ -498,6 +543,30 @@ describe("AmountController", () => {
 
         expect(element.classList.contains("text-black")).to.eq(true);
         expect(element.classList.contains("text-red-700")).to.eq(false);
+      });
+
+      it("switches to negative when the pasted value has a minus sign", () => {
+        element.value = "42.50";
+
+        instance.connect();
+
+        const event = createPasteEvent("-1234");
+
+        instance.paste(event);
+
+        expect(element.value).to.eq("-$1,234");
+      });
+
+      it("switches to positive when the pasted value has a plus sign", () => {
+        element.value = "-42.50";
+
+        instance.connect();
+
+        const event = createPasteEvent("+1234");
+
+        instance.paste(event);
+
+        expect(element.value).to.eq("$1,234");
       });
     });
 
