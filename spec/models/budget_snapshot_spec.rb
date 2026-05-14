@@ -335,6 +335,19 @@ describe BudgetSnapshot do
       it { is_expected.to be(true) }
     end
 
+    context "with a monthly_spending target where assigned is below the target and available is zero" do
+      before do
+        create(:category_snapshot,
+               budget:          budget,
+               category:        subcategory,
+               amount_assigned: subcategory.target_amount - 1,
+               amount_used:     subcategory.target_amount - 1,
+               date:            Date.current.beginning_of_month)
+      end
+
+      it { is_expected.to be(true) }
+    end
+
     context "with a monthly_spending target where assigned matches the target" do
       before do
         create(:category_snapshot,

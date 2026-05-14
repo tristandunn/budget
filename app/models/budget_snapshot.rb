@@ -111,7 +111,7 @@ class BudgetSnapshot
   # @return [Boolean] Whether the category is underfunded.
   def underfunded?(category)
     category.target_type_monthly_spending? &&
-      available_for(category).positive? &&
+      !available_for(category).negative? &&
       target_progress_for(category).underfunded?
   end
 
