@@ -31,6 +31,9 @@ Rails.application.routes.draw do
   end
 
   get "/health", to: "health#index"
+  get "/manifest", to:          "rails/pwa#manifest",
+                   as:          :pwa_manifest,
+                   constraints: { format: :json }
 
   root "budgets#index"
 end
