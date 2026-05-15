@@ -2,6 +2,7 @@
 
 class Current < ActiveSupport::CurrentAttributes
   attribute :budget
+  attribute :user
 
   resets do
     Time.zone = nil

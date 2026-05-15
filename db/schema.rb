@@ -86,6 +86,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_14_230652) do
     t.index ["transfer_pair_id"], name: "index_transactions_on_transfer_pair_id"
   end
 
+  create_table "users", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "email", limit: 255, null: false
+    t.string "password_digest", limit: 60, null: false
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_users_on_email", unique: true
+  end
+
   add_foreign_key "accounts", "budgets"
   add_foreign_key "categories", "budgets"
   add_foreign_key "category_snapshots", "budgets"

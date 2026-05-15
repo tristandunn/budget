@@ -31,6 +31,8 @@ Rails.application.routes.draw do
     resources :transfers, only: %i(new create)
   end
 
+  resource :session, only: %i(new create destroy)
+
   get "/health", to: "health#index"
   get "/manifest", to:          "rails/pwa#manifest",
                    as:          :pwa_manifest,

@@ -11,6 +11,10 @@ describe ApplicationController do
 
   it { is_expected.to be_a(ActionController::Base) }
 
+  it "includes the authentication helpers" do
+    expect(described_class.ancestors).to include(Authentication)
+  end
+
   describe "#assign_current_budget" do
     subject { response.body }
 

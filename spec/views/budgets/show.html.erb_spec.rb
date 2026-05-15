@@ -18,6 +18,10 @@ describe "budgets/show.html.erb" do
     stub_template("categories/_subcategory_row.html.erb"  => "SUBCATEGORY_ROW_PARTIAL")
     stub_template("shared/_toolbar.html.erb"              => "TOOLBAR_PARTIAL")
 
+    without_partial_double_verification do
+      allow(view).to receive(:signed_in?).and_return(false)
+    end
+
     assign :budget,          subcategory.budget
     assign :budget_snapshot, budget_snapshot
   end
@@ -75,8 +79,35 @@ describe "budgets/show.html.erb" do
     )
   end
 
+  it "does not render the sign out form when signed out" do
+    expect(html).to have_no_button(t("budgets.show.sign_out"))
+  end
+
   it "renders the toolbar" do
     expect(html).to include("TOOLBAR_PARTIAL")
+  end
+
+  context "when signed in" do
+    before do
+      without_partial_double_verification do
+        allow(view).to receive(:signed_in?).and_return(true)
+      end
+    end
+
+    it "renders a sign out form" do
+      expect(html).to have_css(
+        "form[action='#{session_path}'] input[name='_method'][value='delete']",
+        visible: :all
+      )
+    end
+
+    it "renders the sign out button" do
+      expect(html).to have_button(t("budgets.show.sign_out"))
+    end
+
+    it "renders a divider between menu items" do
+      expect(html).to have_css("[data-popover-target='menu'].divide-y")
+    end
   end
 
   context "when on the current month" do

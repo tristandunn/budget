@@ -1,0 +1,65 @@
+<main class="min-h-screen bg-taupe-100">
+  <header class="relative p-4">
+    <h1 class="text-lg font-semibold text-center"><%= t(".title") %></h1>
+  </header>
+
+  <div class="mx-auto w-full max-w-lg px-8 py-6">
+    <%= form_with model: @form, url: session_path, class: "highlight-errors" do |f| %>
+      <div class="bg-white rounded-xl mb-4 field-card">
+        <div
+          class="
+            flex items-center gap-3 px-4 py-4 rounded-xl focus-within:outline-none
+            focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-inset
+          "
+        >
+          <div class="grow">
+            <%= f.label :email, class: "sr-only" %>
+
+            <%= f.email_field :email,
+                              "aria-invalid": @form.errors[:email].any?,
+                              autocapitalize: "off",
+                              autocomplete:   "email",
+                              autocorrect:    "off",
+                              autofocus:      true,
+                              class:          "w-full bg-transparent border-none outline-none text-base placeholder:text-taupe-400 focus:ring-0",
+                              maxlength:      User::MAXIMUM_EMAIL_LENGTH,
+                              placeholder:    t(".email_placeholder"),
+                              required:       true %>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl mb-6 field-card">
+        <div
+          class="
+            flex items-center gap-3 px-4 py-4 rounded-xl focus-within:outline-none
+            focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-inset
+          "
+        >
+          <div class="grow">
+            <%= f.label :password, class: "sr-only" %>
+
+            <%= f.password_field :password,
+                                 autocomplete: "current-password",
+                                 class:        "w-full bg-transparent border-none outline-none text-base placeholder:text-taupe-400 focus:ring-0",
+                                 minlength:    User::MINIMUM_PASSWORD_LENGTH,
+                                 placeholder:  t(".password_placeholder"),
+                                 required:     true %>
+          </div>
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        class="
+          flex items-center justify-center gap-2 p-3 w-full text-sm font-medium text-white
+          bg-indigo-600 rounded-lg hover:bg-indigo-700 focus-visible:outline-none
+          focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2
+          focus-visible:ring-offset-taupe-50
+        "
+      >
+        <%= t(".submit") %>
+      </button>
+    <% end %>
+  </div>
+</main>

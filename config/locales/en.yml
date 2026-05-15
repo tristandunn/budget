@@ -94,8 +94,13 @@ en:
       menu: "Menu"
       next_month: "Next month"
       previous_month: "Previous month"
+      sign_out: "Sign Out"
 
   activerecord:
+    attributes:
+      user:
+        email: "E-mail Address"
+        password: "Password"
     errors:
       models:
         transaction:
@@ -111,6 +116,9 @@ en:
         name: "Name"
       payee_form:
         name: "Name"
+      session_form:
+        email: "E-mail Address"
+        password: "Password"
       target_form:
         target_amount_input: "Amount"
       transaction_form:
@@ -129,6 +137,10 @@ en:
         to_account: "To Account"
     errors:
       models:
+        session_form:
+          attributes:
+            email:
+              unknown: "is invalid or password is incorrect"
         transfer_form:
           attributes:
             date:
@@ -230,6 +242,13 @@ en:
       from: "From"
       memo: "Memo"
       to: "To"
+
+  sessions:
+    new:
+      email_placeholder: "you@example.com"
+      password_placeholder: "Password"
+      submit: "Sign In"
+      title: "Sign In"
 
   shared:
     picker:
