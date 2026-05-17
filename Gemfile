@@ -4,10 +4,10 @@ ruby   "4.0.4"
 source "https://rubygems.org"
 
 gem "bcrypt",            "3.1.22"
-gem "bootsnap",          "1.24.3", require: false
+gem "bootsnap",          "1.24.4", require: false
 gem "bundler-audit",     "0.9.3",  require: false
 gem "importmap-rails",   "2.2.3"
-gem "jbuilder",          "2.14.1"
+gem "jbuilder",          "2.15.0"
 gem "kamal",             "2.11.0", require: false
 gem "litestream",        "0.14.0"
 gem "money",             "7.0.2"
@@ -21,7 +21,7 @@ gem "solid_queue",       "1.4.0"
 gem "sqlite3",           "2.9.4"
 gem "stimulus-rails",    "1.3.4"
 gem "tailwindcss-rails", "4.4.0"
-gem "thruster",          "0.1.20", require: false
+gem "thruster",          "0.1.21", require: false
 gem "turbo-rails",       "2.0.23"
 
 group :development, :test do
@@ -33,11 +33,11 @@ group :development do
   gem "erb_lint",            "0.9.0", require: false
   gem "listen",              "3.10.0"
   gem "rack-mini-profiler",  "4.0.1"
-  gem "rubocop",             "1.86.1", require: false
+  gem "rubocop",             "1.86.2", require: false
   gem "rubocop-capybara",    "2.23.0", require: false
   gem "rubocop-factory_bot", "2.28.0", require: false
   gem "rubocop-performance", "1.26.1", require: false
-  gem "rubocop-rails",       "2.35.0", require: false
+  gem "rubocop-rails",       "2.35.1", require: false
   gem "rubocop-rake",        "0.7.1",  require: false
   gem "rubocop-rspec",       "3.9.0",  require: false
   gem "rubocop-rspec_rails", "2.32.0", require: false
