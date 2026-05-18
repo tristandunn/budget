@@ -71,6 +71,7 @@ export default class extends Controller {
     const target = event.currentTarget;
 
     this.#applySelection(target.dataset.value, target.dataset.label);
+    this.#closePanel();
   }
 
   // Select an item whose label exactly matches the search input on Enter.
@@ -132,7 +133,7 @@ export default class extends Controller {
     return valid;
   }
 
-  // Apply a selection to the form and close the picker.
+  // Apply a selection to the form.
   #applySelection(value, label) {
     const empty = value === "";
 
@@ -147,8 +148,6 @@ export default class extends Controller {
     for (const item of this.itemTargets) {
       item.setAttribute("aria-selected", item.dataset.value === value);
     }
-
-    this.#closePanel();
   }
 
   // Animate the picker panel closed.

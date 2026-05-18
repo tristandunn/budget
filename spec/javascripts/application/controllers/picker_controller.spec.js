@@ -503,20 +503,40 @@ describe("PickerController", () => {
   });
 
   describe("#applyValue", () => {
-    beforeEach(() => {
-      controller.open();
-    });
-
     it("applies the matching item by value, updating the hidden field and display", () => {
+      controller.open();
+
       controller.applyValue("2");
 
       expect(hiddenField.value).to.eq("2");
       expect(display.textContent).to.eq("Beta");
       expect(beta.getAttribute("aria-selected")).to.eq("true");
-      expect(picker.classList.contains("hidden")).to.be.true;
+    });
+
+    it("leaves the picker open", () => {
+      controller.open();
+
+      controller.applyValue("2");
+
+      expect(picker.classList.contains("hidden")).to.be.false;
+      expect(picker.classList.contains("closing")).to.be.false;
+    });
+
+    it("does not close the picker on a later open when motion is enabled", () => {
+      window.matchMedia.returns({ "matches": false });
+
+      controller.applyValue("2");
+
+      controller.open();
+      picker.dispatchEvent(new window.Event("transitionend"));
+
+      expect(picker.classList.contains("hidden")).to.be.false;
+      expect(picker.classList.contains("open")).to.be.true;
     });
 
     it("is a no-op when no item matches", () => {
+      controller.open();
+
       controller.applyValue("999");
 
       expect(hiddenField.value).to.eq("");
