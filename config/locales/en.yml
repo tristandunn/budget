@@ -81,7 +81,10 @@ en:
         needed: "Needed this month"
         percent_funded: "Target %{percentage}% funded."
         question: "How much do you need for %{name}?"
+        snooze: "Snooze for this month"
+        snoozed_label: "Target snoozed for this month."
         to_go: "To go"
+        unsnooze: "Unsnooze for this month"
 
   budgets:
     available_to_assign:

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_04_132607) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_14_230652) do
   create_table "accounts", force: :cascade do |t|
     t.integer "balance", default: 0, null: false
     t.integer "budget_id", null: false
@@ -49,6 +49,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_04_132607) do
     t.integer "category_id", null: false
     t.datetime "created_at", null: false
     t.date "date", null: false
+    t.json "metadata", default: {}, null: false
     t.datetime "updated_at", null: false
     t.index ["budget_id", "date", "category_id"], name: "index_category_snapshots_on_budget_id_and_date_and_category_id", unique: true
     t.index ["category_id"], name: "index_category_snapshots_on_category_id"

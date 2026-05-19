@@ -292,6 +292,63 @@ describe BudgetSnapshot do
     end
   end
 
+  describe "#snoozed?" do
+    subject { instance.snoozed?(subcategory) }
+
+    let(:instance)    { described_class.new(budget) }
+    let(:subcategory) do
+      create(:category, :subcategory, :with_monthly_spending_target, budget: budget, with_snapshot: false)
+    end
+
+    context "without a snapshot for the displayed month" do
+      it { is_expected.to be(false) }
+    end
+
+    context "with a snapshot that is not snoozed" do
+      before do
+        create(:category_snapshot,
+               budget:   budget,
+               category: subcategory,
+               date:     Date.current.beginning_of_month,
+               metadata: {})
+      end
+
+      it { is_expected.to be(false) }
+    end
+
+    context "with a snapshot that is snoozed" do
+      before do
+        create(:category_snapshot,
+               budget:   budget,
+               category: subcategory,
+               date:     Date.current.beginning_of_month,
+               metadata: { "snoozed" => true })
+      end
+
+      it { is_expected.to be(true) }
+    end
+
+    context "with a snoozed snapshot but the target has since been removed" do
+      let(:subcategory) { create(:category, :subcategory, budget: budget, with_snapshot: false) }
+
+      before do
+        create(:category_snapshot,
+               budget:   budget,
+               category: subcategory,
+               date:     Date.current.beginning_of_month,
+               metadata: { "snoozed" => true })
+      end
+
+      it { is_expected.to be(false) }
+    end
+
+    context "with a top-level category" do
+      let(:subcategory) { create(:category, budget: budget, with_snapshot: false) }
+
+      it { is_expected.to be(false) }
+    end
+  end
+
   describe "#target_progress_for" do
     subject { instance.target_progress_for(subcategory) }
 
@@ -368,6 +425,20 @@ describe BudgetSnapshot do
                category:        subcategory,
                amount_assigned: subcategory.target_amount - 1,
                amount_used:     subcategory.target_amount,
+               date:            Date.current.beginning_of_month)
+      end
+
+      it { is_expected.to be(false) }
+    end
+
+    context "with a monthly_spending target that is snoozed for the displayed month" do
+      before do
+        create(:category_snapshot,
+               budget:          budget,
+               category:        subcategory,
+               amount_assigned: subcategory.target_amount - 1,
+               amount_used:     0,
+               metadata:        { "snoozed" => true },
                date:            Date.current.beginning_of_month)
       end
 

@@ -16,7 +16,7 @@ describe "categories/_available.html.erb" do
   end
 
   let(:budget_snapshot) do
-    instance_double(BudgetSnapshot, available_for: 50_00, underfunded?: underfunded)
+    instance_double(BudgetSnapshot, available_for: 50_00, snoozed?: false, underfunded?: underfunded)
   end
 
   let(:category)    { build_stubbed(:category, :subcategory) }
@@ -73,7 +73,7 @@ describe "categories/_available.html.erb" do
 
     context "when overspent" do
       let(:budget_snapshot) do
-        instance_double(BudgetSnapshot, available_for: -10_00, underfunded?: false)
+        instance_double(BudgetSnapshot, available_for: -10_00, snoozed?: false, underfunded?: false)
       end
       let(:snapshot)        { CategorySnapshot.new(amount_assigned: 150_00, amount_used: 160_00) }
 
@@ -83,6 +83,23 @@ describe "categories/_available.html.erb" do
 
       it "uses the overspent color" do
         expect(html).to have_css("div.bg-red-200")
+      end
+    end
+
+    context "when snoozed" do
+      let(:budget_snapshot) { instance_double(BudgetSnapshot, available_for: 0, snoozed?: true, underfunded?: false) }
+      let(:snapshot)        { CategorySnapshot.new(amount_assigned: 0, amount_used: 0) }
+
+      it "renders the snoozed label as the icon title" do
+        expect(html).to have_css("svg title", text: t("categories.show.target.snoozed_label"))
+      end
+
+      it "does not render the progress wedge" do
+        expect(html).to have_no_css("svg circle[stroke-dasharray]")
+      end
+
+      it "uses the amount color rather than the underfunded color" do
+        expect(html).to have_css("div.bg-stone-200")
       end
     end
 

@@ -13,6 +13,7 @@ Rails.application.routes.draw do
     end
     resources :categories, only: %i(show edit update) do
       resource :assignment, only: %i(edit update)
+      resource :snooze, only: %i(create destroy)
       resource :target, only: %i(edit update destroy)
     end
     resources :payees, only: %i(index edit update) do

@@ -40,4 +40,26 @@ describe CategorySnapshot do
 
     it { is_expected.to eq(67) }
   end
+
+  describe "#snoozed?" do
+    subject { category_snapshot.snoozed? }
+
+    context "when metadata is empty" do
+      let(:category_snapshot) { build(:category_snapshot, metadata: {}) }
+
+      it { is_expected.to be(false) }
+    end
+
+    context "when metadata snoozed is false" do
+      let(:category_snapshot) { build(:category_snapshot, metadata: { "snoozed" => false }) }
+
+      it { is_expected.to be(false) }
+    end
+
+    context "when metadata snoozed is true" do
+      let(:category_snapshot) { build(:category_snapshot, metadata: { "snoozed" => true }) }
+
+      it { is_expected.to be(true) }
+    end
+  end
 end

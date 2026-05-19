@@ -4,42 +4,68 @@
   class="inline-flex items-baseline gap-1 py-0.5 px-2 -my-0.5 -mx-2 rounded-full <%= available_color(category, budget_snapshot) %>"
 >
   <% if category.target_type? && budget_snapshot.available_for(category) >= 0 %>
-    <% budget_snapshot.target_progress_for(category).tap do |progress| %>
-      <svg class="w-4 h-4 -ml-0.5 self-center" viewBox="0 0 20 20" role="img">
-        <title><%= progress_label(progress) %></title>
+    <% if budget_snapshot.snoozed?(category) %>
+      <svg class="h-4 w-3 self-center select-none" viewBox="0 0 15 20" role="img">
+        <title><%= t("categories.show.target.snoozed_label") %></title>
 
-        <circle
-          cx="10"
-          cy="10"
-          r="8"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-        />
+        <text
+          x="0"
+          y="15"
+          font-size="11"
+          font-weight="700"
+          fill="currentColor"
+        >
+          Z
+        </text>
 
-        <% if progress.funded? %>
-          <path
-            d="M 6.5 10 L 9 12.5 L 13.5 7.5"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.25"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        <% else %>
+        <text
+          x="8"
+          y="9"
+          font-size="10"
+          font-weight="700"
+          fill="currentColor"
+        >
+          z
+        </text>
+      </svg>
+    <% else %>
+      <% budget_snapshot.target_progress_for(category).tap do |progress| %>
+        <svg class="w-4 h-4 -ml-0.5 self-center" viewBox="0 0 20 20" role="img">
+          <title><%= progress_label(progress) %></title>
+
           <circle
             cx="10"
             cy="10"
-            r="3"
+            r="8"
             fill="none"
             stroke="currentColor"
-            stroke-width="6"
-            pathLength="100"
-            stroke-dasharray="<%= progress.funded_percentage %> 100"
-            transform="rotate(-90 10 10)"
+            stroke-width="2"
           />
-        <% end %>
-      </svg>
+
+          <% if progress.funded? %>
+            <path
+              d="M 6.5 10 L 9 12.5 L 13.5 7.5"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.25"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          <% else %>
+            <circle
+              cx="10"
+              cy="10"
+              r="3"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="6"
+              pathLength="100"
+              stroke-dasharray="<%= progress.funded_percentage %> 100"
+              transform="rotate(-90 10 10)"
+            />
+          <% end %>
+        </svg>
+      <% end %>
     <% end %>
   <% end %>
 

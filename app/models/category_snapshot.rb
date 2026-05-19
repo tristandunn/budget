@@ -17,4 +17,11 @@ class CategorySnapshot < ApplicationRecord
   def amount_remaining
     amount_assigned - amount_used
   end
+
+  # Returns true when the target for the snapshot's month has been snoozed.
+  #
+  # @return [Boolean] Whether the snapshot is snoozed.
+  def snoozed?
+    metadata["snoozed"] == true
+  end
 end
