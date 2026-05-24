@@ -776,7 +776,7 @@ __metadata:
     chai: "npm:6.2.2"
     eslint: "npm:10.4.0"
     jsdom: "npm:29.1.1"
-    mocha: "npm:11.7.5"
+    mocha: "npm:11.7.6"
     prettier: "npm:3.8.3"
     prettier-plugin-tailwindcss: "npm:0.8.0"
     sinon: "npm:22.0.0"
@@ -1986,9 +1986,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mocha@npm:11.7.5":
-  version: 11.7.5
-  resolution: "mocha@npm:11.7.5"
+"mocha@npm:11.7.6":
+  version: 11.7.6
+  resolution: "mocha@npm:11.7.6"
   dependencies:
     browser-stdout: "npm:^1.3.1"
     chokidar: "npm:^4.0.1"
@@ -2014,7 +2014,7 @@ __metadata:
   bin:
     _mocha: bin/_mocha
     mocha: bin/mocha.js
-  checksum: 10c0/e6150cba85345aaabbc5b2e7341b1e6706b878f5a9782960cad57fd4cc458730a76d08c5f1a3e05d3ebb49cad93b455764bb00727bd148dcaf0c6dd4fa665b3d
+  checksum: 10c0/95b3eeb52eaf253167d335d1c1a46659f6f282dc112a74fd0ac46380637ae3ee52894319e00a46412a1e5a6e3056128153dc87c1fe36565c748b9fbe8d705ad0
   languageName: node
   linkType: hard
 
@@ -2456,11 +2456,11 @@ __metadata:
   linkType: hard
 
 "semver@npm:^7.5.3":
-  version: 7.8.0
-  resolution: "semver@npm:7.8.0"
+  version: 7.8.1
+  resolution: "semver@npm:7.8.1"
   bin:
     semver: bin/semver.js
-  checksum: 10c0/8f096ca9b80ffd47b308d03f9ce8c873e27e2983f36023c559cdc92c51e8433fc23ebbfe57ec9623fc155636a6961ee989501099841ae4bb1babc8d2b3f048cd
+  checksum: 10c0/92d6871d6347e1f99d0ba396a70f2545ccf2a032cda3d378fa0699edf7506b5c6d266aed55c8b88e72bd91a30d2351e4f39db479375374430fcdc4b58f4e3c1a
   languageName: node
   linkType: hard
 
@@ -2755,21 +2755,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tldts-core@npm:^7.0.30":
-  version: 7.0.30
-  resolution: "tldts-core@npm:7.0.30"
-  checksum: 10c0/e3cd730e96b0e9c0332fcaab44d0257b668f9089644508e4f6f870d37bbf5c218243b7e83aa39690c87b386d1b0ad577772a5994969c4c81cc25a476f783ccd7
+"tldts-core@npm:^7.1.0":
+  version: 7.1.0
+  resolution: "tldts-core@npm:7.1.0"
+  checksum: 10c0/e380f601e0b73105ef2add60f296fd001543e93e4c70cebf4f779717fae609680a8a0f77f1bec72043ce7597acab5f1d54769e8b3d07d20996d84c124d8e90f1
   languageName: node
   linkType: hard
 
 "tldts@npm:^7.0.5":
-  version: 7.0.30
-  resolution: "tldts@npm:7.0.30"
+  version: 7.1.0
+  resolution: "tldts@npm:7.1.0"
   dependencies:
-    tldts-core: "npm:^7.0.30"
+    tldts-core: "npm:^7.1.0"
   bin:
     tldts: bin/cli.js
-  checksum: 10c0/c36f7b480f09128303158e4738a82426c33e8da9f77d4fb57a2d5ef5896c803d7a3c1d53ade965712f9cb4946935139b6d192a18698665556ca504493c7c265e
+  checksum: 10c0/ff3b87a16ef96fde6e6eac745078cb87f0614cd2b854322245b98595efafb63fafbef23ea1f719105a77f7ee8c8d51ca21a42c030d4e9d5a50fdd5bca4da57a6
   languageName: node
   linkType: hard
 
