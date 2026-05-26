@@ -6,6 +6,10 @@ describe Accounts::ReconciliationsController do
   let(:account) { create(:account, budget: budget) }
   let(:budget)  { create(:budget) }
 
+  before do
+    sign_in_for(budget)
+  end
+
   describe "#create" do
     before do
       create(:transaction, :cleared, account: account)

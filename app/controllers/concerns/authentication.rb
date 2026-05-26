@@ -8,6 +8,24 @@ module Authentication
                   :signed_out?
   end
 
+  # Deny access by redirecting to the sign-in page.
+  #
+  # Uses a 303 See Other status so non-GET requests, such as Turbo Stream form
+  # submissions whose session expired, are followed with a GET instead of
+  # repeating the method.
+  #
+  # @return [void]
+  def access_denied
+    redirect_to new_session_url, status: :see_other
+  end
+
+  # Resume the user session, otherwise deny access.
+  #
+  # @return [void]
+  def authenticate
+    resume_session || access_denied
+  end
+
   # Attempt to set the current user from the session.
   #
   # @return [User] The user when one was found in the session.
@@ -30,12 +48,14 @@ module Authentication
     !signed_in?
   end
 
-  # Set the current user and persist their ID to the session.
+  # Set the current user and persist their ID to a fresh session.
   #
   # @param user [User] The user to start the session for.
   # @return [void]
   def start_new_session_for(user)
     Current.user = user
+
+    reset_session
 
     session[:user_id] = user.id
   end
@@ -51,11 +71,17 @@ module Authentication
 
   # Attempt to find a user from the user ID in the session.
   #
+  # Also remove the user ID from the session when no matching user exists.
+  #
   # @return [User] The user when one was found for the session's user ID.
   # @return [nil] When no user ID is in the session or no user matches it.
   def user_from_session
     if session[:user_id].present?
-      User.find_by(id: session[:user_id])
+      User.find_by(id: session[:user_id]).tap do |user|
+        if user.nil?
+          session.delete(:user_id)
+        end
+      end
     end
   end
 end

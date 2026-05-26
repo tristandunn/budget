@@ -3,12 +3,13 @@
 require "rails_helper"
 
 describe "Account transactions" do
-  let(:account) { create(:account, budget: budget) }
-  let(:budget)  { create(:budget) }
+  let(:account) { create(:account) }
+  let(:budget)  { account.budget }
 
   it "navigates from accounts index to account register" do
     transaction = create(:transaction, account: account)
 
+    sign_in_for(budget)
     visit budget_accounts_path(budget)
     click_on account.name
 
@@ -17,6 +18,7 @@ describe "Account transactions" do
   end
 
   it "defaults the account on the new transaction form" do
+    sign_in_for(budget)
     visit budget_account_transactions_path(budget, account)
     click_on "add-transaction"
 

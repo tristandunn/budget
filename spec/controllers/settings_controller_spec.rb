@@ -3,11 +3,15 @@
 require "rails_helper"
 
 describe SettingsController do
+  let(:budget) { create(:budget) }
+
+  before do
+    sign_in_for(budget)
+  end
+
   it { is_expected.to be_a(ApplicationController) }
 
   describe "#update" do
-    let(:budget) { create(:budget) }
-
     context "when enabling a setting" do
       before do
         patch :update, params: { budget_id: budget.id, settings: { hide_reconciled: "1" } }

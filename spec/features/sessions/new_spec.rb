@@ -7,7 +7,7 @@ describe "Creating a new session" do
   let(:user)     { create(:user, password: password) }
 
   before do
-    create(:budget)
+    create(:budget, user: user)
 
     visit new_session_path
   end

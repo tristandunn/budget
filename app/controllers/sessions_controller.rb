@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class SessionsController < ApplicationController
-  skip_before_action :current_budget
+  skip_before_action :authenticate,
+                     :current_budget
 
   before_action :redirect_authenticated_user,
                 except: :destroy,

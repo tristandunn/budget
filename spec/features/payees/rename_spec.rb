@@ -7,6 +7,7 @@ describe "Renaming a payee" do
   let(:payee)  { create(:payee) }
 
   before do
+    sign_in_for(budget)
     visit budget_payees_path(budget)
     click_on payee.name
   end

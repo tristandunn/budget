@@ -9,9 +9,11 @@ describe Budget do
     it { is_expected.to have_many(:accounts).dependent(:destroy) }
     it { is_expected.to have_many(:categories).conditions(parent_id: nil).inverse_of(:budget).dependent(:destroy) }
     it { is_expected.to have_many(:category_snapshots).dependent(:destroy) }
+    it { is_expected.to have_many(:memberships).dependent(:destroy) }
     it { is_expected.to have_many(:payees).dependent(:destroy) }
     it { is_expected.to have_many(:subcategories).class_name("Category").inverse_of(:budget).dependent(:destroy) }
     it { is_expected.to have_many(:transactions).dependent(:destroy) }
+    it { is_expected.to have_many(:users).through(:memberships) }
 
     describe "#subcategories" do
       subject(:subcategories) { budget.subcategories }
@@ -31,6 +33,7 @@ describe Budget do
 
   describe "validations" do
     it { is_expected.to validate_numericality_of(:available_to_assign).only_integer }
+    it { is_expected.to validate_presence_of(:users).on(:create) }
   end
 
   describe "#settings" do

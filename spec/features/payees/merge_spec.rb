@@ -3,11 +3,12 @@
 require "rails_helper"
 
 describe "Merging a payee" do
-  let(:budget)       { source_payee.budget }
-  let(:source_payee) { create(:payee, budget: target_payee.budget) }
-  let(:target_payee) { create(:payee) }
+  let(:budget)        { create(:budget) }
+  let!(:source_payee) { create(:payee, budget: budget) }
+  let!(:target_payee) { create(:payee, budget: budget) }
 
   before do
+    sign_in_for(budget)
     visit budget_payees_path(budget)
     click_on source_payee.name
     fill_in "payee_form_name", with: target_payee.name

@@ -3,11 +3,18 @@
 require "rails_helper"
 
 describe SnoozesController do
+  let(:budget) { create(:budget) }
+
+  before do
+    sign_in_for(budget)
+  end
+
   it { is_expected.to be_a(ApplicationController) }
 
   describe "#create" do
-    let(:budget)      { subcategory.budget }
-    let(:subcategory) { create(:category, :subcategory, :with_monthly_spending_target, with_snapshot: false) }
+    let(:subcategory) do
+      create(:category, :subcategory, :with_monthly_spending_target, budget: budget, with_snapshot: false)
+    end
 
     context "without an existing snapshot for the month" do
       before do
@@ -105,7 +112,7 @@ describe SnoozesController do
     end
 
     context "with a category that has no target" do
-      let(:subcategory) { create(:category, :subcategory, with_snapshot: false) }
+      let(:subcategory) { create(:category, :subcategory, budget: budget, with_snapshot: false) }
 
       it "raises a record not found error" do
         expect do
@@ -140,8 +147,9 @@ describe SnoozesController do
   end
 
   describe "#destroy" do
-    let(:budget)      { subcategory.budget }
-    let(:subcategory) { create(:category, :subcategory, :with_monthly_spending_target, with_snapshot: false) }
+    let(:subcategory) do
+      create(:category, :subcategory, :with_monthly_spending_target, budget: budget, with_snapshot: false)
+    end
 
     context "when a snoozed snapshot exists" do
       let!(:snapshot) do

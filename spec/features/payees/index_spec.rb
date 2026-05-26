@@ -3,11 +3,12 @@
 require "rails_helper"
 
 describe "Listing payees", :js do
-  let(:budget)    { payee_one.budget }
-  let(:payee_one) { create(:payee, budget: payee_two.budget) }
-  let(:payee_two) { create(:payee) }
+  let(:budget)     { create(:budget) }
+  let!(:payee_one) { create(:payee, budget: budget) }
+  let!(:payee_two) { create(:payee, budget: budget) }
 
   before do
+    sign_in_for(budget)
     visit budget_path(budget)
   end
 

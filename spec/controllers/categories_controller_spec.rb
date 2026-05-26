@@ -3,11 +3,16 @@
 require "rails_helper"
 
 describe CategoriesController do
+  let(:budget) { create(:budget) }
+
+  before do
+    sign_in_for(budget)
+  end
+
   it { is_expected.to be_a(ApplicationController) }
 
   describe "#show" do
-    let(:budget)      { subcategory.budget }
-    let(:subcategory) { create(:category, :subcategory) }
+    let(:subcategory) { create(:category, :subcategory, budget: budget) }
 
     context "when on the first month" do
       before do
@@ -53,9 +58,8 @@ describe CategoriesController do
   end
 
   describe "#edit" do
-    let(:budget)      { subcategory.budget }
     let(:form)        { instance_double(CategoryForm) }
-    let(:subcategory) { create(:category, :subcategory) }
+    let(:subcategory) { create(:category, :subcategory, budget: budget) }
 
     before do
       allow(CategoryForm).to receive(:from).and_return(form)
@@ -85,9 +89,8 @@ describe CategoriesController do
 
   describe "#update" do
     context "when valid with the html format" do
-      let(:budget)      { subcategory.budget }
       let(:form)        { instance_double(CategoryForm, update: true) }
-      let(:subcategory) { create(:category, :subcategory) }
+      let(:subcategory) { create(:category, :subcategory, budget: budget) }
 
       before do
         allow(CategoryForm).to receive(:new).and_return(form)
@@ -113,9 +116,8 @@ describe CategoriesController do
     end
 
     context "when valid with the turbo_stream format" do
-      let(:budget)      { subcategory.budget }
       let(:form)        { instance_double(CategoryForm, update: true) }
-      let(:subcategory) { create(:category, :subcategory) }
+      let(:subcategory) { create(:category, :subcategory, budget: budget) }
 
       before do
         allow(CategoryForm).to receive(:new).and_return(form)
@@ -138,9 +140,8 @@ describe CategoriesController do
     end
 
     context "when invalid with the html format" do
-      let(:budget)      { subcategory.budget }
       let(:form)        { instance_double(CategoryForm, update: nil) }
-      let(:subcategory) { create(:category, :subcategory) }
+      let(:subcategory) { create(:category, :subcategory, budget: budget) }
 
       before do
         allow(CategoryForm).to receive(:new).and_return(form)
@@ -169,9 +170,8 @@ describe CategoriesController do
     end
 
     context "when invalid with the turbo_stream format" do
-      let(:budget)      { subcategory.budget }
       let(:form)        { instance_double(CategoryForm, update: nil) }
-      let(:subcategory) { create(:category, :subcategory) }
+      let(:subcategory) { create(:category, :subcategory, budget: budget) }
 
       before do
         allow(CategoryForm).to receive(:new).and_return(form)

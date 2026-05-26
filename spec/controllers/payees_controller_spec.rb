@@ -3,11 +3,15 @@
 require "rails_helper"
 
 describe PayeesController do
+  let(:budget) { create(:budget) }
+
+  before do
+    sign_in_for(budget)
+  end
+
   it { is_expected.to be_a(ApplicationController) }
 
   describe "#index" do
-    let(:budget) { create(:budget) }
-
     let!(:apple) { create(:payee, budget: budget, name: "Apple") }
     let!(:zebra) { create(:payee, budget: budget, name: "Zebra") }
 
@@ -30,7 +34,6 @@ describe PayeesController do
   end
 
   describe "#edit" do
-    let(:budget) { create(:budget) }
     let(:form)   { instance_double(PayeeForm) }
     let(:payee)  { create(:payee, budget: budget) }
 
@@ -61,8 +64,7 @@ describe PayeesController do
   end
 
   describe "#update" do
-    let(:budget) { create(:budget) }
-    let(:payee)  { create(:payee, budget: budget, name: "Old Name") }
+    let(:payee) { create(:payee, budget: budget, name: "Old Name") }
 
     context "when valid with the html format" do
       let(:form) { instance_double(PayeeForm, update: true) }
@@ -175,8 +177,7 @@ describe PayeesController do
   end
 
   describe "#previous_category" do
-    let(:budget) { create(:budget) }
-    let(:payee)  { create(:payee, budget: budget) }
+    let(:payee) { create(:payee, budget: budget) }
 
     context "when the payee belongs to the budget" do
       let(:subcategory) { create(:category, :subcategory, budget: budget) }

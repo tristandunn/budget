@@ -3,11 +3,15 @@
 require "rails_helper"
 
 describe TransactionsController do
+  let(:budget) { create(:budget) }
+
+  before do
+    sign_in_for(budget)
+  end
+
   it { is_expected.to be_a(ApplicationController) }
 
   describe "#index" do
-    let(:budget) { create(:budget) }
-
     context "with transactions" do
       let!(:newer)    { create(:transaction, budget: budget, date: 5.days.ago.to_date) }
       let!(:older)    { create(:transaction, budget: budget, date: 10.days.ago.to_date) }
@@ -54,7 +58,6 @@ describe TransactionsController do
 
   describe "#new" do
     let(:account_id) { nil }
-    let(:budget)     { create(:budget) }
     let(:form)       { instance_double(TransactionForm, budget: budget, subcategory: nil) }
 
     before do
@@ -132,7 +135,6 @@ describe TransactionsController do
   describe "#create" do
     context "when valid" do
       let(:account)     { create(:account, budget: budget) }
-      let(:budget)      { create(:budget) }
       let(:form)        { instance_double(TransactionForm, save: true) }
       let(:subcategory) { create(:category, :subcategory, budget: budget) }
 
@@ -180,7 +182,6 @@ describe TransactionsController do
 
     context "with a stored return location" do
       let(:account)     { create(:account, budget: budget) }
-      let(:budget)      { create(:budget) }
       let(:form)        { instance_double(TransactionForm, save: true) }
       let(:subcategory) { create(:category, :subcategory, budget: budget) }
 
@@ -212,7 +213,6 @@ describe TransactionsController do
     end
 
     context "when invalid" do
-      let(:budget)      { create(:budget) }
       let(:form)        { instance_double(TransactionForm, budget: budget, save: false, subcategory: nil) }
       let(:subcategory) { create(:category, :subcategory, budget: budget) }
 
@@ -272,7 +272,6 @@ describe TransactionsController do
   end
 
   describe "#edit" do
-    let(:budget)      { create(:budget) }
     let(:form)        { instance_double(TransactionForm, budget: budget, subcategory: nil) }
     let(:transaction) { create(:transaction, budget: budget) }
 
@@ -344,7 +343,6 @@ describe TransactionsController do
 
   describe "#update" do
     let(:account)     { create(:account, budget: budget) }
-    let(:budget)      { create(:budget) }
     let(:subcategory) { create(:category, :subcategory, budget: budget) }
     let(:transaction) { create(:transaction, budget: budget) }
 
@@ -537,7 +535,6 @@ describe TransactionsController do
   end
 
   describe "#destroy" do
-    let(:budget)      { create(:budget) }
     let(:transaction) { create(:transaction, budget: budget) }
 
     before do
@@ -605,8 +602,6 @@ describe TransactionsController do
   end
 
   describe "#clear" do
-    let(:budget) { create(:budget) }
-
     context "when the transaction is pending" do
       let(:transaction) { create(:transaction, budget: budget) }
 
@@ -638,8 +633,6 @@ describe TransactionsController do
   end
 
   describe "#unclear" do
-    let(:budget) { create(:budget) }
-
     context "when the transaction is cleared" do
       let(:transaction) { create(:transaction, :cleared, budget: budget) }
 

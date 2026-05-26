@@ -3,12 +3,13 @@
 require "rails_helper"
 
 describe "Account reconciliation", :js do
-  let(:account) { create(:account, balance: -5000, budget: budget) }
-  let(:budget)  { create(:budget) }
+  let(:account) { create(:account, balance: -5000) }
+  let(:budget)  { account.budget }
 
   before do
     create(:transaction, :cleared, account: account, amount: -5000)
 
+    sign_in_for(budget)
     visit budget_account_transactions_path(budget, account)
     find("button[aria-label='#{t("transactions.index.actions")}']").click
   end

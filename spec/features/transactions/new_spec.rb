@@ -11,6 +11,8 @@ describe "Transaction" do
     budget.update!(available_to_assign: 10_000)
     subcategory.snapshots.first.update!(amount_assigned: 10_000, amount_used: 0)
 
+    sign_in_for(budget)
+
     visit budget_account_transactions_path(budget, account)
     click_on "add-transaction"
   end

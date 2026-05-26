@@ -3,12 +3,14 @@
 require "rails_helper"
 
 describe "Hiding reconciled transactions", :js do
-  let(:account)       { create(:account, budget: budget) }
-  let(:budget)        { create(:budget) }
+  let(:account)       { create(:account) }
+  let(:budget)        { account.budget }
   let!(:reconciled)   { create(:transaction, :reconciled, budget: budget, account: account) }
   let!(:unreconciled) { create(:transaction, budget: budget, account: account) }
 
   before do
+    sign_in_for(budget)
+
     visit budget_transactions_path(budget)
     find("button[aria-label='#{t("transactions.index.actions")}']").click
     click_on t("transactions.reconciled.hide")

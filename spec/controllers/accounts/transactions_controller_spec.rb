@@ -3,10 +3,15 @@
 require "rails_helper"
 
 describe Accounts::TransactionsController do
+  let(:budget) { create(:budget) }
+
+  before do
+    sign_in_for(budget)
+  end
+
   describe "#index" do
     context "with an account" do
       let(:account)      { create(:account, budget: budget) }
-      let(:budget)       { create(:budget) }
       let!(:transaction) { create(:transaction, account: account) }
       let!(:upcoming)    { create(:transaction, :upcoming, account: account) }
 
@@ -40,7 +45,6 @@ describe Accounts::TransactionsController do
 
     context "when hiding reconciled transactions" do
       let(:account)      { create(:account, budget: budget) }
-      let(:budget)       { create(:budget) }
       let!(:transaction) { create(:transaction, account: account, date: 5.days.ago.to_date) }
 
       before do
@@ -63,8 +67,6 @@ describe Accounts::TransactionsController do
     end
 
     context "with an invalid account" do
-      let(:budget) { create(:budget) }
-
       it "raises an ActiveRecord::RecordNotFound error" do
         expect { get :index, params: { budget_id: budget.id, account_id: 0 } }
           .to raise_error(ActiveRecord::RecordNotFound)

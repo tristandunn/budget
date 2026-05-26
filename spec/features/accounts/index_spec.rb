@@ -6,6 +6,10 @@ describe "Accounts" do
   context "with a budget" do
     let(:budget) { create(:budget) }
 
+    before do
+      sign_in_for(budget)
+    end
+
     it "renders the page title" do
       visit budget_accounts_path(budget)
 

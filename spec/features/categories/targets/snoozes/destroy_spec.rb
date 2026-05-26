@@ -15,6 +15,7 @@ describe "Category target unsnoozing" do
            date:     Date.current.beginning_of_month,
            metadata: { "snoozed" => true })
 
+    sign_in_for(budget)
     visit budget_path(budget)
     click_on subcategory.name
   end

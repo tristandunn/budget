@@ -7,6 +7,7 @@ describe "Category target editing" do
   let(:subcategory) { create(:category, :subcategory, :with_monthly_spending_target, name: "Groceries") }
 
   before do
+    sign_in_for(budget)
     visit budget_path(budget)
     click_on subcategory.name
     click_on t("categories.show.target.edit")

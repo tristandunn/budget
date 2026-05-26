@@ -10,6 +10,7 @@ describe "Assigning to a subcategory", :js do
   context "when on the current month" do
     before do
       create_snapshots_for(Date.current.beginning_of_month)
+      sign_in_for(budget)
       visit budget_path(budget)
       assign_amount("250.00")
     end
@@ -29,6 +30,7 @@ describe "Assigning to a subcategory", :js do
     before do
       create_snapshots_for(Date.current.beginning_of_month, amount_assigned: 1)
       create_snapshots_for(next_month)
+      sign_in_for(budget)
       visit budget_path(budget)
       click_on "next-month"
       assign_amount("250.00")

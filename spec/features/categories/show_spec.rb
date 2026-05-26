@@ -7,6 +7,7 @@ describe "Category details" do
   let(:subcategory) { create(:category, :subcategory) }
 
   before do
+    sign_in_for(budget)
     visit budget_path(budget)
     click_on subcategory.name
   end

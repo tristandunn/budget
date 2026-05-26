@@ -3,8 +3,8 @@
 require "rails_helper"
 
 describe "Transaction clearing", :js do
-  let(:account) { create(:account, budget: budget) }
-  let(:budget)  { create(:budget) }
+  let(:account) { create(:account) }
+  let(:budget)  { account.budget }
 
   let(:transaction) do
     create(:transaction, budget:  budget,
@@ -15,6 +15,8 @@ describe "Transaction clearing", :js do
 
   before do
     CreateTransaction.call(transaction: transaction)
+
+    sign_in_for(budget)
 
     visit budget_transactions_path(budget)
   end

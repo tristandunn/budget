@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_14_230652) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_25_000001) do
   create_table "accounts", force: :cascade do |t|
     t.integer "balance", default: 0, null: false
     t.integer "budget_id", null: false
@@ -53,6 +53,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_14_230652) do
     t.datetime "updated_at", null: false
     t.index ["budget_id", "date", "category_id"], name: "index_category_snapshots_on_budget_id_and_date_and_category_id", unique: true
     t.index ["category_id"], name: "index_category_snapshots_on_category_id"
+  end
+
+  create_table "memberships", force: :cascade do |t|
+    t.integer "budget_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["budget_id", "user_id"], name: "index_memberships_on_budget_id_and_user_id", unique: true
+    t.index ["user_id"], name: "index_memberships_on_user_id"
   end
 
   create_table "payees", force: :cascade do |t|
@@ -98,6 +107,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_14_230652) do
   add_foreign_key "categories", "budgets"
   add_foreign_key "category_snapshots", "budgets"
   add_foreign_key "category_snapshots", "categories"
+  add_foreign_key "memberships", "budgets"
+  add_foreign_key "memberships", "users"
   add_foreign_key "payees", "budgets"
   add_foreign_key "transactions", "accounts"
   add_foreign_key "transactions", "budgets"

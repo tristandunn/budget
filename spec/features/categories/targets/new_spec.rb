@@ -7,6 +7,7 @@ describe "Category target creation" do
   let(:subcategory) { create(:category, :subcategory, name: "Groceries") }
 
   before do
+    sign_in_for(budget)
     visit budget_path(budget)
     click_on subcategory.name
     click_on t("categories.show.target.create")

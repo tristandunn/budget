@@ -6,6 +6,7 @@ describe "Account creation", :js do
   let(:budget) { create(:budget) }
 
   before do
+    sign_in_for(budget)
     visit budget_accounts_path(budget)
     find("a[aria-label='#{t("accounts.index.new")}']").click
   end

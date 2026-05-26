@@ -84,18 +84,28 @@ describe SessionsController do
   end
 
   describe "#destroy" do
-    let(:user) { create(:user) }
+    context "when signed in" do
+      let(:user) { create(:user) }
 
-    before do
-      sign_in_as user
+      before do
+        sign_in_as user
 
-      delete :destroy
+        delete :destroy
+      end
+
+      it { is_expected.to redirect_to(new_session_url) }
+
+      it "removes the user ID from the session" do
+        expect(session[:user_id]).to be_nil
+      end
     end
 
-    it { is_expected.to redirect_to(new_session_url) }
+    context "when signed out" do
+      before do
+        delete :destroy
+      end
 
-    it "removes the user ID from the session" do
-      expect(session[:user_id]).to be_nil
+      it { is_expected.to redirect_to(new_session_url) }
     end
   end
 end

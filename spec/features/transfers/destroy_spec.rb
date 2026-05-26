@@ -15,6 +15,8 @@ describe "Transfer deletion", :js do
       date:     Date.current
     )
 
+    sign_in_for(budget)
+
     visit budget_transactions_path(budget)
     click_on t("transfers.payee.to", account: savings.name)
   end

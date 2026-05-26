@@ -3,10 +3,11 @@
 require "rails_helper"
 
 describe "Account editing", :js do
-  let(:account) { create(:account, budget: budget, name: "Old Name") }
-  let(:budget)  { create(:budget) }
+  let(:account) { create(:account, name: "Old Name") }
+  let(:budget)  { account.budget }
 
   before do
+    sign_in_for(budget)
     visit budget_account_transactions_path(budget, account)
     find("button[aria-label='#{t("transactions.index.actions")}']").click
     click_on t("accounts.transactions.actions.edit")

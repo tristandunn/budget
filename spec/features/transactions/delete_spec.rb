@@ -3,8 +3,8 @@
 require "rails_helper"
 
 describe "Transaction deletion", :js do
-  let(:account)     { create(:account, budget: budget) }
-  let(:budget)      { create(:budget) }
+  let(:account)     { create(:account) }
+  let(:budget)      { account.budget }
   let(:subcategory) { create(:category, :subcategory, budget: budget) }
 
   let(:transaction) do
@@ -16,6 +16,8 @@ describe "Transaction deletion", :js do
 
   before do
     CreateTransaction.call(transaction: transaction)
+
+    sign_in_for(budget)
 
     visit budget_transactions_path(budget)
     click_on transaction.payee.name

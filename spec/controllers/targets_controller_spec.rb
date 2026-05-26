@@ -3,12 +3,17 @@
 require "rails_helper"
 
 describe TargetsController do
+  let(:budget) { create(:budget) }
+
+  before do
+    sign_in_for(budget)
+  end
+
   it { is_expected.to be_a(ApplicationController) }
 
   describe "#edit" do
-    let(:budget)      { subcategory.budget }
     let(:form)        { instance_double(TargetForm) }
-    let(:subcategory) { create(:category, :subcategory) }
+    let(:subcategory) { create(:category, :subcategory, budget: budget) }
 
     before do
       allow(TargetForm).to receive(:from).and_return(form)
@@ -44,9 +49,8 @@ describe TargetsController do
     let(:form_parameters) { { target_type: "monthly_spending", target_amount_input: "200.00" } }
 
     context "when valid with the html format" do
-      let(:budget)      { subcategory.budget }
       let(:form)        { instance_double(TargetForm, update: true) }
-      let(:subcategory) { create(:category, :subcategory) }
+      let(:subcategory) { create(:category, :subcategory, budget: budget) }
 
       before do
         allow(TargetForm).to receive(:new).and_return(form)
@@ -74,9 +78,8 @@ describe TargetsController do
     end
 
     context "when valid with the turbo_stream format" do
-      let(:budget)      { subcategory.budget }
       let(:form)        { instance_double(TargetForm, update: true) }
-      let(:subcategory) { create(:category, :subcategory) }
+      let(:subcategory) { create(:category, :subcategory, budget: budget) }
 
       before do
         allow(TargetForm).to receive(:new).and_return(form)
@@ -99,9 +102,8 @@ describe TargetsController do
     end
 
     context "when invalid with the html format" do
-      let(:budget)      { subcategory.budget }
       let(:form)        { instance_double(TargetForm, update: nil) }
-      let(:subcategory) { create(:category, :subcategory) }
+      let(:subcategory) { create(:category, :subcategory, budget: budget) }
 
       before do
         allow(TargetForm).to receive(:new).and_return(form)
@@ -130,9 +132,8 @@ describe TargetsController do
     end
 
     context "when invalid with the turbo_stream format" do
-      let(:budget)      { subcategory.budget }
       let(:form)        { instance_double(TargetForm, update: nil) }
-      let(:subcategory) { create(:category, :subcategory) }
+      let(:subcategory) { create(:category, :subcategory, budget: budget) }
 
       before do
         allow(TargetForm).to receive(:new).and_return(form)
@@ -152,8 +153,9 @@ describe TargetsController do
   end
 
   describe "#destroy" do
-    let(:budget)      { subcategory.budget }
-    let(:subcategory) { create(:category, :subcategory, target_type: :monthly_spending, target_amount: 200_00) }
+    let(:subcategory) do
+      create(:category, :subcategory, budget: budget, target_type: :monthly_spending, target_amount: 200_00)
+    end
 
     context "without a previous month" do
       before do

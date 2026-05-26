@@ -3,13 +3,12 @@
 require "rails_helper"
 
 describe "Transfer" do
-  let(:budget)      { create(:budget) }
-  let(:checking)    { create(:account, balance: 50_000, budget: budget) }
-  let(:credit_card) { create(:account, :credit, balance: 20_000, budget: budget) }
+  let(:budget)       { create(:budget) }
+  let!(:checking)    { create(:account, balance: 50_000, budget: budget) }
+  let!(:credit_card) { create(:account, :credit, balance: 20_000, budget: budget) }
 
   before do
-    checking
-    credit_card
+    sign_in_for(budget)
 
     visit new_budget_transfer_path(budget)
   end

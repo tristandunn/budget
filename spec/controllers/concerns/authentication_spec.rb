@@ -21,6 +21,51 @@ describe Authentication do
     end
   end
 
+  describe "#access_denied" do
+    let(:new_session_url) { "https://example.com/session/new" }
+
+    before do
+      allow(instance).to receive(:redirect_to)
+      allow(instance).to receive(:new_session_url).and_return(new_session_url)
+    end
+
+    it "redirects to new_session_url with a see_other status" do
+      instance.access_denied
+
+      expect(instance).to have_received(:redirect_to).with(new_session_url, status: :see_other)
+    end
+  end
+
+  describe "#authenticate" do
+    context "when the session is resumed" do
+      let(:user) { build_stubbed(:user) }
+
+      before do
+        allow(instance).to receive(:access_denied)
+        allow(instance).to receive(:resume_session).and_return(user)
+      end
+
+      it "does not call access_denied" do
+        instance.authenticate
+
+        expect(instance).not_to have_received(:access_denied)
+      end
+    end
+
+    context "when the session is not resumed" do
+      before do
+        allow(instance).to receive(:access_denied)
+        allow(instance).to receive(:resume_session).and_return(nil)
+      end
+
+      it "calls access_denied" do
+        instance.authenticate
+
+        expect(instance).to have_received(:access_denied).with(no_args)
+      end
+    end
+  end
+
   describe "#resume_session" do
     let(:user) { build_stubbed(:user) }
 
@@ -96,6 +141,7 @@ describe Authentication do
     let(:user)    { build_stubbed(:user) }
 
     before do
+      allow(instance).to receive(:reset_session)
       allow(instance).to receive(:session).and_return(session)
 
       instance.start_new_session_for(user)
@@ -103,6 +149,10 @@ describe Authentication do
 
     it "assigns Current.user" do
       expect(Current.user).to eq(user)
+    end
+
+    it "resets the session" do
+      expect(instance).to have_received(:reset_session)
     end
 
     it "stores the user ID in the session" do
@@ -132,7 +182,7 @@ describe Authentication do
   end
 
   describe "#user_from_session" do
-    context "with a user ID in the session" do
+    context "with a user ID in the session matching a user" do
       let(:session) { { user_id: user.id } }
       let(:user)    { build_stubbed(:user) }
 
@@ -150,6 +200,32 @@ describe Authentication do
 
       it "returns the user" do
         expect(instance.user_from_session).to eq(user)
+      end
+
+      it "leaves the user ID in the session" do
+        instance.user_from_session
+
+        expect(session[:user_id]).to eq(user.id)
+      end
+    end
+
+    context "with a user ID in the session not matching a user" do
+      let(:session) { { user_id: 123 } }
+
+      before do
+        allow(instance).to receive(:session).and_return(session)
+
+        allow(User).to receive(:find_by).and_return(nil)
+      end
+
+      it "removes the user ID from the session" do
+        instance.user_from_session
+
+        expect(session).not_to have_key(:user_id)
+      end
+
+      it "returns nil" do
+        expect(instance.user_from_session).to be_nil
       end
     end
 

@@ -7,6 +7,7 @@ class ApplicationController < ActionController::Base
   # maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
 
+  before_action :authenticate
   before_action :current_budget
 
   private
@@ -15,6 +16,6 @@ class ApplicationController < ActionController::Base
   #
   # @return [Budget] The budget for the request.
   def current_budget
-    Current.budget ||= Budget.find(params.expect(:budget_id))
+    Current.budget ||= Current.user.budgets.find(params.expect(:budget_id))
   end
 end

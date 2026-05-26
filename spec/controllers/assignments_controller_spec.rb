@@ -3,12 +3,17 @@
 require "rails_helper"
 
 describe AssignmentsController do
+  let(:budget) { create(:budget) }
+
+  before do
+    sign_in_for(budget)
+  end
+
   it { is_expected.to be_a(ApplicationController) }
 
   describe "#edit" do
-    let(:budget)      { subcategory.budget }
     let(:form)        { instance_double(AssignmentForm) }
-    let(:subcategory) { create(:category, :subcategory) }
+    let(:subcategory) { create(:category, :subcategory, budget: budget) }
 
     before do
       allow(AssignmentForm).to receive(:new).and_return(form)
@@ -63,9 +68,8 @@ describe AssignmentsController do
 
   describe "#update" do
     context "when valid with the html format" do
-      let(:budget)      { subcategory.budget }
       let(:form)        { instance_double(AssignmentForm, save: true) }
-      let(:subcategory) { create(:category, :subcategory) }
+      let(:subcategory) { create(:category, :subcategory, budget: budget) }
 
       before do
         allow(AssignmentForm).to receive(:new).and_return(form)
@@ -94,9 +98,8 @@ describe AssignmentsController do
     end
 
     context "when valid with the turbo_stream format" do
-      let(:budget)      { subcategory.budget }
       let(:form)        { instance_double(AssignmentForm, save: true) }
-      let(:subcategory) { create(:category, :subcategory) }
+      let(:subcategory) { create(:category, :subcategory, budget: budget) }
 
       before do
         allow(AssignmentForm).to receive(:new).and_return(form)
@@ -119,10 +122,9 @@ describe AssignmentsController do
     end
 
     context "with valid year and month parameters" do
-      let(:budget)      { subcategory.budget }
       let(:date)        { 2.months.ago.to_date.beginning_of_month }
       let(:form)        { instance_double(AssignmentForm, save: true) }
-      let(:subcategory) { create(:category, :subcategory) }
+      let(:subcategory) { create(:category, :subcategory, budget: budget) }
 
       before do
         allow(AssignmentForm).to receive(:new).and_return(form)
@@ -149,9 +151,8 @@ describe AssignmentsController do
     end
 
     context "when invalid with the html format" do
-      let(:budget)      { subcategory.budget }
       let(:form)        { instance_double(AssignmentForm, save: false) }
-      let(:subcategory) { create(:category, :subcategory) }
+      let(:subcategory) { create(:category, :subcategory, budget: budget) }
 
       before do
         allow(AssignmentForm).to receive(:new).and_return(form)
@@ -189,9 +190,8 @@ describe AssignmentsController do
     end
 
     context "when invalid with the turbo_stream format" do
-      let(:budget)      { subcategory.budget }
       let(:form)        { instance_double(AssignmentForm, save: false) }
-      let(:subcategory) { create(:category, :subcategory) }
+      let(:subcategory) { create(:category, :subcategory, budget: budget) }
 
       before do
         allow(AssignmentForm).to receive(:new).and_return(form)

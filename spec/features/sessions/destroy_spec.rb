@@ -4,11 +4,10 @@ require "rails_helper"
 
 describe "Destroying a session" do
   before do
-    create(:budget)
+    budget = create(:budget)
 
-    sign_in
-
-    visit root_path
+    sign_in_for(budget)
+    visit budget_path(budget)
   end
 
   it "successfully" do

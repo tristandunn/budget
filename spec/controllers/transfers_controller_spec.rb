@@ -3,10 +3,15 @@
 require "rails_helper"
 
 describe TransfersController do
+  let(:budget) { create(:budget) }
+
+  before do
+    sign_in_for(budget)
+  end
+
   it { is_expected.to be_a(ApplicationController) }
 
   describe "#new" do
-    let(:budget)        { create(:budget) }
     let!(:checking)     { create(:account, budget: budget, name: "Checking") }
     let!(:credit_card)  { create(:account, :credit, budget: budget, name: "Credit Card") }
 
@@ -77,8 +82,6 @@ describe TransfersController do
   end
 
   describe "#create" do
-    let(:budget) { create(:budget) }
-
     before do
       allow(TransferForm).to receive(:new).and_return(form)
     end

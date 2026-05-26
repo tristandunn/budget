@@ -3,6 +3,12 @@
 require "rails_helper"
 
 describe AccountsController do
+  let(:budget) { create(:budget) }
+
+  before do
+    sign_in_for(budget)
+  end
+
   describe "#index" do
     context "with a budget" do
       let(:budget)         { cash_account.budget }

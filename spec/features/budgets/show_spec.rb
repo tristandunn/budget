@@ -7,6 +7,7 @@ describe "Budget" do
     it "renders the current month and year" do
       budget = create(:budget)
 
+      sign_in_for(budget)
       visit budget_path(budget)
 
       expect(page).to have_text(Date.current.strftime("%b %Y"))
@@ -15,6 +16,7 @@ describe "Budget" do
     it "renders the available to assign amount" do
       budget = create(:budget, available_to_assign: 100_000)
 
+      sign_in_for(budget)
       visit budget_path(budget)
 
       expect(page).to have_text("$1,000.00")
@@ -24,6 +26,7 @@ describe "Budget" do
       category = create(:category)
       budget   = category.budget
 
+      sign_in_for(budget)
       visit budget_path(budget)
 
       expect(page).to have_text(category.name)
@@ -33,6 +36,7 @@ describe "Budget" do
       subcategory = create(:category, :subcategory)
       budget      = subcategory.budget
 
+      sign_in_for(budget)
       visit budget_path(budget)
 
       expect(page).to have_text(subcategory.name)
@@ -42,6 +46,7 @@ describe "Budget" do
       it "navigates to the next month" do
         budget = create(:budget)
 
+        sign_in_for(budget)
         visit budget_path(budget)
         click_on "next-month"
 
@@ -51,6 +56,7 @@ describe "Budget" do
       it "navigates back to the previous month" do
         budget = create(:budget)
 
+        sign_in_for(budget)
         visit budget_path(budget)
         click_on "next-month"
         click_on "previous-month"
@@ -61,6 +67,7 @@ describe "Budget" do
       it "navigates back to the current month when clicking the month and year" do
         budget = create(:budget)
 
+        sign_in_for(budget)
         visit budget_path(budget)
         click_on "next-month"
         click_on 1.month.from_now.strftime("%b %Y")
@@ -75,6 +82,7 @@ describe "Budget" do
       let(:subcategory) { create(:category, :subcategory) }
 
       before do
+        sign_in_for(budget)
         visit budget_path(budget)
       end
 

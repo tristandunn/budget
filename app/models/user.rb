@@ -5,6 +5,9 @@ class User < ApplicationRecord
   MAXIMUM_EMAIL_LENGTH    = 255
   MINIMUM_PASSWORD_LENGTH = 8
 
+  has_many :memberships, dependent: :destroy
+  has_many :budgets, through: :memberships
+
   has_secure_password
 
   normalizes :email, with: ->(value) { value.strip.downcase }

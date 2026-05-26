@@ -15,15 +15,32 @@ describe ApplicationController do
     expect(described_class.ancestors).to include(Authentication)
   end
 
-  describe "#assign_current_budget" do
-    subject { response.body }
+  describe "#current_budget" do
+    context "when the budget belongs to the current user" do
+      let(:budget) { create(:budget, settings: { time_zone: "Asia/Tokyo" }) }
 
-    let(:budget) { create(:budget, settings: { time_zone: "Asia/Tokyo" }) }
+      before do
+        sign_in_for(budget)
 
-    before do
-      get :index, params: { budget_id: budget.id }
+        get :index, params: { budget_id: budget.id }
+      end
+
+      it "applies the budget's time zone" do
+        expect(response.body).to eq("Asia/Tokyo")
+      end
     end
 
-    it { is_expected.to eq("Asia/Tokyo") }
+    context "when the budget belongs to another user" do
+      let(:budget) { create(:budget) }
+
+      before do
+        sign_in
+      end
+
+      it "raises an ActiveRecord::RecordNotFound error" do
+        expect { get :index, params: { budget_id: budget.id } }
+          .to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
   end
 end

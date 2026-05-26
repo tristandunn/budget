@@ -3,10 +3,18 @@
 module RSpec
   module Helpers
     module Session
-      module Controller
+      module Shared
         def sign_in
           sign_in_as create(:user)
         end
+
+        def sign_in_for(budget)
+          sign_in_as(budget.users.order(:id).first)
+        end
+      end
+
+      module Controller
+        include Shared
 
         def sign_in_as(user)
           session[:user_id] = user.id
@@ -14,12 +22,10 @@ module RSpec
       end
 
       module Feature
-        def sign_in
-          sign_in_as create(:user)
-        end
+        include Shared
 
         def sign_in_as(user)
-          visit root_path(user: user.id)
+          visit "#{Middleware::Backdoor::SIGN_IN_PATH}?user=#{user.id}"
         end
 
         def sign_out
