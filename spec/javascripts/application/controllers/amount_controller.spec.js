@@ -720,7 +720,16 @@ describe("AmountController", () => {
   describe("when used inside a form", () => {
     let form;
 
+    function dispatchFormdata(formData) {
+      const event = new window.Event("formdata");
+
+      event.formData = formData;
+      form.dispatchEvent(event);
+    }
+
     beforeEach(() => {
+      element.name = "amount";
+
       form = document.createElement("form");
 
       form.appendChild(element);
@@ -735,27 +744,41 @@ describe("AmountController", () => {
       document.body.removeChild(form);
     });
 
-    it("unformats the value before form submission", () => {
+    it("submits the unformatted value", () => {
       element.value = "-1234.56";
 
       instance.connect();
 
-      form.dispatchEvent(new window.Event("submit", { "bubbles": true,
-        "cancelable": true }));
+      const formData = new window.FormData();
 
-      expect(element.value).to.eq("-1234.56");
+      dispatchFormdata(formData);
+
+      expect(formData.get("amount")).to.eq("-1234.56");
     });
 
-    it("removes the submit listener on disconnect", () => {
+    it("leaves the displayed value formatted when the submission is prevented", () => {
       element.value = "-1234.56";
 
       instance.connect();
-      instance.disconnect();
 
       form.dispatchEvent(new window.Event("submit", { "bubbles": true,
         "cancelable": true }));
 
       expect(element.value).to.eq("-$1,234.56");
+    });
+
+    it("removes the formdata listener on disconnect", () => {
+      element.value = "-1234.56";
+
+      instance.connect();
+      instance.disconnect();
+
+      const formData = new window.FormData();
+
+      formData.set("amount", element.value);
+      dispatchFormdata(formData);
+
+      expect(formData.get("amount")).to.eq("-$1,234.56");
     });
   });
 });

@@ -88,7 +88,7 @@ describe "transactions/_form.html.erb" do
 
     it "prepopulates the amount" do
       expect(html).to have_field("transaction_form_amount",
-                                 with: Money.from_cents(transaction.amount).to_s)
+                                 with: Money.from_cents(transaction.amount).format)
     end
 
     it "prepopulates the payee" do

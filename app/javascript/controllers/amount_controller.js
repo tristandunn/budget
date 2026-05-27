@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  #handleSubmit;
+  #handleFormdata;
 
   #positive = false;
 
@@ -20,17 +20,17 @@ export default class extends Controller {
     this.#updateColor();
 
     if (this.element.form) {
-      this.#handleSubmit = () => {
-        this.element.value = this.#unformat(this.element.value);
+      this.#handleFormdata = (event) => {
+        event.formData.set(this.element.name, this.#unformat(this.element.value));
       };
 
-      this.element.form.addEventListener("submit", this.#handleSubmit);
+      this.element.form.addEventListener("formdata", this.#handleFormdata);
     }
   }
 
   disconnect() {
-    if (this.element.form && this.#handleSubmit) {
-      this.element.form.removeEventListener("submit", this.#handleSubmit);
+    if (this.element.form && this.#handleFormdata) {
+      this.element.form.removeEventListener("formdata", this.#handleFormdata);
     }
   }
 

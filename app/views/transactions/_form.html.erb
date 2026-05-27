@@ -3,7 +3,7 @@
   <%= form_with model: form, url: url, method: method, id: "transaction_form", class: "highlight-errors", data: { controller: "transaction-form", action: "submit->transaction-form#validate", transaction_form_payee_picker_outlet: "[data-controller~='payee-picker']", transaction_form_category_picker_outlet: "[data-controller~='category-picker']", transaction_form_account_picker_outlet: "[data-controller~='account-picker']" } do |f| %>
     <div>
       <%= f.label :amount, class: "sr-only" %>
-      <%= f.text_field :amount, autocomplete: false, autofocus: true, class: "w-full text-4xl font-semibold text-center bg-transparent outline-none", required: true, inputmode: "decimal", value: form.amount || "0", data: { controller: "amount", action: "input->amount#input keydown->amount#keydown paste->amount#paste", "transaction-form-target": "amount" } %>
+      <%= f.text_field :amount, autocomplete: false, autofocus: true, class: "w-full text-4xl font-semibold text-center bg-transparent outline-none", required: true, inputmode: "decimal", value: form.amount&.format || "$0.00", data: { controller: "amount", action: "input->amount#input keydown->amount#keydown paste->amount#paste", "transaction-form-target": "amount" } %>
     </div>
 
     <div class="mt-6 bg-white rounded-xl divide-y divide-taupe-200">
