@@ -176,22 +176,45 @@ describe PayeesController do
     end
   end
 
-  describe "#previous_category" do
+  describe "#defaults" do
     let(:payee) { create(:payee, budget: budget) }
 
-    context "when the payee belongs to the budget" do
+    context "when the payee has prior transactions in the budget" do
+      let(:account)     { create(:account, budget: budget) }
       let(:subcategory) { create(:category, :subcategory, budget: budget) }
 
       before do
-        create(:transaction, budget: budget, payee: payee, subcategory: subcategory)
+        create(:transaction,
+               budget:      budget,
+               payee:       payee,
+               account:     account,
+               subcategory: subcategory)
 
-        get :previous_category, params: { budget_id: budget.id, id: payee.id }
+        get :defaults, params: { budget_id: budget.id, id: payee.id }
       end
 
       it { is_expected.to respond_with(:ok) }
 
-      it "returns the previous subcategory id" do
-        expect(response.parsed_body).to eq("subcategory_id" => subcategory.id.to_s)
+      it "returns the previous account and subcategory IDs" do
+        expect(response.parsed_body).to eq(
+          "account_id"     => account.id.to_s,
+          "subcategory_id" => subcategory.id.to_s
+        )
+      end
+    end
+
+    context "when the payee has no prior transactions" do
+      before do
+        get :defaults, params: { budget_id: budget.id, id: payee.id }
+      end
+
+      it { is_expected.to respond_with(:ok) }
+
+      it "returns empty string IDs" do
+        expect(response.parsed_body).to eq(
+          "account_id"     => "",
+          "subcategory_id" => ""
+        )
       end
     end
 
@@ -201,7 +224,7 @@ describe PayeesController do
 
       it "raises a record not found error" do
         expect do
-          get :previous_category, params: { budget_id: budget.id, id: other_payee.id }
+          get :defaults, params: { budget_id: budget.id, id: other_payee.id }
         end.to raise_error(ActiveRecord::RecordNotFound)
       end
     end

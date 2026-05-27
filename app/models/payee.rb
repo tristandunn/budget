@@ -10,6 +10,14 @@ class Payee < ApplicationRecord
 
   normalizes :name, with: ->(value) { value.strip }
 
+  # Return the account id from the most recent transaction for this payee.
+  #
+  # @return [Integer] The most recent account id.
+  # @return [nil] When the payee has no transactions.
+  def previous_account_id
+    transactions.reorder(date: :desc, id: :desc).pick(:account_id)
+  end
+
   # Return the subcategory id from the most recent categorized transaction for
   # this payee.
   #

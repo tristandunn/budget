@@ -6,25 +6,26 @@ import PickerController from "controllers/picker_controller";
  * payee, allowing a new payee to be created inline.
  */
 export default class extends PickerController {
-  static outlets = ["category-picker"];
+  static outlets = ["account-picker", "category-picker"];
 
   static targets = ["createPayeeTemplate"];
 
   /*
-   * Fetch the default subcategory for the selected payee and apply it on the
-   * category picker outlet when one is returned. Skips the fetch when a
-   * category is already selected to avoid overwriting the user's choice.
+   * Fetch the defaults for the selected payee and apply them on the account
+   * and category picker outlets when each is empty. Re-checks emptiness after
+   * the fetch resolves so a value the user picked while the request was in
+   * flight is preserved.
    */
   async select(event) {
     super.select(event);
 
-    const url = event.currentTarget.dataset.previousCategoryUrl;
+    const url = event.currentTarget.dataset.defaultsUrl;
 
-    if (!url || !this.hasCategoryPickerOutlet) {
+    if (!url) {
       return;
     }
 
-    if (this.categoryPickerOutlet.hiddenFieldTarget.value !== "") {
+    if (!this.#accountPickerEmpty() && !this.#categoryPickerEmpty()) {
       return;
     }
 
@@ -36,7 +37,11 @@ export default class extends PickerController {
 
     const data = await response.json();
 
-    if (data.subcategory_id) {
+    if (data.account_id && this.#accountPickerEmpty()) {
+      this.accountPickerOutlet.applyValue(data.account_id);
+    }
+
+    if (data.subcategory_id && this.#categoryPickerEmpty()) {
       this.categoryPickerOutlet.applyValue(data.subcategory_id);
     }
   }
@@ -72,6 +77,18 @@ export default class extends PickerController {
     } else {
       this.#insertCreateOption(query);
     }
+  }
+
+  // Return whether the account picker outlet exists and has no value selected.
+  #accountPickerEmpty() {
+    return this.hasAccountPickerOutlet &&
+      this.accountPickerOutlet.hiddenFieldTarget.value === "";
+  }
+
+  // Return whether the category picker outlet exists and has no value selected.
+  #categoryPickerEmpty() {
+    return this.hasCategoryPickerOutlet &&
+      this.categoryPickerOutlet.hiddenFieldTarget.value === "";
   }
 
   // Return the currently inserted Create option, if any.

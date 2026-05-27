@@ -17,6 +17,35 @@ describe Payee do
     it { is_expected.to validate_uniqueness_of(:name).scoped_to(:budget_id) }
   end
 
+  describe "#previous_account_id" do
+    let(:budget) { create(:budget) }
+    let(:payee)  { create(:payee, budget: budget) }
+
+    it "returns nil when the payee has no transactions" do
+      expect(payee.previous_account_id).to be_nil
+    end
+
+    it "returns the most recent account ID" do
+      older = create(:account, budget: budget)
+      newer = create(:account, budget: budget)
+
+      create(:transaction, budget: budget, payee: payee, account: older, date: 5.days.ago)
+      create(:transaction, budget: budget, payee: payee, account: newer, date: 1.day.ago)
+
+      expect(payee.previous_account_id).to eq(newer.id)
+    end
+
+    it "breaks ties on the same date by the most recent transaction ID" do
+      older = create(:account, budget: budget)
+      newer = create(:account, budget: budget)
+
+      create(:transaction, budget: budget, payee: payee, account: older, date: Date.current)
+      create(:transaction, budget: budget, payee: payee, account: newer, date: Date.current)
+
+      expect(payee.previous_account_id).to eq(newer.id)
+    end
+  end
+
   describe "#previous_subcategory_id" do
     let(:budget) { create(:budget) }
     let(:payee)  { create(:payee, budget: budget) }
@@ -31,7 +60,7 @@ describe Payee do
       expect(payee.previous_subcategory_id).to be_nil
     end
 
-    it "returns the most recent categorized subcategory id" do
+    it "returns the most recent categorized subcategory ID" do
       older = create(:category, :subcategory, budget: budget)
       newer = create(:category, :subcategory, budget: budget)
 
@@ -41,7 +70,7 @@ describe Payee do
       expect(payee.previous_subcategory_id).to eq(newer.id)
     end
 
-    it "breaks ties on the same date by the most recent transaction id" do
+    it "breaks ties on the same date by the most recent transaction ID" do
       older = create(:category, :subcategory, budget: budget)
       newer = create(:category, :subcategory, budget: budget)
 

@@ -18,7 +18,7 @@ Rails.application.routes.draw do
     end
     resources :payees, only: %i(index edit update) do
       member do
-        get :previous_category
+        get :defaults
       end
     end
     resource :settings, only: :update

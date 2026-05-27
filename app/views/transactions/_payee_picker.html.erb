@@ -8,11 +8,11 @@
             "aria-selected": form.payee == payee.name,
             class:           "flex items-center gap-3 px-4 py-3 text-base cursor-pointer",
             data:            {
-              action:                "click->payee-picker#select",
-              label:                 payee.name,
-              payee_picker_target:   "item",
-              previous_category_url: previous_category_budget_payee_path(form.budget, payee),
-              value:                 payee.name
+              action:              "click->payee-picker#select",
+              defaults_url:        defaults_budget_payee_path(form.budget, payee),
+              label:               payee.name,
+              payee_picker_target: "item",
+              value:               payee.name
             },
             role:            "option"
           ) do %>

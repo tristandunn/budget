@@ -31,9 +31,12 @@ class PayeesController < ApplicationController
     end
   end
 
-  # Render the most recent subcategory used for the payee within the budget.
-  def previous_category
-    render json: { subcategory_id: payee.previous_subcategory_id.to_s }
+  # Render the defaults to apply when the payee is selected on a transaction.
+  def defaults
+    render json: {
+      account_id:     payee.previous_account_id.to_s,
+      subcategory_id: payee.previous_subcategory_id.to_s
+    }
   end
 
   protected
