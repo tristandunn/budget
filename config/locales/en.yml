@@ -156,6 +156,7 @@ en:
     spending: "Spending"
     accounts: "Accounts"
     reflect: "Reflect"
+    add_transaction: "Add transaction"
 
   transactions:
     transfer_category: "Credit Card Payment"

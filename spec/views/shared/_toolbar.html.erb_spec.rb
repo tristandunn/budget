@@ -43,6 +43,10 @@ describe "shared/_toolbar.html.erb" do
     expect(html).to have_css(%(a[href="#{path}"][data-turbo-frame="transaction_dialog"]))
   end
 
+  it "renders the add transaction link with an accessible label" do
+    expect(html).to have_css(%(a#add-transaction[aria-label="#{t("toolbar.add_transaction")}"]))
+  end
+
   context "with an account ID" do
     let(:account)    { build_stubbed(:account, budget: budget) }
     let(:account_id) { account.id }

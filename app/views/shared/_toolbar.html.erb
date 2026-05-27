@@ -50,7 +50,7 @@
 
     <%= link_to new_budget_transaction_path(budget, account_id: account_id),
                 id:    "add-transaction",
-                aria:  { label: t("transactions.new.submit") },
+                aria:  { label: t("toolbar.add_transaction") },
                 data:  { turbo_frame: "transaction_dialog" },
                 class: "group/add flex flex-col items-center justify-center px-4 -mt-1 focus-visible:outline-none" do %>
       <svg
