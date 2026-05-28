@@ -104,7 +104,7 @@ export default class extends Controller {
 
   #format(value) {
     const text       = String(value),
-          isNegative = text.startsWith("-"),
+          isNegative = text.includes("-"),
           cleaned    = text.replace(/[^\d.]/g, "");
 
     if (cleaned === "" || cleaned === "." || cleaned === "0") {

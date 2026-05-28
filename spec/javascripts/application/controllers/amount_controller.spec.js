@@ -111,6 +111,14 @@ describe("AmountController", () => {
       expect(element.classList.contains("text-black")).to.eq(false);
     });
 
+    it("keeps the value negative when a digit is typed before the minus sign", () => {
+      element.value = "5-$1,234.56";
+
+      instance.input();
+
+      expect(element.value).to.eq("-$51,234.56");
+    });
+
     it("preserves the cursor position when typing in the middle of the value", () => {
       element.value = "$1,2534.56";
       element.setSelectionRange(5, 5);

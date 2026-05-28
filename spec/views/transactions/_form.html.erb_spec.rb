@@ -88,7 +88,17 @@ describe "transactions/_form.html.erb" do
 
     it "prepopulates the amount" do
       expect(html).to have_field("transaction_form_amount",
-                                 with: Money.from_cents(transaction.amount).format)
+                                 with: Money.from_cents(transaction.amount).format(sign_before_symbol: true))
+    end
+
+    context "when the amount is negative" do
+      let(:transaction) do
+        create(:transaction, amount: -123_456, budget: subcategory.budget, subcategory: subcategory)
+      end
+
+      it "prepopulates the amount with the sign before the symbol" do
+        expect(html).to have_field("transaction_form_amount", with: "-$1,234.56")
+      end
     end
 
     it "prepopulates the payee" do
