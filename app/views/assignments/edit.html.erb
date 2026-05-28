@@ -3,7 +3,7 @@
     <%= form.text_field :amount,
                         class:     "w-full text-right font-semibold bg-transparent outline-none cursor-text no-spinner focus:ring-1 focus:ring-indigo-500 focus:rounded",
                         data:      {
-                          action:             "keydown->arithmetic#keydown blur->inline-edit#submit keydown.enter->inline-edit#submitOnEnter keydown.escape->inline-edit#cancel",
+                          action:             "keydown->arithmetic#keydown blur->inline-edit#submit keydown.enter->inline-edit#submitOnEnter keydown.esc->inline-edit#cancel",
                           controller:         "arithmetic",
                           inline_edit_target: "input"
                         },
