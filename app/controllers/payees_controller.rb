@@ -31,11 +31,14 @@ class PayeesController < ApplicationController
     end
   end
 
-  # Render the defaults to apply when the payee is selected on a transaction.
+  # Render the defaults to apply when the payee is selected on a transaction:
+  # the previous account, the most recent subcategory used, and the
+  # subcategories most often used.
   def defaults
     render json: {
-      account_id:     payee.previous_account_id.to_s,
-      subcategory_id: payee.previous_subcategory_id.to_s
+      account_id:                payee.previous_account_id.to_s,
+      subcategory_id:            payee.previous_subcategory_id.to_s,
+      suggested_subcategory_ids: payee.suggested_subcategory_ids.map(&:to_s)
     }
   end
 

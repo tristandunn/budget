@@ -12,9 +12,13 @@ export default class extends PickerController {
 
   /*
    * Fetch the defaults for the selected payee and apply them on the account
-   * and category picker outlets when each is empty. Re-checks emptiness after
-   * the fetch resolves so a value the user picked while the request was in
-   * flight is preserved.
+   * and category picker outlets: apply the previous account when the account
+   * picker is empty, refresh the suggested group on the category picker, then
+   * apply the previous subcategory when the category picker is empty. Skips the
+   * fetch only when there is nothing to do, meaning the account picker is
+   * already filled or absent and there is no category picker whose suggestions
+   * need refreshing. Re-checks emptiness after the fetch resolves so a value
+   * the user picked while the request was in flight is preserved.
    */
   async select(event) {
     super.select(event);
@@ -25,7 +29,7 @@ export default class extends PickerController {
       return;
     }
 
-    if (!this.#accountPickerEmpty() && !this.#categoryPickerEmpty()) {
+    if (!this.#accountPickerEmpty() && !this.hasCategoryPickerOutlet) {
       return;
     }
 
@@ -39,6 +43,10 @@ export default class extends PickerController {
 
     if (data.account_id && this.#accountPickerEmpty()) {
       this.accountPickerOutlet.applyValue(data.account_id);
+    }
+
+    if (this.hasCategoryPickerOutlet) {
+      this.categoryPickerOutlet.applySuggestions(data.suggested_subcategory_ids || []);
     }
 
     if (data.subcategory_id && this.#categoryPickerEmpty()) {

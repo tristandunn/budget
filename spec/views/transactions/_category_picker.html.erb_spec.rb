@@ -12,10 +12,11 @@ describe "transactions/_category_picker.html.erb" do
   let(:amount_available) { 0 }
   let(:picker)           { instance_double(Transactions::CategoryPicker, groups: [group]) }
   let(:selected)         { false }
+  let(:suggested)        { false }
 
   let(:group) do
     Transactions::CategoryPicker::Group.new(
-      items: [
+      items:     [
         Transactions::CategoryPicker::Item.new(
           amount_available: amount_available,
           id:               1,
@@ -23,7 +24,8 @@ describe "transactions/_category_picker.html.erb" do
           selected:         selected
         )
       ],
-      name:  "Food"
+      name:      "Food",
+      suggested: suggested
     )
   end
 
@@ -81,6 +83,18 @@ describe "transactions/_category_picker.html.erb" do
   context "when the item is not selected" do
     it "does not mark the item as selected" do
       expect(html).to have_no_css("li[data-category-picker-target='item'][aria-selected='true']")
+    end
+  end
+
+  it "does not mark a regular group as the suggested group" do
+    expect(html).to have_no_css("[data-suggested-group]")
+  end
+
+  context "when the group is suggested" do
+    let(:suggested) { true }
+
+    it "marks the section as the suggested group" do
+      expect(html).to have_css("section[data-category-picker-target='group'][data-suggested-group]")
     end
   end
 end

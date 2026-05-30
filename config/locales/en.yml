@@ -160,6 +160,8 @@ en:
 
   transactions:
     transfer_category: "Credit Card Payment"
+    category_picker:
+      suggested: "Suggested"
     reconciled:
       hide: "Hide Reconciled"
       show: "Show Reconciled"

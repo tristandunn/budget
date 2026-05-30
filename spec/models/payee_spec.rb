@@ -90,6 +90,50 @@ describe Payee do
     end
   end
 
+  describe "#suggested_subcategory_ids" do
+    let(:budget) { create(:budget) }
+    let(:payee)  { create(:payee, budget: budget) }
+
+    it "returns an empty array when the payee has no categorized transactions" do
+      create(:transaction, budget: budget, payee: payee, subcategory: nil)
+
+      expect(payee.suggested_subcategory_ids).to eq([])
+    end
+
+    it "returns the most-used subcategory IDs in order, ignoring uncategorized transactions" do
+      common      = create(:category, :subcategory, budget: budget)
+      less_common = create(:category, :subcategory, budget: budget)
+      rare        = create(:category, :subcategory, budget: budget)
+
+      3.times { create(:transaction, budget: budget, payee: payee, subcategory: common) }
+      2.times { create(:transaction, budget: budget, payee: payee, subcategory: less_common) }
+      create(:transaction, budget: budget, payee: payee, subcategory: rare)
+      create(:transaction, budget: budget, payee: payee, subcategory: nil)
+
+      expect(payee.suggested_subcategory_ids).to eq([common.id, less_common.id, rare.id])
+    end
+
+    it "breaks ties on count by the most recent transaction date" do
+      older = create(:category, :subcategory, budget: budget)
+      newer = create(:category, :subcategory, budget: budget)
+
+      create(:transaction, budget: budget, payee: payee, subcategory: older, date: 5.days.ago)
+      create(:transaction, budget: budget, payee: payee, subcategory: newer, date: 1.day.ago)
+
+      expect(payee.suggested_subcategory_ids).to eq([newer.id, older.id])
+    end
+
+    it "limits the number of subcategories" do
+      (described_class::SUGGESTED_CATEGORY_LIMIT + 1).times do
+        subcategory = create(:category, :subcategory, budget: budget)
+
+        create(:transaction, budget: budget, payee: payee, subcategory: subcategory)
+      end
+
+      expect(payee.suggested_subcategory_ids.size).to eq(described_class::SUGGESTED_CATEGORY_LIMIT)
+    end
+  end
+
   describe "normalizations" do
     it "strips whitespace from the name" do
       payee = build(:payee, name: "  Grocery Store  ")

@@ -195,10 +195,11 @@ describe PayeesController do
 
       it { is_expected.to respond_with(:ok) }
 
-      it "returns the previous account and subcategory IDs" do
+      it "returns the previous account, subcategory, and suggested subcategory IDs" do
         expect(response.parsed_body).to eq(
-          "account_id"     => account.id.to_s,
-          "subcategory_id" => subcategory.id.to_s
+          "account_id"                => account.id.to_s,
+          "subcategory_id"            => subcategory.id.to_s,
+          "suggested_subcategory_ids" => [subcategory.id.to_s]
         )
       end
     end
@@ -210,10 +211,11 @@ describe PayeesController do
 
       it { is_expected.to respond_with(:ok) }
 
-      it "returns empty string IDs" do
+      it "returns empty IDs" do
         expect(response.parsed_body).to eq(
-          "account_id"     => "",
-          "subcategory_id" => ""
+          "account_id"                => "",
+          "subcategory_id"            => "",
+          "suggested_subcategory_ids" => []
         )
       end
     end

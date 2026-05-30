@@ -173,6 +173,7 @@ describe("PayeePickerController", () => {
         "hiddenFieldTarget": { "value": "" }
       };
       categoryPickerOutlet = {
+        "applySuggestions": sinon.fake(),
         "applyValue": sinon.fake(),
         "hiddenFieldTarget": { "value": "" }
       };
@@ -191,7 +192,8 @@ describe("PayeePickerController", () => {
         "json": () => {
           return Promise.resolve({
             "account_id": 9,
-            "subcategory_id": 42
+            "subcategory_id": 42,
+            "suggested_subcategory_ids": ["42", "7"]
           });
         },
         "ok": true
@@ -204,7 +206,21 @@ describe("PayeePickerController", () => {
         { "headers": { "Accept": "application/json" } }
       );
       expect(accountPickerOutlet.applyValue).to.have.been.calledWith(9);
+      expect(categoryPickerOutlet.applySuggestions).to.have.been.calledWith(["42", "7"]);
       expect(categoryPickerOutlet.applyValue).to.have.been.calledWith(42);
+    });
+
+    it("applies an empty suggestion list when none are returned", async () => {
+      globalThis.fetch = sinon.fake.resolves({
+        "json": () => {
+          return Promise.resolve({ "subcategory_id": 42 });
+        },
+        "ok": true
+      });
+
+      await controller.select({ "currentTarget": alpha });
+
+      expect(categoryPickerOutlet.applySuggestions).to.have.been.calledWith([]);
     });
 
     it("does nothing when the response is not ok", async () => {
@@ -213,6 +229,7 @@ describe("PayeePickerController", () => {
       await controller.select({ "currentTarget": alpha });
 
       expect(accountPickerOutlet.applyValue).not.to.have.been.called;
+      expect(categoryPickerOutlet.applySuggestions).not.to.have.been.called;
       expect(categoryPickerOutlet.applyValue).not.to.have.been.called;
     });
 
@@ -223,6 +240,37 @@ describe("PayeePickerController", () => {
             "account_id": "",
             "subcategory_id": ""
           });
+        },
+        "ok": true
+      });
+
+      await controller.select({ "currentTarget": alpha });
+
+      expect(accountPickerOutlet.applyValue).not.to.have.been.called;
+      expect(categoryPickerOutlet.applyValue).not.to.have.been.called;
+    });
+
+    it("refreshes suggestions but keeps the selection when one already exists", async () => {
+      categoryPickerOutlet.hiddenFieldTarget.value = "7";
+      globalThis.fetch = sinon.fake.resolves({
+        "json": () => {
+          return Promise.resolve({ "subcategory_id": 42,
+            "suggested_subcategory_ids": ["42"] });
+        },
+        "ok": true
+      });
+
+      await controller.select({ "currentTarget": alpha });
+
+      expect(categoryPickerOutlet.applySuggestions).to.have.been.calledWith(["42"]);
+      expect(categoryPickerOutlet.applyValue).not.to.have.been.called;
+    });
+
+    it("does not apply a subcategory when the payload has none", async () => {
+      globalThis.fetch = sinon.fake.resolves({
+        "json": () => {
+          return Promise.resolve({ "subcategory_id": null,
+            "suggested_subcategory_ids": [] });
         },
         "ok": true
       });
@@ -274,6 +322,7 @@ describe("PayeePickerController", () => {
 
       expect(globalThis.fetch).not.to.have.been.called;
       expect(accountPickerOutlet.applyValue).not.to.have.been.called;
+      expect(categoryPickerOutlet.applySuggestions).not.to.have.been.called;
       expect(categoryPickerOutlet.applyValue).not.to.have.been.called;
     });
 
@@ -322,13 +371,23 @@ describe("PayeePickerController", () => {
       expect(accountPickerOutlet.applyValue).to.have.been.calledWith(9);
     });
 
-    it("does not fetch when both pickers already have values", async () => {
+    it("refreshes suggestions but applies neither value when both pickers have values", async () => {
       accountPickerOutlet.hiddenFieldTarget.value  = "3";
       categoryPickerOutlet.hiddenFieldTarget.value = "7";
+      globalThis.fetch = sinon.fake.resolves({
+        "json": () => {
+          return Promise.resolve({
+            "account_id": 9,
+            "subcategory_id": 42,
+            "suggested_subcategory_ids": ["42"]
+          });
+        },
+        "ok": true
+      });
 
       await controller.select({ "currentTarget": alpha });
 
-      expect(globalThis.fetch).not.to.have.been.called;
+      expect(categoryPickerOutlet.applySuggestions).to.have.been.calledWith(["42"]);
       expect(accountPickerOutlet.applyValue).not.to.have.been.called;
       expect(categoryPickerOutlet.applyValue).not.to.have.been.called;
     });
@@ -430,7 +489,8 @@ describe("PayeePickerController", () => {
         "json": () => {
           return Promise.resolve({
             "account_id": 9,
-            "subcategory_id": 42
+            "subcategory_id": 42,
+            "suggested_subcategory_ids": ["42"]
           });
         },
         "ok": true

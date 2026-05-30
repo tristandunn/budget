@@ -58,7 +58,7 @@ describe TransactionsController do
 
   describe "#new" do
     let(:account_id) { nil }
-    let(:form)       { instance_double(TransactionForm, budget: budget, subcategory: nil) }
+    let(:form)       { instance_double(TransactionForm, budget: budget, payee: nil, subcategory: nil) }
 
     before do
       allow(TransactionForm).to receive(:new).and_return(form)
@@ -213,7 +213,7 @@ describe TransactionsController do
     end
 
     context "when invalid" do
-      let(:form)        { instance_double(TransactionForm, budget: budget, save: false, subcategory: nil) }
+      let(:form)        { instance_double(TransactionForm, budget: budget, payee: nil, save: false, subcategory: nil) }
       let(:subcategory) { create(:category, :subcategory, budget: budget) }
 
       let(:expected_parameters) do
@@ -272,7 +272,7 @@ describe TransactionsController do
   end
 
   describe "#edit" do
-    let(:form)        { instance_double(TransactionForm, budget: budget, subcategory: nil) }
+    let(:form)        { instance_double(TransactionForm, budget: budget, payee: nil, subcategory: nil) }
     let(:transaction) { create(:transaction, budget: budget) }
 
     before do
@@ -391,7 +391,7 @@ describe TransactionsController do
     end
 
     context "when invalid" do
-      let(:form) { instance_double(TransactionForm, budget: budget, update: false, subcategory: nil) }
+      let(:form) { instance_double(TransactionForm, budget: budget, payee: nil, update: false, subcategory: nil) }
 
       before do
         patch :update, params: {

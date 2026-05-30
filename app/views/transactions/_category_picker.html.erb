@@ -2,9 +2,13 @@
 <%= render "shared/picker",
            controller:  "category-picker",
            placeholder: t("transactions.form.search_categories") do %>
-  <div class="space-y-4">
+  <%= tag.div(class: "space-y-4",
+              data:  {
+                category_picker_target: "groups",
+                suggested_label:        t("transactions.category_picker.suggested")
+              }) do %>
     <% picker.groups.each do |group| %>
-      <%= tag.section(data: { category_picker_target: "group" }) do %>
+      <%= tag.section(data: { category_picker_target: "group", suggested_group: group.suggested.presence }) do %>
         <h3 class="px-1 pb-1 text-sm font-semibold text-taupe-800"><%= group.name %></h3>
 
         <ul class="bg-white rounded-xl divide-y divide-taupe-200" role="listbox">
@@ -30,5 +34,5 @@
         </ul>
       <% end %>
     <% end %>
-  </div>
+  <% end %>
 <% end %>
