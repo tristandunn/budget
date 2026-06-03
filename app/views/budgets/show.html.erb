@@ -59,7 +59,12 @@
     </dialog>
   </div>
 
-  <header class="sticky top-0 z-10 grid grid-cols-3 items-center whitespace-nowrap bg-white px-4 pt-safe pb-4">
+  <header
+    class="
+      sticky top-0 z-10 grid grid-cols-3 items-center whitespace-nowrap border-b
+      border-taupe-200 bg-white px-4 pt-safe pb-4
+    "
+  >
     <div class="leading-tight justify-self-start">
       <%= render "available_to_assign", budget: @budget %>
     </div>
@@ -194,7 +199,7 @@
     </div>
   </header>
 
-  <section class="flex-1">
+  <section class="flex-1 -mt-px">
     <table class="w-full text-left">
       <% @budget.categories.reject(&:inflow?).sort_by(&:position).each do |category| %>
         <%= render "categories/category_header",

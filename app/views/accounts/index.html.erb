@@ -11,7 +11,12 @@
     </dialog>
   </div>
 
-  <header class="grid grid-cols-3 items-center whitespace-nowrap bg-white px-4 pt-safe pb-4">
+  <header
+    class="
+      sticky top-0 z-10 grid grid-cols-3 items-center whitespace-nowrap border-b
+      border-taupe-200 bg-white px-4 pt-safe pb-4
+    "
+  >
     <div></div>
 
     <h1 class="text-lg font-semibold justify-self-center"><%= t(".title") %></h1>
@@ -34,7 +39,7 @@
     <% end %>
   </header>
 
-  <section class="flex-1">
+  <section class="flex-1 -mt-px">
     <div class="group" data-controller="collapsible" data-collapsible-id-value="cash">
       <div
         class="

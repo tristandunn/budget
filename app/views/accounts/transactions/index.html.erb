@@ -11,74 +11,76 @@
     </dialog>
   </div>
 
-  <header class="grid grid-cols-3 items-center whitespace-nowrap bg-white px-4 pt-safe pb-4">
-    <%= link_to budget_accounts_path(@budget), aria: { label: t(".back") }, class: "justify-self-start" do %>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="h-5 w-5"
-        viewBox="0 0 20 20"
-        fill="currentColor"
-      >
-        <path
-          fill-rule="evenodd"
-          d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-          clip-rule="evenodd"
-        />
-      </svg>
-    <% end %>
-
-    <h1 class="text-lg font-semibold justify-self-center"><%= @account.name %></h1>
-
-    <div class="justify-self-end">
-      <%= render "accounts/transactions/actions", account: @account, budget: @budget %>
-    </div>
-  </header>
-
-  <div class="flex items-baseline gap-3 border-y border-taupe-200 bg-white px-4 py-2">
-    <div>
-      <p id="cleared_balance" class="text-base font-semibold">
-        <%= number_to_money @account.cleared_balance %>
-      </p>
-
-      <p class="flex items-center gap-1 text-sm">
-        <span
-          class="
-            flex h-4 w-4 items-center justify-center rounded-full bg-taupe-400 text-[0.625rem]
-            font-bold text-white
-          "
+  <div class="sticky top-0 z-10 bg-white">
+    <header class="grid grid-cols-3 items-center whitespace-nowrap bg-white px-4 pt-safe pb-4">
+      <%= link_to budget_accounts_path(@budget), aria: { label: t(".back") }, class: "justify-self-start" do %>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5"
+          viewBox="0 0 20 20"
+          fill="currentColor"
         >
-          C
-        </span>
+          <path
+            fill-rule="evenodd"
+            d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      <% end %>
 
-        <%= t(".cleared_balance") %>
-      </p>
-    </div>
+      <h1 class="text-lg font-semibold justify-self-center"><%= @account.name %></h1>
 
-    <p class="self-center text-base text-taupe-500">+</p>
+      <div class="justify-self-end">
+        <%= render "accounts/transactions/actions", account: @account, budget: @budget %>
+      </div>
+    </header>
 
-    <div>
-      <p id="uncleared_balance" class="text-base font-semibold">
-        <%= number_to_money @account.uncleared_balance %>
-      </p>
+    <div class="flex items-baseline gap-3 border-y border-taupe-200 bg-white px-4 py-2">
+      <div>
+        <p id="cleared_balance" class="text-base font-semibold">
+          <%= number_to_money @account.cleared_balance %>
+        </p>
 
-      <p class="flex items-center gap-1 text-sm">
-        <span class="block h-4 w-4 rounded-full border-2 border-taupe-300"></span>
-        <%= t(".uncleared_balance") %>
-      </p>
-    </div>
+        <p class="flex items-center gap-1 text-sm">
+          <span
+            class="
+              flex h-4 w-4 items-center justify-center rounded-full bg-taupe-400 text-[0.625rem]
+              font-bold text-white
+            "
+          >
+            C
+          </span>
 
-    <p class="self-center text-base text-taupe-500">=</p>
+          <%= t(".cleared_balance") %>
+        </p>
+      </div>
 
-    <div>
-      <p class="text-base font-semibold">
-        <%= number_to_money @account.balance %>
-      </p>
+      <p class="self-center text-base text-taupe-500">+</p>
 
-      <p class="text-sm"><%= t(".working_balance") %></p>
+      <div>
+        <p id="uncleared_balance" class="text-base font-semibold">
+          <%= number_to_money @account.uncleared_balance %>
+        </p>
+
+        <p class="flex items-center gap-1 text-sm">
+          <span class="block h-4 w-4 rounded-full border-2 border-taupe-300"></span>
+          <%= t(".uncleared_balance") %>
+        </p>
+      </div>
+
+      <p class="self-center text-base text-taupe-500">=</p>
+
+      <div>
+        <p class="text-base font-semibold">
+          <%= number_to_money @account.balance %>
+        </p>
+
+        <p class="text-sm"><%= t(".working_balance") %></p>
+      </div>
     </div>
   </div>
 
-  <section class="flex-1">
+  <section class="flex-1 -mt-px">
     <%= render "transactions/list",
                context:                :account,
                current_transactions:   @current_transactions,
