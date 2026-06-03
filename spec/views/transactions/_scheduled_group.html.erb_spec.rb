@@ -5,8 +5,8 @@ require "rails_helper"
 describe "transactions/_scheduled_group.html.erb" do
   subject(:html) do
     render partial: "transactions/scheduled_group", locals: {
+      context:      :transactions,
       date:         date,
-      show_account: true,
       transactions: [transaction]
     }
 
@@ -14,7 +14,7 @@ describe "transactions/_scheduled_group.html.erb" do
   end
 
   let(:date)        { 1.month.from_now.to_date }
-  let(:transaction) { build_stubbed(:transaction, :recurring, date: date) }
+  let(:transaction) { build_stubbed(:transaction, :recurring, date: date, memo: "Lunch with team") }
 
   before do
     stub_template("transactions/_status_indicator.html.erb" => "STATUS_INDICATOR")
@@ -40,6 +40,10 @@ describe "transactions/_scheduled_group.html.erb" do
     expect(html).to have_text(transaction.account.name)
   end
 
+  it "does not render the memo" do
+    expect(html).to have_no_text(transaction.memo)
+  end
+
   it "renders the status indicator" do
     expect(html).to include("STATUS_INDICATOR")
   end
@@ -51,8 +55,8 @@ describe "transactions/_scheduled_group.html.erb" do
   context "when not showing accounts" do
     subject(:html) do
       render partial: "transactions/scheduled_group", locals: {
+        context:      :account,
         date:         date,
-        show_account: false,
         transactions: [transaction]
       }
 
@@ -61,6 +65,10 @@ describe "transactions/_scheduled_group.html.erb" do
 
     it "does not render the account name" do
       expect(html).to have_no_css("li span", text: transaction.account.name)
+    end
+
+    it "renders the memo" do
+      expect(html).to have_text(transaction.memo)
     end
   end
 

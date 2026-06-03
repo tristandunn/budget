@@ -1,4 +1,4 @@
-<%# locals: (current_transactions:, empty_message:, scheduled_transactions:, show_account: true) %>
+<%# locals: (current_transactions:, empty_message:, scheduled_transactions:, context:) %>
 <% if scheduled_transactions.present? || current_transactions.present? %>
   <% if scheduled_transactions.present? %>
     <div
@@ -32,8 +32,8 @@
       <div class="group-[.collapsed]:hidden" data-collapsible-content="collapsible-scheduled">
         <% scheduled_transactions.group_by(&:date).each do |date, transactions| %>
           <%= render "transactions/scheduled_group",
+                     context:      context,
                      date:         date,
-                     show_account: show_account,
                      transactions: transactions %>
         <% end %>
       </div>
@@ -66,10 +66,12 @@
                     </span>
                   </div>
 
-                  <div class="flex items-center justify-between text-sm text-taupe-600">
-                    <span><%= transaction_category(transaction) %></span>
+                  <div class="flex items-center justify-between gap-2 text-sm text-taupe-600">
+                    <span class="max-w-[45%] truncate"><%= transaction_category(transaction) %></span>
 
-                    <% if show_account %>
+                    <% if context == :account %>
+                      <span class="max-w-[45%] truncate"><%= transaction.memo %></span>
+                    <% elsif context == :transactions %>
                       <span><%= transaction.account.name %></span>
                     <% end %>
                   </div>

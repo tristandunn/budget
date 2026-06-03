@@ -5,6 +5,7 @@ require "rails_helper"
 describe "transactions/_list.html.erb" do
   subject(:html) do
     render partial: "transactions/list", locals: {
+      context:                :transactions,
       current_transactions:   current_transactions,
       empty_message:          empty_message,
       scheduled_transactions: scheduled_transactions
@@ -20,7 +21,7 @@ describe "transactions/_list.html.erb" do
   context "when there are transactions" do
     let(:current_transactions) { [transaction] }
     let(:date)                 { 2.days.ago.to_date }
-    let(:transaction)          { build_stubbed(:transaction, date: date) }
+    let(:transaction)          { build_stubbed(:transaction, date: date, memo: "Lunch with team") }
 
     before do
       stub_template("transactions/_status_indicator.html.erb" => "STATUS_INDICATOR")
@@ -44,6 +45,10 @@ describe "transactions/_list.html.erb" do
 
     it "renders the account name" do
       expect(html).to have_text(transaction.account.name)
+    end
+
+    it "does not render the memo" do
+      expect(html).to have_no_text(transaction.memo)
     end
 
     it "renders the status indicator" do
@@ -87,10 +92,10 @@ describe "transactions/_list.html.erb" do
     context "when not showing accounts" do
       subject(:html) do
         render partial: "transactions/list", locals: {
+          context:                :account,
           current_transactions:   current_transactions,
           empty_message:          empty_message,
-          scheduled_transactions: scheduled_transactions,
-          show_account:           false
+          scheduled_transactions: scheduled_transactions
         }
 
         rendered
@@ -98,6 +103,10 @@ describe "transactions/_list.html.erb" do
 
       it "does not render the account name" do
         expect(html).to have_no_css("li span", text: transaction.account.name)
+      end
+
+      it "renders the memo" do
+        expect(html).to have_text(transaction.memo)
       end
     end
 

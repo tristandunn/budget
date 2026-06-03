@@ -52,7 +52,7 @@ module TransactionsHelper
   # @param transaction [Transaction] The transaction to wrap.
   # @return [String] The wrapped HTML content.
   def transaction_row_wrapper(transaction, &)
-    classes = "flex flex-1 flex-col gap-0.5"
+    classes = "flex min-w-0 flex-1 flex-col gap-0.5"
 
     if transaction.reconciled?
       tag.div(class: classes, &)

@@ -80,10 +80,10 @@
 
   <section class="flex-1">
     <%= render "transactions/list",
+               context:                :account,
                current_transactions:   @current_transactions,
                empty_message:          t(".empty"),
-               scheduled_transactions: @scheduled_transactions,
-               show_account:           false %>
+               scheduled_transactions: @scheduled_transactions %>
   </section>
 
   <%= render "shared/toolbar", budget: @budget, account_id: @account.id %>
