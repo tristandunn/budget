@@ -33,7 +33,7 @@ export default class extends Controller {
      * before adding the open class to trigger the slide-in transition.
      * Skip when the user prefers reduced motion since no transition runs.
      */
-    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (!this.#reducedMotion()) {
       this.#forceReflow(dialog);
     }
 
@@ -48,30 +48,9 @@ export default class extends Controller {
       return;
     }
 
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    if (reducedMotion) {
+    this.#animateClosed(dialog, () => {
       this.#reset(dialog);
-
-      return;
-    }
-
-    dialog.addEventListener(
-      "transitionend",
-      () => {
-        return this.#reset(dialog);
-      },
-      { "once": true }
-    );
-
-    /*
-     * Force a reflow so the browser registers the on-screen position before
-     * adding the closing class. Without this, a pending layout change (such as
-     * a turbo stream replacing the frame contents) can be batched with the
-     * class change and skip the slide-out transition entirely.
-     */
-    this.#forceReflow(dialog);
-    dialog.classList.add("closing");
+    });
   }
 
   // Close when clicking the backdrop area of the dialog.
@@ -88,28 +67,33 @@ export default class extends Controller {
     this.close();
   }
 
-  // Slide the dialog closed, then visit the given URL.
-  #dismiss(dialog, url) {
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    if (reducedMotion) {
-      this.#reset(dialog);
-      Turbo.visit(url);
+  /*
+   * Run the close callback immediately when the user prefers reduced motion,
+   * otherwise after the slide-out transition ends. Forcing a reflow before
+   * adding the closing class makes the browser register the on-screen position
+   * first; without it a pending layout change (such as a turbo stream replacing
+   * the frame contents) can be batched with the class change and skip the
+   * transition entirely.
+   */
+  #animateClosed(dialog, onClosed) {
+    if (this.#reducedMotion()) {
+      onClosed();
 
       return;
     }
 
-    dialog.addEventListener(
-      "transitionend",
-      () => {
-        this.#reset(dialog);
-        Turbo.visit(url);
-      },
-      { "once": true }
-    );
+    dialog.addEventListener("transitionend", onClosed, { "once": true });
 
     this.#forceReflow(dialog);
     dialog.classList.add("closing");
+  }
+
+  // Slide the dialog closed, then visit the given URL.
+  #dismiss(dialog, url) {
+    this.#animateClosed(dialog, () => {
+      this.#reset(dialog);
+      Turbo.visit(url);
+    });
   }
 
   /*
@@ -118,6 +102,11 @@ export default class extends Controller {
    */
   #forceReflow(dialog) {
     return dialog.offsetHeight;
+  }
+
+  // Return whether the user prefers reduced motion.
+  #reducedMotion() {
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   }
 
   // Reset the dialog state and clear the frame content.

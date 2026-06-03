@@ -16,8 +16,7 @@ export default class extends Controller {
       }
     }
 
-    this.element.value = this.#format(this.element.value);
-    this.#updateColor();
+    this.#render(this.element.value);
 
     if (this.element.form) {
       this.#handleFormdata = (event) => {
@@ -67,8 +66,7 @@ export default class extends Controller {
         : "-";
     }
 
-    this.element.value = this.#format(`${sign}${cleaned}`);
-    this.#updateColor();
+    this.#render(`${sign}${cleaned}`);
   }
 
   keydown(event) {
@@ -93,8 +91,7 @@ export default class extends Controller {
         ? ""
         : "-";
 
-      this.element.value = this.#format(`${sign}${event.key}`);
-      this.#updateColor();
+      this.#render(`${sign}${event.key}`);
     }
   }
 
@@ -140,12 +137,17 @@ export default class extends Controller {
             ? text.slice(1)
             : text;
 
-    this.element.value = this.#format(positive);
-    this.#updateColor();
+    this.#render(positive);
   }
 
   #positiveOnly() {
     return this.element.dataset.amountPositiveValue === "true";
+  }
+
+  #render(text) {
+    this.element.value = this.#format(text);
+
+    this.#updateColor();
   }
 
   #restoreCursor(targetCount) {
@@ -202,8 +204,7 @@ export default class extends Controller {
             ? text.slice(1)
             : `-${text}`;
 
-    this.element.value = this.#format(toggled);
-    this.#updateColor();
+    this.#render(toggled);
   }
 
   #unformat(value) {

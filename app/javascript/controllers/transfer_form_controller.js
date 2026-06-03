@@ -28,8 +28,10 @@ export default class extends Controller {
     const valid = !isNaN(value) && value !== 0;
 
     if (!valid) {
-      this.amountTarget.classList.remove("text-black");
-      this.amountTarget.classList.add("text-red-700");
+      const classList = this.amountTarget.classList;
+
+      classList.remove("text-black");
+      classList.add("text-red-700");
     }
 
     return valid;

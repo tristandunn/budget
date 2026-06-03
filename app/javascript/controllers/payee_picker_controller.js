@@ -58,29 +58,14 @@ export default class extends PickerController {
    * Insert, update, or remove the Create option based on the current query.
    */
   afterFilter(query) {
-    const existing = this.#existingCreateOption();
-
-    if (query.length === 0) {
-      if (existing) {
-        existing.remove();
-      }
-
-      return;
-    }
-
-    const exactMatch = this.itemTargets.some((item) => {
+    const existing   = this.#existingCreateOption();
+    const exactMatch = query.length > 0 && this.itemTargets.some((item) => {
       return item.dataset.label.toLowerCase() === query.toLowerCase();
     });
 
-    if (exactMatch) {
-      if (existing) {
-        existing.remove();
-      }
-
-      return;
-    }
-
-    if (existing) {
+    if (query.length === 0 || exactMatch) {
+      existing?.remove();
+    } else if (existing) {
       this.#updateCreateOption(existing, query);
     } else {
       this.#insertCreateOption(query);

@@ -2,40 +2,28 @@ import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
   keydown(event) {
-    if (event.key === "+") {
+    if (event.key === "+" || event.key === "-") {
       event.preventDefault();
 
-      this.#handleOperator("+");
-    } else if (event.key === "-") {
-      event.preventDefault();
-
-      this.#handleMinus();
+      this.#handleOperator(event.key);
     } else if (this.#isInvalidKey(event)) {
       event.preventDefault();
     }
   }
 
-  #handleMinus() {
-    const value = this.element.value;
-
-    if (this.#isZeroOrEmpty(value)) {
-      this.element.value = "-";
-    } else {
-      this.element.value = this.#replaceTrailingOperator(value) + "-";
-    }
-
-    this.#moveCursorToEnd();
-  }
-
   #handleOperator(operator) {
-    const value = this.element.value;
+    const element = this.element,
+          value = element.value;
 
     if (this.#isZeroOrEmpty(value)) {
-      return;
+      if (operator === "-") {
+        element.value = "-";
+      }
+    } else {
+      element.value = this.#replaceTrailingOperator(value) + operator;
     }
 
-    this.element.value = this.#replaceTrailingOperator(value) + operator;
-    this.#moveCursorToEnd();
+    element.setSelectionRange(-1, -1);
   }
 
   #isInvalidKey(event) {
@@ -47,14 +35,7 @@ export default class extends Controller {
   }
 
   #isZeroOrEmpty(value) {
-    return value === "" ||
-      !(/[+-]/).test(value.slice(1)) && parseFloat(value) === 0;
-  }
-
-  #moveCursorToEnd() {
-    const length = this.element.value.length;
-
-    this.element.setSelectionRange(length, length);
+    return value === "" || !(/[+-]/).test(value.slice(1)) && parseFloat(value) === 0;
   }
 
   #replaceTrailingOperator(value) {

@@ -27,6 +27,17 @@ describe("ArithmeticController", () => {
         expect(element.value).to.eq("100.00+");
       });
 
+      it("places the cursor at the end", () => {
+        document.body.appendChild(element);
+
+        instance.keydown(event);
+
+        expect(element.selectionStart).to.eq(7);
+        expect(element.selectionEnd).to.eq(7);
+
+        document.body.removeChild(element);
+      });
+
       it("prevents the default behavior", () => {
         instance.keydown(event);
 

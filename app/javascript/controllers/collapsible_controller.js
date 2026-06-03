@@ -14,14 +14,10 @@ export default class extends Controller {
   }
 
   toggle() {
-    this.element.classList.toggle("collapsed");
-    this.#persistState();
-  }
+    const collapsed = this.element.classList.toggle("collapsed"),
+          ids = this.#collapsedIds;
 
-  #persistState() {
-    const ids = this.#collapsedIds;
-
-    if (this.element.classList.contains("collapsed")) {
+    if (collapsed) {
       ids.add(this.idValue);
     } else {
       ids.delete(this.idValue);

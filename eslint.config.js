@@ -51,7 +51,7 @@ export default [
       "@stylistic/padded-blocks": "off",
       "@stylistic/space-before-function-paren": "off",
       "arrow-body-style": ["error", "always"],
-      "no-magic-numbers": ["error", { "ignore": [0, 1, 2, 3] }],
+      "no-magic-numbers": ["error", { "ignore": [-1, 0, 1, 2, 3] }],
       "sort-keys": "error"
     }
   },
