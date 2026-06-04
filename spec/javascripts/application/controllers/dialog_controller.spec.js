@@ -2,9 +2,19 @@ import DialogController from "@app/controllers/dialog_controller.js";
 
 describe("DialogController", () => {
   let controller,
-      dialog;
+      dialog,
+      scheduledTimeouts;
 
   beforeEach(() => {
+    scheduledTimeouts = [];
+
+    sinon.stub(window, "setTimeout").callsFake((callback) => {
+      scheduledTimeouts.push(callback);
+
+      return scheduledTimeouts.length;
+    });
+    sinon.stub(window, "clearTimeout");
+
     window.matchMedia = () => {
       return { "matches": false };
     };
@@ -139,6 +149,39 @@ describe("DialogController", () => {
     expect(dialog.close).to.have.been.calledOnce;
   });
 
+  it("closes when the slide-out transition is cancelled", () => {
+    controller.close();
+    dialog.dispatchEvent(new window.Event("transitioncancel"));
+
+    expect(dialog.close).to.have.been.calledOnce;
+  });
+
+  it("ignores transition events bubbling up from descendants", () => {
+    controller.close();
+
+    const frame = dialog.querySelector("turbo-frame");
+    frame.dispatchEvent(new window.Event("transitionend", { "bubbles": true }));
+
+    expect(dialog.close).not.to.have.been.called;
+  });
+
+  it("forces the dialog closed when no transition event arrives", () => {
+    controller.close();
+    scheduledTimeouts.forEach((callback) => {
+      callback();
+    });
+
+    expect(dialog.close).to.have.been.calledOnce;
+  });
+
+  it("closes only once when a transition event follows a cancel", () => {
+    controller.close();
+    dialog.dispatchEvent(new window.Event("transitioncancel"));
+    dialog.dispatchEvent(new window.Event("transitionend"));
+
+    expect(dialog.close).to.have.been.calledOnce;
+  });
+
   it("closes immediately when prefers-reduced-motion is enabled", () => {
     sinon.stub(window, "matchMedia").returns({ "matches": true });
 
@@ -195,6 +238,23 @@ describe("DialogController", () => {
 
     expect(dialog.close).to.have.been.calledOnce;
     expect(globalThis.Turbo.visit).to.have.been.calledWith("/redirected");
+
+    delete globalThis.Turbo;
+  });
+
+  it("visits the redirect URL only once across multiple transition events", () => {
+    const frame = dialog.querySelector("turbo-frame");
+    frame.innerHTML = "";
+    frame.src = "/redirected";
+
+    globalThis.Turbo = { "visit": sinon.fake() };
+
+    controller.open();
+
+    dialog.dispatchEvent(new window.Event("transitionend"));
+    dialog.dispatchEvent(new window.Event("transitionend"));
+
+    expect(globalThis.Turbo.visit).to.have.been.calledOnce;
 
     delete globalThis.Turbo;
   });

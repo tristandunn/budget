@@ -1,13 +1,23 @@
 import { Controller } from "@hotwired/stimulus";
 
+/*
+ * Fallback delay, in milliseconds, after which a closing dialog is forced
+ * shut even if no transition event arrives. It is longer than the 300ms
+ * slide-out transition so it only fires when the expected transitionend is
+ * missing, such as when Firefox cancels the transition while closing stacked
+ * dialogs. Without it the dialog can stay open in the top layer with a
+ * transparent backdrop that silently blocks every click on the page.
+ */
+const CLOSE_FALLBACK_DELAY = 500;
+
 // Opens and closes a dialog with slide transitions.
 export default class extends Controller {
   static targets = ["dialog"];
 
   // Open the dialog when a frame finishes loading.
   open() {
-    const dialog = this.dialogTarget;
-    const frame = dialog.querySelector("turbo-frame");
+    const dialog = this.dialogTarget,
+          frame = dialog.querySelector("turbo-frame");
 
     /*
      * When a form submission redirects, the frame loads with no content.
@@ -82,9 +92,39 @@ export default class extends Controller {
       return;
     }
 
-    dialog.addEventListener("transitionend", onClosed, { "once": true });
+    /*
+     * Finish closing exactly once. A slide-out fires one transition event per
+     * animated property, and the fallback timer can overlap them, so remove
+     * both listeners and clear the timer before running onClosed. Without this
+     * a dismiss would call Turbo.visit again and navigate a second time.
+     */
+    const finishClosing = () => {
+      dialog.removeEventListener("transitionend", onTransition);
+      dialog.removeEventListener("transitioncancel", onTransition);
+
+      window.clearTimeout(fallback);
+
+      onClosed();
+    };
+
+    /*
+     * Only the dialog's own slide-out finishes closing. Ignore transition
+     * events bubbling up from elements inside the dialog so an inner
+     * transition can't tear the dialog down mid-animation.
+     */
+    const onTransition = (event) => {
+      if (event.target === dialog) {
+        finishClosing();
+      }
+    };
+
+    dialog.addEventListener("transitionend", onTransition);
+    dialog.addEventListener("transitioncancel", onTransition);
+
+    const fallback = window.setTimeout(finishClosing, CLOSE_FALLBACK_DELAY);
 
     this.#forceReflow(dialog);
+
     dialog.classList.add("closing");
   }
 
@@ -92,6 +132,7 @@ export default class extends Controller {
   #dismiss(dialog, url) {
     this.#animateClosed(dialog, () => {
       this.#reset(dialog);
+
       Turbo.visit(url);
     });
   }
