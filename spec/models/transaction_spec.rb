@@ -140,6 +140,32 @@ describe Transaction do
     end
   end
 
+  describe "#clearable?" do
+    context "with a pending transaction" do
+      subject { build_stubbed(:transaction) }
+
+      it { is_expected.to be_clearable }
+    end
+
+    context "with a cleared transaction" do
+      subject { build_stubbed(:transaction, :cleared) }
+
+      it { is_expected.to be_clearable }
+    end
+
+    context "with a reconciled transaction" do
+      subject { build_stubbed(:transaction, :reconciled) }
+
+      it { is_expected.not_to be_clearable }
+    end
+
+    context "with an upcoming transaction" do
+      subject { build_stubbed(:transaction, :upcoming) }
+
+      it { is_expected.not_to be_clearable }
+    end
+  end
+
   describe "#destroyable?" do
     context "with a pending transaction" do
       subject { build_stubbed(:transaction) }

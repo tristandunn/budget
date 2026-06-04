@@ -630,6 +630,21 @@ describe TransactionsController do
         expect(transaction.reload).to be_reconciled
       end
     end
+
+    context "when the transaction is upcoming" do
+      let(:transaction) { create(:transaction, :upcoming, budget: budget) }
+
+      before do
+        patch :clear, params: { budget_id: budget.id, id: transaction.id }, format: :turbo_stream
+      end
+
+      it { is_expected.to respond_with(:see_other) }
+      it { is_expected.to redirect_to(budget_transactions_path(budget)) }
+
+      it "does not change the status" do
+        expect(transaction.reload).to be_upcoming
+      end
+    end
   end
 
   describe "#unclear" do
@@ -659,6 +674,21 @@ describe TransactionsController do
 
       it "does not change the status" do
         expect(transaction.reload).to be_reconciled
+      end
+    end
+
+    context "when the transaction is upcoming" do
+      let(:transaction) { create(:transaction, :upcoming, budget: budget) }
+
+      before do
+        delete :unclear, params: { budget_id: budget.id, id: transaction.id }, format: :turbo_stream
+      end
+
+      it { is_expected.to respond_with(:see_other) }
+      it { is_expected.to redirect_to(budget_transactions_path(budget)) }
+
+      it "does not change the status" do
+        expect(transaction.reload).to be_upcoming
       end
     end
   end

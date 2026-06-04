@@ -33,6 +33,14 @@ class Transaction < ApplicationRecord
   scope :activation_due, -> { upcoming.where(date: ..Date.current) }
   scope :recent,         -> { where(date: 30.days.ago.to_date..) }
 
+  # Returns true when this transaction may be cleared or uncleared. Only pending
+  # and cleared transactions may toggle; upcoming and reconciled may not.
+  #
+  # @return [Boolean]
+  def clearable?
+    pending? || cleared?
+  end
+
   # Returns the attributes to copy when creating a new occurrence. The payee
   # association is included in place of its foreign key so an unsaved new payee
   # is carried over and autosaved with the copy.
