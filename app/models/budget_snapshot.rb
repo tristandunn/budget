@@ -109,7 +109,13 @@ class BudgetSnapshot
   # @param category [Category] The category to evaluate.
   # @return [TargetProgress] The target progress for the category.
   def target_progress_for(category)
-    TargetProgress.new(category: category, snapshot: snapshot_for(category.id))
+    snapshot = snapshot_for(category.id)
+
+    TargetProgress.new(
+      category: category,
+      rollover: rollover_for(category, snapshot),
+      snapshot: snapshot
+    )
   end
 
   # Returns true when the category has a monthly spending target that has not
@@ -154,6 +160,17 @@ class BudgetSnapshot
     Date.new(year.to_i, month.to_i)
   rescue Date::Error
     current_month
+  end
+
+  # Returns the available amount carried in from prior months for the category,
+  # derived from the cumulative balance through the displayed month minus the
+  # displayed month's own remaining amount.
+  #
+  # @param category [Category] The category to evaluate.
+  # @param snapshot [CategorySnapshot] The displayed-month snapshot.
+  # @return [Integer] The rolled-over amount in cents.
+  def rollover_for(category, snapshot)
+    (available_amounts_by_category[category.id] || 0) - snapshot.amount_remaining
   end
 
   # Returns the category snapshots for this budget snapshot, indexed by category id.

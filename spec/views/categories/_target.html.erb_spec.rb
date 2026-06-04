@@ -58,7 +58,7 @@ describe "categories/_target.html.erb" do
     before do
       allow(budget_snapshot).to receive(:target_progress_for)
         .with(subcategory)
-        .and_return(TargetProgress.new(category: subcategory, snapshot: snapshot))
+        .and_return(TargetProgress.new(category: subcategory, rollover: 0, snapshot: snapshot))
     end
 
     it "renders the needed amount" do

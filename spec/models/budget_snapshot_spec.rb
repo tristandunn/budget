@@ -358,11 +358,28 @@ describe BudgetSnapshot do
 
     before do
       allow(TargetProgress).to receive(:new)
-        .with(category: subcategory, snapshot: instance.snapshot_for(subcategory.id))
+        .with(category: subcategory, rollover: 0, snapshot: instance.snapshot_for(subcategory.id))
         .and_return(progress)
     end
 
     it { is_expected.to eq(progress) }
+
+    context "with a balance rolled over from a prior month" do
+      before do
+        create(:category_snapshot,
+               budget:          budget,
+               category:        subcategory,
+               amount_assigned: 30_00,
+               amount_used:     10_00,
+               date:            1.month.ago.beginning_of_month)
+
+        allow(TargetProgress).to receive(:new)
+          .with(category: subcategory, rollover: 20_00, snapshot: instance.snapshot_for(subcategory.id))
+          .and_return(progress)
+      end
+
+      it { is_expected.to eq(progress) }
+    end
   end
 
   describe "#underfunded?" do
@@ -443,6 +460,44 @@ describe BudgetSnapshot do
       end
 
       it { is_expected.to be(false) }
+    end
+
+    context "with a positive rollover that completes an underfunded assignment" do
+      before do
+        create(:category_snapshot,
+               budget:          budget,
+               category:        subcategory,
+               amount_assigned: 1,
+               amount_used:     0,
+               date:            1.month.ago.beginning_of_month)
+        create(:category_snapshot,
+               budget:          budget,
+               category:        subcategory,
+               amount_assigned: subcategory.target_amount - 1,
+               amount_used:     0,
+               date:            Date.current.beginning_of_month)
+      end
+
+      it { is_expected.to be(false) }
+    end
+
+    context "with a negative rollover that keeps a fully assigned target underfunded" do
+      before do
+        create(:category_snapshot,
+               budget:          budget,
+               category:        subcategory,
+               amount_assigned: 0,
+               amount_used:     1,
+               date:            1.month.ago.beginning_of_month)
+        create(:category_snapshot,
+               budget:          budget,
+               category:        subcategory,
+               amount_assigned: subcategory.target_amount,
+               amount_used:     0,
+               date:            Date.current.beginning_of_month)
+      end
+
+      it { is_expected.to be(true) }
     end
   end
 end

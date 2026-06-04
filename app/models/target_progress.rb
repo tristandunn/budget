@@ -3,8 +3,9 @@
 class TargetProgress
   attr_reader :category
 
-  def initialize(category:, snapshot:)
+  def initialize(category:, rollover:, snapshot:)
     @category = category
+    @rollover = rollover
     @snapshot = snapshot
   end
 
@@ -15,11 +16,12 @@ class TargetProgress
     funded_percentage == 100
   end
 
-  # Returns the amount funded toward the target.
+  # Returns the amount funded toward the target, combining the rollover carried
+  # in from prior months with the amount assigned in the displayed month.
   #
   # @return [Integer] The funded amount in cents.
   def funded_amount
-    snapshot.amount_assigned
+    rollover + snapshot.amount_assigned
   end
 
   # Returns the percentage of the target that has been funded, clamped
@@ -53,5 +55,5 @@ class TargetProgress
 
   private
 
-  attr_reader :snapshot
+  attr_reader :rollover, :snapshot
 end

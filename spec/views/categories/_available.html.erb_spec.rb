@@ -52,7 +52,7 @@ describe "categories/_available.html.erb" do
     before do
       allow(budget_snapshot).to receive(:target_progress_for)
         .with(category)
-        .and_return(TargetProgress.new(category: category, snapshot: snapshot))
+        .and_return(TargetProgress.new(category: category, rollover: 0, snapshot: snapshot))
     end
 
     context "when fully funded" do
