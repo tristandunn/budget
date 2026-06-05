@@ -78,6 +78,8 @@ en:
         funded: "Funded"
         funded_label: "Target fully funded."
         heading: "Target"
+        monthly_savings_label: "Set Aside"
+        monthly_spending_label: "Refill"
         needed: "Needed this month"
         percent_funded: "Target %{percentage}% funded."
         question: "How much do you need for %{name}?"
@@ -225,7 +227,10 @@ en:
       delete: "Delete Target"
       delete_confirmation: "Are you sure you want to delete this target?"
       edit_title: "Edit Target"
+      refill_option: "Refill"
+      set_aside_option: "Set Aside"
       submit: "Save"
+      type: "Target type"
 
   transfers:
     form:

@@ -16,12 +16,18 @@ class TargetProgress
     funded_percentage == 100
   end
 
-  # Returns the amount funded toward the target, combining the rollover carried
-  # in from prior months with the amount assigned in the displayed month.
+  # Returns the amount funded toward the target. The refill variety counts
+  # rollover carried in from prior months plus the displayed month's
+  # assignment; the set-aside variety counts only the displayed month's
+  # assignment, so each month requires a fresh contribution.
   #
   # @return [Integer] The funded amount in cents.
   def funded_amount
-    rollover + snapshot.amount_assigned
+    if category.target_type_monthly_savings?
+      snapshot.amount_assigned
+    else
+      rollover + snapshot.amount_assigned
+    end
   end
 
   # Returns the percentage of the target that has been funded, clamped

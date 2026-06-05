@@ -3,6 +3,12 @@
   <% if category.target_type? %>
     <% budget_snapshot.target_progress_for(category).tap do |progress| %>
       <div class="bg-white rounded-xl p-4">
+        <div class="flex justify-center mb-2">
+          <span class="px-2 py-0.5 text-xs font-medium text-indigo-600 bg-indigo-50 rounded-full">
+            <%= t("categories.show.target.#{category.target_type}_label") %>
+          </span>
+        </div>
+
         <div class="<%= class_names("flex justify-center mb-2", "opacity-50" => budget_snapshot.snoozed?(category)) %>">
           <svg
             class="w-20 h-20 <%= progress_color(progress) %>"

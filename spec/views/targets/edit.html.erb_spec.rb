@@ -29,8 +29,24 @@ describe "targets/edit.html.erb" do
     expect(html).to have_field("target_form_target_amount_input")
   end
 
-  it "renders the hidden target type field" do
-    expect(html).to have_field("target_form_target_type", type: :hidden, with: "monthly_spending")
+  it "renders the refill target type option" do
+    expect(html).to have_field("target_form_target_type_monthly_spending", type: :radio, visible: :all)
+  end
+
+  it "renders the set-aside target type option" do
+    expect(html).to have_field("target_form_target_type_monthly_savings", type: :radio, visible: :all)
+  end
+
+  it "selects the refill option by default" do
+    expect(html).to have_checked_field("target_form_target_type_monthly_spending", visible: :all)
+  end
+
+  context "when the category has a monthly savings target" do
+    let(:subcategory) { build_stubbed(:category, :subcategory, :with_monthly_savings_target) }
+
+    it "selects the set-aside option" do
+      expect(html).to have_checked_field("target_form_target_type_monthly_savings", visible: :all)
+    end
   end
 
   it "renders a submit button targeting the target form" do

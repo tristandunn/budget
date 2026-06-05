@@ -61,6 +61,10 @@ describe "categories/_target.html.erb" do
         .and_return(TargetProgress.new(category: subcategory, rollover: 0, snapshot: snapshot))
     end
 
+    it "renders the refill type chip" do
+      expect(html).to have_css("span", text: t("categories.show.target.monthly_spending_label"))
+    end
+
     it "renders the needed amount" do
       expect(html).to have_css("div",
                                normalize_ws: true,
@@ -113,6 +117,14 @@ describe "categories/_target.html.erb" do
 
       it "renders a checkmark instead of the percentage" do
         expect(html).to have_no_css("svg text")
+      end
+    end
+
+    context "with a monthly savings target" do
+      let(:subcategory) { build_stubbed(:category, :subcategory, :with_monthly_savings_target) }
+
+      it "renders the set-aside type chip" do
+        expect(html).to have_css("span", text: t("categories.show.target.monthly_savings_label"))
       end
     end
 

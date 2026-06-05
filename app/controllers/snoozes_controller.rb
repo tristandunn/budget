@@ -43,12 +43,12 @@ class SnoozesController < ApplicationController
   end
 
   # Return the category for the given category_id parameter, scoped to
-  # subcategories with a monthly spending target.
+  # subcategories with a monthly target.
   #
   # @return [Category] The requested category.
   def category
     @category ||= current_budget.subcategories
-                                .target_type_monthly_spending
+                                .with_monthly_target
                                 .find(params.expect(:category_id))
   end
 

@@ -328,6 +328,22 @@ describe BudgetSnapshot do
       it { is_expected.to be(true) }
     end
 
+    context "with a snoozed monthly_savings target" do
+      let(:subcategory) do
+        create(:category, :subcategory, :with_monthly_savings_target, budget: budget, with_snapshot: false)
+      end
+
+      before do
+        create(:category_snapshot,
+               budget:   budget,
+               category: subcategory,
+               date:     Date.current.beginning_of_month,
+               metadata: { "snoozed" => true })
+      end
+
+      it { is_expected.to be(true) }
+    end
+
     context "with a snoozed snapshot but the target has since been removed" do
       let(:subcategory) { create(:category, :subcategory, budget: budget, with_snapshot: false) }
 
@@ -498,6 +514,46 @@ describe BudgetSnapshot do
       end
 
       it { is_expected.to be(true) }
+    end
+
+    context "with a monthly_savings target and a large accumulated balance but nothing assigned this month" do
+      let(:subcategory) do
+        create(:category, :subcategory, :with_monthly_savings_target, budget: budget, with_snapshot: false)
+      end
+
+      before do
+        create(:category_snapshot,
+               budget:          budget,
+               category:        subcategory,
+               amount_assigned: subcategory.target_amount * 5,
+               amount_used:     0,
+               date:            1.month.ago.beginning_of_month)
+        create(:category_snapshot,
+               budget:          budget,
+               category:        subcategory,
+               amount_assigned: 0,
+               amount_used:     0,
+               date:            Date.current.beginning_of_month)
+      end
+
+      it { is_expected.to be(true) }
+    end
+
+    context "with a monthly_savings target after the month's set-aside is assigned" do
+      let(:subcategory) do
+        create(:category, :subcategory, :with_monthly_savings_target, budget: budget, with_snapshot: false)
+      end
+
+      before do
+        create(:category_snapshot,
+               budget:          budget,
+               category:        subcategory,
+               amount_assigned: subcategory.target_amount,
+               amount_used:     0,
+               date:            Date.current.beginning_of_month)
+      end
+
+      it { is_expected.to be(false) }
     end
   end
 end

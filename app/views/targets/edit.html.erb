@@ -29,8 +29,6 @@
                   method: :patch,
                   id:     "target_form",
                   class:  "highlight-errors" do |f| %>
-      <%= f.hidden_field :target_type %>
-
       <div class="bg-white rounded-xl">
         <div
           class="
@@ -61,6 +59,26 @@
                            placeholder:  t(".amount_placeholder"),
                            required:     true %>
         </div>
+      </div>
+
+      <div
+        role="radiogroup"
+        aria-label="<%= t(".type") %>"
+        class="flex w-full gap-1 p-1 mt-4 rounded-xl bg-taupe-200"
+      >
+        <%= f.radio_button :target_type, "monthly_spending",
+                           class:   "peer/refill sr-only",
+                           checked: @form.target_type != "monthly_savings" %>
+
+        <%= label_tag :target_form_target_type_monthly_spending, t(".refill_option"),
+                      class: "flex-1 cursor-pointer rounded-lg p-3 text-center text-base font-medium text-taupe-500 transition peer-checked/refill:bg-white peer-checked/refill:text-taupe-800 peer-checked/refill:shadow peer-focus-visible/refill:ring-2 peer-focus-visible/refill:ring-taupe-500" %>
+
+        <%= f.radio_button :target_type, "monthly_savings",
+                           class:   "peer/savings sr-only",
+                           checked: @form.target_type == "monthly_savings" %>
+
+        <%= label_tag :target_form_target_type_monthly_savings, t(".set_aside_option"),
+                      class: "flex-1 cursor-pointer rounded-lg p-3 text-center text-base font-medium text-taupe-500 transition peer-checked/savings:bg-white peer-checked/savings:text-taupe-800 peer-checked/savings:shadow peer-focus-visible/savings:ring-2 peer-focus-visible/savings:ring-taupe-500" %>
       </div>
     <% end %>
 

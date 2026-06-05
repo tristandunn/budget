@@ -95,13 +95,13 @@ class BudgetSnapshot
     end
   end
 
-  # Returns true when the category currently has a monthly spending target
-  # and the displayed-month snapshot has been snoozed.
+  # Returns true when the category currently has a monthly target and the
+  # displayed-month snapshot has been snoozed.
   #
   # @param category [Category] The category to evaluate.
   # @return [Boolean] Whether the category is snoozed for the displayed month.
   def snoozed?(category)
-    category.target_type_monthly_spending? && snapshot_for(category.id).snoozed?
+    category.monthly_target? && snapshot_for(category.id).snoozed?
   end
 
   # Returns the target progress for the given category.
@@ -118,14 +118,14 @@ class BudgetSnapshot
     )
   end
 
-  # Returns true when the category has a monthly spending target that has not
-  # yet been fully funded for the displayed month and the available amount has
-  # not gone overspent.
+  # Returns true when the category has a monthly target that has not yet been
+  # fully funded for the displayed month and the available amount has not gone
+  # overspent.
   #
   # @param category [Category] The category to evaluate.
   # @return [Boolean] Whether the category is underfunded.
   def underfunded?(category)
-    category.target_type_monthly_spending? &&
+    category.monthly_target? &&
       !available_for(category).negative? &&
       !snoozed?(category) &&
       target_progress_for(category).underfunded?

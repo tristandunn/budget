@@ -42,6 +42,22 @@ describe TargetProgress do
 
       it { is_expected.to be(false) }
     end
+
+    context "with a monthly_savings target where rollover meets it but nothing is assigned" do
+      let(:assigned) { 0 }
+      let(:category) { build_stubbed(:category, :with_monthly_savings_target) }
+      let(:rollover) { category.target_amount }
+
+      it { is_expected.to be(false) }
+    end
+
+    context "with a monthly_savings target where the assignment meets it despite a negative rollover" do
+      let(:assigned) { category.target_amount }
+      let(:category) { build_stubbed(:category, :with_monthly_savings_target) }
+      let(:rollover) { -500_00 }
+
+      it { is_expected.to be(true) }
+    end
   end
 
   describe "#funded_amount" do
@@ -63,6 +79,26 @@ describe TargetProgress do
       let(:rollover) { -50_00 }
 
       it { is_expected.to eq(100_00) }
+    end
+
+    context "with a monthly_savings target" do
+      let(:category) { build_stubbed(:category, :with_monthly_savings_target) }
+
+      it { is_expected.to eq(150_00) }
+    end
+
+    context "with a monthly_savings target and a positive rollover" do
+      let(:category) { build_stubbed(:category, :with_monthly_savings_target) }
+      let(:rollover) { 14_06 }
+
+      it { is_expected.to eq(150_00) }
+    end
+
+    context "with a monthly_savings target and a negative rollover" do
+      let(:category) { build_stubbed(:category, :with_monthly_savings_target) }
+      let(:rollover) { -50_00 }
+
+      it { is_expected.to eq(150_00) }
     end
   end
 
@@ -116,6 +152,21 @@ describe TargetProgress do
 
       it { is_expected.to eq(50) }
     end
+
+    context "with a monthly_savings target where rollover meets it but nothing is assigned" do
+      let(:assigned) { 0 }
+      let(:category) { build_stubbed(:category, :with_monthly_savings_target) }
+      let(:rollover) { category.target_amount }
+
+      it { is_expected.to eq(0) }
+    end
+
+    context "with a monthly_savings target where the assignment exceeds it" do
+      let(:assigned) { category.target_amount + 50_00 }
+      let(:category) { build_stubbed(:category, :with_monthly_savings_target) }
+
+      it { is_expected.to eq(100) }
+    end
   end
 
   describe "#underfunded" do
@@ -148,6 +199,22 @@ describe TargetProgress do
       let(:rollover) { -50_00 }
 
       it { is_expected.to eq(50_00) }
+    end
+
+    context "with a monthly_savings target where rollover meets it but nothing is assigned" do
+      let(:assigned) { 0 }
+      let(:category) { build_stubbed(:category, :with_monthly_savings_target) }
+      let(:rollover) { category.target_amount }
+
+      it { is_expected.to eq(category.target_amount) }
+    end
+
+    context "with a monthly_savings target where the assignment meets it" do
+      let(:assigned) { category.target_amount }
+      let(:category) { build_stubbed(:category, :with_monthly_savings_target) }
+      let(:rollover) { -500_00 }
+
+      it { is_expected.to eq(0) }
     end
   end
 
