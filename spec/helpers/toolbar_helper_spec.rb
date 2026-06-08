@@ -15,7 +15,7 @@ describe ToolbarHelper do
     context "when inactive" do
       let(:active) { false }
 
-      it { is_expected.to eq("#{described_class::DEFAULT_CLASSES} text-taupe-400 hover:text-taupe-600") }
+      it { is_expected.to eq("#{described_class::DEFAULT_CLASSES} text-taupe-400") }
     end
   end
 end

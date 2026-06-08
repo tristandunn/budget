@@ -1,7 +1,7 @@
 <%# locals: (budget:) %>
 <%= button_to budget_settings_path(budget, settings: { hide_reconciled: !budget.settings.hide_reconciled? }),
               method: :patch,
-              class:  "flex w-full items-center justify-between gap-4 px-3 py-2 text-left text-sm text-taupe-800 hover:bg-taupe-50" do %>
+              class:  "flex w-full items-center justify-between gap-4 px-3 py-2 text-left text-sm text-taupe-800" do %>
   <% if budget.settings.hide_reconciled? %>
     <%= t("transactions.reconciled.show") %>
   <% else %>

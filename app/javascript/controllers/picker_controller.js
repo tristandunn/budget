@@ -25,15 +25,6 @@ export default class extends Controller {
     }
   }
 
-  // Open the picker from a keyboard activation on the trigger.
-  openOnKey(event) {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-
-      this.open();
-    }
-  }
-
   // Animate the picker closed and return to the form.
   back() {
     this.#closePanel();

@@ -26,8 +26,7 @@ describe "transfers/_form.html.erb" do
 
   it "wires the from-account opener to the picker controller" do
     expect(html).to have_css(
-      "[data-action~='click->from-account-picker#open']" \
-      "[data-action~='keydown->from-account-picker#openOnKey']"
+      "[data-action~='click->from-account-picker#open']"
     )
   end
 
@@ -41,8 +40,7 @@ describe "transfers/_form.html.erb" do
 
   it "wires the to-account opener to the picker controller" do
     expect(html).to have_css(
-      "[data-action~='click->to-account-picker#open']" \
-      "[data-action~='keydown->to-account-picker#openOnKey']"
+      "[data-action~='click->to-account-picker#open']"
     )
   end
 

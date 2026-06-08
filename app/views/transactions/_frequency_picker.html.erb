@@ -3,7 +3,7 @@
   <ul class="bg-white rounded-xl divide-y divide-taupe-200" role="listbox">
     <%= tag.li(
           "aria-selected": form.frequency.blank?,
-          class:           "flex items-center gap-3 px-4 py-3 text-base cursor-pointer",
+          class:           "flex items-center gap-3 px-4 py-3 text-base",
           data:            {
             frequency_picker_target: "item",
             action:                  "click->frequency-picker#select",
@@ -18,7 +18,7 @@
     <% Transaction.frequencies.each_key do |value| %>
       <%= tag.li(
             "aria-selected": form.frequency == value,
-            class:           "flex items-center gap-3 px-4 py-3 text-base cursor-pointer",
+            class:           "flex items-center gap-3 px-4 py-3 text-base",
             data:            {
               frequency_picker_target: "item",
               action:                  "click->frequency-picker#select",

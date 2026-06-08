@@ -38,12 +38,12 @@
       <%= f.radio_button :credit, false, class: "peer/cash sr-only", checked: !form.credit %>
 
       <%= label_tag :account_form_credit_false, t(".cash"),
-                    class: "flex-1 cursor-pointer rounded-lg p-3 text-center text-base font-medium text-taupe-500 transition peer-checked/cash:bg-white peer-checked/cash:text-taupe-800 peer-checked/cash:shadow peer-focus-visible/cash:ring-2 peer-focus-visible/cash:ring-taupe-500" %>
+                    class: "flex-1 rounded-lg p-3 text-center text-base font-medium text-taupe-500 transition peer-checked/cash:bg-white peer-checked/cash:text-taupe-800 peer-checked/cash:shadow peer-focus-visible/cash:ring-2 peer-focus-visible/cash:ring-taupe-500" %>
 
       <%= f.radio_button :credit, true, class: "peer/credit sr-only", checked: form.credit %>
 
       <%= label_tag :account_form_credit_true, t(".credit"),
-                    class: "flex-1 cursor-pointer rounded-lg p-3 text-center text-base font-medium text-taupe-500 transition peer-checked/credit:bg-white peer-checked/credit:text-taupe-800 peer-checked/credit:shadow peer-focus-visible/credit:ring-2 peer-focus-visible/credit:ring-taupe-500" %>
+                    class: "flex-1 rounded-lg p-3 text-center text-base font-medium text-taupe-500 transition peer-checked/credit:bg-white peer-checked/credit:text-taupe-800 peer-checked/credit:shadow peer-focus-visible/credit:ring-2 peer-focus-visible/credit:ring-taupe-500" %>
     </div>
   <% end %>
 
@@ -54,7 +54,7 @@
                     method: :delete,
                     form:   { data: { turbo_frame: "_top" } },
                     data:   { turbo_confirm: t(".delete_confirmation") },
-                    class:  "mx-auto text-sm text-red-600 underline cursor-pointer hover:text-red-500" %>
+                    class:  "mx-auto text-sm text-red-600 underline" %>
     </div>
   <% end %>
 </div>

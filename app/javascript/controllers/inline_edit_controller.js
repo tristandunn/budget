@@ -5,13 +5,6 @@ const CLEANUP_DELAY_MS = 1000;
 export default class extends Controller {
   static targets = ["input"];
 
-  cancel() {
-    const input = this.inputTarget;
-
-    input.value = this.originalValue;
-    input.blur();
-  }
-
   inputTargetConnected() {
     const input = this.inputTarget;
 

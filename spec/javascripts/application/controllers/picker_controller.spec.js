@@ -123,48 +123,6 @@ describe("PickerController", () => {
     });
   });
 
-  describe("#openOnKey", () => {
-    beforeEach(() => {
-      sinon.stub(controller, "open");
-    });
-
-    it("opens the picker when Enter is pressed", () => {
-      const event = {
-        "key": "Enter",
-        "preventDefault": sinon.fake()
-      };
-
-      controller.openOnKey(event);
-
-      expect(event.preventDefault).to.have.been.called;
-      expect(controller.open).to.have.been.called;
-    });
-
-    it("opens the picker when Space is pressed", () => {
-      const event = {
-        "key": " ",
-        "preventDefault": sinon.fake()
-      };
-
-      controller.openOnKey(event);
-
-      expect(event.preventDefault).to.have.been.called;
-      expect(controller.open).to.have.been.called;
-    });
-
-    it("ignores other keys", () => {
-      const event = {
-        "key": "a",
-        "preventDefault": sinon.fake()
-      };
-
-      controller.openOnKey(event);
-
-      expect(event.preventDefault).not.to.have.been.called;
-      expect(controller.open).not.to.have.been.called;
-    });
-  });
-
   describe("#back", () => {
     it("hides the picker", () => {
       controller.open();

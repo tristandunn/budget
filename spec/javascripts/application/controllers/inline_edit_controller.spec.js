@@ -29,18 +29,6 @@ describe("InlineEditController", () => {
     document.body.removeChild(cell);
   });
 
-  describe("#cancel", () => {
-    it("resets the value and blurs the input", () => {
-      instance.inputTargetConnected();
-      input.value = "200.00";
-
-      instance.cancel();
-
-      expect(input.value).to.eq("100.00");
-      expect(input.blur).to.have.been.called;
-    });
-  });
-
   describe("#inputTargetConnected", () => {
     it("focuses the input", () => {
       instance.inputTargetConnected();

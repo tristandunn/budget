@@ -7,7 +7,7 @@
     <button
       type="button"
       data-action="dialog#close"
-      class="absolute top-4 left-4 text-sm cursor-pointer"
+      class="absolute top-4 left-4 text-sm"
     >
       <%= t(".cancel") %>
     </button>
@@ -15,7 +15,7 @@
     <button
       type="submit"
       form="target_form"
-      class="absolute top-4 right-4 text-sm font-semibold text-indigo-600 cursor-pointer"
+      class="absolute top-4 right-4 text-sm font-semibold text-indigo-600"
     >
       <%= t(".submit") %>
     </button>
@@ -71,14 +71,14 @@
                            checked: @form.target_type != "monthly_savings" %>
 
         <%= label_tag :target_form_target_type_monthly_spending, t(".refill_option"),
-                      class: "flex-1 cursor-pointer rounded-lg p-3 text-center text-base font-medium text-taupe-500 transition peer-checked/refill:bg-white peer-checked/refill:text-taupe-800 peer-checked/refill:shadow peer-focus-visible/refill:ring-2 peer-focus-visible/refill:ring-taupe-500" %>
+                      class: "flex-1 rounded-lg p-3 text-center text-base font-medium text-taupe-500 transition peer-checked/refill:bg-white peer-checked/refill:text-taupe-800 peer-checked/refill:shadow peer-focus-visible/refill:ring-2 peer-focus-visible/refill:ring-taupe-500" %>
 
         <%= f.radio_button :target_type, "monthly_savings",
                            class:   "peer/savings sr-only",
                            checked: @form.target_type == "monthly_savings" %>
 
         <%= label_tag :target_form_target_type_monthly_savings, t(".set_aside_option"),
-                      class: "flex-1 cursor-pointer rounded-lg p-3 text-center text-base font-medium text-taupe-500 transition peer-checked/savings:bg-white peer-checked/savings:text-taupe-800 peer-checked/savings:shadow peer-focus-visible/savings:ring-2 peer-focus-visible/savings:ring-taupe-500" %>
+                      class: "flex-1 rounded-lg p-3 text-center text-base font-medium text-taupe-500 transition peer-checked/savings:bg-white peer-checked/savings:text-taupe-800 peer-checked/savings:shadow peer-focus-visible/savings:ring-2 peer-focus-visible/savings:ring-taupe-500" %>
       </div>
     <% end %>
 
@@ -90,9 +90,9 @@
                     form:   { data: { turbo_confirm: t(".delete_confirmation") } },
                     class:  "
                       flex items-center justify-center gap-2 mt-6 p-3 w-full text-sm font-medium
-                      text-red-600 bg-taupe-200 rounded-lg hover:bg-taupe-300
+                      text-red-600 bg-taupe-200 rounded-lg
                       focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500
-                      focus-visible:ring-offset-2 focus-visible:ring-offset-taupe-50 no-underline cursor-pointer
+                      focus-visible:ring-offset-2 focus-visible:ring-offset-taupe-50 no-underline
                     " do %>
         <%= t(".delete") %>
       <% end %>

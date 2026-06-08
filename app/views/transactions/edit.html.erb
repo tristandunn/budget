@@ -9,11 +9,7 @@
           <%= @transaction.transfer? ? t(".transfer_title") : t(".title") %>
         </h2>
 
-        <button
-          type="button"
-          class="absolute top-4 left-4 text-sm cursor-pointer"
-          data-action="dialog#close"
-        >
+        <button type="button" class="absolute top-4 left-4 text-sm" data-action="dialog#close">
           <%= t(".cancel") %>
         </button>
 
@@ -21,7 +17,7 @@
           <button
             type="submit"
             form="transaction_form"
-            class="absolute top-4 right-4 text-sm font-semibold text-indigo-600 cursor-pointer"
+            class="absolute top-4 right-4 text-sm font-semibold text-indigo-600"
           >
             <%= t(".submit") %>
           </button>
@@ -42,10 +38,9 @@
                         form_class: "w-full",
                         class:      "
                           flex items-center justify-center gap-2 p-3 w-full text-sm font-medium
-                          text-red-700 bg-taupe-200 rounded-lg hover:bg-taupe-300
+                          text-red-700 bg-taupe-200 rounded-lg
                           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600
                           focus-visible:ring-offset-2 focus-visible:ring-offset-taupe-50
-                          cursor-pointer
                         " do %>
             <svg
               xmlns="http://www.w3.org/2000/svg"

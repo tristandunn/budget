@@ -29,7 +29,7 @@
     "
   >
     <%= button_to budget_account_reconciliation_path(budget, account),
-                  class: "flex w-full items-center justify-between gap-4 px-3 py-2 text-left text-sm text-taupe-800 hover:bg-taupe-50",
+                  class: "flex w-full items-center justify-between gap-4 px-3 py-2 text-left text-sm text-taupe-800",
                   form:  { data: { turbo_confirm: t(".reconcile_confirm") } } do %>
       <span class="flex flex-col">
         <span><%= t(".reconcile") %></span>
@@ -63,7 +63,7 @@
       <hr class="border-t-4 border-taupe-100">
       <%= link_to new_budget_transfer_path(budget, to_account_id: account.id),
                   data:  { turbo_frame: "transaction_dialog" },
-                  class: "flex w-full items-center justify-between gap-4 px-3 py-2 text-left text-sm text-taupe-800 hover:bg-taupe-50" do %>
+                  class: "flex w-full items-center justify-between gap-4 px-3 py-2 text-left text-sm text-taupe-800" do %>
         <%= t(".record_payment") %>
 
         <svg
@@ -83,7 +83,7 @@
 
     <%= link_to edit_budget_account_path(budget, account),
                 data:  { turbo_frame: "account_dialog" },
-                class: "flex w-full items-center justify-between gap-4 px-3 py-2 text-left text-sm text-taupe-800 hover:bg-taupe-50" do %>
+                class: "flex w-full items-center justify-between gap-4 px-3 py-2 text-left text-sm text-taupe-800" do %>
       <%= t(".edit") %>
 
       <svg

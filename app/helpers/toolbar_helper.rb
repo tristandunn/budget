@@ -11,7 +11,7 @@ module ToolbarHelper
     if active
       "#{DEFAULT_CLASSES} text-taupe-800"
     else
-      "#{DEFAULT_CLASSES} text-taupe-400 hover:text-taupe-600"
+      "#{DEFAULT_CLASSES} text-taupe-400"
     end
   end
 end

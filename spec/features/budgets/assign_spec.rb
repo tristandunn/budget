@@ -51,28 +51,12 @@ describe "Assigning to a subcategory", :js do
     end
   end
 
-  context "when canceling with escape" do
-    before do
-      create_snapshots_for(Date.current.beginning_of_month)
-      visit budget_path(budget)
-      assign_amount("250.00", with: :escape)
-    end
-
-    it "closes the editor" do
-      expect(page).to have_no_field("assignment_form_amount")
-    end
-
-    it "keeps the existing assigned amount" do
-      expect(page).to have_link("$0.00")
-    end
-  end
-
   private
 
-  def assign_amount(amount, with: :return)
+  def assign_amount(amount)
     find("tbody td a", text: "$0.00").click
     fill_in "assignment_form_amount", with: amount
-    find_by_id("assignment_form_amount").native.send_keys(with)
+    find_by_id("assignment_form_amount").native.send_keys(:return)
   end
 
   def create_parent_snapshot(date, amount_assigned: 0)

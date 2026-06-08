@@ -6,7 +6,7 @@
     <% payees.each do |payee| %>
       <%= tag.li(
             "aria-selected": form.payee == payee.name,
-            class:           "flex items-center gap-3 px-4 py-3 text-base cursor-pointer",
+            class:           "flex items-center gap-3 px-4 py-3 text-base",
             data:            {
               action:              "click->payee-picker#select",
               defaults_url:        defaults_budget_payee_path(form.budget, payee),
@@ -23,7 +23,7 @@
 
   <%= tag.template(data: { payee_picker_target: "createPayeeTemplate" }) do %>
     <li
-      class="flex items-center gap-3 px-4 py-3 text-base cursor-pointer"
+      class="flex items-center gap-3 px-4 py-3 text-base"
       data-action="click->payee-picker#select"
       role="option"
     >

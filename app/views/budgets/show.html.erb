@@ -153,7 +153,7 @@
       >
         <%= link_to budget_payees_path(@budget),
                     data:  { turbo_frame: "payees_dialog" },
-                    class: "flex w-full items-center justify-between gap-4 px-3 py-2 text-left text-sm text-taupe-800 no-underline hover:bg-taupe-50" do %>
+                    class: "flex w-full items-center justify-between gap-4 px-3 py-2 text-left text-sm text-taupe-800 no-underline" do %>
           <%= t(".manage_payees") %>
 
           <svg
@@ -174,7 +174,7 @@
                         method: :delete,
                         class:  "
                           flex w-full items-center justify-between gap-4 px-3 py-2 text-left text-sm
-                          text-taupe-800 hover:bg-taupe-50
+                          text-taupe-800
                         " do %>
             <%= t(".sign_out") %>
 
