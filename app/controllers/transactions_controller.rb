@@ -190,7 +190,9 @@ class TransactionsController < ApplicationController
   # @return [Category] The requested subcategory.
   # @return [nil] When no subcategory is provided.
   def subcategory
-    @subcategory ||= current_budget.subcategories.find(parameters[:subcategory_id])
+    if parameters[:subcategory_id].present?
+      @subcategory ||= current_budget.subcategories.find(parameters[:subcategory_id])
+    end
   end
 
   # Return the transaction for the given `id` parameter.

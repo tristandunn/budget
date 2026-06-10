@@ -269,6 +269,26 @@ describe TransactionsController do
         expect(assigns(:category_picker)).to be_a(Transactions::CategoryPicker)
       end
     end
+
+    context "with a blank subcategory" do
+      let(:form) { instance_double(TransactionForm, budget: budget, payee: nil, save: false, subcategory: nil) }
+
+      before do
+        allow(TransactionForm).to receive(:new).and_return(form)
+
+        post :create, params: {
+          budget_id:        budget.id,
+          transaction_form: { subcategory_id: "" }
+        }
+      end
+
+      it { is_expected.to respond_with(:unprocessable_content) }
+      it { is_expected.to render_template(:new) }
+
+      it "initializes the form with a nil subcategory" do
+        expect(TransactionForm).to have_received(:new).with(hash_including(subcategory: nil))
+      end
+    end
   end
 
   describe "#edit" do
