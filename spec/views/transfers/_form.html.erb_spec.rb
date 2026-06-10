@@ -49,7 +49,9 @@ describe "transfers/_form.html.erb" do
   end
 
   it "renders the amount field" do
-    expect(html).to have_field("transfer_form_amount")
+    expect(html).to have_css(
+      %(input#transfer_form_amount[autocomplete="off"][autofocus][required])
+    )
   end
 
   it "renders the date field" do

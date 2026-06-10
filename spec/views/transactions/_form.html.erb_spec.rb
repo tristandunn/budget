@@ -17,7 +17,9 @@ describe "transactions/_form.html.erb" do
   let(:subcategory) { build_stubbed(:category, :subcategory) }
 
   it "renders the amount field" do
-    expect(html).to have_field("transaction_form_amount")
+    expect(html).to have_css(
+      %(input#transaction_form_amount[autocomplete="off"][autofocus][required])
+    )
   end
 
   it "renders the payee hidden field" do
