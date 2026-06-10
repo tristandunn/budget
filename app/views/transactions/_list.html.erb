@@ -8,10 +8,7 @@
       data-collapsible-id-value="scheduled"
     >
       <div
-        class="
-          flex items-center justify-between border-y border-taupe-200
-          bg-taupe-100 px-4 py-2
-        "
+        class="flex items-center justify-between border-y border-taupe-200 bg-taupe-100 px-4 py-2"
         data-action="click->collapsible#toggle"
       >
         <h3 class="text-sm font-semibold">
@@ -67,7 +64,9 @@
                   </div>
 
                   <div class="flex items-center justify-between gap-2 text-sm text-taupe-600">
-                    <span class="max-w-[45%] truncate"><%= transaction_category(transaction) %></span>
+                    <span class="max-w-[45%] truncate">
+                      <%= transaction_category(transaction) %>
+                    </span>
 
                     <% if context == :account %>
                       <span class="max-w-[45%] truncate"><%= transaction.memo %></span>

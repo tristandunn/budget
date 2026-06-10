@@ -3,8 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "check:erb": "herb-format --check .",
     "fix:css": "prettier --write app/assets/tailwind/**/*.css",
-    "fix:erb": "herb-format",
+    "fix:erb": "herb-format .",
     "fix:js": "eslint --fix .",
     "lint:css": "stylelint app/assets/tailwind/**/*.css",
     "lint:js": "eslint .",
