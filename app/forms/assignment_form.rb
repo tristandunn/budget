@@ -42,7 +42,7 @@ class AssignmentForm < BaseForm
   #
   # @return [Array<BigDecimal>] The numeric parts of the amount string.
   def parts
-    @parts ||= @amount.to_s.scan(ARITHMETIC_PATTERN).filter_map do |part|
+    @parts ||= @amount.to_s.delete("$,").scan(ARITHMETIC_PATTERN).filter_map do |part|
       BigDecimal(part, exception: false)
     end
   end

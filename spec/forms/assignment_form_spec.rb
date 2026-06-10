@@ -34,6 +34,30 @@ describe AssignmentForm, type: :form do
       it { is_expected.to eq(Money.from_amount(BigDecimal("10.50"))) }
     end
 
+    context "when amount is comma-grouped" do
+      let(:amount) { "1,000" }
+
+      it { is_expected.to eq(Money.from_amount(BigDecimal("1000"))) }
+    end
+
+    context "when amount is comma-grouped with a decimal" do
+      let(:amount) { "1,000.50" }
+
+      it { is_expected.to eq(Money.from_amount(BigDecimal("1000.50"))) }
+    end
+
+    context "when amount has a dollar sign and comma" do
+      let(:amount) { "$1,000" }
+
+      it { is_expected.to eq(Money.from_amount(BigDecimal("1000"))) }
+    end
+
+    context "when amount is comma-grouped in an expression" do
+      let(:amount) { "1,000+2,000" }
+
+      it { is_expected.to eq(Money.from_amount(BigDecimal("3000"))) }
+    end
+
     context "when amount is an addition expression" do
       let(:amount) { "100.00+13.37" }
 
