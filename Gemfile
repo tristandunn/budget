@@ -29,7 +29,7 @@ group :development, :test do
 end
 
 group :development do
-  gem "brakeman",            "8.0.4", require: false
+  gem "brakeman",            "8.0.5", require: false
   gem "erb_lint",            "0.9.0", require: false
   gem "listen",              "3.10.0"
   gem "rack-mini-profiler",  "4.0.1"
@@ -53,6 +53,6 @@ group :test do
   gem "faker",                    "3.8.0"
   gem "rails-controller-testing", "1.0.5"
   gem "selenium-webdriver",       "4.44.0"
-  gem "shoulda-matchers",         "7.0.1"
+  gem "shoulda-matchers",         "8.0.1"
   gem "simplecov-console",        "0.9.5", require: false
 end
