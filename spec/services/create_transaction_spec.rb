@@ -22,14 +22,24 @@ describe CreateTransaction do
           .to change { account.reload.balance }.from(10_000).to(11_000)
       end
 
-      it "increments the amount assigned in the category snapshot" do
+      it "decrements the amount used in the category snapshot" do
         expect { described_class.call(transaction: transaction) }
-          .to change { category_snapshot.reload.amount_assigned }.by(1000)
+          .to change { category_snapshot.reload.amount_used }.by(-1000)
       end
 
-      it "increments the amount assigned in the subcategory snapshot" do
+      it "decrements the amount used in the subcategory snapshot" do
         expect { described_class.call(transaction: transaction) }
-          .to change { subcategory_snapshot.reload.amount_assigned }.by(1000)
+          .to change { subcategory_snapshot.reload.amount_used }.by(-1000)
+      end
+
+      it "does not change the amount assigned in the category snapshot" do
+        expect { described_class.call(transaction: transaction) }
+          .not_to(change { category_snapshot.reload.amount_assigned })
+      end
+
+      it "does not change the amount assigned in the subcategory snapshot" do
+        expect { described_class.call(transaction: transaction) }
+          .not_to(change { subcategory_snapshot.reload.amount_assigned })
       end
 
       it "does not change available to assign" do
@@ -40,6 +50,46 @@ describe CreateTransaction do
       it "saves the transaction" do
         expect { described_class.call(transaction: transaction) }
           .to change(transaction, :persisted?).from(false).to(true)
+      end
+    end
+
+    context "with a positive amount in a monthly savings category" do
+      let(:subcategory) do
+        parent = create(:category, with_snapshot: false)
+
+        create(:category, :with_monthly_savings_target,
+               parent: parent, budget: parent.budget, with_snapshot: false)
+      end
+
+      let(:transaction) do
+        build(:transaction, account:     account,
+                            subcategory: subcategory,
+                            budget:      subcategory.budget,
+                            amount:      20_000)
+      end
+
+      before do
+        create(:category_snapshot, category:        subcategory.parent,
+                                   amount_assigned: 0,
+                                   amount_used:     0)
+        create(:category_snapshot, category:        subcategory,
+                                   amount_assigned: 0,
+                                   amount_used:     0)
+      end
+
+      it "does not change the amount assigned in the subcategory snapshot" do
+        expect { described_class.call(transaction: transaction) }
+          .not_to(change { subcategory_snapshot.reload.amount_assigned })
+      end
+
+      it "does not fund the savings target" do
+        described_class.call(transaction: transaction)
+
+        progress = TargetProgress.new(category: subcategory,
+                                      rollover: 0,
+                                      snapshot: subcategory_snapshot.reload)
+
+        expect(progress.funded_amount).to eq(0)
       end
     end
 

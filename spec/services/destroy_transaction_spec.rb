@@ -27,14 +27,19 @@ describe DestroyTransaction do
           .to change { account.reload.balance }.from(11_000).to(10_000)
       end
 
-      it "decrements the amount assigned in the category snapshot" do
+      it "restores the amount used in the category snapshot" do
         expect { described_class.call(transaction: transaction) }
-          .to change { category_snapshot.reload.amount_assigned }.by(-1000)
+          .to change { category_snapshot.reload.amount_used }.by(1000)
       end
 
-      it "decrements the amount assigned in the subcategory snapshot" do
+      it "restores the amount used in the subcategory snapshot" do
         expect { described_class.call(transaction: transaction) }
-          .to change { subcategory_snapshot.reload.amount_assigned }.by(-1000)
+          .to change { subcategory_snapshot.reload.amount_used }.by(1000)
+      end
+
+      it "does not change the amount assigned in the category snapshot" do
+        expect { described_class.call(transaction: transaction) }
+          .not_to(change { category_snapshot.reload.amount_assigned })
       end
 
       it "does not change available to assign" do

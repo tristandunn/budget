@@ -57,16 +57,16 @@ describe UpdateTransaction do
     context "when changing amount sign on the same subcategory" do
       let(:attributes) { { amount: 500 } }
 
-      it "reverses the old category snapshot amount used" do
+      it "adjusts the category snapshot amount used by the negated delta" do
         snapshot = subcategory.parent.snapshots.for_month(transaction.date).first
 
-        expect { update }.to change { snapshot.reload.amount_used }.by(-1000)
+        expect { update }.to change { snapshot.reload.amount_used }.by(-1500)
       end
 
-      it "applies the new category snapshot amount assigned" do
+      it "does not change the category snapshot amount assigned" do
         snapshot = subcategory.parent.snapshots.for_month(transaction.date).first
 
-        expect { update }.to change { snapshot.reload.amount_assigned }.by(500)
+        expect { update }.not_to(change { snapshot.reload.amount_assigned })
       end
     end
 
@@ -78,16 +78,16 @@ describe UpdateTransaction do
         create(:transaction, budget: subcategory.budget, subcategory: subcategory, amount: 1000)
       end
 
-      it "reverses the old subcategory snapshot amount assigned" do
+      it "reverses the old subcategory snapshot amount used" do
         snapshot = subcategory.snapshots.for_month(transaction.date).first
 
-        expect { update }.to change { snapshot.reload.amount_assigned }.by(-1000)
+        expect { update }.to change { snapshot.reload.amount_used }.by(1000)
       end
 
-      it "applies the new subcategory snapshot amount assigned" do
+      it "applies the new subcategory snapshot amount used" do
         snapshot = new_subcategory.snapshots.for_month(transaction.date).first
 
-        expect { update }.to change { snapshot.reload.amount_assigned }.by(1000)
+        expect { update }.to change { snapshot.reload.amount_used }.by(-1000)
       end
     end
 
@@ -98,10 +98,10 @@ describe UpdateTransaction do
         create(:transaction, budget: subcategory.budget, subcategory: subcategory, amount: 1000)
       end
 
-      it "adjusts the category snapshot amount assigned" do
+      it "adjusts the category snapshot amount used by the negated delta" do
         snapshot = subcategory.parent.snapshots.for_month(transaction.date).first
 
-        expect { update }.to change { snapshot.reload.amount_assigned }.by(1000)
+        expect { update }.to change { snapshot.reload.amount_used }.by(-1000)
       end
     end
 

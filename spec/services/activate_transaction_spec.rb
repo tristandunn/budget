@@ -36,16 +36,28 @@ describe ActivateTransaction do
           .to change { account.reload.balance }.from(10_000).to(11_000)
       end
 
-      it "increments the amount assigned in the category snapshot" do
+      it "decrements the amount used in the category snapshot" do
         described_class.call(attributes: new_attributes, transaction: transaction)
 
-        expect(category_snapshot.amount_assigned).to eq(1000)
+        expect(category_snapshot.amount_used).to eq(-1000)
       end
 
-      it "increments the amount assigned in the subcategory snapshot" do
+      it "decrements the amount used in the subcategory snapshot" do
         described_class.call(attributes: new_attributes, transaction: transaction)
 
-        expect(subcategory_snapshot.amount_assigned).to eq(1000)
+        expect(subcategory_snapshot.amount_used).to eq(-1000)
+      end
+
+      it "does not change the amount assigned in the category snapshot" do
+        described_class.call(attributes: new_attributes, transaction: transaction)
+
+        expect(category_snapshot.amount_assigned).to eq(0)
+      end
+
+      it "does not change the amount assigned in the subcategory snapshot" do
+        described_class.call(attributes: new_attributes, transaction: transaction)
+
+        expect(subcategory_snapshot.amount_assigned).to eq(0)
       end
 
       it "does not change available to assign" do

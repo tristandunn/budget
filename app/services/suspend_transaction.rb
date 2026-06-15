@@ -60,16 +60,13 @@ class SuspendTransaction
     end
   end
 
-  # Reverse the effect of the transaction on a single snapshot.
+  # Reverse the effect of the transaction on a single snapshot. The snapshot
+  # was moved by the negated amount when applied, so reverse it by the amount.
   #
   # @param snapshot [CategorySnapshot] The snapshot to reverse.
   # @return [void]
   def reverse_snapshot(snapshot)
-    if amount.positive?
-      snapshot.increment!(:amount_assigned, -amount)
-    else
-      snapshot.increment!(:amount_used, amount)
-    end
+    snapshot.increment!(:amount_used, amount)
   end
 
   # Return the category and subcategory snapshots for the transaction month.

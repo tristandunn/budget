@@ -54,40 +54,18 @@ class UpdateTransaction
     end
   end
 
-  # Adjust the category effects based on what changed.
+  # Adjust the category effects based on what changed. When the same snapshots
+  # are affected, a single net adjustment by the amount delta avoids reversing
+  # and reapplying the full effect, and an unchanged amount needs no adjustment
+  # at all.
   #
   # @return [void]
   def adjust_category_effects
-    if delta_optimizable?
-      adjust_snapshot_deltas
-    else
-      apply_category_effect(previous_subcategory, previous_date, previous_amount, multiplier: -1)
+    if snapshots_changed?
+      apply_category_effect(previous_subcategory, previous_date, -previous_amount)
       apply_category_effect(subcategory, date, amount)
-    end
-  end
-
-  # Adjust a single snapshot by the per-column deltas.
-  #
-  # @param snapshot [CategorySnapshot] The snapshot to adjust.
-  # @return [void]
-  def adjust_snapshot_delta(snapshot)
-    if assigned_delta.nonzero?
-      snapshot.increment!(:amount_assigned, assigned_delta)
-    end
-
-    if used_delta.nonzero?
-      snapshot.increment!(:amount_used, used_delta)
-    end
-  end
-
-  # Adjust snapshot deltas when the subcategory and month are unchanged.
-  #
-  # @return [void]
-  def adjust_snapshot_deltas
-    if amount_delta.nonzero?
-      snapshots_for(subcategory, date).each do |snapshot|
-        adjust_snapshot_delta(snapshot)
-      end
+    elsif amount_delta.nonzero?
+      apply_category_effect(subcategory, date, amount_delta)
     end
   end
 
@@ -98,52 +76,24 @@ class UpdateTransaction
     @amount_delta ||= amount - previous_amount
   end
 
-  # Apply or reverse a category effect. The multiplier controls direction:
-  # +1 applies the effect, -1 reverses it.
+  # Apply a signed amount to the appropriate balance for the subcategory. An
+  # inflow moves available to assign, while any other subcategory moves the used
+  # column of each snapshot by the negated amount, since spending is negative
+  # and a refund is positive. The caller negates the amount to reverse an
+  # effect.
   #
   # @param subcategory [Category] The subcategory to apply the effect to.
   # @param date [Date] The date for snapshot lookup.
-  # @param amount [Integer] The original transaction amount.
-  # @param multiplier [Integer] The direction multiplier (1 or -1).
+  # @param amount [Integer] The signed amount to apply.
   # @return [void]
-  def apply_category_effect(subcategory, date, amount, multiplier: 1)
+  def apply_category_effect(subcategory, date, amount)
     if subcategory.inflow?
-      budget.increment!(:available_to_assign, amount * multiplier)
+      budget.increment!(:available_to_assign, amount)
     else
       snapshots_for(subcategory, date).each do |snapshot|
-        apply_to_snapshot(snapshot, amount, multiplier: multiplier)
+        snapshot.increment!(:amount_used, -amount)
       end
     end
-  end
-
-  # Apply an amount to the appropriate snapshot column. The sign of the amount
-  # determines the column, the multiplier controls the direction.
-  #
-  # @param snapshot [CategorySnapshot] The snapshot to adjust.
-  # @param amount [Integer] The original transaction amount.
-  # @param multiplier [Integer] The direction multiplier (1 or -1).
-  # @return [void]
-  def apply_to_snapshot(snapshot, amount, multiplier: 1)
-    if amount.positive?
-      snapshot.increment!(:amount_assigned, amount * multiplier)
-    else
-      snapshot.increment!(:amount_used, -amount * multiplier)
-    end
-  end
-
-  # Return the delta for the amount assigned column.
-  #
-  # @return [Integer] The change in amount assigned.
-  def assigned_delta
-    @assigned_delta ||= [amount, 0].max - [previous_amount, 0].max
-  end
-
-  # Return whether the delta optimization can be used because neither
-  # subcategory is inflow and the subcategory and month are unchanged.
-  #
-  # @return [Boolean] Whether the delta optimization can be used.
-  def delta_optimizable?
-    [previous_subcategory, subcategory].none?(&:inflow?) && !snapshots_changed?
   end
 
   # Return whether different snapshots are affected due to a subcategory or
@@ -166,12 +116,5 @@ class UpdateTransaction
       subcategory.parent.snapshots.for_month(date).find_or_create_by!(budget: budget),
       subcategory.snapshots.for_month(date).find_or_create_by!(budget: budget)
     ]
-  end
-
-  # Return the delta for the amount used column.
-  #
-  # @return [Integer] The change in amount used.
-  def used_delta
-    @used_delta ||= [amount, 0].min.abs - [previous_amount, 0].min.abs
   end
 end

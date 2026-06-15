@@ -58,16 +58,14 @@ class ActivateTransaction
     budget.increment!(:available_to_assign, amount)
   end
 
-  # Update the category and subcategory snapshots based on transaction amount.
+  # Update the category and subcategory snapshots based on the transaction
+  # amount. A negative amount is spending and a positive amount is a refund, so
+  # both move the used column by the negated amount.
   #
   # @return [void]
   def increment_snapshots
     snapshots.each do |snapshot|
-      if amount.positive?
-        snapshot.increment!(:amount_assigned, amount)
-      else
-        snapshot.increment!(:amount_used, amount.abs)
-      end
+      snapshot.increment!(:amount_used, -amount)
     end
   end
 
