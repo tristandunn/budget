@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 class BudgetSnapshotMonth
-  def initialize(budget, month: nil, year: nil)
-    @budget = budget
-    @month  = month
-    @year   = year
+  def initialize(budget, month: nil, snapshot_range: nil, year: nil)
+    @budget         = budget
+    @month          = month
+    @snapshot_range = snapshot_range
+    @year           = year
   end
 
   # Returns true if this snapshot is on the current month.

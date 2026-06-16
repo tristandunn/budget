@@ -1,5 +1,5 @@
 <%= turbo_stream.replace dom_id(@transaction, :status) do %>
-  <%= render "transactions/status_indicator", transaction: @transaction %>
+  <%= render "transactions/status_indicator", context: params[:context], transaction: @transaction %>
 <% end %>
 
 <%= turbo_stream.replace "cleared_balance" do %>
@@ -12,4 +12,17 @@
   <p id="uncleared_balance" class="text-base font-semibold">
     <%= number_to_money @transaction.account.uncleared_balance %>
   </p>
+<% end %>
+
+<% if params[:context] == "transactions" %>
+  <%= turbo_stream.replace "budget_cleared_balance" do %>
+    <p id="budget_cleared_balance" class="text-base font-semibold">
+      <%= number_to_money @transaction.budget.cleared_balance %>
+    </p>
+  <% end %>
+  <%= turbo_stream.replace "budget_uncleared_balance" do %>
+    <p id="budget_uncleared_balance" class="text-base font-semibold">
+      <%= number_to_money @transaction.budget.uncleared_balance %>
+    </p>
+  <% end %>
 <% end %>

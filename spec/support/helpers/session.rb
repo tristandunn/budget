@@ -29,7 +29,6 @@ module RSpec
         end
 
         def sign_out
-          find("button[aria-label='#{t("budgets.show.menu")}']").click
           click_button t("budgets.show.sign_out")
         end
       end

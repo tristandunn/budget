@@ -1,4 +1,4 @@
-<%# locals: (account:, budget:) %>
+<%# locals: (account:, budget:, reconciled_summary: true) %>
 <div data-controller="popover" class="relative">
   <button
     type="button"
@@ -29,18 +29,14 @@
     "
   >
     <%= button_to budget_account_reconciliation_path(budget, account),
-                  class: "flex w-full items-center justify-between gap-4 px-3 py-2 text-left text-sm text-taupe-800",
+                  class: "flex w-full cursor-pointer items-center justify-between gap-4 px-3 py-2 text-left text-sm text-taupe-800",
                   form:  { data: { turbo_confirm: t(".reconcile_confirm") } } do %>
       <span class="flex flex-col">
         <span><%= t(".reconcile") %></span>
 
-        <span class="text-xs text-taupe-500">
-          <% if account.last_reconciled_at %>
-            <%= t(".reconciled", time: relative_time(account.last_reconciled_at.to_date)) %>
-          <% else %>
-            <%= t(".reconciled_never") %>
-          <% end %>
-        </span>
+        <% if reconciled_summary %>
+          <span class="text-xs text-taupe-500"><%= account_reconciled_summary(account) %></span>
+        <% end %>
       </span>
 
       <svg

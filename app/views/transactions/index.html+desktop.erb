@@ -1,0 +1,23 @@
+<div class="flex h-dvh">
+  <%= render "shared/sidebar", budget: @budget %>
+
+  <main class="flex min-w-0 flex-1 flex-col overflow-hidden bg-white">
+    <div class="sticky top-0 z-10 bg-white">
+      <header class="flex items-center justify-between gap-4 whitespace-nowrap bg-white px-6 py-4">
+        <h1 class="text-lg font-semibold"><%= t("sidebar.all_accounts") %></h1>
+
+        <%= render "transactions/actions", budget: @budget %>
+      </header>
+
+      <%= render "shared/transactions/balances", record: @budget, prefix: "budget_" %>
+    </div>
+
+    <section class="-mt-px min-w-0 flex-1 overflow-y-auto">
+      <%= render "transactions/list",
+                 context:                :transactions,
+                 current_transactions:   @current_transactions,
+                 empty_message:          t(".empty"),
+                 scheduled_transactions: @scheduled_transactions %>
+    </section>
+  </main>
+</div>

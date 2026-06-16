@@ -12,10 +12,18 @@ describe "Listing payees", :js do
     visit budget_path(budget)
   end
 
-  it "navigates from the budget menu to the payees list" do
-    find("button[aria-label='#{t("budgets.show.menu")}']").click
+  it "navigates from the sidebar to the payees list" do
     click_on t("budgets.show.manage_payees")
 
     expect(page).to have_text(payee_one.name).and(have_text(payee_two.name))
+  end
+
+  context "when on a mobile browser", :mobile do
+    it "navigates from the budget menu to the payees list" do
+      find("button[aria-label='#{t("budgets.show.menu")}']").click
+      click_on t("budgets.show.manage_payees")
+
+      expect(page).to have_text(payee_one.name).and(have_text(payee_two.name))
+    end
   end
 end

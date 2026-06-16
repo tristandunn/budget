@@ -1,0 +1,42 @@
+<div class="flex h-dvh">
+  <%= render "shared/sidebar", budget: @budget, account_id: @account.id %>
+
+  <main class="flex min-w-0 flex-1 flex-col overflow-hidden bg-white">
+    <div data-controller="dialog">
+      <dialog
+        id="account_dialog_modal"
+        class="dialog"
+        aria-labelledby="account_dialog_title"
+        data-dialog-target="dialog"
+        data-action="click->dialog#backdropClose cancel->dialog#cancel"
+      >
+        <turbo-frame id="account_dialog" data-action="turbo:frame-load->dialog#open"></turbo-frame>
+      </dialog>
+    </div>
+
+    <div class="sticky top-0 z-10 bg-white">
+      <header class="flex items-center justify-between gap-4 whitespace-nowrap bg-white px-6 py-4">
+        <div>
+          <h1 class="text-lg font-semibold"><%= @account.name %></h1>
+
+          <p class="text-xs text-taupe-500"><%= account_reconciled_summary(@account) %></p>
+        </div>
+
+        <%= render "accounts/transactions/actions",
+                   account:            @account,
+                   budget:             @budget,
+                   reconciled_summary: false %>
+      </header>
+
+      <%= render "shared/transactions/balances", record: @account %>
+    </div>
+
+    <section class="-mt-px min-w-0 flex-1 overflow-y-auto">
+      <%= render "transactions/list",
+                 context:                :account,
+                 current_transactions:   @current_transactions,
+                 empty_message:          t(".empty"),
+                 scheduled_transactions: @scheduled_transactions %>
+    </section>
+  </main>
+</div>

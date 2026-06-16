@@ -1,0 +1,14 @@
+<%# locals: (month_snapshot:) %>
+<div class="flex items-center justify-between px-4 py-2 text-sm">
+  <span class="flex items-center gap-2">
+    <span class="<%= progress_color(month_snapshot) %>">
+      <%= render "shared/progress_pie",
+                 progress: month_snapshot,
+                 label:    month_progress_label(month_snapshot) %>
+    </span>
+
+    <%= l(month_snapshot.date, format: :month) %>
+  </span>
+
+  <span><%= number_to_money month_snapshot.total_assigned %></span>
+</div>

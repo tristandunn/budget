@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe "Accounts" do
+describe "Accounts", :mobile do
   context "with a budget" do
     let(:budget) { create(:budget) }
 

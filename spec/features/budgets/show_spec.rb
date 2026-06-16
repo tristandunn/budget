@@ -87,6 +87,29 @@ describe "Budget" do
       end
 
       it "hides subcategories when clicking the category" do
+        find("th[scope='row']", text: category.name).click
+
+        expect(page).to have_no_text(subcategory.name)
+      end
+
+      it "shows subcategories when clicking a collapsed category" do
+        2.times { find("th[scope='row']", text: category.name).click }
+
+        expect(page).to have_text(subcategory.name)
+      end
+    end
+
+    context "when toggling a category on a mobile browser", :js, :mobile do
+      let(:budget)      { subcategory.budget }
+      let(:category)    { subcategory.parent }
+      let(:subcategory) { create(:category, :subcategory) }
+
+      before do
+        sign_in_for(budget)
+        visit budget_path(budget)
+      end
+
+      it "hides subcategories when clicking the category" do
         find("thead th", text: category.name).click
 
         expect(page).to have_no_text(subcategory.name)

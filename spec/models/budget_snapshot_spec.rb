@@ -84,6 +84,154 @@ describe BudgetSnapshot do
     end
   end
 
+  describe "#funded?" do
+    subject(:budget_snapshot) { described_class.new(budget) }
+
+    let(:subcategory) do
+      create(:category, :subcategory, :with_monthly_spending_target, budget: budget, with_snapshot: false)
+    end
+
+    context "when the monthly targets are fully funded" do
+      before do
+        create(:category_snapshot, budget: budget, category: subcategory, amount_assigned: 200_00, amount_used: 0)
+      end
+
+      it { is_expected.to be_funded }
+    end
+
+    context "when the monthly targets are not fully funded" do
+      before do
+        create(:category_snapshot, budget: budget, category: subcategory, amount_assigned: 100_00, amount_used: 0)
+      end
+
+      it { is_expected.not_to be_funded }
+    end
+  end
+
+  describe "#funded_percentage" do
+    subject(:budget_snapshot) { described_class.new(budget) }
+
+    context "without monthly targets" do
+      it "returns zero" do
+        expect(budget_snapshot.funded_percentage).to eq(0)
+      end
+    end
+
+    context "with monthly targets" do
+      let(:first_target)  do
+        create(:category, :subcategory, :with_monthly_spending_target, budget: budget, with_snapshot: false)
+      end
+      let(:second_target) do
+        create(:category, :subcategory, :with_monthly_spending_target, budget: budget, with_snapshot: false)
+      end
+
+      before do
+        create(:category_snapshot, budget: budget, category: first_target, amount_assigned: 200_00, amount_used: 0)
+        create(:category_snapshot, budget: budget, category: second_target, amount_assigned: 100_00, amount_used: 0)
+      end
+
+      it "returns the aggregate funded percentage across the targets" do
+        expect(budget_snapshot.funded_percentage).to eq(75)
+      end
+    end
+
+    context "when one target is overfunded and another is unfunded" do
+      before do
+        overfunded = create(:category, :subcategory, :with_monthly_spending_target, budget:        budget,
+                                                                                    with_snapshot: false)
+        unfunded   = create(:category, :subcategory, :with_monthly_spending_target, budget:        budget,
+                                                                                    with_snapshot: false)
+
+        create(:category_snapshot, budget: budget, category: overfunded, amount_assigned: 400_00, amount_used: 0)
+        create(:category_snapshot, budget: budget, category: unfunded, amount_assigned: 0, amount_used: 0)
+      end
+
+      it "caps each target's contribution so overfunding does not mask the shortfall" do
+        expect(budget_snapshot.funded_percentage).to eq(50)
+      end
+    end
+
+    context "when a target is funded below zero" do
+      before do
+        overspent = create(:category, :subcategory, :with_monthly_savings_target, budget:        budget,
+                                                                                  with_snapshot: false)
+
+        create(:category_snapshot, budget: budget, category: overspent, amount_assigned: -100_00, amount_used: 0)
+      end
+
+      it "does not return a negative percentage" do
+        expect(budget_snapshot.funded_percentage).to eq(0)
+      end
+    end
+  end
+
+  describe "#future_months" do
+    subject(:budget_snapshot) { described_class.new(budget) }
+
+    let(:category) { create(:category, budget: budget, with_snapshot: false) }
+
+    context "with several assigned future months" do
+      before do
+        create(:category_snapshot, budget:          budget,
+                                   category:        category,
+                                   date:            Date.current.beginning_of_month,
+                                   amount_assigned: 100)
+
+        (1..7).each do |offset|
+          create(:category_snapshot, budget:          budget,
+                                     category:        category,
+                                     date:            offset.months.from_now.beginning_of_month,
+                                     amount_assigned: 100)
+        end
+      end
+
+      it "returns up to six future months ordered from the nearest" do
+        expect(budget_snapshot.future_months.map(&:date)).to eq(
+          (1..6).map { |offset| offset.months.from_now.beginning_of_month }
+        )
+      end
+    end
+
+    context "with a future month that has no assignments" do
+      before do
+        create(:category_snapshot, budget:          budget,
+                                   category:        category,
+                                   date:            Date.current.beginning_of_month,
+                                   amount_assigned: 100)
+        create(:category_snapshot, budget:          budget,
+                                   category:        category,
+                                   date:            1.month.from_now.beginning_of_month,
+                                   amount_assigned: 0)
+      end
+
+      it "excludes the unassigned month" do
+        expect(budget_snapshot.future_months).to be_empty
+      end
+    end
+
+    context "with multiple categories assigned in the same future month" do
+      let(:other_category) { create(:category, budget: budget, with_snapshot: false) }
+
+      before do
+        create(:category_snapshot, budget:          budget,
+                                   category:        category,
+                                   date:            Date.current.beginning_of_month,
+                                   amount_assigned: 100)
+
+        [category, other_category].each do |assigned_category|
+          create(:category_snapshot, budget:          budget,
+                                     category:        assigned_category,
+                                     date:            1.month.from_now.beginning_of_month,
+                                     amount_assigned: 100)
+        end
+      end
+
+      it "returns the month only once" do
+        expect(budget_snapshot.future_months.size).to eq(1)
+      end
+    end
+  end
+
   describe "#snapshot_for" do
     subject(:budget_snapshot) { described_class.new(budget) }
 
@@ -211,6 +359,82 @@ describe BudgetSnapshot do
       end
 
       it { is_expected.to eq(progress) }
+    end
+  end
+
+  describe "#total_assigned" do
+    subject(:budget_snapshot) { described_class.new(budget) }
+
+    let(:category) { create(:category, budget: budget, with_snapshot: false) }
+
+    before do
+      create(:category_snapshot, budget: budget, category: category, amount_assigned: 300, amount_used: 0)
+      create(:category_snapshot, budget:          budget,
+                                 category:        create(:category, :inflow, budget: budget),
+                                 amount_assigned: 999,
+                                 amount_used:     0)
+    end
+
+    it "sums the assigned amount for the month, excluding inflow categories" do
+      expect(budget_snapshot.total_assigned).to eq(300)
+    end
+  end
+
+  describe "#total_available" do
+    subject(:budget_snapshot) { described_class.new(budget) }
+
+    let(:parent)      { create(:category, budget: budget, with_snapshot: false) }
+    let(:subcategory) { create(:category, budget: budget, parent: parent, with_snapshot: false) }
+
+    before do
+      create(:category_snapshot, budget: budget, category: subcategory, amount_assigned: 300, amount_used: 90)
+      create(:category_snapshot, budget:          budget,
+                                 category:        create(:category, :inflow, budget: budget),
+                                 amount_assigned: 999,
+                                 amount_used:     0)
+    end
+
+    it "sums the cumulative available amount, excluding inflow categories" do
+      expect(budget_snapshot.total_available).to eq(210)
+    end
+  end
+
+  describe "#total_rollover" do
+    subject(:budget_snapshot) { described_class.new(budget) }
+
+    let(:parent)      { create(:category, budget: budget, with_snapshot: false) }
+    let(:subcategory) { create(:category, budget: budget, parent: parent, with_snapshot: false) }
+
+    before do
+      create(:category_snapshot, budget:          budget,
+                                 category:        subcategory,
+                                 date:            1.month.ago.beginning_of_month,
+                                 amount_assigned: 100,
+                                 amount_used:     40)
+      create(:category_snapshot, budget: budget, category: subcategory, amount_assigned: 300, amount_used: 150)
+      create(:category_snapshot, budget: budget, category: parent, amount_assigned: 300, amount_used: 150)
+    end
+
+    it "returns the available amount carried in from prior months" do
+      expect(budget_snapshot.total_rollover).to eq(60)
+    end
+  end
+
+  describe "#total_used" do
+    subject(:budget_snapshot) { described_class.new(budget) }
+
+    let(:category) { create(:category, budget: budget, with_snapshot: false) }
+
+    before do
+      create(:category_snapshot, budget: budget, category: category, amount_assigned: 0, amount_used: 150)
+      create(:category_snapshot, budget:          budget,
+                                 category:        create(:category, :inflow, budget: budget),
+                                 amount_assigned: 0,
+                                 amount_used:     999)
+    end
+
+    it "sums the used amount for the month, excluding inflow categories" do
+      expect(budget_snapshot.total_used).to eq(150)
     end
   end
 

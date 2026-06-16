@@ -1,11 +1,16 @@
 # frozen_string_literal: true
 
 class AccountsController < ApplicationController
-  # Render the accounts index.
+  # Render the accounts index on mobile or redirect to the transactions
+  # on desktop.
   def index
-    @budget          = current_budget
-    @cash_accounts   = current_budget.accounts.cash.load
-    @credit_accounts = current_budget.accounts.credit.load
+    if request.variant.mobile?
+      @budget          = current_budget
+      @cash_accounts   = current_budget.accounts.cash.load
+      @credit_accounts = current_budget.accounts.credit.load
+    else
+      redirect_to budget_transactions_path(current_budget)
+    end
   end
 
   # Render the new account form.

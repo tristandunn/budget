@@ -27,6 +27,22 @@ module BudgetHelper
     end
   end
 
+  # Returns the localized label describing a month's funding progress, the
+  # snapshot counterpart to {#progress_label}, used as the accessible name for
+  # the future-month progress icon.
+  #
+  # @param snapshot [BudgetSnapshot] The month snapshot to describe.
+  # @return [String] The localized progress label.
+  def month_progress_label(snapshot)
+    month = l(snapshot.date, format: :month)
+
+    if snapshot.funded?
+      t("budgets.show.future_funded", month: month)
+    else
+      t("budgets.show.future_progress", month: month, percentage: snapshot.funded_percentage)
+    end
+  end
+
   # Returns the CSS classes for a navigation arrow link.
   #
   # @return [String] A string representing the CSS classes for the navigation arrow link.
@@ -34,10 +50,11 @@ module BudgetHelper
     class_names("h-5 w-5", "text-taupe-300 pointer-events-none" => disabled)
   end
 
-  # Returns the CSS class for a target's progress icon, signaling lime when
-  # fully funded and yellow when underfunded.
+  # Returns the CSS class for a progress icon, signaling lime when fully funded
+  # and yellow when underfunded. Accepts any progress-like object that responds
+  # to +funded?+, such as a month {BudgetSnapshot} or a {TargetProgress}.
   #
-  # @param progress [TargetProgress] The progress to evaluate.
+  # @param progress [BudgetSnapshot, TargetProgress] The progress to evaluate.
   # @return [String] The CSS class for the progress icon.
   def progress_color(progress)
     if progress.funded?

@@ -3,6 +3,28 @@
 require "rails_helper"
 
 describe TransactionsHelper do
+  describe "#account_reconciled_summary" do
+    subject { helper.account_reconciled_summary(account) }
+
+    let(:account) { build_stubbed(:account) }
+
+    context "when the account has been reconciled" do
+      before do
+        allow(account).to receive(:last_reconciled_at).and_return(Time.current)
+      end
+
+      it { is_expected.to eq(t("accounts.transactions.actions.reconciled", time: t("dates.today").downcase)) }
+    end
+
+    context "when the account has never been reconciled" do
+      before do
+        allow(account).to receive(:last_reconciled_at).and_return(nil)
+      end
+
+      it { is_expected.to eq(t("accounts.transactions.actions.reconciled_never")) }
+    end
+  end
+
   describe "#relative_date" do
     it "returns today for the current date" do
       expect(helper.relative_date(Date.current)).to eq(t("dates.today"))

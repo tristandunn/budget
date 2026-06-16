@@ -1,4 +1,4 @@
-<%# locals: (transaction:) %>
+<%# locals: (transaction:, context: nil) %>
 <div id="<%= dom_id(transaction, :status) %>" class="flex items-center">
   <% if transaction.upcoming? %>
     <span role="img" aria-label="<%= t(".upcoming") %>">

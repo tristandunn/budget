@@ -1,0 +1,77 @@
+<%# locals: (budget_snapshot:) %>
+<aside class="flex w-96 shrink-0 flex-col border-l border-taupe-300 bg-taupe-100">
+  <div class="p-4 space-y-4">
+    <div
+      class="group bg-white rounded-xl"
+      data-controller="collapsible"
+      data-collapsible-id-value="budget-summary"
+    >
+      <h2
+        class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-taupe-700 cursor-pointer"
+        data-action="click->collapsible#toggle"
+      >
+        <%= render "shared/collapsible_arrow" %>
+
+        <%= t("budgets.show.summary", month: l(budget_snapshot.date, format: :month)) %>
+      </h2>
+
+      <div
+        class="border-t border-taupe-200 divide-y divide-taupe-200 group-[.collapsed]:hidden"
+        data-collapsible-content="collapsible-budget-summary"
+      >
+        <div class="flex items-center justify-between px-4 py-2 text-sm">
+          <span><%= t("budgets.show.rollover") %></span>
+          <span><%= number_to_money budget_snapshot.total_rollover %></span>
+        </div>
+
+        <div class="flex items-center justify-between px-4 py-2 text-sm">
+          <span><%= t("budgets.show.assigned") %></span>
+          <span><%= number_to_money budget_snapshot.total_assigned %></span>
+        </div>
+
+        <div class="flex items-center justify-between px-4 py-2 text-sm">
+          <span><%= t("budgets.show.activity") %></span>
+          <span><%= number_to_money(-budget_snapshot.total_used) %></span>
+        </div>
+
+        <div class="flex items-center justify-between px-4 py-2 text-sm">
+          <span><%= t("budgets.show.available") %></span>
+          <span><%= number_to_money budget_snapshot.total_available %></span>
+        </div>
+      </div>
+    </div>
+
+    <% if budget_snapshot.future_months.any? %>
+      <div
+        class="group bg-white rounded-xl"
+        data-controller="collapsible"
+        data-collapsible-id-value="future-months"
+      >
+        <h2
+          class="
+            flex items-center gap-2 px-4 py-2 text-sm font-semibold text-taupe-700
+            cursor-pointer
+          "
+          data-action="click->collapsible#toggle"
+        >
+          <%= render "shared/collapsible_arrow" %>
+
+          <%= t("budgets.show.future_assigned") %>
+
+          <span class="ml-auto">
+            <%= number_to_money budget_snapshot.future_months.sum(&:total_assigned) %>
+          </span>
+        </h2>
+
+        <div
+          class="border-t border-taupe-200 group-[.collapsed]:hidden"
+          data-collapsible-content="collapsible-future-months"
+        >
+          <%= render partial:    "budgets/future_month",
+                     collection: budget_snapshot.future_months,
+                     as:         :month_snapshot %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</aside>

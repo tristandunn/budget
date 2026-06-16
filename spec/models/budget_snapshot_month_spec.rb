@@ -199,5 +199,17 @@ describe BudgetSnapshotMonth do
         expect(snapshot_range).to eq(Date.current.beginning_of_month..1.month.from_now.beginning_of_month)
       end
     end
+
+    context "with a provided range" do
+      before do
+        create(:category_snapshot, budget: budget, date: 3.months.ago.beginning_of_month)
+      end
+
+      it "returns the provided range without computing one" do
+        range = Date.current.beginning_of_month..1.month.from_now.beginning_of_month
+
+        expect(described_class.new(budget, snapshot_range: range).snapshot_range).to eq(range)
+      end
+    end
   end
 end

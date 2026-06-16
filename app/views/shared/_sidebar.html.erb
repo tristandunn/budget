@@ -1,0 +1,263 @@
+<%# locals: (budget:, account_id: nil) %>
+<div data-controller="dialog">
+  <dialog
+    id="transaction_dialog_modal"
+    class="dialog"
+    aria-labelledby="transaction_dialog_title"
+    data-dialog-target="dialog"
+    data-action="click->dialog#backdropClose cancel->dialog#cancel"
+  >
+    <turbo-frame id="transaction_dialog" data-action="turbo:frame-load->dialog#open"></turbo-frame>
+  </dialog>
+</div>
+
+<div data-controller="dialog" data-action="dialog:close->dialog#close">
+  <dialog
+    id="payees_dialog_modal"
+    class="dialog"
+    aria-labelledby="payees_dialog_title"
+    data-dialog-target="dialog"
+    data-action="click->dialog#backdropClose cancel->dialog#cancel"
+  >
+    <turbo-frame id="payees_dialog" data-action="turbo:frame-load->dialog#open"></turbo-frame>
+  </dialog>
+</div>
+
+<div data-controller="dialog" data-action="dialog:close->dialog#close">
+  <dialog
+    id="payee_rename_dialog_modal"
+    class="dialog"
+    aria-labelledby="payee_rename_dialog_title"
+    data-dialog-target="dialog"
+    data-action="click->dialog#backdropClose cancel->dialog#cancel"
+  >
+    <turbo-frame id="payee_rename_dialog" data-action="turbo:frame-load->dialog#open"></turbo-frame>
+  </dialog>
+</div>
+
+<aside class="flex w-72 shrink-0 flex-col bg-indigo-950 text-indigo-100">
+  <div class="shrink-0 px-5 py-4">
+    <div class="truncate text-lg font-semibold text-white"><%= t("title") %></div>
+    <div class="truncate text-xs text-indigo-300"><%= Current.user.email %></div>
+  </div>
+
+  <div class="shrink-0 px-3 pb-2">
+    <%= link_to new_budget_transaction_path(budget, account_id: account_id),
+                id:    "add-transaction",
+                aria:  { label: t("toolbar.add_transaction") },
+                data:  { turbo_frame: "transaction_dialog" },
+                class: "
+                  flex items-center justify-center gap-2 rounded-lg bg-white/5 px-3 py-2 text-sm
+                  font-medium text-indigo-100 no-underline hover:bg-white/10
+                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400
+                  focus-visible:ring-offset-2 focus-visible:ring-offset-indigo-950
+                " do %>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-5 w-5"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        aria-hidden="true"
+      >
+        <path
+          d="M12.75 7.75a.75.75 0 0 0-1.5 0v3.5h-3.5a.75.75 0 0 0 0 1.5h3.5v3.5a.75.75 0 0 0 1.5 0v-3.5h3.5a.75.75 0 0 0 0-1.5h-3.5v-3.5Z"
+        />
+
+        <path
+          d="M12 1c6.075 0 11 4.925 11 11s-4.925 11-11 11S1 18.075 1 12 5.925 1 12 1ZM2.5 12a9.5 9.5 0 0 0 9.5 9.5 9.5 9.5 0 0 0 9.5-9.5A9.5 9.5 0 0 0 12 2.5 9.5 9.5 0 0 0 2.5 12Z"
+        />
+      </svg>
+
+      <%= t("toolbar.add_transaction") %>
+    <% end %>
+  </div>
+
+  <div class="min-h-0 flex-1 overflow-y-auto px-3">
+    <nav class="flex flex-col gap-1">
+      <%= link_to budget_path(budget),
+                  class: "#{sidebar_item_class(active: controller_name == "budgets")} text-base" do %>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          stroke="currentColor"
+          stroke-width="0.75"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path
+            d="M6.75 0a.75.75 0 0 1 .75.75V3h9V.75a.75.75 0 0 1 1.5 0V3h2.75c.966 0 1.75.784 1.75 1.75v16a1.75 1.75 0 0 1-1.75 1.75H3.25a1.75 1.75 0 0 1-1.75-1.75v-16C1.5 3.784 2.284 3 3.25 3H6V.75A.75.75 0 0 1 6.75 0ZM21 9.5H3v11.25c0 .138.112.25.25.25h17.5a.25.25 0 0 0 .25-.25Zm-17.75-5a.25.25 0 0 0-.25.25V8h18V4.75a.25.25 0 0 0-.25-.25Z"
+          />
+        </svg>
+
+        <%= t("toolbar.plan") %>
+      <% end %>
+
+      <%= link_to root_path, class: "#{sidebar_item_class(active: false)} text-base" do %>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          stroke="currentColor"
+          stroke-width="0.75"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path
+            d="M22.875 22.125H1.125q-.311 0-.53-.22-.22-.219-.22-.53 0-.311.22-.53.219-.22.53-.22h21.75q.311 0 .53.22.22.219.22.53 0 .311-.22.53-.219.22-.53.22Z"
+          />
+
+          <path
+            d="M3.25 10.5h4a.25.25 0 0 1 .25.25v10a.25.25 0 0 1-.25.25h-4a.25.25 0 0 1-.25-.25v-10a.25.25 0 0 1 .25-.25Zm6-6h4a.25.25 0 0 1 .25.25v16a.25.25 0 0 1-.25.25h-4a.25.25 0 0 1-.25-.25v-16a.25.25 0 0 1 .25-.25Zm6 9h4a.25.25 0 0 1 .25.25v7a.25.25 0 0 1-.25.25h-4a.25.25 0 0 1-.25-.25v-7a.25.25 0 0 1 .25-.25Z"
+          />
+        </svg>
+
+        <%= t("toolbar.reflect") %>
+      <% end %>
+
+      <%= link_to budget_transactions_path(budget),
+                  class: "#{sidebar_item_class(active: controller_path == "transactions")} text-base" do %>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          stroke="currentColor"
+          stroke-width="0.75"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path
+            d="M7.5 1.75C7.5.784 8.284 0 9.25 0h5.5c.966 0 1.75.784 1.75 1.75V4h4.75c.966 0 1.75.784 1.75 1.75v14.5A1.75 1.75 0 0 1 21.25 22H2.75A1.75 1.75 0 0 1 1 20.25V5.75C1 4.784 1.784 4 2.75 4H7.5Zm-5 10.24v8.26c0 .138.112.25.25.25h18.5a.25.25 0 0 0 .25-.25v-8.26A4.235 4.235 0 0 1 18.75 13H5.25a4.235 4.235 0 0 1-2.75-1.01Zm19-3.24v-3a.25.25 0 0 0-.25-.25H2.75a.25.25 0 0 0-.25.25v3a2.75 2.75 0 0 0 2.75 2.75h13.5a2.75 2.75 0 0 0 2.75-2.75Zm-6.5-7a.25.25 0 0 0-.25-.25h-5.5a.25.25 0 0 0-.25.25V4h6Z"
+          />
+        </svg>
+
+        <%= t("sidebar.all_accounts") %>
+      <% end %>
+    </nav>
+
+    <div class="mt-4 space-y-2">
+      <% [
+           ["sidebar-cash", t("accounts.index.cash"), budget.accounts.reject(&:credit?)],
+           ["sidebar-credit", t("accounts.index.credit"), budget.accounts.select(&:credit?)]
+         ].each do |group_id, label, accounts| %>
+        <div
+          class="group"
+          data-controller="collapsible"
+          data-collapsible-id-value="<%= group_id %>"
+        >
+          <button
+            type="button"
+            data-action="click->collapsible#toggle"
+            class="
+              flex w-full cursor-pointer items-center justify-between gap-2 rounded-lg py-1.5
+              pr-2 pl-3 text-left
+            "
+          >
+            <span class="flex items-center text-xs uppercase tracking-wide text-white">
+              <span
+                class="
+                  relative -inset-y-px mr-2 inline-block h-2 w-2 rotate-45 border-r-2 border-b-2
+                  border-white group-[.collapsed]:inset-y-0
+                  group-[.collapsed]:translate-x-(--collapsible-arrow-shift)
+                  group-[.collapsed]:-rotate-45
+                "
+                data-collapsible-arrow
+              ></span>
+
+              <%= label %>
+            </span>
+
+            <% accounts.sum(&:balance).then do |total| %>
+              <% if total.negative? %>
+                <span class="rounded-full bg-white px-2 py-0.5 text-xs font-semibold text-red-600">
+                  <%= number_to_money total %>
+                </span>
+              <% else %>
+                <span class="text-xs font-semibold text-indigo-100">
+                  <%= number_to_money total %>
+                </span>
+              <% end %>
+            <% end %>
+          </button>
+
+          <ul
+            class="space-y-1 group-[.collapsed]:hidden"
+            data-collapsible-content="collapsible-<%= group_id %>"
+          >
+            <% accounts.each do |account| %>
+              <li>
+                <%= link_to budget_account_transactions_path(budget, account),
+                            class: sidebar_account_class(active: sidebar_account_active?(account)) do %>
+                  <span class="min-w-0 truncate"><%= account.name %></span>
+
+                  <% if account.balance.negative? %>
+                    <span
+                      class="
+                        shrink-0 rounded-full bg-white px-2 py-0.5 text-xs font-semibold
+                        text-red-600
+                      "
+                    >
+                      <%= number_to_money account.balance %>
+                    </span>
+                  <% else %>
+                    <span class="shrink-0 text-xs font-medium text-indigo-100">
+                      <%= number_to_money account.balance %>
+                    </span>
+                  <% end %>
+                <% end %>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="shrink-0 px-3 pt-2 pb-3">
+    <%= link_to budget_payees_path(budget),
+                id:    "manage-payees",
+                data:  { turbo_frame: "payees_dialog" },
+                class: "#{sidebar_item_class(active: false)} text-sm" do %>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 16 16"
+        class="h-5 w-5"
+        fill="currentColor"
+        aria-hidden="true"
+      >
+        <path
+          d="M10.561 8.073a6.005 6.005 0 0 1 3.432 5.142.75.75 0 1 1-1.498.07 4.5 4.5 0 0 0-8.99 0 .75.75 0 0 1-1.498-.07 6.004 6.004 0 0 1 3.431-5.142 3.999 3.999 0 1 1 5.123 0ZM10.5 5a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Z"
+        />
+      </svg>
+
+      <%= t("budgets.show.manage_payees") %>
+    <% end %>
+
+    <% if signed_in? %>
+      <%= button_to session_path,
+                    method: :delete,
+                    class:  "#{sidebar_item_class(active: false)} w-full text-sm" do %>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 16 16"
+          class="h-5 w-5"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            d="M2 2.75C2 1.784 2.784 1 3.75 1h2.5a.75.75 0 0 1 0 1.5h-2.5a.25.25 0 0 0-.25.25v10.5c0 .138.112.25.25.25h2.5a.75.75 0 0 1 0 1.5h-2.5A1.75 1.75 0 0 1 2 13.25Z"
+          />
+
+          <path
+            d="M10.273 5.18a.75.75 0 0 1 1.06 0l2.5 2.5a.75.75 0 0 1 0 1.06l-2.5 2.5a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734L11.44 8.75H6.75a.75.75 0 0 1 0-1.5h4.69L10.273 6.24a.75.75 0 0 1 0-1.06Z"
+          />
+        </svg>
+
+        <%= t("budgets.show.sign_out") %>
+      <% end %>
+    <% end %>
+  </div>
+</aside>

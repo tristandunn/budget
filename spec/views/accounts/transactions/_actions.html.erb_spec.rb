@@ -81,4 +81,30 @@ describe "accounts/transactions/_actions.html.erb" do
       expect(html).to have_text(t("accounts.transactions.actions.reconciled_never"))
     end
   end
+
+  context "when the reconciled summary is disabled" do
+    subject(:html) do
+      render partial: "accounts/transactions/actions",
+             locals:  { account: account, budget: budget, reconciled_summary: false }
+
+      rendered
+    end
+
+    let(:account) { create(:account, budget: budget) }
+    let(:budget)  { create(:budget) }
+
+    before do
+      create(:transaction, account: account, status: :reconciled)
+    end
+
+    it "renders the reconcile button" do
+      expect(html).to have_button(t("accounts.transactions.actions.reconcile"))
+    end
+
+    it "does not render the reconciled summary" do
+      expect(html).to have_no_text(
+        t("accounts.transactions.actions.reconciled", time: t("dates.today").downcase)
+      )
+    end
+  end
 end

@@ -25,7 +25,7 @@ class BudgetsController < ApplicationController
   def current_budget
     Current.budget ||= if params[:id]
                          Current.user.budgets
-                                .includes(categories: :subcategories)
+                                .includes(:accounts, categories: :subcategories)
                                 .find(params.expect(:id))
                        else
                          Current.user.budgets.first!

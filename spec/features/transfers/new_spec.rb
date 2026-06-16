@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe "Transfer" do
+describe "Transfer", :mobile do
   let(:budget)       { create(:budget) }
   let!(:checking)    { create(:account, balance: 50_000, budget: budget) }
   let!(:credit_card) { create(:account, :credit, balance: 20_000, budget: budget) }

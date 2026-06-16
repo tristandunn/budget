@@ -36,6 +36,38 @@ describe Budget do
     it { is_expected.to validate_presence_of(:users).on(:create) }
   end
 
+  describe "#balance" do
+    let(:budget) { create(:budget) }
+
+    it "returns the combined balance of every account" do
+      create(:account, budget: budget, balance: 100_00)
+      create(:account, budget: budget, balance: -25_00)
+
+      expect(budget.balance).to eq(75_00)
+    end
+
+    it "memoizes the combined balance" do
+      allow(budget.accounts).to receive(:sum).and_call_original
+
+      budget.balance
+      budget.balance
+
+      expect(budget.accounts).to have_received(:sum).once
+    end
+  end
+
+  describe "#cleared_balance" do
+    let(:budget) { create(:budget) }
+
+    it "returns the combined balance minus pending transaction amounts" do
+      account = create(:account, budget: budget, balance: -90_00)
+      create(:transaction, account: account, amount: -20_00, budget: budget)
+      create(:transaction, :cleared, account: account, amount: -40_00, budget: budget)
+
+      expect(budget.cleared_balance).to eq(-70_00)
+    end
+  end
+
   describe "#settings" do
     subject { budget.settings }
 
@@ -47,5 +79,26 @@ describe Budget do
     end
 
     it { is_expected.to eq(settings) }
+  end
+
+  describe "#uncleared_balance" do
+    let(:budget) { create(:budget) }
+
+    it "returns the combined sum of pending transaction amounts" do
+      account = create(:account, budget: budget)
+      create(:transaction, account: account, amount: -50_00, budget: budget)
+      create(:transaction, :cleared, account: account, amount: -30_00, budget: budget)
+
+      expect(budget.uncleared_balance).to eq(-50_00)
+    end
+
+    it "memoizes the combined uncleared balance" do
+      allow(budget.transactions).to receive(:pending).and_call_original
+
+      budget.uncleared_balance
+      budget.uncleared_balance
+
+      expect(budget.transactions).to have_received(:pending).once
+    end
   end
 end

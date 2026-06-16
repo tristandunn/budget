@@ -15,4 +15,12 @@ describe "Destroying a session" do
 
     expect(page).to have_css("h1", text: t("sessions.new.title"))
   end
+
+  context "when on a mobile browser", :mobile do
+    it "successfully" do
+      sign_out
+
+      expect(page).to have_css("h1", text: t("sessions.new.title"))
+    end
+  end
 end

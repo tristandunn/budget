@@ -1,0 +1,36 @@
+<%# locals: (budget:, subcategory:, budget_snapshot:) %>
+<tr id="<%= dom_id(subcategory, :row) %>" class="bg-white border-b border-taupe-300">
+  <th
+    scope="row"
+    id="<%= dom_id(subcategory, :name) %>"
+    class="py-2 pr-4 pl-9 text-sm font-normal truncate"
+  >
+    <%= link_to subcategory.name,
+                budget_category_path(budget, subcategory,
+                                     year:  budget_snapshot.date.year,
+                                     month: budget_snapshot.date.month),
+                class: "text-inherit no-underline",
+                data:  { turbo_frame: "category_dialog" } %>
+  </th>
+
+  <td class="py-2 px-4 text-sm text-right whitespace-nowrap" data-controller="inline-edit">
+    <%= turbo_frame_tag dom_id(subcategory, :assignment) do %>
+      <%= link_to number_to_money(budget_snapshot.snapshot_for(subcategory.id).amount_assigned),
+                  edit_budget_category_assignment_path(budget, subcategory,
+                                                       year:  budget_snapshot.date.year,
+                                                       month: budget_snapshot.date.month),
+                  class: "text-inherit no-underline",
+                  data:  { action: "click->inline-edit#prefocus", turbo_prefetch: false } %>
+    <% end %>
+  </td>
+
+  <td class="py-2 px-4 text-sm text-right whitespace-nowrap">
+    <%= number_to_money(-budget_snapshot.snapshot_for(subcategory.id).amount_used) %>
+  </td>
+
+  <td class="py-2 px-4 text-sm text-right whitespace-nowrap">
+    <%= render "categories/available",
+               category:        subcategory,
+               budget_snapshot: budget_snapshot %>
+  </td>
+</tr>

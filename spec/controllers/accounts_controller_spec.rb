@@ -10,12 +10,14 @@ describe AccountsController do
   end
 
   describe "#index" do
-    context "with a budget" do
-      let(:budget)         { cash_account.budget }
-      let(:cash_account)   { create(:account, budget: credit_account.budget) }
-      let(:credit_account) { create(:account, :credit) }
+    let(:budget)         { cash_account.budget }
+    let(:cash_account)   { create(:account, budget: credit_account.budget) }
+    let(:credit_account) { create(:account, :credit) }
 
+    context "when on a mobile browser" do
       before do
+        request.headers["User-Agent"] = UserAgents::MOBILE
+
         get :index, params: { budget_id: budget.id }
       end
 
@@ -33,6 +35,16 @@ describe AccountsController do
       it "assigns the credit accounts" do
         expect(assigns(:credit_accounts)).to contain_exactly(credit_account)
       end
+    end
+
+    context "when on a desktop browser" do
+      before do
+        request.headers["User-Agent"] = UserAgents::DESKTOP
+
+        get :index, params: { budget_id: budget.id }
+      end
+
+      it { is_expected.to redirect_to(budget_transactions_path(budget)) }
     end
   end
 

@@ -1,0 +1,180 @@
+<div class="flex h-dvh">
+  <%= render "shared/sidebar", budget: @budget %>
+
+  <div class="flex min-w-0 flex-1 flex-col">
+    <header
+      class="
+        sticky top-0 z-10 flex items-center gap-4 whitespace-nowrap border-b border-taupe-300
+        bg-white px-6 py-4
+      "
+    >
+      <div class="flex items-center gap-2">
+        <%= link_to(
+              month_budget_path(@budget, year: @budget_snapshot.previous_date.year, month: @budget_snapshot.previous_date.month),
+              aria:  { label: t("budgets.show.previous_month"), disabled: @budget_snapshot.first_month? || nil },
+              class: navigation_arrow_class(@budget_snapshot.first_month?),
+              id:    "previous-month"
+            ) do %>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        <% end %>
+
+        <h1 class="text-lg font-semibold">
+          <% if @budget_snapshot.current_month? %>
+            <%= l(@budget_snapshot.date, format: :month_and_year) %>
+          <% else %>
+            <%= link_to l(@budget_snapshot.date, format: :month_and_year),
+                        budget_path(@budget),
+                        class: "text-inherit no-underline" %>
+          <% end %>
+        </h1>
+
+        <%= link_to(
+              month_budget_path(@budget, year: @budget_snapshot.next_date.year, month: @budget_snapshot.next_date.month),
+              aria:  { label: t("budgets.show.next_month"), disabled: @budget_snapshot.last_month? || nil },
+              class: navigation_arrow_class(@budget_snapshot.last_month?),
+              id:    "next-month"
+            ) do %>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        <% end %>
+      </div>
+
+      <div class="leading-tight">
+        <%= render "available_to_assign", budget: @budget %>
+      </div>
+    </header>
+
+    <div class="flex min-h-0 flex-1">
+      <main class="flex min-w-0 flex-1 flex-col bg-white">
+        <section class="min-w-0 flex-1 overflow-y-auto">
+          <table class="w-full table-fixed text-left">
+            <colgroup>
+              <col>
+              <col class="w-1/5">
+              <col class="w-1/5">
+              <col class="w-1/5">
+            </colgroup>
+
+            <thead class="sticky top-0 z-10 bg-white">
+              <tr class="text-xs uppercase tracking-wide text-taupe-700">
+                <th
+                  scope="col"
+                  class="py-2 pr-4 pl-9 font-medium shadow-[inset_0_-1px_0_var(--color-taupe-300)]"
+                >
+                  <%= t(".category") %>
+                </th>
+
+                <th
+                  scope="col"
+                  class="
+                    py-2 px-4 font-medium text-right
+                    shadow-[inset_0_-1px_0_var(--color-taupe-300)]
+                  "
+                >
+                  <%= t(".assigned") %>
+                </th>
+
+                <th
+                  scope="col"
+                  class="
+                    py-2 px-4 font-medium text-right
+                    shadow-[inset_0_-1px_0_var(--color-taupe-300)]
+                  "
+                >
+                  <%= t(".activity") %>
+                </th>
+
+                <th
+                  scope="col"
+                  class="
+                    py-2 px-4 font-medium text-right
+                    shadow-[inset_0_-1px_0_var(--color-taupe-300)]
+                  "
+                >
+                  <%= t(".available") %>
+                </th>
+              </tr>
+            </thead>
+
+            <% @budget.categories.reject(&:inflow?).sort_by(&:position).each do |category| %>
+              <%= render "categories/category_header",
+                         category:        category,
+                         budget_snapshot: @budget_snapshot %>
+
+              <tbody
+                class="[.group.collapsed+&]:hidden"
+                data-collapsible-content="collapsible-category-<%= category.id %>"
+              >
+                <% category.subcategories.sort_by(&:position).each do |subcategory| %>
+                  <%= render "categories/subcategory_row",
+                             budget:          @budget,
+                             subcategory:     subcategory,
+                             budget_snapshot: @budget_snapshot %>
+                <% end %>
+              </tbody>
+            <% end %>
+          </table>
+        </section>
+      </main>
+
+      <%= render "summary", budget_snapshot: @budget_snapshot %>
+    </div>
+  </div>
+
+  <div data-controller="dialog" data-action="dialog:close->dialog#close">
+    <dialog
+      id="category_dialog_modal"
+      class="dialog"
+      aria-labelledby="category_dialog_title"
+      data-dialog-target="dialog"
+      data-action="click->dialog#backdropClose cancel->dialog#cancel"
+    >
+      <turbo-frame id="category_dialog" data-action="turbo:frame-load->dialog#open"></turbo-frame>
+    </dialog>
+  </div>
+
+  <div data-controller="dialog" data-action="dialog:close->dialog#close">
+    <dialog
+      id="category_rename_dialog_modal"
+      class="dialog"
+      aria-labelledby="category_rename_dialog_title"
+      data-dialog-target="dialog"
+      data-action="click->dialog#backdropClose cancel->dialog#cancel"
+    >
+      <turbo-frame id="category_rename_dialog" data-action="turbo:frame-load->dialog#open"></turbo-frame>
+    </dialog>
+  </div>
+
+  <div data-controller="dialog" data-action="dialog:close->dialog#close">
+    <dialog
+      id="category_target_dialog_modal"
+      class="dialog"
+      aria-labelledby="category_target_dialog_title"
+      data-dialog-target="dialog"
+      data-action="click->dialog#backdropClose cancel->dialog#cancel"
+    >
+      <turbo-frame id="category_target_dialog" data-action="turbo:frame-load->dialog#open"></turbo-frame>
+    </dialog>
+  </div>
+</div>

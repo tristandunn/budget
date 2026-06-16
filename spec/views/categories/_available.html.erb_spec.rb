@@ -22,6 +22,10 @@ describe "categories/_available.html.erb" do
   let(:category)    { build_stubbed(:category, :subcategory) }
   let(:underfunded) { false }
 
+  before do
+    stub_template("shared/_progress_pie.html.erb" => "PROGRESS_PIE_PARTIAL")
+  end
+
   it "identifies the badge with a stable dom id" do
     expect(html).to have_css("div##{dom_id(category, :available)}")
   end
@@ -55,19 +59,11 @@ describe "categories/_available.html.erb" do
         .and_return(TargetProgress.new(category: category, rollover: 0, snapshot: snapshot))
     end
 
-    context "when fully funded" do
+    context "when not snoozed" do
       let(:snapshot) { CategorySnapshot.new(amount_assigned: 200_00, amount_used: 0) }
 
-      it "renders the funded label as the icon title" do
-        expect(html).to have_css("svg title", text: t("categories.show.target.funded_label"))
-      end
-
-      it "renders the checkmark path" do
-        expect(html).to have_css("svg path")
-      end
-
-      it "does not render the pie wedge" do
-        expect(html).to have_no_css("svg circle[stroke-dasharray]")
+      it "renders the progress pie" do
+        expect(html).to include("PROGRESS_PIE_PARTIAL")
       end
     end
 
@@ -100,24 +96,6 @@ describe "categories/_available.html.erb" do
 
       it "uses the amount color rather than the underfunded color" do
         expect(html).to have_css("div.bg-stone-200")
-      end
-    end
-
-    context "when underfunded" do
-      let(:snapshot)    { CategorySnapshot.new(amount_assigned: 150_00, amount_used: 0) }
-      let(:underfunded) { true }
-
-      it "renders a labelled title describing the progress" do
-        expect(html).to have_css("svg title",
-                                 text: t("categories.show.target.percent_funded", percentage: 75))
-      end
-
-      it "renders the pie wedge sized to the funded percentage" do
-        expect(html).to have_css("svg circle[stroke-dasharray='75 100']")
-      end
-
-      it "does not render the checkmark" do
-        expect(html).to have_no_css("svg path")
       end
     end
   end

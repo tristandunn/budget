@@ -43,4 +43,32 @@ describe ApplicationController do
       end
     end
   end
+
+  describe "#set_request_variant" do
+    let(:budget) { create(:budget) }
+
+    before do
+      sign_in_for(budget)
+
+      request.headers["User-Agent"] = user_agent
+
+      get :index, params: { budget_id: budget.id }
+    end
+
+    context "when the User-Agent is from a mobile browser" do
+      let(:user_agent) { UserAgents::MOBILE }
+
+      it "sets the mobile variant" do
+        expect(request.variant).to eq([:mobile])
+      end
+    end
+
+    context "when the User-Agent is from a desktop browser" do
+      let(:user_agent) { UserAgents::DESKTOP }
+
+      it "sets the desktop variant" do
+        expect(request.variant).to eq([:desktop])
+      end
+    end
+  end
 end

@@ -27,8 +27,21 @@ describe "Transfer deletion", :js do
     end
 
     expect(page)
-      .to have_text(t("transactions.index.title"))
+      .to have_text(t("sidebar.all_accounts"))
       .and(have_no_text(t("transfers.payee.to", account: savings.name)))
       .and(have_no_text(t("transfers.payee.from", account: checking.name)))
+  end
+
+  context "when on a mobile browser", :mobile do
+    it "deletes the transfer" do
+      accept_confirm do
+        click_on t("transfers.show.delete.submit")
+      end
+
+      expect(page)
+        .to have_text(t("transactions.index.title"))
+        .and(have_no_text(t("transfers.payee.to", account: savings.name)))
+        .and(have_no_text(t("transfers.payee.from", account: checking.name)))
+    end
   end
 end

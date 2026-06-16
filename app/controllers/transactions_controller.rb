@@ -121,7 +121,7 @@ class TransactionsController < ApplicationController
   #
   # @return [Array(Array<Transaction>, Array<Transaction>)] The upcoming and current transactions.
   def filtered_transactions
-    transactions = current_budget.transactions.recent.includes(:account, :payee, :subcategory)
+    transactions = current_budget.transactions.recent.includes(:account, :payee, subcategory: :parent)
     transactions = transactions.where.not(status: :reconciled) if current_budget.settings.hide_reconciled?
     transactions.partition(&:upcoming?)
   end
@@ -200,7 +200,7 @@ class TransactionsController < ApplicationController
   # @return [Transaction] The requested transaction.
   def transaction
     @transaction ||= current_budget.transactions
-                                   .includes(:account, :budget, :payee, transfer_pair: :account)
+                                   .includes(:account, :payee, transfer_pair: :account)
                                    .find(params.expect(:id))
   end
 

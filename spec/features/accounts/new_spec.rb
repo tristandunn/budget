@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe "Account creation", :js do
+describe "Account creation", :js, :mobile do
   let(:budget) { create(:budget) }
 
   before do

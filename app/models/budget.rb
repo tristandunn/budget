@@ -14,10 +14,31 @@ class Budget < ApplicationRecord
   validates :available_to_assign, numericality: { only_integer: true }
   validates :users, presence: true, on: :create
 
+  # Return the combined balance of every account.
+  #
+  # @return [Integer] The working balance in cents.
+  def balance
+    @balance ||= accounts.sum(:balance)
+  end
+
+  # Return the combined balance minus pending transaction amounts.
+  #
+  # @return [Integer] The cleared balance in cents.
+  def cleared_balance
+    balance - uncleared_balance
+  end
+
   # Return the settings for this budget.
   #
   # @return [Settings] The budget settings.
   def settings
     @settings ||= Settings.new(self)
+  end
+
+  # Return the combined sum of pending transaction amounts.
+  #
+  # @return [Integer] The uncleared balance in cents.
+  def uncleared_balance
+    @uncleared_balance ||= transactions.pending.sum(:amount)
   end
 end

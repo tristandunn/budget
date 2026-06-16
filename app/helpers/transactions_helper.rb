@@ -1,6 +1,20 @@
 # frozen_string_literal: true
 
 module TransactionsHelper
+  # Returns the last-reconciled summary label for an account, describing when it
+  # was last reconciled or that it never has been.
+  #
+  # @param account [Account] The account to summarize.
+  # @return [String] The reconciled summary label.
+  def account_reconciled_summary(account)
+    if account.last_reconciled_at
+      t("accounts.transactions.actions.reconciled",
+        time: relative_time(account.last_reconciled_at.to_date))
+    else
+      t("accounts.transactions.actions.reconciled_never")
+    end
+  end
+
   # Returns "Today", "Yesterday", or the long date format for the given date.
   #
   # @param date [Date] The date to format.

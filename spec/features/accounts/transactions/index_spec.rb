@@ -6,7 +6,7 @@ describe "Account transactions" do
   let(:account) { create(:account) }
   let(:budget)  { account.budget }
 
-  it "navigates from accounts index to account register" do
+  it "navigates from accounts index to account register", :mobile do
     transaction = create(:transaction, account: account)
 
     sign_in_for(budget)

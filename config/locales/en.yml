@@ -1,6 +1,12 @@
 en:
   title: "Budget"
 
+  date:
+    formats:
+      month: "%B"
+      month_and_year: "%b %Y"
+      numeric: "%m/%d/%Y"
+
   dates:
     days_ago:
       one: "%{count} day ago"
@@ -42,8 +48,8 @@ en:
         edit: "Edit Account"
         reconcile: "Reconcile"
         reconcile_confirm: "Mark all cleared transactions as reconciled?"
-        reconciled: "Reconciled %{time}"
-        reconciled_never: "Reconciled never"
+        reconciled: "Reconciled %{time}."
+        reconciled_never: "Never reconciled."
         record_payment: "Record Payment"
       index:
         back: "Back"
@@ -92,11 +98,20 @@ en:
     available_to_assign:
       title: "Available to Assign"
     show:
+      activity: "Activity"
+      assigned: "Assigned"
+      available: "Available"
+      category: "Category"
+      future_assigned: "Assigned in the Future"
+      future_funded: "%{month} fully funded."
+      future_progress: "%{month} %{percentage}% funded."
       manage_payees: "Manage Payees"
       menu: "Menu"
       next_month: "Next month"
       previous_month: "Previous month"
+      rollover: "Rollover"
       sign_out: "Sign Out"
+      summary: "%{month}'s Summary"
 
   activerecord:
     attributes:
@@ -169,13 +184,29 @@ en:
     add_transaction: "Add transaction"
 
   transactions:
+    qualified_category: "%{category}: %{subcategory}"
     transfer_category: "Credit Card Payment"
+    balances:
+      cleared: "Cleared"
+      uncleared: "Uncleared"
+      working: "Working Balance"
+    transaction:
+      recurring: "Recurring"
     category_picker:
       suggested: "Suggested"
     reconciled:
       hide: "Hide Reconciled"
       show: "Show Reconciled"
     list:
+      columns:
+        account: "Account"
+        category: "Category"
+        date: "Date"
+        inflow: "Inflow"
+        memo: "Memo"
+        outflow: "Outflow"
+        payee: "Payee"
+        status: "Status"
       scheduled: "Scheduled"
     status_indicator:
       cleared: "Cleared"
@@ -269,3 +300,6 @@ en:
   shared:
     picker:
       back: "Back"
+
+  sidebar:
+    all_accounts: "All Accounts"

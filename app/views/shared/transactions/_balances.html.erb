@@ -1,0 +1,45 @@
+<%# locals: (record:, prefix: "") %>
+<div class="flex items-baseline gap-3 border-y border-taupe-300 bg-white px-6 py-2">
+  <div>
+    <p id="<%= prefix %>cleared_balance" class="text-base font-semibold">
+      <%= number_to_money record.cleared_balance %>
+    </p>
+
+    <p class="flex items-center gap-1 text-sm">
+      <span
+        class="
+          flex h-4 w-4 items-center justify-center rounded-full bg-taupe-400 text-[0.625rem]
+          font-bold text-white
+        "
+        aria-hidden="true"
+      >
+        C
+      </span>
+
+      <%= t("transactions.balances.cleared") %>
+    </p>
+  </div>
+
+  <p class="self-center text-base text-taupe-500" aria-hidden="true">+</p>
+
+  <div>
+    <p id="<%= prefix %>uncleared_balance" class="text-base font-semibold">
+      <%= number_to_money record.uncleared_balance %>
+    </p>
+
+    <p class="flex items-center gap-1 text-sm">
+      <span class="block h-4 w-4 rounded-full border-2 border-taupe-300"></span>
+      <%= t("transactions.balances.uncleared") %>
+    </p>
+  </div>
+
+  <p class="self-center text-base text-taupe-500" aria-hidden="true">=</p>
+
+  <div>
+    <p class="text-base font-semibold">
+      <%= number_to_money record.balance %>
+    </p>
+
+    <p class="text-sm"><%= t("transactions.balances.working") %></p>
+  </div>
+</div>

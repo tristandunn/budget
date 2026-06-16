@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+
+<html lang="en-US" class="antialiased text-gray-900">
+  <head>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= turbo_refresh_method_tag :morph %>
+    <%= turbo_refresh_scroll_tag :preserve %>
+
+    <meta name="format-detection" content="telephone=no">
+    <meta name="theme-color" content="#FFF">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title><%= t("title") %></title>
+
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="<%= asset_path("favicon-32.png") %>"
+    >
+
+    <link rel="apple-touch-icon" href="<%= asset_path("apple-touch-icon.png") %>">
+    <link rel="manifest" href="<%= pwa_manifest_path(format: :json) %>">
+
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+
+    <%= render "shared/collapsible_preload" %>
+  </head>
+
+  <body class="h-dvh overflow-hidden bg-taupe-50 text-black">
+    <%= yield %>
+  </body>
+</html>

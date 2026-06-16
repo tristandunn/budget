@@ -1,0 +1,34 @@
+<%# locals: (category:, budget_snapshot:) %>
+<tbody
+  id="<%= dom_id(category, :header) %>"
+  class="group bg-taupe-100 border-b border-taupe-300"
+  data-controller="collapsible"
+  data-collapsible-id-value="category-<%= category.id %>"
+>
+  <tr class="cursor-pointer" data-action="click->collapsible#toggle">
+    <th scope="row" class="relative py-2 pr-4 pl-9 text-[15px] align-middle truncate">
+      <div
+        class="
+          absolute inset-y-0 left-4 my-auto w-2 h-2 border-r border-b rotate-45 border-taupe-500
+          -translate-y-[3px] group-[.collapsed]:translate-x-(--collapsible-arrow-shift)
+          group-[.collapsed]:translate-y-0 group-[.collapsed]:-rotate-45
+        "
+        data-collapsible-arrow
+      ></div>
+
+      <%= category.name %>
+    </th>
+
+    <td class="py-2 px-4 text-sm align-middle font-normal text-right whitespace-nowrap">
+      <%= number_to_money budget_snapshot.snapshot_for(category.id).amount_assigned %>
+    </td>
+
+    <td class="py-2 px-4 text-sm align-middle font-normal text-right whitespace-nowrap">
+      <%= number_to_money(-budget_snapshot.snapshot_for(category.id).amount_used) %>
+    </td>
+
+    <td class="py-2 px-4 text-sm align-middle font-normal text-right whitespace-nowrap">
+      <%= number_to_money budget_snapshot.available_for(category) %>
+    </td>
+  </tr>
+</tbody>

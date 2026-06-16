@@ -28,6 +28,16 @@ describe "Transaction deletion", :js do
       click_on t("transactions.edit.delete.submit")
     end
 
-    expect(page).to have_text(t("transactions.index.title")).and(have_no_text(transaction.payee.name))
+    expect(page).to have_text(t("sidebar.all_accounts")).and(have_no_text(transaction.payee.name))
+  end
+
+  context "when on a mobile browser", :mobile do
+    it "deletes the transaction" do
+      accept_confirm do
+        click_on t("transactions.edit.delete.submit")
+      end
+
+      expect(page).to have_text(t("transactions.index.title")).and(have_no_text(transaction.payee.name))
+    end
   end
 end

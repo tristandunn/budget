@@ -5,7 +5,8 @@ source "https://rubygems.org"
 
 gem "bcrypt",            "3.1.22"
 gem "bootsnap",          "1.24.6", require: false
-gem "bundler-audit",     "0.9.3",  require: false
+gem "browser",           "6.2.0"
+gem "bundler-audit",     "0.9.3", require: false
 gem "importmap-rails",   "2.2.3"
 gem "jbuilder",          "2.15.1"
 gem "kamal",             "2.12.0", require: false

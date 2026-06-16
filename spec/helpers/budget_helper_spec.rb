@@ -52,6 +52,24 @@ describe BudgetHelper do
     end
   end
 
+  describe "#month_progress_label" do
+    subject { helper.month_progress_label(snapshot) }
+
+    context "when the month is fully funded" do
+      let(:snapshot) { instance_double(BudgetSnapshot, funded?: true, date: Date.new(2026, 7, 1)) }
+
+      it { is_expected.to eq(t("budgets.show.future_funded", month: "July")) }
+    end
+
+    context "when the month is not fully funded" do
+      let(:snapshot) do
+        instance_double(BudgetSnapshot, funded?: false, funded_percentage: 75, date: Date.new(2026, 7, 1))
+      end
+
+      it { is_expected.to eq(t("budgets.show.future_progress", month: "July", percentage: 75)) }
+    end
+  end
+
   describe "#navigation_arrow_class" do
     subject { helper.navigation_arrow_class(disabled) }
 
