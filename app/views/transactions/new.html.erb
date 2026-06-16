@@ -7,7 +7,9 @@
   >
     <div>
       <header class="relative p-4">
-        <h2 class="text-lg font-semibold text-center"><%= t(".title") %></h2>
+        <h2 id="transaction_dialog_title" class="text-lg font-semibold text-center">
+          <%= t(".title") %>
+        </h2>
 
         <button type="button" class="absolute top-4 left-4 text-sm" data-action="dialog#close">
           <%= t(".cancel") %>

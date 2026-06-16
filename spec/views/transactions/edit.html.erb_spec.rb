@@ -36,7 +36,7 @@ describe "transactions/edit.html.erb" do
 
   context "when the transaction is not a transfer" do
     it "renders the edit transaction title" do
-      expect(html).to have_css("h2", text: t("transactions.edit.title"))
+      expect(html).to have_css("h2#transaction_dialog_title", text: t("transactions.edit.title"))
     end
 
     it "does not render the payment title" do
@@ -124,8 +124,8 @@ describe "transactions/edit.html.erb" do
       expect(html).to have_no_css("[data-controller]")
     end
 
-    it "renders the payment title" do
-      expect(html).to have_css("h2", text: t("transactions.edit.transfer_title"))
+    it "renders the transfer title" do
+      expect(html).to have_css("h2#transaction_dialog_title", text: t("transactions.edit.transfer_title"))
     end
 
     it "does not render the edit transaction title" do

@@ -26,7 +26,7 @@ describe "transactions/new.html.erb" do
   end
 
   it "renders the title" do
-    expect(html).to have_css("h2", text: t("transactions.new.title"))
+    expect(html).to have_css("h2#transaction_dialog_title", text: t("transactions.new.title"))
   end
 
   it "renders a cancel button" do

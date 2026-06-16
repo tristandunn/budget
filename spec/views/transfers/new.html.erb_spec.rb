@@ -22,7 +22,7 @@ describe "transfers/new.html.erb" do
   end
 
   it "renders the title" do
-    expect(html).to have_css("h2", text: t("transfers.new.title"))
+    expect(html).to have_css("h2#transaction_dialog_title", text: t("transfers.new.title"))
   end
 
   it "renders inside the transaction dialog turbo frame" do

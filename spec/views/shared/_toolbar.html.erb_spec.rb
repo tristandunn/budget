@@ -30,7 +30,7 @@ describe "shared/_toolbar.html.erb" do
   end
 
   it "renders the transaction dialog" do
-    expect(html).to have_css("dialog.dialog[aria-label]")
+    expect(html).to have_css("dialog.dialog[aria-labelledby='transaction_dialog_title']")
   end
 
   it "renders the transaction dialog turbo frame" do
