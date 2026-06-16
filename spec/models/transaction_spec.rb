@@ -54,18 +54,18 @@ describe Transaction do
   end
 
   describe ".default_scope" do
-    it "orders transactions by date descending" do
+    it "orders transactions by date ascending" do
       newer = create(:transaction, date: Date.new(2026, 3, 15))
       older = create(:transaction, date: Date.new(2026, 3, 10), budget: newer.budget)
 
-      expect(described_class.all).to eq([newer, older])
+      expect(described_class.all).to eq([older, newer])
     end
 
-    it "orders transactions with the same date by created_at descending" do
+    it "orders transactions with the same date by created_at ascending" do
       first  = create(:transaction, date: Date.new(2026, 3, 15))
       second = create(:transaction, date: Date.new(2026, 3, 15), budget: first.budget)
 
-      expect(described_class.all).to eq([second, first])
+      expect(described_class.all).to eq([first, second])
     end
   end
 

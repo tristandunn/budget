@@ -28,7 +28,7 @@ class Transaction < ApplicationRecord
 
   normalizes :memo, with: ->(value) { value.strip }
 
-  default_scope -> { order(date: :desc, created_at: :desc) }
+  default_scope -> { order(date: :asc, created_at: :asc) }
 
   scope :activation_due, -> { upcoming.where(date: ..Date.current) }
   scope :recent,         -> { where(date: 30.days.ago.to_date..) }

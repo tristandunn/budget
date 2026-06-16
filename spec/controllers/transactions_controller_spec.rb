@@ -32,7 +32,7 @@ describe TransactionsController do
       end
 
       it "assigns the current transactions limited to the previous 31 days" do
-        expect(assigns(:current_transactions)).to eq([newer, older])
+        expect(assigns(:current_transactions)).to eq([older, newer])
       end
 
       it "assigns the scheduled transactions" do
