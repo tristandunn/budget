@@ -133,7 +133,12 @@ export default class extends Controller {
     this.#animateClosed(dialog, () => {
       this.#reset(dialog);
 
-      Turbo.visit(url);
+      /*
+       * Visit with the replace action so Turbo treats the same-URL navigation
+       * as a page refresh and morphs the DOM, preserving scroll position
+       * instead of performing a full reload.
+       */
+      Turbo.visit(url, { "action": "replace" });
     });
   }
 

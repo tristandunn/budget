@@ -38,6 +38,65 @@ describe("CollapsibleController", () => {
 
       expect(document.getElementById("collapsible-preload")).to.eq(null);
     });
+
+    it("preserves the class attribute when the section is morphed", () => {
+      instance.connect();
+
+      const event = new window.CustomEvent("turbo:before-morph-attribute", {
+        "cancelable": true,
+        "detail": { "attributeName": "class" }
+      });
+
+      element.dispatchEvent(event);
+
+      expect(event.defaultPrevented).to.eq(true);
+    });
+
+    it("allows non-class attributes to be morphed", () => {
+      instance.connect();
+
+      const event = new window.CustomEvent("turbo:before-morph-attribute", {
+        "cancelable": true,
+        "detail": { "attributeName": "data-collapsible-id-value" }
+      });
+
+      element.dispatchEvent(event);
+
+      expect(event.defaultPrevented).to.eq(false);
+    });
+
+    it("allows a descendant class attribute to be morphed", () => {
+      const child = document.createElement("span");
+      element.appendChild(child);
+
+      instance.connect();
+
+      const event = new window.CustomEvent("turbo:before-morph-attribute", {
+        "bubbles": true,
+        "cancelable": true,
+        "detail": { "attributeName": "class" }
+      });
+
+      child.dispatchEvent(event);
+
+      expect(event.defaultPrevented).to.eq(false);
+    });
+  });
+
+  describe("#disconnect", () => {
+    it("stops preserving the class attribute on morph", () => {
+      instance.connect();
+      instance.disconnect();
+
+      const event = new window.CustomEvent("turbo:before-morph-attribute", {
+        "cancelable": true,
+        "detail": { "attributeName": "class" }
+      });
+
+      element.dispatchEvent(event);
+
+      expect(event.defaultPrevented).to.eq(false);
+    });
   });
 
   describe("#toggle", () => {

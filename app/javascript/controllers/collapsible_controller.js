@@ -11,6 +11,12 @@ export default class extends Controller {
     }
 
     document.getElementById("collapsible-preload")?.remove();
+
+    this.element.addEventListener("turbo:before-morph-attribute", this.#preserveClass);
+  }
+
+  disconnect() {
+    this.element.removeEventListener("turbo:before-morph-attribute", this.#preserveClass);
   }
 
   toggle() {
@@ -25,6 +31,18 @@ export default class extends Controller {
 
     this.#collapsedIds = ids;
   }
+
+  /*
+   * Cancel class morphs on this element so the client-managed collapsed state
+   * survives a page morph, since connect does not re-run for a persistent
+   * element. The event bubbles, so restrict the guard to this element's own
+   * class attribute and let descendant rows morph their state classes normally.
+   */
+  #preserveClass = (event) => {
+    if (event.target === this.element && event.detail.attributeName === "class") {
+      event.preventDefault();
+    }
+  };
 
   get #collapsedIds() {
     return new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"));

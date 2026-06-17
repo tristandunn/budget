@@ -16,4 +16,12 @@ describe "layouts/application.html.erb" do
   it "renders a link to the PWA manifest" do
     expect(html).to have_css("link[rel='manifest'][href='#{pwa_manifest_path(format: :json)}']", visible: :all)
   end
+
+  it "enables morphing for same-URL refreshes" do
+    expect(html).to have_css("meta[name='turbo-refresh-method'][content='morph']", visible: :all)
+  end
+
+  it "preserves scroll position across refreshes" do
+    expect(html).to have_css("meta[name='turbo-refresh-scroll'][content='preserve']", visible: :all)
+  end
 end

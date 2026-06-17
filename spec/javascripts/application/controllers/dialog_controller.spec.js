@@ -237,7 +237,7 @@ describe("DialogController", () => {
     dialog.dispatchEvent(new window.Event("transitionend"));
 
     expect(dialog.close).to.have.been.calledOnce;
-    expect(globalThis.Turbo.visit).to.have.been.calledWith("/redirected");
+    expect(globalThis.Turbo.visit).to.have.been.calledWith("/redirected", { "action": "replace" });
 
     delete globalThis.Turbo;
   });
@@ -270,7 +270,7 @@ describe("DialogController", () => {
     controller.open();
 
     expect(dialog.close).to.have.been.calledOnce;
-    expect(globalThis.Turbo.visit).to.have.been.calledWith("/redirected");
+    expect(globalThis.Turbo.visit).to.have.been.calledWith("/redirected", { "action": "replace" });
 
     delete globalThis.Turbo;
   });
