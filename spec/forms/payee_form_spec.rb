@@ -78,6 +78,16 @@ describe PayeeForm, type: :form do
 
         expect(Payee.exists?(payee.id)).to be(false)
       end
+
+      it "does not change a reconciled transaction's updated_at" do
+        reconciled = create(:transaction,
+                            :reconciled,
+                            budget:     budget,
+                            payee:      payee,
+                            updated_at: 1.week.ago)
+
+        expect { update }.not_to(change { reconciled.reload.updated_at })
+      end
     end
 
     context "when renaming to a name matching another payee in a different budget" do

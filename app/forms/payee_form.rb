@@ -48,9 +48,7 @@ class PayeeForm < BaseForm
   # @return [Payee] The destroyed payee.
   def merge
     Payee.transaction do
-      payee.transactions.find_each do |transaction|
-        transaction.update!(payee: duplicate_payee)
-      end
+      payee.transactions.update_all(payee_id: duplicate_payee.id) # rubocop:disable Rails/SkipsModelValidations
 
       payee.destroy!
     end
