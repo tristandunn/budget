@@ -34,7 +34,7 @@ group :development do
   gem "listen",              "3.10.0"
   gem "rack-mini-profiler",  "4.0.1"
   gem "rubocop",             "1.88.0", require: false
-  gem "rubocop-capybara",    "2.23.0", require: false
+  gem "rubocop-capybara",    "3.0.0", require: false
   gem "rubocop-factory_bot", "2.28.0", require: false
   gem "rubocop-performance", "1.26.1", require: false
   gem "rubocop-rails",       "2.35.5", require: false
