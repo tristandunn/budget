@@ -161,13 +161,12 @@ describe Authentication do
   end
 
   describe "#terminate_session" do
-    let(:session) { { user_id: 123 } }
-    let(:user)    { build_stubbed(:user) }
+    let(:user) { build_stubbed(:user) }
 
     before do
       Current.user = user
 
-      allow(instance).to receive(:session).and_return(session)
+      allow(instance).to receive(:reset_session)
 
       instance.terminate_session
     end
@@ -176,8 +175,8 @@ describe Authentication do
       expect(Current.user).to be_nil
     end
 
-    it "removes the user ID from the session" do
-      expect(session[:user_id]).to be_nil
+    it "resets the session" do
+      expect(instance).to have_received(:reset_session)
     end
   end
 

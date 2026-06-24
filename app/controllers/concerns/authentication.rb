@@ -60,13 +60,13 @@ module Authentication
     session[:user_id] = user.id
   end
 
-  # Clear the current user and remove the user ID from the session.
+  # Clear the current user and reset the session.
   #
   # @return [void]
   def terminate_session
     Current.user = nil
 
-    session.delete(:user_id)
+    reset_session
   end
 
   # Attempt to find a user from the user ID in the session.

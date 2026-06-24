@@ -90,13 +90,15 @@ describe SessionsController do
       before do
         sign_in_as user
 
+        session[:return_to] = budget_path(create(:budget))
+
         delete :destroy
       end
 
       it { is_expected.to redirect_to(new_session_url) }
 
-      it "removes the user ID from the session" do
-        expect(session[:user_id]).to be_nil
+      it "clears the session" do
+        expect(session).to be_empty
       end
     end
 
