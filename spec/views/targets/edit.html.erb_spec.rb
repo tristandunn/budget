@@ -29,6 +29,13 @@ describe "targets/edit.html.erb" do
     expect(html).to have_field("target_form_target_amount_input")
   end
 
+  it "wires the positive amount controller to the target amount field" do
+    expect(html).to have_css(
+      "input#target_form_target_amount_input" \
+      "[data-controller='amount'][data-amount-positive-value='true']"
+    )
+  end
+
   it "renders the refill target type option" do
     expect(html).to have_field("target_form_target_type_monthly_spending", type: :radio, visible: :all)
   end

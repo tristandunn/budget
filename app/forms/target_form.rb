@@ -32,12 +32,16 @@ class TargetForm < BaseForm
 
   # Parse a decimal input string into cents and store it as the target amount.
   #
-  # A blank value clears the amount so validation can surface a presence error.
+  # Currency formatting characters are stripped before parsing. A blank or
+  # unparseable value clears the amount so validation can surface a presence
+  # error rather than raising.
   #
   # @param value [String] The raw input string.
   def target_amount_input=(value)
-    self.target_amount = if value.present?
-                           Money.from_amount(BigDecimal(value)).cents
+    amount = BigDecimal(value.to_s.delete("$,"), exception: false)
+
+    self.target_amount = if amount
+                           Money.from_amount(amount).cents
                          end
   end
 

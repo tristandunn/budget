@@ -51,6 +51,11 @@
                            autocomplete: "off",
                            autofocus:    true,
                            class:        "flex-1 bg-transparent border-none outline-none placeholder:text-taupe-400 focus:ring-0",
+                           data:         {
+                             action:                  "input->amount#input keydown->amount#keydown paste->amount#paste",
+                             "amount-positive-value": "true",
+                             controller:              "amount"
+                           },
                            inputmode:    "decimal",
                            placeholder:  t(".amount_placeholder"),
                            required:     true %>

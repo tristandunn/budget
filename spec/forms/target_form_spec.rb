@@ -72,14 +72,22 @@ describe TargetForm, type: :form do
       expect(form.target_amount).to eq(200_00)
     end
 
+    it "strips formatting characters before parsing" do
+      form.target_amount_input = "$1,000.50"
+
+      expect(form.target_amount).to eq(100_050)
+    end
+
     it "clears a previously assigned amount when input is blank" do
       form.target_amount_input = ""
 
       expect(form.target_amount).to be_nil
     end
 
-    it "raises when the input cannot be parsed as a decimal" do
-      expect { form.target_amount_input = "abc" }.to raise_error(ArgumentError)
+    it "clears a previously assigned amount when the input cannot be parsed" do
+      form.target_amount_input = "abc"
+
+      expect(form.target_amount).to be_nil
     end
   end
 
