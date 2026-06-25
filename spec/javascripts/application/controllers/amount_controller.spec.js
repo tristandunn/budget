@@ -606,7 +606,7 @@ describe("AmountController", () => {
 
   describe("when positive mode is active", () => {
     beforeEach(() => {
-      element.dataset.amountPositiveValue = "true";
+      instance.positiveValue = true;
     });
 
     it("rejects the - key", () => {

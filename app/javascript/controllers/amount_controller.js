@@ -1,12 +1,14 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
+  static values = { "positive": Boolean };
+
   #handleFormdata;
 
   #positive = false;
 
   connect() {
-    if (this.#positiveOnly()) {
+    if (this.positiveValue) {
       this.#positive = true;
     } else {
       const initial = parseFloat(this.#unformat(this.element.value));
@@ -52,7 +54,7 @@ export default class extends Controller {
 
     let sign;
 
-    if (this.#positiveOnly()) {
+    if (this.positiveValue) {
       sign = "";
     } else if (pasted.includes("-")) {
       this.#positive = false;
@@ -76,7 +78,7 @@ export default class extends Controller {
 
     event.preventDefault();
 
-    if (this.#positiveOnly() && (event.key === "-" || event.key === "+")) {
+    if (this.positiveValue && (event.key === "-" || event.key === "+")) {
       return;
     }
 
@@ -138,10 +140,6 @@ export default class extends Controller {
             : text;
 
     this.#render(positive);
-  }
-
-  #positiveOnly() {
-    return this.element.dataset.amountPositiveValue === "true";
   }
 
   #render(text) {
@@ -214,7 +212,7 @@ export default class extends Controller {
   #updateColor() {
     const classList = this.element.classList;
 
-    if (this.#positiveOnly()) {
+    if (this.positiveValue) {
       classList.remove("text-red-700");
       classList.add("text-black");
 
