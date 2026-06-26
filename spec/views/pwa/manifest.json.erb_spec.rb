@@ -33,7 +33,38 @@ describe "pwa/manifest.json.erb" do
     expect(manifest).to include("theme_color" => "#FFF")
   end
 
-  it "renders an empty icons array" do
-    expect(manifest).to include("icons" => [])
+  it "renders the 192x192 PNG icon" do
+    expect(manifest["icons"]).to include(
+      "purpose" => "any",
+      "sizes"   => "192x192",
+      "src"     => view.asset_path("icon-192.png"),
+      "type"    => "image/png"
+    )
+  end
+
+  it "renders the 512x512 PNG icon" do
+    expect(manifest["icons"]).to include(
+      "purpose" => "any",
+      "sizes"   => "512x512",
+      "src"     => view.asset_path("icon-512.png"),
+      "type"    => "image/png"
+    )
+  end
+
+  it "renders the 512x512 maskable PNG icon" do
+    expect(manifest["icons"]).to include(
+      "purpose" => "maskable",
+      "sizes"   => "512x512",
+      "src"     => view.asset_path("icon-maskable-512.png"),
+      "type"    => "image/png"
+    )
+  end
+
+  it "renders the scalable SVG icon" do
+    expect(manifest["icons"]).to include(
+      "sizes" => "any",
+      "src"   => view.asset_path("icon.svg"),
+      "type"  => "image/svg+xml"
+    )
   end
 end

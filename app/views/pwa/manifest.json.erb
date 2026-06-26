@@ -1,9 +1,33 @@
 {
-  "name": <%= raw t("title").to_json %>,
-  "short_name": <%= raw t("title").to_json %>,
+  "name": <%== t("title").to_json %>,
+  "short_name": <%== t("title").to_json %>,
   "start_url": "/",
   "display": "standalone",
   "background_color": "#FFF",
   "theme_color": "#FFF",
-  "icons": []
+  "icons": [
+    {
+      "src": "<%= asset_path("icon-192.png") %>",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "<%= asset_path("icon-512.png") %>",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    },
+    {
+      "src": "<%= asset_path("icon-maskable-512.png") %>",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    },
+    {
+      "src": "<%= asset_path("icon.svg") %>",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    }
+  ]
 }
