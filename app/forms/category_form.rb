@@ -3,6 +3,8 @@
 class CategoryForm < BaseForm
   attr_accessor :category, :name
 
+  validate :validate_category
+
   # Build a form prepopulated from an existing category.
   #
   # @param category [Category] The category to prepopulate from.
@@ -31,11 +33,11 @@ class CategoryForm < BaseForm
     { name: name }
   end
 
-  # Validate the category, merging errors into the form.
+  # Validate the category, merging its errors into the form.
   #
-  # @return [Boolean] Whether the category is valid.
-  def valid?(context = nil)
-    category.valid?(context).tap do
+  # @return [void]
+  def validate_category
+    if category.invalid?
       errors.merge!(category.errors)
     end
   end

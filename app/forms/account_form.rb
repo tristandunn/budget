@@ -4,6 +4,8 @@ class AccountForm < BaseForm
   attr_accessor :account, :budget, :name
   attr_writer :credit
 
+  validate :validate_account
+
   # Build a form prepopulated from an existing account.
   #
   # @param account [Account] The account to prepopulate from.
@@ -82,11 +84,11 @@ class AccountForm < BaseForm
     end
   end
 
-  # Validate the account, merging errors into the form.
+  # Validate the account, merging its errors into the form.
   #
-  # @return [Boolean] Whether the account is valid.
-  def valid?(context = nil)
-    account.valid?(context).tap do
+  # @return [void]
+  def validate_account
+    if account.invalid?
       errors.merge!(account.errors)
     end
   end

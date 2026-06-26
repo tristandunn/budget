@@ -3,6 +3,8 @@
 class PayeeForm < BaseForm
   attr_accessor :name, :payee
 
+  validate :validate_payee
+
   # Build a form prepopulated from an existing payee.
   #
   # @param payee [Payee] The payee to prepopulate from.
@@ -54,11 +56,11 @@ class PayeeForm < BaseForm
     end
   end
 
-  # Validate the payee, merging errors into the form.
+  # Validate the payee, merging its errors into the form.
   #
-  # @return [Boolean] Whether the payee is valid.
-  def valid?(context = nil)
-    payee.valid?(context).tap do
+  # @return [void]
+  def validate_payee
+    if payee.invalid?
       errors.merge!(payee.errors)
     end
   end

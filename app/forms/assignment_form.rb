@@ -6,6 +6,8 @@ class AssignmentForm < BaseForm
   attr_accessor :budget, :date, :subcategory
   attr_writer   :amount
 
+  validate :validate_assignment
+
   # Return the amount as a Money object.
   #
   # @return [Money] The parsed amount.
@@ -47,11 +49,11 @@ class AssignmentForm < BaseForm
     end
   end
 
-  # Validate the assignment, merging errors into the form.
+  # Validate the assignment, merging its errors into the form.
   #
-  # @return [Boolean] Whether the assignment is valid.
-  def valid?(context = nil)
-    assignment.valid?(context).tap do
+  # @return [void]
+  def validate_assignment
+    if assignment.invalid?
       errors.merge!(assignment.errors)
     end
   end

@@ -5,6 +5,8 @@ class TargetForm < BaseForm
 
   attr_accessor :category, :target_amount, :target_type
 
+  validate :validate_category
+
   # Build a form pre-populated from an existing category. Categories without
   # a target default to the most common target type so the editor opens to a
   # usable state.
@@ -65,11 +67,11 @@ class TargetForm < BaseForm
     { target_amount: target_amount, target_type: target_type }
   end
 
-  # Validate the underlying category, merging its errors back into the form.
+  # Validate the underlying category, merging its errors into the form.
   #
-  # @return [Boolean] Whether the category is valid.
-  def valid?(context = nil)
-    category.valid?(context).tap do
+  # @return [void]
+  def validate_category
+    if category.invalid?
       errors.merge!(category.errors)
     end
   end
