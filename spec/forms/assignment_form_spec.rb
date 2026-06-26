@@ -204,4 +204,37 @@ describe AssignmentForm, type: :form do
       end
     end
   end
+
+  describe "#validate_date_within_navigable_range" do
+    subject(:form) do
+      described_class.new(amount: "25.00", budget: budget, date: date, subcategory: subcategory).tap(&:valid?)
+    end
+
+    let(:budget)      { subcategory.budget }
+    let(:subcategory) { build_stubbed(:category, :subcategory) }
+
+    context "when the date is after the navigable range" do
+      let(:date) { 5.years.from_now.to_date.beginning_of_month }
+
+      it "adds the out-of-range error to date" do
+        expect(form.errors).to be_added(:date, :out_of_range)
+      end
+    end
+
+    context "when the date is before the navigable range" do
+      let(:date) { 5.years.ago.to_date.beginning_of_month }
+
+      it "adds the out-of-range error to date" do
+        expect(form.errors).to be_added(:date, :out_of_range)
+      end
+    end
+
+    context "when the date is within the navigable range" do
+      let(:date) { Date.current.beginning_of_month }
+
+      it "does not add an error to date" do
+        expect(form.errors[:date]).to be_empty
+      end
+    end
+  end
 end

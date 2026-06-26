@@ -139,6 +139,10 @@ en:
         to_account: "To Account"
     errors:
       models:
+        assignment_form:
+          attributes:
+            date:
+              out_of_range: "is outside the navigable range"
         session_form:
           attributes:
             email:
