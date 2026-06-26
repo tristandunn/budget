@@ -5,10 +5,13 @@ export default class extends Controller {
 
   connect() {
     this.#boundClose = this.#close.bind(this);
+
+    document.addEventListener("turbo:before-cache", this.#boundClose);
   }
 
   disconnect() {
     document.removeEventListener("click", this.#boundClose);
+    document.removeEventListener("turbo:before-cache", this.#boundClose);
   }
 
   toggle(event) {
