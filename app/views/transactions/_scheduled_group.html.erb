@@ -19,7 +19,7 @@
           </div>
 
           <div class="flex items-center justify-between gap-2 text-sm text-taupe-400">
-            <span class="max-w-[45%] truncate"><%= transaction.subcategory&.name %></span>
+            <span class="max-w-[45%] truncate"><%= transaction_category(transaction) %></span>
 
             <% if context == :account %>
               <span class="max-w-[45%] truncate"><%= transaction.memo %></span>
