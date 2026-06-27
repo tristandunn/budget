@@ -143,6 +143,10 @@ en:
           attributes:
             date:
               out_of_range: "is outside the navigable range"
+        category_form:
+          attributes:
+            name:
+              reserved: "is reserved"
         session_form:
           attributes:
             email:

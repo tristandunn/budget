@@ -19,4 +19,13 @@ describe "Category editing" do
 
     expect(page).to have_text("New Name")
   end
+
+  it "does not allow renaming to a reserved inflow name" do
+    fill_in "category_form_name", with: Category::INFLOW
+    click_on t("categories.edit.submit")
+
+    expect(page).to have_text(
+      t("activemodel.errors.models.category_form.attributes.name.reserved")
+    )
+  end
 end

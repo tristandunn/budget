@@ -47,5 +47,29 @@ describe CategoryForm, type: :form do
         expect(form.errors[:name]).to be_present
       end
     end
+
+    context "when the category would be an inflow category" do
+      let(:form) { described_class.new(category: category, name: "Reserved") }
+
+      before do
+        allow(category).to receive(:inflow?).and_return(true)
+      end
+
+      it { is_expected.to be_nil }
+
+      it "does not update the category" do
+        update
+
+        expect(category.reload.name).not_to eq("Reserved")
+      end
+
+      it "adds a reserved error to the name" do
+        update
+
+        expect(form.errors[:name]).to include(
+          t("activemodel.errors.models.category_form.attributes.name.reserved")
+        )
+      end
+    end
   end
 end

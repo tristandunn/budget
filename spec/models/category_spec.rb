@@ -80,6 +80,12 @@ describe Category do
       end
     end
 
+    it "returns true regardless of case" do
+      category = build(:category, name: Category::INFLOW.upcase)
+
+      expect(category).to be_inflow
+    end
+
     it "returns false for a regular category" do
       category = build(:category, name: "Groceries")
 

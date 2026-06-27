@@ -34,7 +34,7 @@ class Category < ApplicationRecord
   #
   # @return [Boolean] Whether this category is an inflow category.
   def inflow?
-    name.in?(INFLOW_NAMES)
+    name.to_s.downcase.in?(INFLOW_NAMES.map(&:downcase))
   end
 
   # Returns true when the category has a per-month funding target, as opposed

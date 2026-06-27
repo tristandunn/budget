@@ -4,6 +4,7 @@ class CategoryForm < BaseForm
   attr_accessor :category, :name
 
   validate :validate_category
+  validate :validate_name
 
   # Build a form prepopulated from an existing category.
   #
@@ -39,6 +40,15 @@ class CategoryForm < BaseForm
   def validate_category
     if category.invalid?
       errors.merge!(category.errors)
+    end
+  end
+
+  # Validate that the name is not a reserved inflow name.
+  #
+  # @return [void]
+  def validate_name
+    if category.inflow?
+      errors.add(:name, :reserved)
     end
   end
 end
