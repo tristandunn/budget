@@ -22,7 +22,7 @@ class PayeeForm < BaseForm
   # @return [Boolean] Whether the rename succeeded.
   def update
     if duplicate_payee
-      merge
+      payee.merge_into(duplicate_payee)
     else
       payee.assign_attributes(name: name)
 
@@ -42,18 +42,6 @@ class PayeeForm < BaseForm
     @duplicate_payee ||= if name.present?
                            payee.budget.payees.where.not(id: payee.id).find_by(name: name)
                          end
-  end
-
-  # Reassign all of the payee's transactions to the existing payee, then
-  # destroy the renamed payee.
-  #
-  # @return [Payee] The destroyed payee.
-  def merge
-    Payee.transaction do
-      payee.transactions.update_all(payee_id: duplicate_payee.id) # rubocop:disable Rails/SkipsModelValidations
-
-      payee.destroy!
-    end
   end
 
   # Validate the payee, merging its errors into the form.

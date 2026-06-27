@@ -17,6 +17,38 @@ describe Payee do
     it { is_expected.to validate_uniqueness_of(:name).scoped_to(:budget_id) }
   end
 
+  describe "#merge_into" do
+    subject(:merge_into) { payee.merge_into(other) }
+
+    let(:budget) { create(:budget) }
+    let(:other)  { create(:payee, budget: budget) }
+    let(:payee)  { create(:payee, budget: budget) }
+
+    it "reassigns the payee's transactions to the other payee" do
+      transaction = create(:transaction, budget: budget, payee: payee)
+
+      merge_into
+
+      expect(transaction.reload.payee).to eq(other)
+    end
+
+    it "destroys the payee" do
+      merge_into
+
+      expect(described_class.exists?(payee.id)).to be(false)
+    end
+
+    it "returns the destroyed payee" do
+      expect(merge_into).to eq(payee)
+    end
+
+    it "does not change a reconciled transaction's updated_at" do
+      reconciled = create(:transaction, :reconciled, budget: budget, payee: payee, updated_at: 1.week.ago)
+
+      expect { merge_into }.not_to(change { reconciled.reload.updated_at })
+    end
+  end
+
   describe "#previous_account_id" do
     let(:budget) { create(:budget) }
     let(:payee)  { create(:payee, budget: budget) }

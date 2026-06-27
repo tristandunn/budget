@@ -70,18 +70,48 @@ class AccountForm < BaseForm
     { credit: credit, name: name }
   end
 
-  # Rename the transfer payees that mirror this account's previous name so
-  # they stay in sync rather than leaving stale payees behind.
+  # Rename a single direction's transfer payee to mirror the account's new name.
+  # When a payee already uses the new name, the renamed payee is merged into it
+  # instead so the uniqueness validation is not violated.
+  #
+  # @param direction [Symbol] The transfer direction.
+  # @param old_name [String] The account's previous name.
+  # @param new_name [String] The account's new name.
+  # @return [void]
+  def rename_transfer_payee(direction, old_name, new_name)
+    payee = budget.payees.find_by(name: transfer_payee_name(direction, old_name))
+
+    if payee
+      renamed  = transfer_payee_name(direction, new_name)
+      existing = budget.payees.find_by(name: renamed)
+
+      if existing
+        payee.merge_into(existing)
+      else
+        payee.update!(name: renamed)
+      end
+    end
+  end
+
+  # Rename the transfer payees that mirror this account's previous name so they
+  # stay in sync rather than leaving stale payees behind.
   #
   # @return [void]
   def rename_transfer_payees
     old_name, new_name = account.changes[:name]
 
     %i(from to).each do |direction|
-      payee = budget.payees.find_by(name: I18n.t("transfers.payee.#{direction}", account: old_name))
-
-      payee&.update!(name: I18n.t("transfers.payee.#{direction}", account: new_name))
+      rename_transfer_payee(direction, old_name, new_name)
     end
+  end
+
+  # Build the transfer payee name for a direction and account name.
+  #
+  # @param direction [Symbol] The transfer direction, :from or :to.
+  # @param account_name [String] The account name to embed in the payee name.
+  # @return [String] The translated transfer payee name.
+  def transfer_payee_name(direction, account_name)
+    I18n.t("transfers.payee.#{direction}", account: account_name)
   end
 
   # Validate the account, merging its errors into the form.

@@ -156,6 +156,62 @@ describe AccountForm, type: :form do
       end
     end
 
+    context "when a transfer payee with the new name already exists" do
+      let(:existing) { create(:payee, budget: account.budget, name: t("transfers.payee.to", account: "New")) }
+      let(:form)     { described_class.new(account: account, budget: account.budget, name: "New", credit: "false") }
+      let(:stale)    { create(:payee, budget: account.budget, name: t("transfers.payee.to", account: "Old")) }
+
+      before do
+        create(:transaction, budget: account.budget, payee: existing)
+        create(:transaction, budget: account.budget, payee: stale)
+      end
+
+      it { is_expected.to be_truthy }
+
+      it "updates the account name" do
+        update
+
+        expect(account.reload.name).to eq("New")
+      end
+
+      it "reassigns the stale transfer payee's transactions to the existing payee" do
+        update
+
+        expect(Transaction.all.map(&:payee).uniq).to eq([existing])
+      end
+
+      it "preserves the existing payee's original transactions" do
+        update
+
+        expect(existing.transactions.count).to eq(2)
+      end
+
+      it "destroys the stale transfer payee" do
+        update
+
+        expect(Payee.exists?(stale.id)).to be(false)
+      end
+
+      it "reassigns the inflow-side stale payee's transactions to the existing payee" do
+        from_existing = create(:payee, budget: account.budget, name: t("transfers.payee.from", account: "New"))
+        from_stale    = create(:payee, budget: account.budget, name: t("transfers.payee.from", account: "Old"))
+        transaction   = create(:transaction, budget: account.budget, payee: from_stale)
+
+        update
+
+        expect(transaction.reload.payee).to eq(from_existing)
+      end
+
+      it "destroys the inflow-side stale payee" do
+        create(:payee, budget: account.budget, name: t("transfers.payee.from", account: "New"))
+        from_stale = create(:payee, budget: account.budget, name: t("transfers.payee.from", account: "Old"))
+
+        update
+
+        expect(Payee.exists?(from_stale.id)).to be(false)
+      end
+    end
+
     context "when the name is unchanged" do
       let(:form) { described_class.new(account: account, budget: account.budget, name: "Old", credit: "true") }
 

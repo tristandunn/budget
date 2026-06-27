@@ -12,6 +12,19 @@ class Payee < ApplicationRecord
 
   normalizes :name, with: ->(value) { value.strip }
 
+  # Reassign this payee's transactions to another payee and destroy
+  # this payee.
+  #
+  # @param other [Payee] The payee to absorb this payee's transactions.
+  # @return [Payee] The destroyed payee.
+  def merge_into(other)
+    transaction do
+      transactions.update_all(payee_id: other.id) # rubocop:disable Rails/SkipsModelValidations
+
+      destroy!
+    end
+  end
+
   # Return the account id from the most recent transaction for this payee.
   #
   # @return [Integer] The most recent account id.
