@@ -42,4 +42,8 @@ describe "assignments/edit.html.erb" do
       with: Money.from_cents(subcategory_snapshot.amount_assigned).to_s
     )
   end
+
+  it "sanitizes pasted input through the arithmetic controller" do
+    expect(html).to have_css("input[data-action*='paste->arithmetic#paste']")
+  end
 end

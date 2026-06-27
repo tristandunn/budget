@@ -1,9 +1,9 @@
 <%= turbo_frame_tag dom_id(@subcategory, :assignment) do %>
-  <%= form_with model: @form, url: budget_category_assignment_path(@budget, @subcategory, month: @form.date.month, year: @form.date.year), method: :patch, class: "inline", data: { controller: "inline-edit", turbo_frame: "_top" } do |form| %>
+  <%= form_with model: @form, url: budget_category_assignment_path(@budget, @subcategory, month: @form.date.month, year: @form.date.year), method: :patch, class: "inline", data: { controller: "inline-edit" } do |form| %>
     <%= form.text_field :amount,
                         class:     "w-full text-right font-semibold bg-transparent outline-none no-spinner focus:ring-1 focus:ring-indigo-500 focus:rounded",
                         data:      {
-                          action:             "keydown->arithmetic#keydown blur->inline-edit#submit keydown.enter->inline-edit#submitOnEnter",
+                          action:             "keydown->arithmetic#keydown paste->arithmetic#paste blur->inline-edit#submit keydown.enter->inline-edit#submitOnEnter",
                           controller:         "arithmetic",
                           inline_edit_target: "input"
                         },

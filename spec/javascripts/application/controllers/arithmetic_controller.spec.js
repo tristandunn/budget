@@ -3,6 +3,18 @@ import ArithmeticController from "@app/controllers/arithmetic_controller.js";
 describe("ArithmeticController", () => {
   let element, instance;
 
+  function createPasteEvent(text) {
+    const event = new window.Event("paste", { "cancelable": true });
+
+    event.clipboardData = {
+      "getData": () => {
+        return text;
+      }
+    };
+
+    return event;
+  }
+
   beforeEach(() => {
     element = document.createElement("input");
     element.value = "100.00";
@@ -223,6 +235,102 @@ describe("ArithmeticController", () => {
 
         expect(event.defaultPrevented).to.eq(false);
       });
+    });
+  });
+
+  describe("#paste", () => {
+    beforeEach(() => {
+      document.body.appendChild(element);
+    });
+
+    afterEach(() => {
+      document.body.removeChild(element);
+    });
+
+    it("inserts the cleaned value at the cursor", () => {
+      element.value = "";
+      element.setSelectionRange(0, 0);
+
+      instance.paste(createPasteEvent("123.45"));
+
+      expect(element.value).to.eq("123.45");
+    });
+
+    it("keeps digits, decimals, and operators", () => {
+      element.value = "";
+      element.setSelectionRange(0, 0);
+
+      instance.paste(createPasteEvent("12+3-4.5"));
+
+      expect(element.value).to.eq("12+3-4.5");
+    });
+
+    it("strips non-numeric, non-operator characters", () => {
+      element.value = "";
+      element.setSelectionRange(0, 0);
+
+      instance.paste(createPasteEvent("$1,2a3"));
+
+      expect(element.value).to.eq("123");
+    });
+
+    it("replaces the selected range", () => {
+      element.value = "100.00";
+      element.setSelectionRange(0, 6);
+
+      instance.paste(createPasteEvent("50"));
+
+      expect(element.value).to.eq("50");
+    });
+
+    it("places the cursor after the inserted value", () => {
+      element.value = "100";
+      element.setSelectionRange(3, 3);
+
+      instance.paste(createPasteEvent("+25"));
+
+      expect(element.value).to.eq("100+25");
+      expect(element.selectionStart).to.eq(6);
+      expect(element.selectionEnd).to.eq(6);
+    });
+
+    it("collapses consecutive operators, keeping the last", () => {
+      element.value = "";
+      element.setSelectionRange(0, 0);
+
+      instance.paste(createPasteEvent("1+-2"));
+
+      expect(element.value).to.eq("1-2");
+    });
+
+    it("collapses operators across the insertion boundary", () => {
+      element.value = "100+";
+      element.setSelectionRange(4, 4);
+
+      instance.paste(createPasteEvent("+25"));
+
+      expect(element.value).to.eq("100+25");
+      expect(element.selectionStart).to.eq(6);
+      expect(element.selectionEnd).to.eq(6);
+    });
+
+    it("collapses operators when inserting before an existing operator", () => {
+      element.value = "1+2";
+      element.setSelectionRange(1, 1);
+
+      instance.paste(createPasteEvent("5+"));
+
+      expect(element.value).to.eq("15+2");
+      expect(element.selectionStart).to.eq(3);
+      expect(element.selectionEnd).to.eq(3);
+    });
+
+    it("prevents the default behavior", () => {
+      const event = createPasteEvent("123");
+
+      instance.paste(event);
+
+      expect(event.defaultPrevented).to.eq(true);
     });
   });
 });
