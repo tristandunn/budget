@@ -42,6 +42,34 @@ describe TransferForm, type: :form do
     end
   end
 
+  describe "#default_amount" do
+    subject { form.default_amount }
+
+    context "when there is no destination account" do
+      let(:form) { described_class.new }
+
+      it { is_expected.to be_nil }
+    end
+
+    context "when the destination is a cash account" do
+      let(:form) { described_class.new(to_account: create(:account)) }
+
+      it { is_expected.to be_nil }
+    end
+
+    context "when the destination credit account has a balance owed" do
+      let(:form) { described_class.new(to_account: create(:account, :credit, balance: -7000)) }
+
+      it { is_expected.to eq("70.00") }
+    end
+
+    context "when the destination credit account is overpaid" do
+      let(:form) { described_class.new(to_account: create(:account, :credit, balance: 5000)) }
+
+      it { is_expected.to eq("0.00") }
+    end
+  end
+
   describe "#save" do
     subject(:save) { form.save }
 

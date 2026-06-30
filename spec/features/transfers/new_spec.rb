@@ -34,6 +34,18 @@ describe "Transfer" do
     end
   end
 
+  context "with a credit to_account_id that has a balance owed" do
+    let(:credit_with_balance) { create(:account, :credit, balance: -7000, budget: budget) }
+
+    before do
+      visit new_budget_transfer_path(budget, to_account_id: credit_with_balance.id)
+    end
+
+    it "defaults the amount to the cleared balance owed" do
+      expect(page).to have_field(TransferForm.human_attribute_name(:amount), with: "70.00")
+    end
+  end
+
   context "when clicking a transfer row" do
     before do
       CreateTransfer.call(

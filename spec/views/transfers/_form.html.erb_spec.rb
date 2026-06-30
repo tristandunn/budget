@@ -65,4 +65,13 @@ describe "transfers/_form.html.erb" do
   it "renders the form with the shared transaction_form id" do
     expect(html).to have_css("form#transaction_form")
   end
+
+  context "when the destination credit account has a balance owed" do
+    let(:form)       { TransferForm.new(budget: budget, to_account: to_account) }
+    let(:to_account) { create(:account, :credit, balance: -7000) }
+
+    it "defaults the amount field to the cleared balance owed" do
+      expect(html).to have_css(%(input#transfer_form_amount[value="70.00"]))
+    end
+  end
 end
