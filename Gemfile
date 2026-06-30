@@ -21,7 +21,7 @@ gem "solid_queue",       "1.4.0"
 gem "sqlite3",           "2.9.5"
 gem "stimulus-rails",    "1.3.4"
 gem "tailwindcss-rails", "4.6.0"
-gem "thruster",          "0.1.21", require: false
+gem "thruster",          "0.1.22", require: false
 gem "turbo-rails",       "2.0.23"
 
 group :development, :test do
