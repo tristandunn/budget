@@ -208,15 +208,10 @@ class TransactionsController < ApplicationController
   #
   # @return [Hash] The permitted parameters merged with the budget and subcategory.
   def transaction_parameters
-    {
+    parameters.to_h.slice(:amount, :date, :frequency, :memo, :payee).merge(
       account:     account,
-      amount:      parameters[:amount],
       budget:      current_budget,
-      date:        parameters[:date],
-      frequency:   parameters[:frequency],
-      memo:        parameters[:memo],
-      payee:       parameters[:payee],
       subcategory: subcategory
-    }
+    )
   end
 end
