@@ -76,6 +76,36 @@ describe AssignmentForm, type: :form do
       it { is_expected.to eq(Money.from_amount(BigDecimal("105"))) }
     end
 
+    context "when amount has whitespace around a subtraction operator" do
+      let(:amount) { "10 - 5" }
+
+      it { is_expected.to eq(Money.from_amount(BigDecimal("5"))) }
+    end
+
+    context "when amount has whitespace around an addition operator" do
+      let(:amount) { "10 + 5" }
+
+      it { is_expected.to eq(Money.from_amount(BigDecimal("15"))) }
+    end
+
+    context "when amount is surrounded by whitespace" do
+      let(:amount) { " 10 " }
+
+      it { is_expected.to eq(Money.from_amount(BigDecimal("10"))) }
+    end
+
+    context "when amount separates an expression with tabs" do
+      let(:amount) { "10\t-\t5" }
+
+      it { is_expected.to eq(Money.from_amount(BigDecimal("5"))) }
+    end
+
+    context "when amount contains other invalid characters" do
+      let(:amount) { "10a-5" }
+
+      it { is_expected.to eq(Money.from_amount(BigDecimal("5"))) }
+    end
+
     context "when amount starts with a negative part" do
       let(:amount) { "-50+20" }
 

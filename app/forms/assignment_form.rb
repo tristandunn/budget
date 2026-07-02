@@ -2,6 +2,7 @@
 
 class AssignmentForm < BaseForm
   ARITHMETIC_PATTERN = /[+-]?[\d.]+/
+  INVALID_CHARACTERS = /[^\d.+-]/
 
   attr_accessor :budget, :date, :subcategory
   attr_writer   :amount
@@ -52,9 +53,10 @@ class AssignmentForm < BaseForm
   #
   # @return [Array<BigDecimal>] The numeric parts of the amount string.
   def parts
-    @parts ||= @amount.to_s.delete("$,").scan(ARITHMETIC_PATTERN).filter_map do |part|
-      BigDecimal(part, exception: false)
-    end
+    @parts ||= @amount.to_s
+                      .gsub(INVALID_CHARACTERS, "")
+                      .scan(ARITHMETIC_PATTERN)
+                      .filter_map { |part| BigDecimal(part, exception: false) }
   end
 
   # Validate the assignment, merging its errors into the form.
