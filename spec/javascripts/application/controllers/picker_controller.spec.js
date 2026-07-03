@@ -3,6 +3,7 @@ import PickerController from "@app/controllers/picker_controller.js";
 describe("PickerController", () => {
   let controller, display, element, hiddenField, icon, picker, search;
   let alpha, beta, gamma, groupOne, groupTwo;
+  let scheduledTimeouts;
 
   const buildItem = (label, value) => {
     const item = document.createElement("li");
@@ -67,6 +68,15 @@ describe("PickerController", () => {
     controller.groupTargets      = [groupOne, groupTwo];
 
     sinon.stub(window, "matchMedia").returns({ "matches": true });
+
+    scheduledTimeouts = [];
+
+    sinon.stub(window, "setTimeout").callsFake((callback) => {
+      scheduledTimeouts.push(callback);
+
+      return scheduledTimeouts.length;
+    });
+    sinon.stub(window, "clearTimeout");
   });
 
   describe("#open", () => {
@@ -146,6 +156,47 @@ describe("PickerController", () => {
 
       expect(picker.classList.contains("closing")).to.be.false;
       expect(picker.classList.contains("hidden")).to.be.true;
+    });
+
+    it("does not hide the picker when it is reopened mid-close", () => {
+      window.matchMedia.returns({ "matches": false });
+
+      controller.open();
+      controller.back();
+      controller.open();
+
+      picker.dispatchEvent(new window.Event("transitionend"));
+
+      expect(picker.classList.contains("open")).to.be.true;
+      expect(picker.classList.contains("closing")).to.be.false;
+      expect(picker.classList.contains("hidden")).to.be.false;
+    });
+
+    it("ignores a second close while one is already animating", () => {
+      window.matchMedia.returns({ "matches": false });
+
+      controller.open();
+      controller.back();
+      controller.back();
+
+      expect(scheduledTimeouts).to.have.lengthOf(1);
+    });
+
+    it("tears down an in-flight close when reduced motion is toggled on", () => {
+      window.matchMedia.returns({ "matches": false });
+
+      controller.open();
+      controller.back();
+
+      window.matchMedia.returns({ "matches": true });
+
+      controller.back();
+
+      picker.dispatchEvent(new window.Event("transitionend"));
+
+      expect(picker.classList.contains("closing")).to.be.false;
+      expect(picker.classList.contains("hidden")).to.be.true;
+      expect(window.clearTimeout).to.have.been.called;
     });
   });
 

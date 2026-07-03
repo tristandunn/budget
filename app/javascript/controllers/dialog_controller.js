@@ -1,14 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
-
-/*
- * Fallback delay, in milliseconds, after which a closing dialog is forced
- * shut even if no transition event arrives. It is longer than the 300ms
- * slide-out transition so it only fires when the expected transitionend is
- * missing, such as when Firefox cancels the transition while closing stacked
- * dialogs. Without it the dialog can stay open in the top layer with a
- * transparent backdrop that silently blocks every click on the page.
- */
-const CLOSE_FALLBACK_DELAY = 500;
+import DialogCloser from "shared/dialog_closer";
 
 /*
  * Opens and closes a modal dialog with slide transitions, dismissing it once
@@ -16,6 +7,8 @@ const CLOSE_FALLBACK_DELAY = 500;
  */
 export default class extends Controller {
   static targets = ["dialog"];
+
+  #closer = new DialogCloser();
 
   // Open the dialog when a frame finishes loading.
   open() {
@@ -32,6 +25,10 @@ export default class extends Controller {
       return;
     }
 
+    this.#closer.cancel(() => {
+      dialog.classList.remove("closing");
+    });
+
     /*
      * Skip showModal when the dialog is already open. This happens when
      * a turbo frame inside the open dialog loads new content, such as
@@ -47,7 +44,7 @@ export default class extends Controller {
      * Skip when the user prefers reduced motion since no transition runs.
      */
     if (!this.#reducedMotion()) {
-      this.#forceReflow(dialog);
+      void dialog.offsetHeight;
     }
 
     dialog.classList.add("open");
@@ -57,11 +54,7 @@ export default class extends Controller {
   close() {
     const dialog = this.dialogTarget;
 
-    if (dialog.classList.contains("closing")) {
-      return;
-    }
-
-    this.#animateClosed(dialog, () => {
+    this.#closeWithMotion(dialog, () => {
       this.#reset(dialog);
     });
   }
@@ -82,58 +75,37 @@ export default class extends Controller {
 
   /*
    * Run the close callback immediately when the user prefers reduced motion,
-   * otherwise after the slide-out transition ends. Forcing a reflow before
-   * adding the closing class makes the browser register the on-screen position
-   * first; without it a pending layout change (such as a turbo stream replacing
-   * the frame contents) can be batched with the class change and skip the
-   * transition entirely.
+   * otherwise hand off to the closer, which forces a reflow and then adds the
+   * closing class to slide the dialog out before running the callback once the
+   * transition ends.
    */
-  #animateClosed(dialog, onClosed) {
+  #closeWithMotion(dialog, onClosed) {
     if (this.#reducedMotion()) {
+      this.#closer.cancel();
       onClosed();
 
       return;
     }
 
-    /*
-     * Finish closing exactly once. A slide-out fires one transition event per
-     * animated property, and the fallback timer can overlap them, so remove
-     * both listeners and clear the timer before running onClosed. Without this
-     * a dismiss would call Turbo.visit again and navigate a second time.
-     */
-    const finishClosing = () => {
-      dialog.removeEventListener("transitionend", onTransition);
-      dialog.removeEventListener("transitioncancel", onTransition);
-
-      window.clearTimeout(fallback);
-
-      onClosed();
-    };
-
-    /*
-     * Only the dialog's own slide-out finishes closing. Ignore transition
-     * events bubbling up from elements inside the dialog so an inner
-     * transition can't tear the dialog down mid-animation.
-     */
-    const onTransition = (event) => {
-      if (event.target === dialog) {
-        finishClosing();
-      }
-    };
-
-    dialog.addEventListener("transitionend", onTransition);
-    dialog.addEventListener("transitioncancel", onTransition);
-
-    const fallback = window.setTimeout(finishClosing, CLOSE_FALLBACK_DELAY);
-
-    this.#forceReflow(dialog);
-
-    dialog.classList.add("closing");
+    this.#closer.close(
+      dialog,
+      () => {
+        dialog.classList.add("closing");
+      },
+      onClosed
+    );
   }
 
-  // Slide the dialog closed, then visit the given URL.
+  /*
+   * Slide the dialog closed, then visit the given URL. Cancel any in-flight
+   * close first so #closeWithMotion is not dropped by the guard against
+   * overlapping closes, otherwise a dismiss that lands while the dialog is
+   * already animating shut would skip the redirect.
+   */
   #dismiss(dialog, url) {
-    this.#animateClosed(dialog, () => {
+    this.#closer.cancel();
+
+    this.#closeWithMotion(dialog, () => {
       this.#reset(dialog);
 
       /*
@@ -143,14 +115,6 @@ export default class extends Controller {
        */
       Turbo.visit(url, { "action": "replace" });
     });
-  }
-
-  /*
-   * Read offsetHeight to force a synchronous layout flush, ensuring any
-   * pending style or DOM changes are applied before the next class change.
-   */
-  #forceReflow(dialog) {
-    return dialog.offsetHeight;
   }
 
   // Return whether the user prefers reduced motion.

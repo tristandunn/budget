@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
+import DialogCloser from "shared/dialog_closer";
 
 /*
  * Manages a search-and-select picker panel built from server-rendered items.
@@ -8,8 +9,14 @@ import { Controller } from "@hotwired/stimulus";
 export default class extends Controller {
   static targets = ["display", "group", "hiddenField", "icon", "item", "picker", "search"];
 
+  #closer = new DialogCloser();
+
   // Show the picker panel and reset the search input.
   open() {
+    this.#closer.cancel(() => {
+      this.pickerTarget.classList.remove("closing");
+    });
+
     this.pickerTarget.classList.remove("hidden");
 
     if (!this.#reducedMotion()) {
@@ -144,23 +151,26 @@ export default class extends Controller {
   // Animate the picker panel closed.
   #closePanel() {
     if (this.#reducedMotion()) {
+      this.#closer.cancel(() => {
+        this.pickerTarget.classList.remove("closing");
+      });
       this.pickerTarget.classList.remove("open");
       this.pickerTarget.classList.add("hidden");
 
       return;
     }
 
-    this.pickerTarget.addEventListener(
-      "transitionend",
+    this.#closer.close(
+      this.pickerTarget,
+      () => {
+        this.pickerTarget.classList.remove("open");
+        this.pickerTarget.classList.add("closing");
+      },
       () => {
         this.pickerTarget.classList.remove("closing");
         this.pickerTarget.classList.add("hidden");
-      },
-      { "once": true }
+      }
     );
-
-    this.pickerTarget.classList.remove("open");
-    this.pickerTarget.classList.add("closing");
   }
 
   // Return whether the user prefers reduced motion.

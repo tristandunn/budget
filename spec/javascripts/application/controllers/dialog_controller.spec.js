@@ -149,6 +149,30 @@ describe("DialogController", () => {
     expect(dialog.close).to.have.been.calledOnce;
   });
 
+  it("does not close the dialog when it is reopened mid-close", () => {
+    controller.close();
+    controller.open();
+
+    dialog.dispatchEvent(new window.Event("transitionend"));
+
+    expect(dialog.close).not.to.have.been.called;
+    expect(dialog.classList.contains("open")).to.be.true;
+    expect(dialog.classList.contains("closing")).to.be.false;
+  });
+
+  it("tears down an in-flight close when reduced motion is toggled on", () => {
+    controller.close();
+
+    sinon.stub(window, "matchMedia").returns({ "matches": true });
+
+    controller.close();
+    dialog.dispatchEvent(new window.Event("transitionend"));
+
+    expect(dialog.close).to.have.been.calledOnce;
+    expect(dialog.classList.contains("closing")).to.be.false;
+    expect(window.clearTimeout).to.have.been.called;
+  });
+
   it("closes when the slide-out transition is cancelled", () => {
     controller.close();
     dialog.dispatchEvent(new window.Event("transitioncancel"));
@@ -255,6 +279,25 @@ describe("DialogController", () => {
     dialog.dispatchEvent(new window.Event("transitionend"));
 
     expect(globalThis.Turbo.visit).to.have.been.calledOnce;
+
+    delete globalThis.Turbo;
+  });
+
+  it("dismisses and visits the redirect URL while a close is already in flight", () => {
+    globalThis.Turbo = { "visit": sinon.fake() };
+
+    controller.close();
+
+    const frame = dialog.querySelector("turbo-frame");
+    frame.innerHTML = "";
+    frame.src = "/redirected";
+
+    controller.open();
+
+    dialog.dispatchEvent(new window.Event("transitionend"));
+
+    expect(dialog.close).to.have.been.calledOnce;
+    expect(globalThis.Turbo.visit).to.have.been.calledWith("/redirected", { "action": "replace" });
 
     delete globalThis.Turbo;
   });
