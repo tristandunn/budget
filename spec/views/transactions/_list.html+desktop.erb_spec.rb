@@ -8,6 +8,7 @@ describe "transactions/_list.html+desktop.erb" do
       context:                context,
       current_transactions:   current_transactions,
       empty_message:          empty_message,
+      scheduled_id:           "account-all-scheduled",
       scheduled_transactions: scheduled_transactions
     }
 
@@ -69,11 +70,13 @@ describe "transactions/_list.html+desktop.erb" do
     end
 
     it "wires the scheduled section to the collapsible controller" do
-      expect(html).to have_css("tbody#scheduled[data-controller='collapsible']")
+      expect(html).to have_css(
+        "tbody#account-all-scheduled[data-controller='collapsible'][data-collapsible-id-value='account-all-scheduled']"
+      )
     end
 
     it "marks the scheduled content for the collapsible preload" do
-      expect(html).to have_css("tbody[data-collapsible-content='collapsible-scheduled']")
+      expect(html).to have_css("tbody[data-collapsible-content='collapsible-account-all-scheduled']")
     end
 
     it "renders the transaction partial" do
@@ -81,14 +84,14 @@ describe "transactions/_list.html+desktop.erb" do
     end
 
     it "spans the base columns in the scheduled header" do
-      expect(html).to have_css("tbody#scheduled th[scope='rowgroup'][colspan='7']")
+      expect(html).to have_css("tbody#account-all-scheduled th[scope='rowgroup'][colspan='7']")
     end
 
     context "with the all-accounts context" do
       let(:context) { :transactions }
 
       it "spans the extra account column in the scheduled header" do
-        expect(html).to have_css("tbody#scheduled th[scope='rowgroup'][colspan='8']")
+        expect(html).to have_css("tbody#account-all-scheduled th[scope='rowgroup'][colspan='8']")
       end
     end
   end

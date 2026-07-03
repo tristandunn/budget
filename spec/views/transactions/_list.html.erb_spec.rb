@@ -8,6 +8,7 @@ describe "transactions/_list.html.erb" do
       context:                :transactions,
       current_transactions:   current_transactions,
       empty_message:          empty_message,
+      scheduled_id:           "account-all-scheduled",
       scheduled_transactions: scheduled_transactions
     }
 
@@ -56,7 +57,7 @@ describe "transactions/_list.html.erb" do
     end
 
     it "does not render the current transaction in the scheduled section" do
-      expect(html).to have_no_css("#scheduled", text: transaction.payee.name)
+      expect(html).to have_no_css("#account-all-scheduled", text: transaction.payee.name)
     end
 
     it "links each transaction to its edit page" do
@@ -95,6 +96,7 @@ describe "transactions/_list.html.erb" do
           context:                :account,
           current_transactions:   current_transactions,
           empty_message:          empty_message,
+          scheduled_id:           "account-all-scheduled",
           scheduled_transactions: scheduled_transactions
         }
 
@@ -138,6 +140,12 @@ describe "transactions/_list.html.erb" do
 
     it "renders the scheduled header" do
       expect(html).to have_text(t("transactions.list.scheduled"))
+    end
+
+    it "wires the scheduled section to the collapsible controller" do
+      expect(html).to have_css(
+        "#account-all-scheduled[data-controller='collapsible'][data-collapsible-id-value='account-all-scheduled']"
+      ).and(have_css("[data-collapsible-content='collapsible-account-all-scheduled']"))
     end
 
     it "renders the scheduled group partial" do

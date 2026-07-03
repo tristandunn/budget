@@ -1,4 +1,4 @@
-<%# locals: (current_transactions:, empty_message:, scheduled_transactions:, context:) %>
+<%# locals: (current_transactions:, empty_message:, scheduled_transactions:, context:, scheduled_id:) %>
 <% if scheduled_transactions.present? || current_transactions.present? %>
   <table class="w-full table-fixed text-left">
     <colgroup>
@@ -107,10 +107,10 @@
 
     <% if scheduled_transactions.present? %>
       <tbody
-        id="scheduled"
+        id="<%= scheduled_id %>"
         class="group border-b border-taupe-300 bg-taupe-200"
         data-controller="collapsible"
-        data-collapsible-id-value="scheduled"
+        data-collapsible-id-value="<%= scheduled_id %>"
       >
         <tr class="cursor-pointer" data-action="click->collapsible#toggle">
           <th
@@ -131,7 +131,10 @@
           </th>
         </tr>
       </tbody>
-      <tbody class="[.group.collapsed+&]:hidden" data-collapsible-content="collapsible-scheduled">
+      <tbody
+        class="[.group.collapsed+&]:hidden"
+        data-collapsible-content="collapsible-<%= scheduled_id %>"
+      >
         <% scheduled_transactions.each do |transaction| %>
           <%= render "transactions/transaction", transaction: transaction, scheduled: true, context: context %>
         <% end %>

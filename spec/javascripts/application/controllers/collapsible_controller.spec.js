@@ -129,4 +129,43 @@ describe("CollapsibleController", () => {
       expect(JSON.parse(localStorage.getItem("budget:collapsed-sections"))).to.deep.eq([]);
     });
   });
+
+  describe("per-identifier state", () => {
+    let firstElement, firstInstance, secondElement, secondInstance;
+
+    beforeEach(() => {
+      firstElement  = document.createElement("tbody");
+      secondElement = document.createElement("tbody");
+
+      firstInstance = new CollapsibleController({ "scope": { "element": firstElement } });
+      firstInstance.idValue = "account-1-scheduled";
+
+      secondInstance = new CollapsibleController({ "scope": { "element": secondElement } });
+      secondInstance.idValue = "account-2-scheduled";
+    });
+
+    it("only persists the toggled identifier", () => {
+      firstInstance.toggle();
+
+      expect(JSON.parse(localStorage.getItem("budget:collapsed-sections"))).
+        to.deep.eq(["account-1-scheduled"]);
+    });
+
+    it("does not collapse a section with a different identifier", () => {
+      firstInstance.toggle();
+
+      secondInstance.connect();
+
+      expect(secondElement.classList.contains("collapsed")).to.eq(false);
+    });
+
+    it("collapses a section that shares its identifier with a stored one", () => {
+      firstInstance.toggle();
+
+      secondInstance.idValue = "account-1-scheduled";
+      secondInstance.connect();
+
+      expect(secondElement.classList.contains("collapsed")).to.eq(true);
+    });
+  });
 });

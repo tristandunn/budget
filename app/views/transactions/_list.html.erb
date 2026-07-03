@@ -1,11 +1,11 @@
-<%# locals: (current_transactions:, empty_message:, scheduled_transactions:, context:) %>
+<%# locals: (current_transactions:, empty_message:, scheduled_transactions:, context:, scheduled_id:) %>
 <% if scheduled_transactions.present? || current_transactions.present? %>
   <% if scheduled_transactions.present? %>
     <div
-      id="scheduled"
+      id="<%= scheduled_id %>"
       class="group"
       data-controller="collapsible"
-      data-collapsible-id-value="scheduled"
+      data-collapsible-id-value="<%= scheduled_id %>"
     >
       <div
         class="flex items-center justify-between border-y border-taupe-200 bg-taupe-100 px-4 py-2"
@@ -26,7 +26,10 @@
         </h3>
       </div>
 
-      <div class="group-[.collapsed]:hidden" data-collapsible-content="collapsible-scheduled">
+      <div
+        class="group-[.collapsed]:hidden"
+        data-collapsible-content="collapsible-<%= scheduled_id %>"
+      >
         <% scheduled_transactions.group_by(&:date).each do |date, transactions| %>
           <%= render "transactions/scheduled_group",
                      context:      context,
