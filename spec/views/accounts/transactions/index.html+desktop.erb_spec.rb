@@ -15,9 +15,9 @@ describe "accounts/transactions/index.html+desktop.erb" do
   before do
     allow(account).to receive_messages(balance: 7_500, cleared_balance: 5_000, uncleared_balance: 2_500)
 
-    stub_template("shared/_sidebar.html.erb"                 => "SIDEBAR_PARTIAL")
-    stub_template("accounts/transactions/_actions.html.erb"  => "ACTIONS_PARTIAL")
-    stub_template("transactions/_list.html.erb"              => "LIST_PARTIAL")
+    stub_template("shared/_sidebar.html.erb"                    => "SIDEBAR_PARTIAL")
+    stub_template("accounts/transactions/_actions_bar.html.erb" => "ACTIONS_BAR_PARTIAL")
+    stub_template("transactions/_list.html.erb"                 => "LIST_PARTIAL")
 
     assign :budget,                 budget
     assign :account,                account
@@ -51,8 +51,8 @@ describe "accounts/transactions/index.html+desktop.erb" do
     expect(html).to have_css("#uncleared_balance", text: number_to_money(2_500))
   end
 
-  it "renders the actions partial" do
-    expect(html).to include("ACTIONS_PARTIAL")
+  it "renders the actions bar partial" do
+    expect(html).to include("ACTIONS_BAR_PARTIAL")
   end
 
   it "renders the transaction list" do

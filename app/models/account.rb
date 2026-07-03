@@ -35,6 +35,13 @@ class Account < ApplicationRecord
     end
   end
 
+  # Return whether the account has cleared transactions awaiting reconciliation.
+  #
+  # @return [Boolean] Whether there are cleared transactions to reconcile.
+  def reconcilable?
+    transactions.cleared.exists?
+  end
+
   # Return the sum of pending transaction amounts.
   #
   # @return [Integer] The uncleared balance in cents.

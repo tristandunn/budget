@@ -1,0 +1,11 @@
+<%# locals: (account:, budget:) %>
+<div id="account_actions" class="flex items-center gap-2">
+  <% if account.reconcilable? %>
+    <%= render "accounts/transactions/reconcile", account: account, budget: budget %>
+  <% end %>
+
+  <%= render "accounts/transactions/actions",
+             account:   account,
+             budget:    budget,
+             reconcile: false %>
+</div>

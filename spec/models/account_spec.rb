@@ -100,6 +100,25 @@ describe Account do
     end
   end
 
+  describe "#reconcilable?" do
+    let(:account) { create(:account) }
+
+    before do
+      create(:transaction, account: account, budget: account.budget)
+      create(:transaction, :reconciled, account: account, budget: account.budget)
+    end
+
+    it "returns true when there are cleared transactions" do
+      create(:transaction, :cleared, account: account, budget: account.budget)
+
+      expect(account).to be_reconcilable
+    end
+
+    it "returns false when there are no cleared transactions" do
+      expect(account).not_to be_reconcilable
+    end
+  end
+
   describe "#uncleared_balance" do
     it "returns the sum of pending transaction amounts" do
       account = create(:account)

@@ -13,9 +13,9 @@ describe "accounts/transactions/index.html.erb" do
   let(:budget)  { build_stubbed(:budget) }
 
   before do
-    stub_template("accounts/transactions/_actions.html.erb" => "ACTIONS_PARTIAL")
-    stub_template("shared/_toolbar.html.erb"                => "TOOLBAR_PARTIAL")
-    stub_template("transactions/_list.html.erb"             => "LIST_PARTIAL")
+    stub_template("accounts/transactions/_actions_bar.html.erb" => "ACTIONS_BAR_PARTIAL")
+    stub_template("shared/_toolbar.html.erb"                    => "TOOLBAR_PARTIAL")
+    stub_template("transactions/_list.html.erb"                 => "LIST_PARTIAL")
 
     assign :budget,                 budget
     assign :account,                account
@@ -43,8 +43,8 @@ describe "accounts/transactions/index.html.erb" do
     expect(html).to have_text(number_to_money(account.uncleared_balance))
   end
 
-  it "renders the actions partial" do
-    expect(html).to include("ACTIONS_PARTIAL")
+  it "renders the actions bar partial" do
+    expect(html).to include("ACTIONS_BAR_PARTIAL")
   end
 
   it "renders the transaction list" do

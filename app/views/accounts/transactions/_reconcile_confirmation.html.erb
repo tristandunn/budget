@@ -1,0 +1,27 @@
+<%# locals: (account:, budget:) %>
+<div class="mb-3 rounded-lg bg-taupe-50 px-3 py-2 text-center">
+  <p class="text-base text-taupe-800 sm:text-sm">
+    <%= t("accounts.transactions.reconcile.prompt") %>
+  </p>
+
+  <p class="text-2xl font-semibold text-taupe-800 sm:text-lg">
+    <%= number_to_money(account.cleared_balance) %>
+  </p>
+</div>
+
+<div class="grid grid-cols-2 gap-2">
+  <button
+    type="button"
+    data-action="click->confirm#cancel"
+    class="
+      cursor-pointer rounded-lg bg-taupe-200 px-3 py-2.5 text-center text-base font-medium
+      text-taupe-800 sm:py-1.5 sm:text-sm
+    "
+  >
+    <%= t("accounts.transactions.reconcile.decline") %>
+  </button>
+
+  <%= button_to t("accounts.transactions.reconcile.accept"),
+                budget_account_reconciliation_path(budget, account),
+                class: "w-full cursor-pointer rounded-lg bg-indigo-600 px-3 py-2.5 text-center text-base font-medium text-white sm:py-1.5 sm:text-sm" %>
+</div>

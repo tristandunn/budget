@@ -13,7 +13,7 @@ describe TransactionsHelper do
         allow(account).to receive(:last_reconciled_at).and_return(Time.current)
       end
 
-      it { is_expected.to eq(t("accounts.transactions.actions.reconciled", time: t("dates.today").downcase)) }
+      it { is_expected.to eq(t("accounts.transactions.reconcile.reconciled", time: t("dates.today").downcase)) }
     end
 
     context "when the account has never been reconciled" do
@@ -21,7 +21,7 @@ describe TransactionsHelper do
         allow(account).to receive(:last_reconciled_at).and_return(nil)
       end
 
-      it { is_expected.to eq(t("accounts.transactions.actions.reconciled_never")) }
+      it { is_expected.to eq(t("accounts.transactions.reconcile.reconciled_never")) }
     end
   end
 

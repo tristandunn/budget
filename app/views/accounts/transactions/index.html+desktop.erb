@@ -22,10 +22,7 @@
           <p class="text-xs text-taupe-500"><%= account_reconciled_summary(@account) %></p>
         </div>
 
-        <%= render "accounts/transactions/actions",
-                   account:            @account,
-                   budget:             @budget,
-                   reconciled_summary: false %>
+        <%= render "accounts/transactions/actions_bar", account: @account, budget: @budget %>
       </header>
 
       <%= render "shared/transactions/balances", record: @account %>

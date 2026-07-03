@@ -1,0 +1,21 @@
+<%# locals: (account:, budget:) %>
+<div data-controller="confirm" class="relative">
+  <button
+    type="button"
+    data-action="click->confirm#prompt"
+    class="cursor-pointer rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white"
+  >
+    <%= t(".reconcile") %>
+  </button>
+
+  <div
+    data-confirm-target="panel"
+    hidden
+    class="
+      absolute right-0 top-full z-10 mt-1 w-64 whitespace-normal rounded-lg border
+      border-taupe-200 bg-white p-3 text-left shadow-lg
+    "
+  >
+    <%= render "accounts/transactions/reconcile_confirmation", account: account, budget: budget %>
+  </div>
+</div>

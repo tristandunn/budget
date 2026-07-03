@@ -14,6 +14,7 @@ describe "transactions/clear.turbo_stream.erb" do
 
   before do
     stub_template("transactions/_status_indicator.html.erb" => "STATUS_INDICATOR")
+    stub_template("accounts/transactions/_actions_bar.html.erb" => "ACTIONS_BAR")
 
     allow(view).to receive(:params).and_return(
       ActionController::Parameters.new(context: context)
@@ -28,6 +29,14 @@ describe "transactions/clear.turbo_stream.erb" do
 
   it "renders the status indicator" do
     expect(html).to include("STATUS_INDICATOR")
+  end
+
+  it "replaces the account actions" do
+    expect(html).to have_turbo_stream_element(action: "replace", target: "account_actions")
+  end
+
+  it "renders the account actions" do
+    expect(html).to include("ACTIONS_BAR")
   end
 
   it "replaces the cleared balance" do

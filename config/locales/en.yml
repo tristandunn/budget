@@ -46,10 +46,6 @@ en:
     transactions:
       actions:
         edit: "Edit Account"
-        reconcile: "Reconcile"
-        reconcile_confirm: "Mark all cleared transactions as reconciled?"
-        reconciled: "Reconciled %{time}."
-        reconciled_never: "Never reconciled."
         record_payment: "Record Payment"
       index:
         back: "Back"
@@ -57,6 +53,13 @@ en:
         empty: "No transactions yet."
         uncleared_balance: "Uncleared"
         working_balance: "Working Balance"
+      reconcile:
+        accept: "Yes"
+        decline: "No"
+        prompt: "Is this your current balance?"
+        reconcile: "Reconcile"
+        reconciled: "Reconciled %{time}."
+        reconciled_never: "Never reconciled."
 
   categories:
     category_header:

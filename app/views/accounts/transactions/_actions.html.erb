@@ -1,5 +1,5 @@
-<%# locals: (account:, budget:, reconciled_summary: true) %>
-<div data-controller="popover" class="relative">
+<%# locals: (account:, budget:, reconcile: true) %>
+<div data-controller="<%= reconcile ? "popover confirm" : "popover" %>" class="relative">
   <button
     type="button"
     data-action="popover#toggle"
@@ -28,30 +28,34 @@
       bg-white whitespace-nowrap shadow-lg hidden
     "
   >
-    <%= button_to budget_account_reconciliation_path(budget, account),
-                  class: "flex w-full cursor-pointer items-center justify-between gap-4 px-3 py-2 text-left text-sm text-taupe-800",
-                  form:  { data: { turbo_confirm: t(".reconcile_confirm") } } do %>
-      <span class="flex flex-col">
-        <span><%= t(".reconcile") %></span>
-
-        <% if reconciled_summary %>
-          <span class="text-xs text-taupe-500"><%= account_reconciled_summary(account) %></span>
-        <% end %>
-      </span>
-
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="h-4 w-4 text-taupe-800"
-        viewBox="0 0 16 16"
-        fill="currentColor"
+    <% if reconcile %>
+      <button
+        type="button"
+        data-action="click->confirm#prompt"
+        class="
+          flex w-full cursor-pointer items-center justify-between gap-4 px-3 py-2 text-left
+          text-sm text-taupe-800
+        "
       >
-        <path
-          d="M4 4a4 4 0 0 1 8 0v2h.25c.966 0 1.75.784 1.75 1.75v5.5A1.75 1.75 0 0 1 12.25 15h-8.5A1.75 1.75 0 0 1 2 13.25v-5.5C2 6.784 2.784 6 3.75 6H4Zm8.25 3.5h-8.5a.25.25 0 0 0-.25.25v5.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25v-5.5a.25.25 0 0 0-.25-.25ZM10.5 6V4a2.5 2.5 0 1 0-5 0v2Z"
-        />
-      </svg>
-    <% end %>
+        <span class="flex flex-col">
+          <span><%= t("accounts.transactions.reconcile.reconcile") %></span>
 
-    <hr class="border-taupe-200">
+          <span class="text-xs text-taupe-500"><%= account_reconciled_summary(account) %></span>
+        </span>
+
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-4 w-4 text-taupe-800"
+          viewBox="0 0 16 16"
+          fill="currentColor"
+        >
+          <path
+            d="M4 4a4 4 0 0 1 8 0v2h.25c.966 0 1.75.784 1.75 1.75v5.5A1.75 1.75 0 0 1 12.25 15h-8.5A1.75 1.75 0 0 1 2 13.25v-5.5C2 6.784 2.784 6 3.75 6H4Zm8.25 3.5h-8.5a.25.25 0 0 0-.25.25v5.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25v-5.5a.25.25 0 0 0-.25-.25ZM10.5 6V4a2.5 2.5 0 1 0-5 0v2Z"
+          />
+        </svg>
+      </button>
+      <hr class="border-taupe-200">
+    <% end %>
 
     <%= render "shared/transactions/hide_reconciled", budget: budget %>
 
@@ -94,4 +98,25 @@
       </svg>
     <% end %>
   </div>
+
+  <% if reconcile %>
+    <div
+      data-confirm-target="panel"
+      data-action="click->confirm#cancel"
+      hidden
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+    >
+      <div
+        data-action="click->confirm#stop"
+        class="
+          w-full max-w-xs whitespace-normal rounded-lg border border-taupe-200 bg-white p-4
+          text-left shadow-xl
+        "
+      >
+        <%= render "accounts/transactions/reconcile_confirmation",
+                   account: account,
+                   budget:  budget %>
+      </div>
+    </div>
+  <% end %>
 </div>

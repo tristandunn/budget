@@ -14,7 +14,10 @@ describe "accounts/transactions/_actions.html.erb" do
   let(:budget)  { build_stubbed(:budget) }
 
   before do
+    allow(view).to receive(:account_reconciled_summary).with(account).and_return("RECONCILED_SUMMARY")
+
     stub_template("shared/transactions/_hide_reconciled.html.erb" => "HIDE_RECONCILED_PARTIAL")
+    stub_template("accounts/transactions/_reconcile_confirmation.html.erb" => "RECONCILE_CONFIRMATION")
   end
 
   it "renders a popover trigger button" do
@@ -23,12 +26,27 @@ describe "accounts/transactions/_actions.html.erb" do
     )
   end
 
-  it "renders a reconcile button" do
-    expect(html).to have_button(t("accounts.transactions.actions.reconcile"))
+  it "wires the popover to the confirm controller" do
+    expect(html).to have_css("[data-controller='popover confirm']")
   end
 
-  it "renders a confirmation dialog" do
-    expect(html).to have_css("[data-turbo-confirm]")
+  it "renders a reconcile trigger that opens the confirmation" do
+    expect(html).to have_css(
+      "button[data-action='click->confirm#prompt']",
+      text: t("accounts.transactions.reconcile.reconcile")
+    )
+  end
+
+  it "renders the reconciled summary in the reconcile trigger" do
+    expect(html).to have_css(
+      "button[data-action='click->confirm#prompt']",
+      text: "RECONCILED_SUMMARY"
+    )
+  end
+
+  it "renders the confirmation panel" do
+    expect(html).to have_css("[data-confirm-target='panel']", visible: :all)
+      .and include("RECONCILE_CONFIRMATION")
   end
 
   it "renders the hide reconciled partial" do
@@ -63,48 +81,26 @@ describe "accounts/transactions/_actions.html.erb" do
     end
   end
 
-  context "when the account has been reconciled" do
-    let(:account) { create(:account, budget: budget) }
-    let(:budget)  { create(:budget) }
-
-    before do
-      create(:transaction, account: account, status: :reconciled)
-    end
-
-    it "renders the last reconciled time" do
-      expect(html).to have_text("Reconciled today")
-    end
-  end
-
-  context "when the account has never been reconciled" do
-    it "renders reconciled never" do
-      expect(html).to have_text(t("accounts.transactions.actions.reconciled_never"))
-    end
-  end
-
-  context "when the reconciled summary is disabled" do
+  context "when reconcile is disabled" do
     subject(:html) do
       render partial: "accounts/transactions/actions",
-             locals:  { account: account, budget: budget, reconciled_summary: false }
+             locals:  { account: account, budget: budget, reconcile: false }
 
       rendered
     end
 
-    let(:account) { create(:account, budget: budget) }
-    let(:budget)  { create(:budget) }
-
-    before do
-      create(:transaction, account: account, status: :reconciled)
+    it "does not render a reconcile trigger" do
+      expect(html).to have_no_css("button[data-action='click->confirm#prompt']")
     end
 
-    it "renders the reconcile button" do
-      expect(html).to have_button(t("accounts.transactions.actions.reconcile"))
+    it "does not wire the confirm controller" do
+      expect(html).to have_css("[data-controller='popover']")
+        .and have_no_css("[data-controller='popover confirm']")
     end
 
-    it "does not render the reconciled summary" do
-      expect(html).to have_no_text(
-        t("accounts.transactions.actions.reconciled", time: t("dates.today").downcase)
-      )
+    it "does not render the confirmation panel" do
+      expect(html).to have_no_css("[data-confirm-target='panel']", visible: :all)
+        .and have_no_text("RECONCILE_CONFIRMATION")
     end
   end
 end

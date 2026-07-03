@@ -2,6 +2,12 @@
   <%= render "transactions/status_indicator", context: params[:context], transaction: @transaction %>
 <% end %>
 
+<%= turbo_stream.replace "account_actions" do %>
+  <%= render "accounts/transactions/actions_bar",
+             account: @transaction.account,
+             budget:  @transaction.budget %>
+<% end %>
+
 <%= turbo_stream.replace "cleared_balance" do %>
   <p id="cleared_balance" class="text-base font-semibold">
     <%= number_to_money @transaction.account.cleared_balance %>

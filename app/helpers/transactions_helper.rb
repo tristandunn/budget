@@ -8,10 +8,10 @@ module TransactionsHelper
   # @return [String] The reconciled summary label.
   def account_reconciled_summary(account)
     if account.last_reconciled_at
-      t("accounts.transactions.actions.reconciled",
+      t("accounts.transactions.reconcile.reconciled",
         time: relative_time(account.last_reconciled_at.to_date))
     else
-      t("accounts.transactions.actions.reconciled_never")
+      t("accounts.transactions.reconcile.reconciled_never")
     end
   end
 
