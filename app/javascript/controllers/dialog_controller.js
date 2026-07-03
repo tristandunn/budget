@@ -10,7 +10,10 @@ import { Controller } from "@hotwired/stimulus";
  */
 const CLOSE_FALLBACK_DELAY = 500;
 
-// Opens and closes a dialog with slide transitions.
+/*
+ * Opens and closes a modal dialog with slide transitions, dismissing it once
+ * the slide-out transition ends or the fallback delay elapses.
+ */
 export default class extends Controller {
   static targets = ["dialog"];
 

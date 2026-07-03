@@ -2,6 +2,11 @@ import { Controller } from "@hotwired/stimulus";
 
 const STORAGE_KEY = "budget:collapsed-sections";
 
+/*
+ * Toggles a section's collapsed state and persists the collapsed IDs in
+ * localStorage. On connect it restores the state and preserves it across Turbo
+ * morphs so a persistent element keeps its client-managed collapse.
+ */
 export default class extends Controller {
   static values = { "id": String };
 

@@ -1,5 +1,11 @@
 import { Controller } from "@hotwired/stimulus";
 
+/*
+ * Formats a currency input as the user types, pastes, or presses keys,
+ * tracking the sign and restoring the cursor position while typing reformats
+ * the value. Unformats the value back to a plain number when the form is
+ * submitted.
+ */
 export default class extends Controller {
   static values = { "positive": Boolean };
 

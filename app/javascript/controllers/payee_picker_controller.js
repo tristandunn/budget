@@ -1,7 +1,7 @@
 import PickerController from "controllers/picker_controller";
 
 /*
- * Manages the payee picker. Inserts a "Create" option after each filter pass
+ * Inserts a "Create" option in the payee picker after each filter pass
  * whenever the query is non-empty and does not exactly match an existing
  * payee, allowing a new payee to be created inline.
  */

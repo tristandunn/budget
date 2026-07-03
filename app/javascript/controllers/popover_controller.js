@@ -1,5 +1,9 @@
 import { Controller } from "@hotwired/stimulus";
 
+/*
+ * Toggles a popover menu, closing it on an outside click or before Turbo
+ * caches the page.
+ */
 export default class extends Controller {
   static targets = ["menu"];
 

@@ -1,5 +1,10 @@
 import { Controller } from "@hotwired/stimulus";
 
+/*
+ * Limits a text input to arithmetic expressions of decimal numbers and the
+ * plus and minus operators. Handles operator keypresses and pastes, collapsing
+ * consecutive operators so only the last one in a run is kept.
+ */
 export default class extends Controller {
   keydown(event) {
     if (event.key === "+" || event.key === "-") {

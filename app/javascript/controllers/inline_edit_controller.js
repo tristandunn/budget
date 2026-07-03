@@ -2,6 +2,11 @@ import { Controller } from "@hotwired/stimulus";
 
 const CLEANUP_DELAY_MS = 1000;
 
+/*
+ * Manages an inline edit input, focusing and selecting it when it connects.
+ * Submits the form when the value changes to a non-empty string; otherwise
+ * reloads the enclosing turbo-frame to discard the edit.
+ */
 export default class extends Controller {
   static targets = ["input"];
 

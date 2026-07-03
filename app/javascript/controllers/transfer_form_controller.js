@@ -1,10 +1,10 @@
 import { Controller } from "@hotwired/stimulus";
 
 /*
- * Validates the transfer form before submission. Asks each account picker
- * to validate itself and checks the amount is a non-zero number; cancels
- * the submit when any required field is missing so the user can see which
- * fields need a value.
+ * Validates the transfer form before submission. Asks each account picker to
+ * validate itself and checks the amount is a non-zero number, cancelling the
+ * submit when any required field is missing so the user can see which fields
+ * need a value.
  */
 export default class extends Controller {
   static outlets = ["from-account-picker", "to-account-picker"];

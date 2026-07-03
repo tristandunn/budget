@@ -1,9 +1,9 @@
 import { Controller } from "@hotwired/stimulus";
 
 /*
- * Filters a list of payees by case-insensitive substring match on the search input.
- * Listens for the dialog:close event fired by the dialog-dismisser so the search
- * clears after the rename dialog updates the list via turbo-stream.
+ * Filters a list of payees by a case-insensitive substring match on the search
+ * input. Listens for the dialog:close event fired by the dialog-dismisser so
+ * the search clears after the rename dialog updates the list via turbo-stream.
  */
 export default class extends Controller {
   static targets = ["empty", "item", "search"];

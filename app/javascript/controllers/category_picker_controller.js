@@ -1,9 +1,9 @@
 import PickerController from "controllers/picker_controller";
 
 /*
- * Manages the category picker. Rebuilds a suggested group at the top of the
- * list whenever a payee is selected, cloning the matching category items so
- * the suggestions share the originals' selection behavior and amounts.
+ * Rebuilds a suggested group at the top of the category picker whenever a
+ * payee is selected, cloning the matching category items so the suggestions
+ * share the originals' selection behavior and amounts.
  */
 export default class extends PickerController {
   static targets = ["groups"];
