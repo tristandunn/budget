@@ -36,9 +36,9 @@ class BudgetSnapshotMonth
     date >= snapshot_range.last
   end
 
-  # Returns the next navigable date, or the current date if on the last month.
+  # Returns the next navigable date, or this month's date if on the last month.
   #
-  # @return [Date] The next navigable date, or the current date if on the last month.
+  # @return [Date] The next navigable date, or this month's date if on the last month.
   def next_date
     if last_month?
       date
@@ -47,9 +47,9 @@ class BudgetSnapshotMonth
     end
   end
 
-  # Returns the previous navigable date, or the current date if on the first month.
+  # Returns the previous navigable date, or this month's date if on the first month.
   #
-  # @return [Date] The previous navigable date, or the current date if on the first month.
+  # @return [Date] The previous navigable date, or this month's date if on the first month.
   def previous_date
     if first_month?
       date

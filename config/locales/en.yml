@@ -66,8 +66,6 @@ en:
     category_header:
       assigned: "Assigned"
       available: "Available"
-    dialog:
-      close: "Close dialog"
     edit:
       cancel: "Cancel"
       enter_name: "Enter a name"
