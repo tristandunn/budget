@@ -119,7 +119,7 @@ jobs:
           bundler-cache: true
 
       - name: Scan for vulnerabilities
-        run: bin/brakeman --format github --no-pager
+        run: bin/brakeman --format github --no-pager --exit-on-warn --exit-on-error
 
       - name: Scan for vulnerabilities in JavaScript dependencies
         run: bin/importmap audit
