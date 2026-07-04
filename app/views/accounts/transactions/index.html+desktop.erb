@@ -2,17 +2,7 @@
   <%= render "shared/sidebar", budget: @budget, account_id: @account.id %>
 
   <main class="flex min-w-0 flex-1 flex-col overflow-hidden bg-white">
-    <div data-controller="dialog">
-      <dialog
-        id="account_dialog_modal"
-        class="dialog"
-        aria-labelledby="account_dialog_title"
-        data-dialog-target="dialog"
-        data-action="click->dialog#backdropClose cancel->dialog#cancel"
-      >
-        <turbo-frame id="account_dialog" data-action="turbo:frame-load->dialog#open"></turbo-frame>
-      </dialog>
-    </div>
+    <%= render "shared/dialog", id: "account_dialog" %>
 
     <div class="sticky top-0 z-10 bg-white">
       <header class="flex items-center justify-between gap-4 whitespace-nowrap bg-white px-6 py-4">

@@ -1,15 +1,5 @@
 <div class="flex flex-col min-h-dvh">
-  <div data-controller="dialog">
-    <dialog
-      id="account_dialog_modal"
-      class="dialog"
-      aria-labelledby="account_dialog_title"
-      data-dialog-target="dialog"
-      data-action="click->dialog#backdropClose cancel->dialog#cancel"
-    >
-      <turbo-frame id="account_dialog" data-action="turbo:frame-load->dialog#open"></turbo-frame>
-    </dialog>
-  </div>
+  <%= render "shared/dialog", id: "account_dialog" %>
 
   <div class="sticky top-0 z-10 bg-white">
     <header class="grid grid-cols-3 items-center whitespace-nowrap bg-white px-4 pt-safe pb-4">

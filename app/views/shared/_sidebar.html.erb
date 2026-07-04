@@ -1,39 +1,9 @@
 <%# locals: (budget:, account_id: nil) %>
-<div data-controller="dialog">
-  <dialog
-    id="transaction_dialog_modal"
-    class="dialog"
-    aria-labelledby="transaction_dialog_title"
-    data-dialog-target="dialog"
-    data-action="click->dialog#backdropClose cancel->dialog#cancel"
-  >
-    <turbo-frame id="transaction_dialog" data-action="turbo:frame-load->dialog#open"></turbo-frame>
-  </dialog>
-</div>
+<%= render "shared/dialog", id: "transaction_dialog" %>
 
-<div data-controller="dialog" data-action="dialog:close->dialog#close">
-  <dialog
-    id="payees_dialog_modal"
-    class="dialog"
-    aria-labelledby="payees_dialog_title"
-    data-dialog-target="dialog"
-    data-action="click->dialog#backdropClose cancel->dialog#cancel"
-  >
-    <turbo-frame id="payees_dialog" data-action="turbo:frame-load->dialog#open"></turbo-frame>
-  </dialog>
-</div>
+<%= render "shared/dialog", id: "payees_dialog", dismissable: true %>
 
-<div data-controller="dialog" data-action="dialog:close->dialog#close">
-  <dialog
-    id="payee_rename_dialog_modal"
-    class="dialog"
-    aria-labelledby="payee_rename_dialog_title"
-    data-dialog-target="dialog"
-    data-action="click->dialog#backdropClose cancel->dialog#cancel"
-  >
-    <turbo-frame id="payee_rename_dialog" data-action="turbo:frame-load->dialog#open"></turbo-frame>
-  </dialog>
-</div>
+<%= render "shared/dialog", id: "payee_rename_dialog", dismissable: true %>
 
 <aside class="flex w-72 shrink-0 flex-col bg-indigo-950 text-indigo-100">
   <div class="flex shrink-0 items-center gap-3 px-5 py-4">

@@ -1,0 +1,12 @@
+<%# locals: (id:, dismissable: false) %>
+<%= tag.div(data: { controller: "dialog", action: ("dialog:close->dialog#close" if dismissable) }) do %>
+  <dialog
+    id="<%= id %>_modal"
+    class="dialog"
+    aria-labelledby="<%= id %>_title"
+    data-dialog-target="dialog"
+    data-action="click->dialog#backdropClose cancel->dialog#cancel"
+  >
+    <turbo-frame id="<%= id %>" data-action="turbo:frame-load->dialog#open"></turbo-frame>
+  </dialog>
+<% end %>

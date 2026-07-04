@@ -1,15 +1,5 @@
 <%# locals: (budget:, account_id: nil) %>
-<div data-controller="dialog">
-  <dialog
-    id="transaction_dialog_modal"
-    class="dialog"
-    aria-labelledby="transaction_dialog_title"
-    data-dialog-target="dialog"
-    data-action="click->dialog#backdropClose cancel->dialog#cancel"
-  >
-    <turbo-frame id="transaction_dialog" data-action="turbo:frame-load->dialog#open"></turbo-frame>
-  </dialog>
-</div>
+<%= render "shared/dialog", id: "transaction_dialog" %>
 
 <footer class="sticky bottom-0 pb-[calc(env(safe-area-inset-bottom)/2)] bg-taupe-50 border-t border-taupe-200">
   <nav class="flex items-center">

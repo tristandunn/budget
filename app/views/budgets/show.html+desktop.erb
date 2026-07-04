@@ -142,39 +142,9 @@
     </div>
   </div>
 
-  <div data-controller="dialog" data-action="dialog:close->dialog#close">
-    <dialog
-      id="category_dialog_modal"
-      class="dialog"
-      aria-labelledby="category_dialog_title"
-      data-dialog-target="dialog"
-      data-action="click->dialog#backdropClose cancel->dialog#cancel"
-    >
-      <turbo-frame id="category_dialog" data-action="turbo:frame-load->dialog#open"></turbo-frame>
-    </dialog>
-  </div>
+  <%= render "shared/dialog", id: "category_dialog", dismissable: true %>
 
-  <div data-controller="dialog" data-action="dialog:close->dialog#close">
-    <dialog
-      id="category_rename_dialog_modal"
-      class="dialog"
-      aria-labelledby="category_rename_dialog_title"
-      data-dialog-target="dialog"
-      data-action="click->dialog#backdropClose cancel->dialog#cancel"
-    >
-      <turbo-frame id="category_rename_dialog" data-action="turbo:frame-load->dialog#open"></turbo-frame>
-    </dialog>
-  </div>
+  <%= render "shared/dialog", id: "category_rename_dialog", dismissable: true %>
 
-  <div data-controller="dialog" data-action="dialog:close->dialog#close">
-    <dialog
-      id="category_target_dialog_modal"
-      class="dialog"
-      aria-labelledby="category_target_dialog_title"
-      data-dialog-target="dialog"
-      data-action="click->dialog#backdropClose cancel->dialog#cancel"
-    >
-      <turbo-frame id="category_target_dialog" data-action="turbo:frame-load->dialog#open"></turbo-frame>
-    </dialog>
-  </div>
+  <%= render "shared/dialog", id: "category_target_dialog", dismissable: true %>
 </div>
