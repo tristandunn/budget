@@ -36,6 +36,18 @@ describe Budget do
     it { is_expected.to validate_presence_of(:users).on(:create) }
   end
 
+  describe "#assignable_categories" do
+    let(:budget) { create(:budget) }
+
+    it "returns non-inflow top-level categories sorted by position" do
+      create(:category, budget: budget, name: Category::INFLOW, position: 0)
+      second = create(:category, budget: budget, position: 2)
+      first  = create(:category, budget: budget, position: 1)
+
+      expect(budget.assignable_categories).to eq([first, second])
+    end
+  end
+
   describe "#balance" do
     let(:budget) { create(:budget) }
 

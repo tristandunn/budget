@@ -108,7 +108,7 @@ class BudgetSnapshot
   #
   # @return [Integer] The assigned amount in cents.
   def total_assigned
-    assignable_categories.sum do |category|
+    budget.assignable_categories.sum do |category|
       snapshot_for(category.id).amount_assigned
     end
   end
@@ -118,7 +118,7 @@ class BudgetSnapshot
   #
   # @return [Integer] The available amount in cents.
   def total_available
-    assignable_categories.sum do |category|
+    budget.assignable_categories.sum do |category|
       available_for(category)
     end
   end
@@ -136,7 +136,7 @@ class BudgetSnapshot
   #
   # @return [Integer] The used amount in cents.
   def total_used
-    assignable_categories.sum do |category|
+    budget.assignable_categories.sum do |category|
       snapshot_for(category.id).amount_used
     end
   end
@@ -157,14 +157,6 @@ class BudgetSnapshot
   private
 
   attr_reader :budget, :month, :year
-
-  # Returns the top-level categories that can hold assignments, excluding inflow
-  # categories.
-  #
-  # @return [Array<Category>] The non-inflow top-level categories.
-  def assignable_categories
-    @assignable_categories ||= budget.categories.reject(&:inflow?)
-  end
 
   # Returns a hash of category_id to the available amount (assigned minus used)
   # summed across every snapshot up to and including the displayed month.

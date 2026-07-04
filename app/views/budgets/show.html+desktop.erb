@@ -121,7 +121,7 @@
               </tr>
             </thead>
 
-            <% @budget.categories.reject(&:inflow?).sort_by(&:position).each do |category| %>
+            <% @budget.assignable_categories.each do |category| %>
               <%= render "categories/category_header",
                          category:        category,
                          budget_snapshot: @budget_snapshot %>
@@ -130,7 +130,7 @@
                 class="[.group.collapsed+&]:hidden"
                 data-collapsible-content="collapsible-category-<%= category.id %>"
               >
-                <% category.subcategories.sort_by(&:position).each do |subcategory| %>
+                <% category.subcategories_by_position.each do |subcategory| %>
                   <%= render "categories/subcategory_row",
                              budget:          @budget,
                              subcategory:     subcategory,

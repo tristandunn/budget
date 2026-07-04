@@ -14,6 +14,14 @@ class Budget < ApplicationRecord
   validates :available_to_assign, numericality: { only_integer: true }
   validates :users, presence: true, on: :create
 
+  # Return the top-level categories that can hold assignments, excluding inflow
+  # categories, sorted by position.
+  #
+  # @return [Array<Category>] The non-inflow top-level categories sorted by position.
+  def assignable_categories
+    @assignable_categories ||= categories.reject(&:inflow?).sort_by(&:position)
+  end
+
   # Return the combined balance of every account.
   #
   # @return [Integer] The working balance in cents.
