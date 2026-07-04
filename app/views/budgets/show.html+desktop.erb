@@ -10,11 +10,12 @@
         bg-white px-6 py-4
       "
     >
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-2" data-controller="month-navigation">
         <%= link_to(
               month_budget_path(@budget, year: @budget_snapshot.previous_date.year, month: @budget_snapshot.previous_date.month),
               aria:  { label: t("budgets.show.previous_month"), disabled: @budget_snapshot.first_month? || nil },
               class: navigation_arrow_class(@budget_snapshot.first_month?),
+              data:  { "month-navigation-target": "previous" },
               id:    "previous-month"
             ) do %>
           <svg
@@ -45,6 +46,7 @@
               month_budget_path(@budget, year: @budget_snapshot.next_date.year, month: @budget_snapshot.next_date.month),
               aria:  { label: t("budgets.show.next_month"), disabled: @budget_snapshot.last_month? || nil },
               class: navigation_arrow_class(@budget_snapshot.last_month?),
+              data:  { "month-navigation-target": "next" },
               id:    "next-month"
             ) do %>
           <svg

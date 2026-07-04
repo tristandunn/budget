@@ -42,6 +42,15 @@ describe "budgets/show.html+desktop.erb" do
     )
   end
 
+  it "mounts the month navigation controller" do
+    expect(html).to have_css('div[data-controller="month-navigation"]')
+  end
+
+  it "targets the previous and next month links for keyboard navigation" do
+    expect(html).to have_css('a#previous-month[data-month-navigation-target="previous"]')
+      .and(have_css('a#next-month[data-month-navigation-target="next"]'))
+  end
+
   it "renders the column headers" do
     expect(html).to have_css("th", text: t("budgets.show.category"))
       .and(have_css("th", text: t("budgets.show.assigned")))
