@@ -298,7 +298,13 @@ describe TransactionForm, type: :form do
     end
 
     it "reuses an existing payee" do
-      existing = create(:payee, budget: subcategory.budget, name: "Test Payee")
+      existing = create(:payee, budget: subcategory.budget, name: attributes[:payee])
+
+      expect(transaction.payee).to eq(existing)
+    end
+
+    it "reuses an existing payee whose name differs only in case" do
+      existing = create(:payee, budget: subcategory.budget, name: attributes[:payee].upcase)
 
       expect(transaction.payee).to eq(existing)
     end

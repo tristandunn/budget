@@ -40,7 +40,7 @@ class PayeeForm < BaseForm
   # @return [nil] When no other payee has a matching name.
   def duplicate_payee
     @duplicate_payee ||= if name.present?
-                           payee.budget.payees.where.not(id: payee.id).find_by(name: name)
+                           payee.budget.payees.where.not(id: payee.id).by_name(name).first
                          end
   end
 

@@ -148,7 +148,7 @@ class TransactionForm < BaseForm
   # @return [nil] When the payee name is blank.
   def payee_record
     if payee.present?
-      Payee.find_or_initialize_by(budget: budget, name: payee)
+      budget.payees.by_name(payee).first_or_initialize(name: payee)
     end
   end
 

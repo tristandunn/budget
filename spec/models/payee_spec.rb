@@ -14,7 +14,24 @@ describe Payee do
     subject(:payee) { create(:payee) }
 
     it { is_expected.to validate_presence_of(:name) }
-    it { is_expected.to validate_uniqueness_of(:name).scoped_to(:budget_id) }
+    it { is_expected.to validate_uniqueness_of(:name).scoped_to(:budget_id).case_insensitive }
+  end
+
+  describe ".by_name" do
+    let(:budget) { create(:budget) }
+    let(:payee)  { create(:payee, budget: budget) }
+
+    it "matches a name that differs only in case" do
+      expect(budget.payees.by_name(payee.name.downcase)).to contain_exactly(payee)
+    end
+
+    it "matches a name with surrounding whitespace" do
+      expect(budget.payees.by_name("  #{payee.name}  ")).to contain_exactly(payee)
+    end
+
+    it "excludes a name that does not match" do
+      expect(budget.payees.by_name("Different")).to be_empty
+    end
   end
 
   describe "#merge_into" do

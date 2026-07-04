@@ -90,6 +90,27 @@ describe PayeeForm, type: :form do
       end
     end
 
+    context "when renaming to a name matching another payee only in case" do
+      let(:existing) { create(:payee, budget: budget, name: "Target") }
+      let(:form)     { described_class.new(payee: payee, name: existing.name.downcase) }
+
+      let!(:transaction) { create(:transaction, budget: budget, payee: payee) }
+
+      it { is_expected.to be_truthy }
+
+      it "reassigns the renamed payee's transactions to the existing payee" do
+        update
+
+        expect(transaction.reload.payee).to eq(existing)
+      end
+
+      it "destroys the renamed payee" do
+        update
+
+        expect(Payee.exists?(payee.id)).to be(false)
+      end
+    end
+
     context "when renaming to a name matching another payee in a different budget" do
       let(:form)         { described_class.new(payee: payee, name: "Shared") }
       let(:other_budget) { create(:budget) }
@@ -116,6 +137,24 @@ describe PayeeForm, type: :form do
         update
 
         expect(payee.reload.name).to eq("Old Name")
+      end
+    end
+
+    context "when changing only the case of the payee's own name" do
+      let(:form) { described_class.new(payee: payee, name: "old name") }
+
+      it { is_expected.to be(true) }
+
+      it "renames the payee in place" do
+        update
+
+        expect(payee.reload.name).to eq("old name")
+      end
+
+      it "does not destroy the payee" do
+        update
+
+        expect(Payee.exists?(payee.id)).to be(true)
       end
     end
   end

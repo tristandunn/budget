@@ -97,9 +97,8 @@ class CreateTransfer
   # @param account [Account] The counterpart account whose name labels the payee.
   # @return [Payee] The found or created payee record.
   def payee_for(direction, account)
-    Payee.find_or_create_by!(
-      budget: budget,
-      name:   I18n.t("transfers.payee.#{direction}", account: account.name)
-    )
+    name = I18n.t("transfers.payee.#{direction}", account: account.name)
+
+    budget.payees.by_name(name).first_or_create!(name: name)
   end
 end

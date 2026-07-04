@@ -80,6 +80,32 @@ describe CreateTransfer do
       expect(inflow_payee).to eq(t("transfers.payee.from", account: from_account.name))
     end
 
+    context "when payees differing only in case already exist" do
+      let!(:outflow_payee) do
+        create(:payee, budget: budget, name: t("transfers.payee.to", account: to_account.name).upcase)
+      end
+
+      let!(:inflow_payee) do
+        create(:payee, budget: budget, name: t("transfers.payee.from", account: from_account.name).upcase)
+      end
+
+      it "does not create additional payees" do
+        expect { perform }.not_to change(Payee, :count).from(2)
+      end
+
+      it "reuses the existing outflow payee" do
+        perform
+
+        expect(from_account.transactions.first.payee).to eq(outflow_payee)
+      end
+
+      it "reuses the existing inflow payee" do
+        perform
+
+        expect(to_account.transactions.first.payee).to eq(inflow_payee)
+      end
+    end
+
     it "persists the supplied date on both rows" do
       perform
 

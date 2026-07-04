@@ -8,9 +8,11 @@ class Payee < ApplicationRecord
   has_many :transactions, dependent: :restrict_with_error
 
   validates :name, presence:   true,
-                   uniqueness: { scope: :budget_id }
+                   uniqueness: { case_sensitive: false, scope: :budget_id }
 
   normalizes :name, with: ->(value) { value.strip }
+
+  scope :by_name, ->(name) { where("LOWER(name) = LOWER(?)", name.to_s.strip) }
 
   # Reassign this payee's transactions to another payee and destroy
   # this payee.
