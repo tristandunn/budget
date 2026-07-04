@@ -10,7 +10,7 @@ describe "Budget" do
       sign_in_for(budget)
       visit budget_path(budget)
 
-      expect(page).to have_text(Date.current.strftime("%b %Y"))
+      expect(page).to have_text(I18n.l(Date.current, format: :month_and_year))
     end
 
     it "renders the available to assign amount" do
@@ -50,7 +50,7 @@ describe "Budget" do
         visit budget_path(budget)
         click_on "next-month"
 
-        expect(page).to have_text(1.month.from_now.strftime("%b %Y"))
+        expect(page).to have_text(I18n.l(1.month.from_now.to_date, format: :month_and_year))
       end
 
       it "navigates back to the previous month" do
@@ -61,7 +61,7 @@ describe "Budget" do
         click_on "next-month"
         click_on "previous-month"
 
-        expect(page).to have_text(Date.current.strftime("%b %Y"))
+        expect(page).to have_text(I18n.l(Date.current, format: :month_and_year))
       end
 
       it "navigates back to the current month when clicking the month and year" do
@@ -70,9 +70,9 @@ describe "Budget" do
         sign_in_for(budget)
         visit budget_path(budget)
         click_on "next-month"
-        click_on 1.month.from_now.strftime("%b %Y")
+        click_on I18n.l(1.month.from_now.to_date, format: :month_and_year)
 
-        expect(page).to have_text(Date.current.strftime("%b %Y"))
+        expect(page).to have_text(I18n.l(Date.current, format: :month_and_year))
       end
     end
 

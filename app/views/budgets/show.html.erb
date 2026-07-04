@@ -92,9 +92,9 @@
 
       <h1 class="text-lg font-semibold">
         <% if @budget_snapshot.current_month? %>
-          <%= @budget_snapshot.date.strftime("%b %Y") %>
+          <%= l(@budget_snapshot.date, format: :month_and_year) %>
         <% else %>
-          <%= link_to @budget_snapshot.date.strftime("%b %Y"),
+          <%= link_to l(@budget_snapshot.date, format: :month_and_year),
                       budget_path(@budget),
                       class: "text-inherit no-underline" %>
         <% end %>

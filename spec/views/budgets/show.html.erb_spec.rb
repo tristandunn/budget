@@ -23,7 +23,10 @@ describe "budgets/show.html.erb" do
   end
 
   it "renders the header with the current month and year" do
-    expect(html).to have_css("h1", text: Date.current.beginning_of_month.strftime("%b %Y"))
+    expect(html).to have_css(
+      "h1",
+      text: I18n.l(Date.current.beginning_of_month, format: :month_and_year)
+    )
   end
 
   it "renders the available to assign partial" do
@@ -96,7 +99,9 @@ describe "budgets/show.html.erb" do
 
   context "when on the current month" do
     it "renders the month and year as plain text" do
-      expect(html).to have_no_link(Date.current.beginning_of_month.strftime("%b %Y"))
+      expect(html).to have_no_link(
+        I18n.l(Date.current.beginning_of_month, format: :month_and_year)
+      )
     end
   end
 
@@ -145,7 +150,7 @@ describe "budgets/show.html.erb" do
 
     it "links the month and year to the current month" do
       expect(html).to have_link(
-        next_month.strftime("%b %Y"),
+        I18n.l(next_month.to_date, format: :month_and_year),
         href: budget_path(subcategory.budget)
       )
     end

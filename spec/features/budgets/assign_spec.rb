@@ -39,7 +39,7 @@ describe "Assigning to a subcategory", :js do
     end
 
     it "stays on the navigated month after assigning" do
-      expect(page).to have_text(next_month.strftime("%b %Y"))
+      expect(page).to have_text(I18n.l(next_month.to_date, format: :month_and_year))
     end
 
     it "updates the assigned amount" do

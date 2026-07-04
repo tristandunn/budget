@@ -34,7 +34,7 @@ describe "budgets/_future_month.html+desktop.erb" do
   end
 
   it "renders the month name" do
-    expect(html).to have_text(month.strftime("%B"))
+    expect(html).to have_text(I18n.l(month.to_date, format: :month))
   end
 
   it "renders the assigned amount for the month" do
