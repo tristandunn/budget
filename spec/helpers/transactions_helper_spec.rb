@@ -58,8 +58,16 @@ describe TransactionsHelper do
       expect(helper.relative_time(7.days.ago.to_date)).to eq("1 week ago")
     end
 
+    it "rounds weeks ago to the nearest week" do
+      expect(helper.relative_time(11.days.ago.to_date)).to eq("2 weeks ago")
+    end
+
     it "returns pluralized weeks ago for 14-27 days" do
       expect(helper.relative_time(14.days.ago.to_date)).to eq("2 weeks ago")
+    end
+
+    it "rounds weeks ago up at the end of the range" do
+      expect(helper.relative_time(27.days.ago.to_date)).to eq("4 weeks ago")
     end
 
     it "returns months ago at the boundary of 28 days" do
@@ -70,8 +78,20 @@ describe TransactionsHelper do
       expect(helper.relative_time(30.days.ago.to_date)).to eq("1 month ago")
     end
 
+    it "rounds months ago down just past the boundary" do
+      expect(helper.relative_time(31.days.ago.to_date)).to eq("1 month ago")
+    end
+
+    it "rounds months ago down below the midpoint" do
+      expect(helper.relative_time(45.days.ago.to_date)).to eq("1 month ago")
+    end
+
     it "returns pluralized months ago for 60+ days" do
       expect(helper.relative_time(60.days.ago.to_date)).to eq("2 months ago")
+    end
+
+    it "rounds months ago to the nearest month past 60 days" do
+      expect(helper.relative_time(61.days.ago.to_date)).to eq("2 months ago")
     end
   end
 

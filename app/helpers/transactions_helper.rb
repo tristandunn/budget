@@ -42,8 +42,8 @@ module TransactionsHelper
     when 0      then t("dates.today").downcase
     when 1      then t("dates.yesterday").downcase
     when 2..6   then t("dates.days_ago", count: days)
-    when 7..27  then t("dates.weeks_ago", count: days.days.in_weeks.to_i)
-    else             t("dates.months_ago", count: days.days.in_months.ceil)
+    when 7..27  then t("dates.weeks_ago", count: days.days.in_weeks.round)
+    else             t("dates.months_ago", count: days.days.in_months.round)
     end
   end
 
