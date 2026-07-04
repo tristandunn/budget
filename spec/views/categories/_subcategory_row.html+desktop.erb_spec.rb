@@ -29,17 +29,39 @@ describe "categories/_subcategory_row.html+desktop.erb" do
     expect(html).to have_css("tr##{dom_id(subcategory, :row)}")
   end
 
-  it "renders the subcategory name as a link to its details" do
-    expect(html).to have_link(
-      subcategory.name,
-      href: budget_category_path(budget, subcategory,
-                                 year:  budget_snapshot.date.year,
-                                 month: budget_snapshot.date.month)
+  it "renders a selection checkbox for the subcategory" do
+    expect(html).to have_css(
+      "input[type=checkbox][data-selection-target=subcategory]" \
+      "[data-subcategory-id='#{subcategory.id}']"
     )
+  end
+
+  it "carries the panel detail url on the selection checkbox" do
+    expect(html).to have_css(
+      "input[data-selection-target=subcategory]" \
+      "[data-detail-url='#{budget_category_path(budget, subcategory,
+                                                year:  budget_snapshot.date.year,
+                                                month: budget_snapshot.date.month)}']"
+    )
+  end
+
+  it "labels the selection checkbox with the subcategory name" do
+    expect(html).to have_css(
+      "input[data-selection-target=subcategory]" \
+      "[aria-label='#{t("categories.subcategory_row.select", name: subcategory.name)}']"
+    )
+  end
+
+  it "renders the subcategory name inside the selection label" do
+    expect(html).to have_css("label", text: subcategory.name)
   end
 
   it "identifies the subcategory name cell so it can be targeted by turbo streams" do
     expect(html).to have_css("th##{dom_id(subcategory, :name)}", text: subcategory.name)
+  end
+
+  it "selects the row when the assignment amount is edited" do
+    expect(html).to have_css("a[data-action~='click->selection#selectRow']")
   end
 
   it "renders the subcategory amount assigned as a link" do

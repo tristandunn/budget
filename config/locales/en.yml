@@ -95,6 +95,8 @@ en:
         snoozed_label: "Target snoozed for this month."
         to_go: "To go"
         unsnooze: "Unsnooze for this month"
+    subcategory_row:
+      select: "Select %{name}"
 
   budgets:
     available_to_assign:

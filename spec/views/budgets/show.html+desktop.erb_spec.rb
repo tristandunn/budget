@@ -66,6 +66,10 @@ describe "budgets/show.html+desktop.erb" do
     expect(html).to include("SUMMARY_PARTIAL")
   end
 
+  it "scopes the budget table and summary to the selection controller" do
+    expect(html).to have_css("div[data-controller='selection']")
+  end
+
   it "renders the category header partial" do
     expect(html).to include("CATEGORY_HEADER_PARTIAL")
   end
@@ -80,10 +84,6 @@ describe "budgets/show.html+desktop.erb" do
 
   it "renders the subcategory row partial" do
     expect(html).to include("SUBCATEGORY_ROW_PARTIAL")
-  end
-
-  it "renders the category details dialog" do
-    expect(html).to have_css("dialog#category_dialog_modal turbo-frame#category_dialog")
   end
 
   it "renders the category rename dialog" do

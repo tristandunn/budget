@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe "Category target creation" do
+describe "Category target creation", :mobile do
   let(:budget)      { subcategory.budget }
   let(:subcategory) { create(:category, :subcategory, name: "Groceries") }
 

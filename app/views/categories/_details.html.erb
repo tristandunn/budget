@@ -1,18 +1,4 @@
 <%# locals: (budget:, category:, budget_snapshot:, previous_budget_snapshot:) %>
-<header class="relative p-4">
-  <h2 id="category_dialog_title" class="text-lg font-semibold text-center">
-    <%= category.name %>
-  </h2>
-
-  <button
-    type="button"
-    data-action="dialog#close"
-    class="absolute top-4 right-4 text-sm text-taupe-600"
-  >
-    <%= t("categories.show.done") %>
-  </button>
-</header>
-
 <div class="self-center py-6 px-8 mx-auto w-full max-w-lg">
   <section>
     <h3 class="px-4 mb-2 text-sm font-medium text-taupe-600 uppercase tracking-wide">

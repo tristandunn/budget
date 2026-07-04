@@ -1,0 +1,73 @@
+<%# locals: (budget:, category:, budget_snapshot:, previous_budget_snapshot:) %>
+<div class="p-4 space-y-4">
+  <div
+    class="group bg-white rounded-xl"
+    data-controller="collapsible"
+    data-collapsible-id-value="category-<%= category.id %>-balance"
+  >
+    <h3
+      class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-taupe-700 cursor-pointer"
+      data-action="click->collapsible#toggle"
+    >
+      <%= render "shared/collapsible_arrow" %>
+
+      <%= t("categories.show.balance") %>
+    </h3>
+
+    <div
+      class="border-t border-taupe-200 divide-y divide-taupe-200 group-[.collapsed]:hidden"
+      data-collapsible-content="collapsible-category-<%= category.id %>-balance"
+    >
+      <div class="flex items-center justify-between px-4 py-2 text-sm">
+        <span><%= t("categories.show.rollover") %></span>
+        <span><%= number_to_money(previous_budget_snapshot&.available_for(category) || 0) %></span>
+      </div>
+
+      <div class="flex items-center justify-between px-4 py-2 text-sm">
+        <span><%= t("categories.show.assigned") %></span>
+
+        <span>
+          <%= number_to_money budget_snapshot.snapshot_for(category.id).amount_assigned %>
+        </span>
+      </div>
+
+      <div class="flex items-center justify-between px-4 py-2 text-sm">
+        <span><%= t("categories.show.activity") %></span>
+        <span><%= number_to_money(-budget_snapshot.snapshot_for(category.id).amount_used) %></span>
+      </div>
+
+      <div class="flex items-center justify-between px-4 py-2 text-sm">
+        <span><%= t("categories.show.available") %></span>
+
+        <span class="inline-block py-0.5 px-2 -my-0.5 rounded-full <%= amount_color(budget_snapshot.available_for(category)) %>">
+          <%= number_to_money budget_snapshot.available_for(category) %>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="group bg-white rounded-xl"
+    data-controller="collapsible"
+    data-collapsible-id-value="category-<%= category.id %>-target"
+  >
+    <h3
+      class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-taupe-700 cursor-pointer"
+      data-action="click->collapsible#toggle"
+    >
+      <%= render "shared/collapsible_arrow" %>
+
+      <%= t("categories.show.target.heading") %>
+    </h3>
+
+    <div
+      class="border-t border-taupe-200 group-[.collapsed]:hidden"
+      data-collapsible-content="collapsible-category-<%= category.id %>-target"
+    >
+      <%= render "categories/target",
+                 budget:          budget,
+                 category:        category,
+                 budget_snapshot: budget_snapshot %>
+    </div>
+  </div>
+</div>

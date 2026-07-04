@@ -1,4 +1,18 @@
 <%= turbo_frame_tag "category_dialog", class: "flex flex-col h-full" do %>
+  <header class="relative p-4">
+    <h2 id="category_dialog_title" class="text-lg font-semibold text-center">
+      <%= @category.name %>
+    </h2>
+
+    <button
+      type="button"
+      data-action="dialog#close"
+      class="absolute top-4 right-4 text-sm text-taupe-600"
+    >
+      <%= t("categories.show.done") %>
+    </button>
+  </header>
+
   <%= render "details",
              budget:                   @budget,
              category:                 @category,

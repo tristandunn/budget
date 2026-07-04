@@ -25,6 +25,14 @@ describe "categories/show.html.erb" do
     expect(html).to have_css("turbo-frame#category_dialog")
   end
 
+  it "renders the category name as the dialog title" do
+    expect(html).to have_css("h2#category_dialog_title", text: subcategory.name)
+  end
+
+  it "renders a Done button that closes the dialog" do
+    expect(html).to have_css("button[data-action='dialog#close']", text: t("categories.show.done"))
+  end
+
   it "renders the details partial inside the category dialog frame" do
     expect(html).to have_css("turbo-frame#category_dialog", text: "DETAILS_PARTIAL")
   end

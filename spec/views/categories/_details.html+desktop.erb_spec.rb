@@ -2,16 +2,17 @@
 
 require "rails_helper"
 
-describe "categories/_details.html.erb" do
+describe "categories/_details.html+desktop.erb" do
   subject(:html) do
     render(
-      locals:  {
+      locals:   {
         budget:                   budget,
         category:                 subcategory,
         budget_snapshot:          budget_snapshot,
         previous_budget_snapshot: previous_budget_snapshot
       },
-      partial: "categories/details"
+      partial:  "categories/details",
+      variants: [:desktop]
     )
 
     rendered
@@ -33,6 +34,14 @@ describe "categories/_details.html.erb" do
     stub_template("categories/_target.html.erb" => "TARGET_PARTIAL")
   end
 
+  it "renders a collapsible balance header" do
+    expect(html).to have_css(
+      "div[data-controller='collapsible'][data-collapsible-id-value='category-#{subcategory.id}-balance']"
+    ).and(
+      have_css("h3[data-action='click->collapsible#toggle']", text: t("categories.show.balance"))
+    )
+  end
+
   it "renders the rollover amount" do
     expect(html).to have_css("div", normalize_ws: true, text: "#{t("categories.show.rollover")} $200.00")
   end
@@ -49,22 +58,16 @@ describe "categories/_details.html.erb" do
     expect(html).to have_css("span.bg-lime-400", text: "$500.00")
   end
 
-  it "renders the target partial" do
-    expect(html).to include("TARGET_PARTIAL")
-  end
-
-  it "links the rename button to the edit form with month and year" do
-    expect(html).to have_link(
-      t("categories.show.rename"),
-      href: edit_budget_category_path(budget, subcategory,
-                                      year:  budget_snapshot.date.year,
-                                      month: budget_snapshot.date.month)
+  it "renders a collapsible target header" do
+    expect(html).to have_css(
+      "div[data-controller='collapsible'][data-collapsible-id-value='category-#{subcategory.id}-target']"
+    ).and(
+      have_css("h3[data-action='click->collapsible#toggle']", text: t("categories.show.target.heading"))
     )
   end
 
-  it "targets the rename dialog frame from the rename link" do
-    expect(html).to have_css("a[data-turbo-frame='category_rename_dialog']",
-                             text: t("categories.show.rename"))
+  it "renders the target partial" do
+    expect(html).to include("TARGET_PARTIAL")
   end
 
   context "without a previous budget snapshot" do

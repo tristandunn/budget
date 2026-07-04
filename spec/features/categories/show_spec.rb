@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe "Category details" do
+describe "Category details", :mobile do
   let(:budget)      { subcategory.budget }
   let(:subcategory) { create(:category, :subcategory) }
 

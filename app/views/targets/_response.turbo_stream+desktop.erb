@@ -1,0 +1,17 @@
+<%# locals: (budget:, category:, budget_snapshot:, previous_budget_snapshot:) %>
+<%= turbo_stream.replace dom_id(category, :target) do %>
+  <%= render "categories/target",
+             budget:          budget,
+             category:        category,
+             budget_snapshot: budget_snapshot %>
+<% end %>
+
+<%= turbo_stream.replace dom_id(category, :available) do %>
+  <%= render "categories/available",
+             category:        category,
+             budget_snapshot: budget_snapshot %>
+<% end %>
+
+<%= turbo_stream.update "category_target_dialog" do %>
+  <div data-controller="dialog-dismisser"></div>
+<% end %>

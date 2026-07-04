@@ -1,6 +1,6 @@
 <%# locals: (budget_snapshot:) %>
 <aside class="flex w-96 shrink-0 flex-col border-l border-taupe-300 bg-taupe-100">
-  <div class="p-4 space-y-4">
+  <div class="p-4 space-y-4" data-selection-target="summary">
     <div
       class="group bg-white rounded-xl"
       data-controller="collapsible"
@@ -74,4 +74,8 @@
       </div>
     <% end %>
   </div>
+
+  <%= turbo_frame_tag "category_panel",
+                      class: "hidden flex-1 overflow-y-auto",
+                      data:  { selection_target: "panelFrame" } %>
 </aside>

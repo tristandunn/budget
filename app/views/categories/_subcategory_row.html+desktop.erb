@@ -1,16 +1,21 @@
 <%# locals: (budget:, subcategory:, budget_snapshot:) %>
 <tr id="<%= dom_id(subcategory, :row) %>" class="bg-white border-b border-taupe-300">
-  <th
-    scope="row"
-    id="<%= dom_id(subcategory, :name) %>"
-    class="py-2 pr-4 pl-9 text-sm font-normal truncate"
-  >
-    <%= link_to subcategory.name,
-                budget_category_path(budget, subcategory,
-                                     year:  budget_snapshot.date.year,
-                                     month: budget_snapshot.date.month),
-                class: "text-inherit no-underline",
-                data:  { turbo_frame: "category_dialog" } %>
+  <th scope="row" id="<%= dom_id(subcategory, :name) %>" class="py-2 pr-4 pl-9 text-sm font-normal">
+    <label class="flex items-center gap-2 min-w-0 cursor-pointer">
+      <%= check_box_tag dom_id(subcategory, :select), subcategory.id, false,
+                        class: "shrink-0",
+                        aria:  { label: t(".select", name: subcategory.name) },
+                        data:  {
+                          selection_target: "subcategory",
+                          subcategory_id:   subcategory.id,
+                          detail_url:       budget_category_path(budget, subcategory,
+                                                                 year:  budget_snapshot.date.year,
+                                                                 month: budget_snapshot.date.month),
+                          action:           "selection#toggle"
+                        } %>
+
+      <span class="truncate"><%= subcategory.name %></span>
+    </label>
   </th>
 
   <td class="py-2 px-4 text-sm text-right whitespace-nowrap" data-controller="inline-edit">
@@ -20,7 +25,10 @@
                                                        year:  budget_snapshot.date.year,
                                                        month: budget_snapshot.date.month),
                   class: "text-inherit no-underline",
-                  data:  { action: "click->inline-edit#prefocus", turbo_prefetch: false } %>
+                  data:  {
+                    action:         "click->inline-edit#prefocus click->selection#selectRow",
+                    turbo_prefetch: false
+                  } %>
     <% end %>
   </td>
 

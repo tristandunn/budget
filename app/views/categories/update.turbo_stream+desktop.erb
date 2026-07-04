@@ -1,0 +1,10 @@
+<%= turbo_stream.replace dom_id(@category, :row) do %>
+  <%= render "categories/subcategory_row",
+             budget:          @budget,
+             subcategory:     @category,
+             budget_snapshot: @budget_snapshot %>
+<% end %>
+
+<%= turbo_stream.update "category_rename_dialog" do %>
+  <div data-controller="dialog-dismisser"></div>
+<% end %>

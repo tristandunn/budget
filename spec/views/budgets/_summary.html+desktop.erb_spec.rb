@@ -65,6 +65,16 @@ describe "budgets/_summary.html+desktop.erb" do
     )
   end
 
+  it "marks the summary content as the selection summary target" do
+    expect(html).to have_css("div[data-selection-target='summary']")
+  end
+
+  it "renders a hidden category panel frame as the selection panel target" do
+    expect(html).to have_css(
+      "turbo-frame#category_panel.hidden[data-selection-target='panelFrame']"
+    )
+  end
+
   it "makes the summary card collapsible from its heading" do
     expect(html).to have_css(
       "div[data-controller='collapsible'][data-collapsible-id-value='budget-summary']"

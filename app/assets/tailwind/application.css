@@ -14,6 +14,10 @@
   --collapsible-arrow-shift: -2px;
 }
 
+tr[data-selected] {
+  @apply bg-sky-100;
+}
+
 @utility pt-safe {
   padding-top: max(1rem, env(safe-area-inset-top));
 }

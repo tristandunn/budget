@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe "Category target unsnoozing" do
+describe "Category target unsnoozing", :mobile do
   let(:budget)      { subcategory.budget }
   let(:subcategory) do
     create(:category, :subcategory, :with_monthly_spending_target, name: "Groceries", with_snapshot: false)
