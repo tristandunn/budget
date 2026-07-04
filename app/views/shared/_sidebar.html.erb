@@ -36,25 +36,25 @@
 </div>
 
 <aside class="flex w-72 shrink-0 flex-col bg-indigo-950 text-indigo-100">
-  <div class="shrink-0 px-5 py-4">
-    <div class="truncate text-lg font-semibold text-white"><%= t("title") %></div>
-    <div class="truncate text-xs text-indigo-300"><%= Current.user.email %></div>
-  </div>
+  <div class="flex shrink-0 items-center gap-3 px-5 py-4">
+    <div class="min-w-0 flex-1">
+      <div class="truncate text-lg font-semibold text-white"><%= t("title") %></div>
+      <div class="truncate text-xs text-indigo-300"><%= Current.user.email %></div>
+    </div>
 
-  <div class="shrink-0 px-3 pb-2">
     <%= link_to new_budget_transaction_path(budget, account_id: account_id),
                 id:    "add-transaction",
                 aria:  { label: t("toolbar.add_transaction") },
                 data:  { turbo_frame: "transaction_dialog" },
                 class: "
-                  flex items-center justify-center gap-2 rounded-lg bg-white/5 px-3 py-2 text-sm
-                  font-medium text-indigo-100 no-underline hover:bg-white/10
-                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400
-                  focus-visible:ring-offset-2 focus-visible:ring-offset-indigo-950
+                  flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/5
+                  text-indigo-100 no-underline hover:bg-white/10 focus-visible:outline-none
+                  focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2
+                  focus-visible:ring-offset-indigo-950
                 " do %>
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        class="h-5 w-5"
+        class="h-6 w-6"
         viewBox="0 0 24 24"
         fill="currentColor"
         aria-hidden="true"
@@ -67,8 +67,6 @@
           d="M12 1c6.075 0 11 4.925 11 11s-4.925 11-11 11S1 18.075 1 12 5.925 1 12 1ZM2.5 12a9.5 9.5 0 0 0 9.5 9.5 9.5 9.5 0 0 0 9.5-9.5A9.5 9.5 0 0 0 12 2.5 9.5 9.5 0 0 0 2.5 12Z"
         />
       </svg>
-
-      <%= t("toolbar.add_transaction") %>
     <% end %>
   </div>
 
