@@ -2,6 +2,14 @@
 
 A minimal budgeting application.
 
+## Screenshots
+
+<div align="center">
+  <img src="docs/assets/desktop.png" alt="A budget on the desktop." height="386" />
+  &#160;&#160;&#160;&#160;&#160;
+  <img src="docs/assets/iphone.png" alt="A budget on the iPhone." height="386" />
+</div>
+
 ## Contributing
 
 See the [contributing guidelines](docs/CONTRIBUTING.md).
