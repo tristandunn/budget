@@ -18,6 +18,7 @@ describe Accounts::ReconciliationsController do
     end
 
     it { is_expected.to redirect_to(budget_account_transactions_path(budget, account)) }
+    it { is_expected.to respond_with(:see_other) }
 
     it "marks cleared transactions as reconciled" do
       expect(account.transactions.reconciled.count).to eq(1)

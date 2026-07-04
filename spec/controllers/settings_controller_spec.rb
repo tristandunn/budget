@@ -17,7 +17,7 @@ describe SettingsController do
         patch :update, params: { budget_id: budget.id, settings: { hide_reconciled: "1" } }
       end
 
-      it { is_expected.to respond_with(302) }
+      it { is_expected.to respond_with(:see_other) }
 
       it "enables the setting" do
         expect(budget.reload.settings.hide_reconciled?).to be(true)
@@ -31,7 +31,7 @@ describe SettingsController do
         patch :update, params: { budget_id: budget.id, settings: { hide_reconciled: "0" } }
       end
 
-      it { is_expected.to respond_with(302) }
+      it { is_expected.to respond_with(:see_other) }
 
       it "removes the setting" do
         expect(budget.reload.settings.hide_reconciled?).to be(false)

@@ -8,7 +8,7 @@ module Accounts
       account.transactions.cleared.update_all(status: :reconciled, updated_at: Time.current)
       # rubocop:enable Rails/SkipsModelValidations
 
-      redirect_to budget_account_transactions_path(current_budget, account)
+      redirect_to budget_account_transactions_path(current_budget, account), status: :see_other
     end
 
     private
