@@ -3,6 +3,7 @@ en:
 
   date:
     formats:
+      full_month_and_year: "%B %Y"
       month: "%B"
       month_and_year: "%b %Y"
       numeric: "%m/%d/%Y"

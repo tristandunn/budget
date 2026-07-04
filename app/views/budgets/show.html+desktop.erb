@@ -1,3 +1,5 @@
+<% content_for :title, l(@budget_snapshot.date, format: :full_month_and_year) %>
+
 <div class="flex h-dvh">
   <%= render "shared/sidebar", budget: @budget %>
 

@@ -19,6 +19,12 @@ describe "sessions/new.html.erb" do
     expect(html).to have_css("h1", text: t("sessions.new.title"))
   end
 
+  it "sets the page title" do
+    html
+
+    expect(view.content_for(:title)).to eq(t("sessions.new.title"))
+  end
+
   it "renders a form to create a session" do
     expect(html).to have_css(%(form[action="#{session_path}"][method="post"]))
   end

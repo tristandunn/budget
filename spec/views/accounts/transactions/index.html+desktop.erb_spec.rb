@@ -33,6 +33,12 @@ describe "accounts/transactions/index.html+desktop.erb" do
     expect(html).to have_css("h1", text: account.name)
   end
 
+  it "sets the page title to the account name" do
+    html
+
+    expect(view.content_for(:title)).to eq(account.name)
+  end
+
   it "renders the account reconciled summary" do
     allow(view).to receive(:account_reconciled_summary).with(account).and_return("RECONCILED_SUMMARY")
 

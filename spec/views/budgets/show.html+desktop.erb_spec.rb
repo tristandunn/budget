@@ -34,6 +34,14 @@ describe "budgets/show.html+desktop.erb" do
     )
   end
 
+  it "sets the page title to the full month and year" do
+    html
+
+    expect(view.content_for(:title)).to eq(
+      I18n.l(Date.current.beginning_of_month, format: :full_month_and_year)
+    )
+  end
+
   it "renders the column headers" do
     expect(html).to have_css("th", text: t("budgets.show.category"))
       .and(have_css("th", text: t("budgets.show.assigned")))

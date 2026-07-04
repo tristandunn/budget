@@ -27,6 +27,12 @@ describe "accounts/transactions/index.html.erb" do
     expect(html).to have_css("h1", text: account.name)
   end
 
+  it "sets the page title to the account name" do
+    html
+
+    expect(view.content_for(:title)).to eq(account.name)
+  end
+
   it "renders a back link to the accounts index" do
     expect(html).to have_link(href: budget_accounts_path(budget))
   end

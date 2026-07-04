@@ -25,6 +25,12 @@ describe "transactions/index.html.erb" do
     expect(html).to have_css("h1", text: t("transactions.index.title"))
   end
 
+  it "sets the page title" do
+    html
+
+    expect(view.content_for(:title)).to eq(t("transactions.index.title"))
+  end
+
   it "renders the actions partial" do
     expect(html).to include("ACTIONS_PARTIAL")
   end

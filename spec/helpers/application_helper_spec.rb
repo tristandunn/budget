@@ -17,4 +17,24 @@ describe ApplicationHelper do
 
     it { is_expected.to eq(result) }
   end
+
+  describe "#page_title" do
+    subject(:page_title) { helper.page_title }
+
+    context "with a page title" do
+      before do
+        helper.content_for(:title, "Groceries")
+      end
+
+      it "suffixes the page title with the application name" do
+        expect(page_title).to eq("Groceries - #{t("title")}")
+      end
+    end
+
+    context "without a page title" do
+      it "returns the application name" do
+        expect(page_title).to eq(t("title"))
+      end
+    end
+  end
 end

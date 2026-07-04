@@ -29,6 +29,14 @@ describe "budgets/show.html.erb" do
     )
   end
 
+  it "sets the page title to the full month and year" do
+    html
+
+    expect(view.content_for(:title)).to eq(
+      I18n.l(Date.current.beginning_of_month, format: :full_month_and_year)
+    )
+  end
+
   it "renders the available to assign partial" do
     expect(html).to include("AVAILABLE_TO_ASSIGN_PARTIAL")
   end

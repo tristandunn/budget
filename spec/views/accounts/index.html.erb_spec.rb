@@ -23,6 +23,12 @@ describe "accounts/index.html.erb" do
     expect(html).to have_css("h1", text: t("accounts.index.title"))
   end
 
+  it "sets the page title" do
+    html
+
+    expect(view.content_for(:title)).to eq(t("accounts.index.title"))
+  end
+
   it "renders the new account link" do
     expect(html).to have_link(href: new_budget_account_path(budget))
   end

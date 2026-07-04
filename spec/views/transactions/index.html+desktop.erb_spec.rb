@@ -31,6 +31,12 @@ describe "transactions/index.html+desktop.erb" do
     expect(html).to have_css("h1", text: t("sidebar.all_accounts"))
   end
 
+  it "sets the page title" do
+    html
+
+    expect(view.content_for(:title)).to eq(t("sidebar.all_accounts"))
+  end
+
   it "renders the budget cleared balance" do
     expect(html).to have_css("#budget_cleared_balance", text: number_to_money(5_000))
   end

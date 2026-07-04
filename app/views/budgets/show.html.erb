@@ -1,3 +1,5 @@
+<% content_for :title, l(@budget_snapshot.date, format: :full_month_and_year) %>
+
 <div class="flex flex-col min-h-dvh">
   <%= render "shared/dialog", id: "category_dialog", dismissable: true %>
 
