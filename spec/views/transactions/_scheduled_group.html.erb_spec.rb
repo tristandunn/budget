@@ -85,7 +85,7 @@ describe "transactions/_scheduled_group.html.erb" do
       build_stubbed(:transaction, :recurring, date: date, subcategory: nil, transfer_pair_id: 1)
     end
 
-    it "renders the credit card payment label" do
+    it "renders the transfer category label" do
       expect(html).to have_text(t("transactions.transfer_category"))
     end
   end

@@ -85,7 +85,7 @@ class TransactionsController < ApplicationController
     end
   end
 
-  protected
+  private
 
   # Return the account for the given `account_id` parameter.
   #

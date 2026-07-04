@@ -61,7 +61,7 @@ class AccountsController < ApplicationController
     end
   end
 
-  protected
+  private
 
   # Return the account for the given id parameter.
   #

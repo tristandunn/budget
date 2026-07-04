@@ -33,7 +33,7 @@ class SnoozesController < ApplicationController
     end
   end
 
-  protected
+  private
 
   # Return the budget snapshot for the displayed month.
   #

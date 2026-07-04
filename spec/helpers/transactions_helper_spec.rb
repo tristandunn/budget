@@ -99,7 +99,7 @@ describe TransactionsHelper do
     context "when the transaction is a transfer" do
       let(:transaction) { build_stubbed(:transaction, transfer_pair_id: 1) }
 
-      it "returns the credit card payment label" do
+      it "returns the transfer category label" do
         expect(helper.transaction_category(transaction)).to eq(t("transactions.transfer_category"))
       end
     end

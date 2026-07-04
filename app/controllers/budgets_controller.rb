@@ -3,7 +3,7 @@
 class BudgetsController < ApplicationController
   before_action :redirect_to_canonical_month, only: :show, if: :out_of_range_month?
 
-  # Render the budget.
+  # Redirect to the current budget.
   def index
     redirect_to budget_path(current_budget)
   end

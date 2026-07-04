@@ -166,7 +166,7 @@ describe AccountForm, type: :form do
         create(:transaction, budget: account.budget, payee: stale)
       end
 
-      it { is_expected.to be_truthy }
+      it { is_expected.to be(true) }
 
       it "updates the account name" do
         update

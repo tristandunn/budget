@@ -28,7 +28,7 @@ class AssignmentsController < ApplicationController
     end
   end
 
-  protected
+  private
 
   # Return the parameters for building the form.
   #

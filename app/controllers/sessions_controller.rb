@@ -36,7 +36,7 @@ class SessionsController < ApplicationController
     redirect_to new_session_url, status: :see_other
   end
 
-  protected
+  private
 
   # Return the permitted form parameters.
   #

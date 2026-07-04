@@ -42,7 +42,7 @@ class PayeesController < ApplicationController
     }
   end
 
-  protected
+  private
 
   # Return the permitted form parameters.
   #

@@ -21,7 +21,7 @@ class TransfersController < ApplicationController
     end
   end
 
-  protected
+  private
 
   # Return the default destination account from the query parameter, if present.
   #

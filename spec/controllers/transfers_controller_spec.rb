@@ -149,7 +149,7 @@ describe TransfersController do
       end
 
       it "assigns the budget accounts" do
-        expect(assigns(:accounts)).to include(from_account, to_account)
+        expect(assigns(:accounts)).to eq([from_account, to_account])
       end
     end
 
