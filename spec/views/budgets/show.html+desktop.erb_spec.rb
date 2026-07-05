@@ -62,12 +62,21 @@ describe "budgets/show.html+desktop.erb" do
     expect(html).to include("AVAILABLE_TO_ASSIGN_PARTIAL")
   end
 
-  it "renders the summary partial" do
-    expect(html).to include("SUMMARY_PARTIAL")
-  end
-
   it "scopes the budget table and summary to the selection controller" do
     expect(html).to have_css("div[data-controller='selection']")
+  end
+
+  it "carries the summary url on the selection controller" do
+    expect(html).to have_css(
+      "div[data-controller='selection']" \
+      "[data-selection-summary-url-value='#{summary_budget_categories_path(subcategory.budget,
+                                                                           year:  budget_snapshot.date.year,
+                                                                           month: budget_snapshot.date.month)}']"
+    )
+  end
+
+  it "renders the summary partial" do
+    expect(html).to include("SUMMARY_PARTIAL")
   end
 
   it "renders the category header partial" do

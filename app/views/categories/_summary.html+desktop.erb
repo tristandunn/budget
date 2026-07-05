@@ -1,0 +1,55 @@
+<%# locals: (summary:, budget_snapshot:) %>
+<div class="p-4 space-y-4">
+  <header>
+    <h2 class="text-base font-semibold text-taupe-800">
+      <%= t(".title", count: summary.size) %>
+    </h2>
+
+    <p class="mt-1 text-sm text-taupe-600">
+      <%= summary.names.to_sentence %>
+    </p>
+  </header>
+
+  <div
+    class="group bg-white rounded-xl"
+    data-controller="collapsible"
+    data-collapsible-id-value="selection-summary"
+  >
+    <h3
+      class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-taupe-700 cursor-pointer"
+      data-action="click->collapsible#toggle"
+    >
+      <%= render "shared/collapsible_arrow" %>
+
+      <%= t(".heading", month: l(budget_snapshot.date, format: :month)) %>
+    </h3>
+
+    <div
+      class="border-t border-taupe-200 divide-y divide-taupe-200 group-[.collapsed]:hidden"
+      data-collapsible-content="collapsible-selection-summary"
+    >
+      <div class="flex items-center justify-between px-4 py-2 text-sm">
+        <span><%= t("categories.show.rollover") %></span>
+        <span><%= number_to_money summary.rollover %></span>
+      </div>
+
+      <div class="flex items-center justify-between px-4 py-2 text-sm">
+        <span><%= t("categories.show.assigned") %></span>
+        <span><%= number_to_money summary.assigned %></span>
+      </div>
+
+      <div class="flex items-center justify-between px-4 py-2 text-sm">
+        <span><%= t("categories.show.activity") %></span>
+        <span><%= number_to_money summary.activity %></span>
+      </div>
+
+      <div class="flex items-center justify-between px-4 py-2 text-sm">
+        <span><%= t("categories.show.available") %></span>
+
+        <span class="inline-block py-0.5 px-2 -my-0.5 rounded-full <%= amount_color(summary.available) %>">
+          <%= number_to_money summary.available %>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>

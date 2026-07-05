@@ -1,18 +1,21 @@
 import { Controller } from "@hotwired/stimulus";
 
 /*
- * Manages single-select of a subcategory row on the desktop budget. Checking a
- * row swaps the sidebar summary for a detail panel loaded into the category
- * frame, highlights the row, and unchecks any prior selection. Restores the
- * selection and reloads the panel when a selected row is replaced by a stream.
+ * Manages selection of subcategory rows on the desktop budget. Checking rows
+ * swaps the sidebar summary for a panel loaded into the category frame and
+ * highlights the rows. A single selection loads that subcategory's detail and
+ * two or more load an aggregate summary of the selection.
  */
 export default class extends Controller {
   static targets = ["panelFrame", "subcategory", "summary"];
 
-  static values = { "selectedId": String };
+  static values = {
+    "selectedIds": Array,
+    "summaryUrl": String
+  };
 
   subcategoryTargetConnected(box) {
-    if (box.dataset.subcategoryId === this.selectedIdValue && !box.checked) {
+    if (!box.checked && this.selectedIdsValue.includes(box.dataset.subcategoryId)) {
       box.checked = true;
 
       this.#highlightRows();
@@ -27,20 +30,20 @@ export default class extends Controller {
     if (box && !box.checked) {
       box.checked = true;
 
-      this.toggle({ "target": box });
+      this.toggle();
     }
   }
 
-  toggle(event) {
-    if (event.target.checked) {
-      this.subcategoryTargets.forEach((box) => {
-        if (box !== event.target) {
-          box.checked = false;
-        }
-      });
-    }
-
+  toggle() {
     this.#updatePanel();
+  }
+
+  #detailUrl(id) {
+    const box = this.subcategoryTargets.find((box) => {
+      return box.dataset.subcategoryId === id;
+    });
+
+    return box.dataset.detailUrl;
   }
 
   #hidePanel() {
@@ -54,28 +57,45 @@ export default class extends Controller {
     });
   }
 
+  #selectedIds() {
+    return this.subcategoryTargets.filter((box) => {
+      return box.checked;
+    }).map((box) => {
+      return box.dataset.subcategoryId;
+    });
+  }
+
   #showPanel() {
     this.summaryTarget.classList.add("hidden");
     this.panelFrameTarget.classList.remove("hidden");
   }
 
-  #updatePanel() {
-    const checked = this.subcategoryTargets.find((box) => {
-      return box.checked;
+  #summaryUrl(ids) {
+    const url = new window.URL(this.summaryUrlValue, window.location.origin);
+
+    ids.forEach((id) => {
+      url.searchParams.append("ids[]", id);
     });
 
-    this.selectedIdValue = checked
-      ? checked.dataset.subcategoryId
-      : "";
+    return url.pathname + url.search;
+  }
+
+  #updatePanel() {
+    const ids = this.#selectedIds();
+
+    this.selectedIdsValue = ids;
 
     this.#highlightRows();
 
-    if (checked) {
-      this.panelFrameTarget.setAttribute("src", checked.dataset.detailUrl);
-      this.#showPanel();
-    } else {
+    if (ids.length === 0) {
       this.panelFrameTarget.removeAttribute("src");
       this.#hidePanel();
+    } else if (ids.length === 1) {
+      this.panelFrameTarget.setAttribute("src", this.#detailUrl(ids[0]));
+      this.#showPanel();
+    } else {
+      this.panelFrameTarget.setAttribute("src", this.#summaryUrl(ids));
+      this.#showPanel();
     }
   }
 }

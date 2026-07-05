@@ -35,6 +35,8 @@ describe("SelectionController", () => {
     instance.subcategoryTargets = [alpha, beta];
     instance.panelFrameTarget   = panelFrame;
     instance.summaryTarget      = summary;
+    instance.selectedIdsValue   = [];
+    instance.summaryUrlValue    = "/budgets/1/categories/summary?year=2026&month=7";
   });
 
   describe("#toggle", () => {
@@ -55,24 +57,27 @@ describe("SelectionController", () => {
       expect(summary.classList.contains("hidden")).to.eq(true);
     });
 
-    it("unchecks the previously selected subcategory", () => {
+    it("keeps the previously selected subcategory checked", () => {
       alpha.checked = true;
       instance.toggle({ "target": alpha });
 
       beta.checked = true;
       instance.toggle({ "target": beta });
 
-      expect(alpha.checked).to.eq(false);
+      expect(alpha.checked).to.eq(true);
+      expect(beta.checked).to.eq(true);
     });
 
-    it("swaps the panel frame to the newly selected subcategory", () => {
+    it("loads the summary with every selected id when more than one is selected", () => {
       alpha.checked = true;
       instance.toggle({ "target": alpha });
 
       beta.checked = true;
       instance.toggle({ "target": beta });
 
-      expect(panelFrame.getAttribute("src")).to.eq("/budgets/1/categories/2/panel");
+      expect(panelFrame.getAttribute("src")).to.eq(
+        "/budgets/1/categories/summary?year=2026&month=7&ids%5B%5D=1&ids%5B%5D=2"
+      );
     });
 
     it("clears the panel frame source when the selection is removed", () => {
@@ -96,7 +101,20 @@ describe("SelectionController", () => {
       expect(summary.classList.contains("hidden")).to.eq(false);
     });
 
-    it("marks the selected subcategory's row and clears the others", () => {
+    it("returns to the single subcategory detail when the selection drops to one", () => {
+      alpha.checked = true;
+      instance.toggle({ "target": alpha });
+
+      beta.checked = true;
+      instance.toggle({ "target": beta });
+
+      beta.checked = false;
+      instance.toggle({ "target": beta });
+
+      expect(panelFrame.getAttribute("src")).to.eq("/budgets/1/categories/1/panel");
+    });
+
+    it("marks every selected subcategory's row", () => {
       const alphaRow = rowFor(alpha),
             betaRow  = rowFor(beta);
 
@@ -106,7 +124,7 @@ describe("SelectionController", () => {
       beta.checked = true;
       instance.toggle({ "target": beta });
 
-      expect(alphaRow.hasAttribute("data-selected")).to.eq(false);
+      expect(alphaRow.hasAttribute("data-selected")).to.eq(true);
       expect(betaRow.hasAttribute("data-selected")).to.eq(true);
     });
 
@@ -133,7 +151,7 @@ describe("SelectionController", () => {
       expect(panelFrame.getAttribute("src")).to.eq("/budgets/1/categories/1/panel");
     });
 
-    it("unchecks the previously selected subcategory", () => {
+    it("keeps the previously selected subcategory checked", () => {
       rowFor(alpha);
       rowFor(beta);
 
@@ -142,7 +160,7 @@ describe("SelectionController", () => {
 
       instance.selectRow({ "target": beta });
 
-      expect(alpha.checked).to.eq(false);
+      expect(alpha.checked).to.eq(true);
       expect(beta.checked).to.eq(true);
     });
 
@@ -171,7 +189,7 @@ describe("SelectionController", () => {
 
       panelFrame.reload = sinon.fake();
       instance.subcategoryTargets = [replacement];
-      instance.selectedIdValue = "1";
+      instance.selectedIdsValue = ["1"];
 
       instance.subcategoryTargetConnected(replacement);
 
@@ -180,13 +198,13 @@ describe("SelectionController", () => {
       expect(panelFrame.reload).to.have.been.called;
     });
 
-    it("ignores a connected row that is not the selected one", () => {
+    it("ignores a connected row that is not part of the selection", () => {
       const other = subcategory("2", "/budgets/1/categories/2/panel");
       rowFor(other);
 
       panelFrame.reload = sinon.fake();
       instance.subcategoryTargets = [other];
-      instance.selectedIdValue = "1";
+      instance.selectedIdsValue = ["1"];
 
       instance.subcategoryTargetConnected(other);
 
@@ -201,7 +219,7 @@ describe("SelectionController", () => {
 
       panelFrame.reload = sinon.fake();
       instance.subcategoryTargets = [box];
-      instance.selectedIdValue = "1";
+      instance.selectedIdsValue = ["1"];
 
       instance.subcategoryTargetConnected(box);
 

@@ -1,0 +1,5 @@
+<%= turbo_frame_tag "category_panel", class: "flex flex-col h-full" do %>
+  <%= render "summary",
+             summary:         @summary,
+             budget_snapshot: @budget_snapshot %>
+<% end %>

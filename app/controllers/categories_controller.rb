@@ -9,6 +9,17 @@ class CategoriesController < ApplicationController
     @previous_budget_snapshot = previous_budget_snapshot
   end
 
+  # Render the summary for the selected subcategories.
+  def summary
+    @budget_snapshot = budget_snapshot
+    @summary         = CategorySummary.new(
+      current_budget,
+      budget_snapshot:          @budget_snapshot,
+      ids:                      params.expect(ids: []),
+      previous_budget_snapshot: previous_budget_snapshot
+    )
+  end
+
   # Render the category edit form.
   def edit
     @budget   = current_budget

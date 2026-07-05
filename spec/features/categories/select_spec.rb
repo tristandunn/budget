@@ -88,15 +88,28 @@ describe "Category selection" do
       )
     end
 
-    it "swaps the detail and unchecks the previous subcategory when another is selected" do
+    it "shows the selection summary and keeps both checked when a second is selected" do
       check(first_subcategory.name)
 
       wait_for(have_css("#category_panel", text: first_subcategory.name)) do
         check(second_subcategory.name)
       end
 
-      expect(page).to have_css("#category_panel", text: "$200.00")
-        .and(have_unchecked_field(first_subcategory.name))
+      expect(page).to have_css("#category_panel", text: t("categories.summary.title", count: 2))
+        .and(have_checked_field(first_subcategory.name))
+        .and(have_checked_field(second_subcategory.name))
+    end
+
+    it "returns to the single subcategory detail when the selection drops to one" do
+      check(first_subcategory.name)
+      check(second_subcategory.name)
+
+      wait_for(have_css("#category_panel", text: t("categories.summary.title", count: 2))) do
+        uncheck(second_subcategory.name)
+      end
+
+      expect(page).to have_css("#category_panel", text: first_subcategory.name)
+        .and(have_no_css("#category_panel", text: t("categories.summary.title", count: 2)))
     end
 
     it "restores the month summary when the subcategory is deselected" do
