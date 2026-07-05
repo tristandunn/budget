@@ -23,6 +23,17 @@ describe "categories/_category_header.html+desktop.erb" do
     expect(html).to have_css("tbody##{dom_id(category, :header)}")
   end
 
+  it "renders a selection checkbox for the category" do
+    expect(html).to have_css(
+      "input[type=checkbox][data-selection-target=category]" \
+      "[data-category-id='#{category.id}'][data-action='selection#toggleCategory']"
+    )
+  end
+
+  it "labels the selection checkbox with the category name" do
+    expect(html).to have_field(category.name, type: :checkbox)
+  end
+
   it "renders the category name" do
     expect(html).to have_css("th", text: category.name)
   end
@@ -45,10 +56,7 @@ describe "categories/_category_header.html+desktop.erb" do
     )
   end
 
-  it "wires the collapsible controller" do
-    expect(html).to have_css(
-      "tbody[data-controller='collapsible']" \
-      "[data-collapsible-id-value='category-#{category.id}']"
-    )
+  it "wires the collapsible controller to the arrow" do
+    expect(html).to have_css("[data-collapsible-arrow][data-action='click->collapsible#toggle']")
   end
 end

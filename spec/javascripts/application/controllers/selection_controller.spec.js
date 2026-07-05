@@ -1,12 +1,30 @@
 import SelectionController from "@app/controllers/selection_controller.js";
 
 describe("SelectionController", () => {
-  let alpha, beta, instance, panelFrame, summary;
+  let all, alpha, beta, group, instance, panelFrame, summary;
 
-  const subcategory = (id, url) => {
+  const selectAll = () => {
+    const box = document.createElement("input");
+    box.type = "checkbox";
+    box.setAttribute("data-selection-target", "all");
+
+    return box;
+  };
+
+  const category = (id) => {
+    const box = document.createElement("input");
+    box.type = "checkbox";
+    box.setAttribute("data-selection-target", "category");
+    box.dataset.categoryId = id;
+
+    return box;
+  };
+
+  const subcategory = (id, url, categoryId = "10") => {
     const box = document.createElement("input");
     box.type = "checkbox";
     box.setAttribute("data-selection-target", "subcategory");
+    box.dataset.categoryId = categoryId;
     box.dataset.subcategoryId = id;
     box.dataset.detailUrl = url;
 
@@ -21,8 +39,10 @@ describe("SelectionController", () => {
   };
 
   beforeEach(() => {
+    all   = selectAll();
     alpha = subcategory("1", "/budgets/1/categories/1/panel");
     beta  = subcategory("2", "/budgets/1/categories/2/panel");
+    group = category("10");
 
     summary = document.createElement("div");
 
@@ -32,6 +52,8 @@ describe("SelectionController", () => {
     instance = new SelectionController({
       "scope": { "element": document.createElement("div") }
     });
+    instance.allTarget          = all;
+    instance.categoryTargets    = [group];
     instance.subcategoryTargets = [alpha, beta];
     instance.panelFrameTarget   = panelFrame;
     instance.summaryTarget      = summary;
@@ -138,6 +160,130 @@ describe("SelectionController", () => {
       instance.toggle({ "target": alpha });
 
       expect(alphaRow.hasAttribute("data-selected")).to.eq(false);
+    });
+
+    it("checks the category when all of its subcategories are checked", () => {
+      alpha.checked = true;
+      instance.toggle({ "target": alpha });
+
+      beta.checked = true;
+      instance.toggle({ "target": beta });
+
+      expect(group.checked).to.eq(true);
+      expect(group.indeterminate).to.eq(false);
+    });
+
+    it("marks the category indeterminate when only some subcategories are checked", () => {
+      alpha.checked = true;
+      instance.toggle({ "target": alpha });
+
+      expect(group.checked).to.eq(false);
+      expect(group.indeterminate).to.eq(true);
+    });
+
+    it("clears the category when the last subcategory is unchecked", () => {
+      alpha.checked = true;
+      instance.toggle({ "target": alpha });
+
+      alpha.checked = false;
+      instance.toggle({ "target": alpha });
+
+      expect(group.checked).to.eq(false);
+      expect(group.indeterminate).to.eq(false);
+    });
+
+    it("checks the select-all box when every subcategory is checked", () => {
+      alpha.checked = true;
+      instance.toggle({ "target": alpha });
+
+      beta.checked = true;
+      instance.toggle({ "target": beta });
+
+      expect(all.checked).to.eq(true);
+      expect(all.indeterminate).to.eq(false);
+    });
+
+    it("marks the select-all box indeterminate when only some are checked", () => {
+      alpha.checked = true;
+      instance.toggle({ "target": alpha });
+
+      expect(all.checked).to.eq(false);
+      expect(all.indeterminate).to.eq(true);
+    });
+  });
+
+  describe("#toggleAll", () => {
+    it("checks every subcategory and loads their summary", () => {
+      all.checked = true;
+
+      instance.toggleAll({ "target": all });
+
+      expect(alpha.checked).to.eq(true);
+      expect(beta.checked).to.eq(true);
+      expect(panelFrame.getAttribute("src")).to.eq(
+        "/budgets/1/categories/summary?year=2026&month=7&ids%5B%5D=1&ids%5B%5D=2"
+      );
+    });
+
+    it("checks every category box when everything is selected", () => {
+      all.checked = true;
+
+      instance.toggleAll({ "target": all });
+
+      expect(group.checked).to.eq(true);
+      expect(group.indeterminate).to.eq(false);
+    });
+
+    it("unchecks every subcategory and restores the summary", () => {
+      all.checked = true;
+      instance.toggleAll({ "target": all });
+
+      all.checked = false;
+      instance.toggleAll({ "target": all });
+
+      expect(alpha.checked).to.eq(false);
+      expect(beta.checked).to.eq(false);
+      expect(panelFrame.hasAttribute("src")).to.eq(false);
+      expect(panelFrame.classList.contains("hidden")).to.eq(true);
+      expect(summary.classList.contains("hidden")).to.eq(false);
+    });
+  });
+
+  describe("#toggleCategory", () => {
+    it("checks every subcategory under the category and loads their summary", () => {
+      group.checked = true;
+
+      instance.toggleCategory({ "target": group });
+
+      expect(alpha.checked).to.eq(true);
+      expect(beta.checked).to.eq(true);
+      expect(panelFrame.getAttribute("src")).to.eq(
+        "/budgets/1/categories/summary?year=2026&month=7&ids%5B%5D=1&ids%5B%5D=2"
+      );
+    });
+
+    it("unchecks every subcategory under the category and restores the summary", () => {
+      group.checked = true;
+      instance.toggleCategory({ "target": group });
+
+      group.checked = false;
+      instance.toggleCategory({ "target": group });
+
+      expect(alpha.checked).to.eq(false);
+      expect(beta.checked).to.eq(false);
+      expect(panelFrame.hasAttribute("src")).to.eq(false);
+      expect(panelFrame.classList.contains("hidden")).to.eq(true);
+      expect(summary.classList.contains("hidden")).to.eq(false);
+    });
+
+    it("leaves subcategories that belong to another category untouched", () => {
+      const other = subcategory("3", "/budgets/1/categories/3/panel", "20");
+      instance.subcategoryTargets = [alpha, beta, other];
+
+      group.checked = true;
+      instance.toggleCategory({ "target": group });
+
+      expect(other.checked).to.eq(false);
     });
   });
 

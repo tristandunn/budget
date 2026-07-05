@@ -7,6 +7,7 @@
                         aria:  { label: t(".select", name: subcategory.name) },
                         data:  {
                           selection_target: "subcategory",
+                          category_id:      subcategory.parent_id,
                           subcategory_id:   subcategory.id,
                           detail_url:       budget_category_path(budget, subcategory,
                                                                  year:  budget_snapshot.date.year,

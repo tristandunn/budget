@@ -3,16 +3,6 @@
 require "rails_helper"
 
 describe "Category selection" do
-  it "renders a selection checkbox for each subcategory" do
-    subcategory = create(:category, :subcategory)
-    budget      = subcategory.budget
-
-    sign_in_for(budget)
-    visit budget_path(budget)
-
-    expect(page).to have_field(subcategory.name, type: :checkbox)
-  end
-
   context "when selecting a subcategory", :js do
     let(:budget)   { create(:budget) }
     let(:category) { create(:category, budget: budget) }
@@ -122,6 +112,22 @@ describe "Category selection" do
       expect(page).to have_css("turbo-frame#category_panel.hidden", visible: :all)
         .and(have_css("[data-selection-target='summary']", text: t("budgets.show.rollover")))
     end
+
+    it "checks its subcategories and shows the summary when the category is checked" do
+      check(category.name)
+
+      expect(page).to have_checked_field(first_subcategory.name)
+        .and(have_checked_field(second_subcategory.name))
+        .and(have_css("#category_panel", text: t("categories.summary.title", count: 2)))
+    end
+
+    it "checks every subcategory and shows the summary when select all is checked" do
+      check(t("budgets.show.select_all"))
+
+      expect(page).to have_checked_field(first_subcategory.name)
+        .and(have_checked_field(second_subcategory.name))
+        .and(have_css("#category_panel", text: t("categories.summary.title", count: 2)))
+    end
   end
 
   context "when on a mobile browser", :mobile do
@@ -133,6 +139,16 @@ describe "Category selection" do
       visit budget_path(budget)
 
       expect(page).to have_text(subcategory.name).and(have_no_field(subcategory.name, type: :checkbox))
+    end
+
+    it "does not render a selection checkbox for each category" do
+      category = create(:category)
+      budget   = category.budget
+
+      sign_in_for(budget)
+      visit budget_path(budget)
+
+      expect(page).to have_text(category.name).and(have_no_field(category.name, type: :checkbox))
     end
   end
 end

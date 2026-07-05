@@ -86,14 +86,14 @@ describe "Budget" do
         visit budget_path(budget)
       end
 
-      it "hides subcategories when clicking the category" do
-        find("th[scope='row']", text: category.name).click
+      it "hides subcategories when clicking the collapse arrow" do
+        find("[data-collapsible-id-value='category-#{category.id}'] [data-collapsible-arrow]").click
 
         expect(page).to have_no_text(subcategory.name)
       end
 
-      it "shows subcategories when clicking a collapsed category" do
-        2.times { find("th[scope='row']", text: category.name).click }
+      it "shows subcategories when clicking the arrow of a collapsed category" do
+        2.times { find("[data-collapsible-id-value='category-#{category.id}'] [data-collapsible-arrow]").click }
 
         expect(page).to have_text(subcategory.name)
       end

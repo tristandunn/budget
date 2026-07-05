@@ -36,6 +36,13 @@ describe "categories/_subcategory_row.html+desktop.erb" do
     )
   end
 
+  it "carries the parent category id on the selection checkbox" do
+    expect(html).to have_css(
+      "input[data-selection-target=subcategory]" \
+      "[data-category-id='#{subcategory.parent_id}']"
+    )
+  end
+
   it "carries the panel detail url on the selection checkbox" do
     expect(html).to have_css(
       "input[data-selection-target=subcategory]" \
