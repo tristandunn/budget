@@ -151,7 +151,24 @@ describe("SelectionController", () => {
       expect(panelFrame.getAttribute("src")).to.eq("/budgets/1/categories/1/panel");
     });
 
-    it("keeps the previously selected subcategory checked", () => {
+    it("switches to only the clicked row during a multiple selection", () => {
+      rowFor(alpha);
+      rowFor(beta);
+
+      alpha.checked = true;
+      instance.toggle({ "target": alpha });
+
+      beta.checked = true;
+      instance.toggle({ "target": beta });
+
+      instance.selectRow({ "target": beta });
+
+      expect(alpha.checked).to.eq(false);
+      expect(beta.checked).to.eq(true);
+      expect(panelFrame.getAttribute("src")).to.eq("/budgets/1/categories/2/panel");
+    });
+
+    it("switches to the clicked row when a different single row is selected", () => {
       rowFor(alpha);
       rowFor(beta);
 
@@ -160,11 +177,12 @@ describe("SelectionController", () => {
 
       instance.selectRow({ "target": beta });
 
-      expect(alpha.checked).to.eq(true);
+      expect(alpha.checked).to.eq(false);
       expect(beta.checked).to.eq(true);
+      expect(panelFrame.getAttribute("src")).to.eq("/budgets/1/categories/2/panel");
     });
 
-    it("does nothing when the row's subcategory is already selected", () => {
+    it("does nothing when the row is already the only selection", () => {
       rowFor(alpha);
       alpha.checked = true;
 
