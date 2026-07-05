@@ -4,10 +4,12 @@ import { Controller } from "@hotwired/stimulus";
  * Manages selection of subcategory rows on the desktop budget. Checking rows
  * swaps the sidebar summary for a panel loaded into the category frame and
  * highlights the rows. A single selection loads that subcategory's detail and
- * two or more load an aggregate summary of the selection.
+ * two or more load an aggregate summary of the selection. Category and
+ * select-all checkboxes check their subcategories in bulk and reflect the
+ * selection with a checked, unchecked, or indeterminate state.
  */
 export default class extends Controller {
-  static targets = ["panelFrame", "subcategory", "summary"];
+  static targets = ["all", "category", "panelFrame", "subcategory", "summary"];
 
   static values = {
     "selectedIds": Array,
@@ -19,6 +21,7 @@ export default class extends Controller {
       box.checked = true;
 
       this.#highlightRows();
+      this.#syncSelectionStates();
       this.panelFrameTarget.reload?.();
     }
   }
@@ -45,6 +48,32 @@ export default class extends Controller {
   }
 
   toggle() {
+    this.#syncSelectionStates();
+    this.#updatePanel();
+  }
+
+  toggleAll(event) {
+    const checked = event.target.checked;
+
+    this.subcategoryTargets.forEach((box) => {
+      box.checked = checked;
+    });
+
+    this.#syncSelectionStates();
+    this.#updatePanel();
+  }
+
+  toggleCategory(event) {
+    const categoryId = event.target.dataset.categoryId,
+          checked    = event.target.checked;
+
+    this.subcategoryTargets.filter((box) => {
+      return box.dataset.categoryId === categoryId;
+    }).forEach((box) => {
+      box.checked = checked;
+    });
+
+    this.#syncSelectionStates();
     this.#updatePanel();
   }
 
@@ -88,6 +117,35 @@ export default class extends Controller {
     });
 
     return url.pathname + url.search;
+  }
+
+  #syncAllState() {
+    const boxes = this.subcategoryTargets;
+    const checkedCount = boxes.filter((box) => {
+      return box.checked;
+    }).length;
+
+    this.allTarget.checked       = boxes.length > 0 && checkedCount === boxes.length;
+    this.allTarget.indeterminate = checkedCount > 0 && checkedCount < boxes.length;
+  }
+
+  #syncCategoryStates() {
+    this.categoryTargets.forEach((category) => {
+      const boxes = this.subcategoryTargets.filter((box) => {
+        return box.dataset.categoryId === category.dataset.categoryId;
+      });
+      const checkedCount = boxes.filter((box) => {
+        return box.checked;
+      }).length;
+
+      category.checked       = boxes.length > 0 && checkedCount === boxes.length;
+      category.indeterminate = checkedCount > 0 && checkedCount < boxes.length;
+    });
+  }
+
+  #syncSelectionStates() {
+    this.#syncAllState();
+    this.#syncCategoryStates();
   }
 
   #updatePanel() {

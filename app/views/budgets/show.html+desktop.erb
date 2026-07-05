@@ -90,6 +90,15 @@
                   scope="col"
                   class="py-2 pr-4 pl-9 font-medium shadow-[inset_0_-1px_0_var(--color-taupe-300)]"
                 >
+                  <label class="cursor-pointer">
+                    <%= check_box_tag "select_all", "1", false,
+                                      class: "mr-2 align-middle",
+                                      data:  {
+                                        selection_target: "all",
+                                        action:           "selection#toggleAll"
+                                      } %><span class="sr-only"><%= t(".select_all") %></span>
+                  </label>
+
                   <%= t(".category") %>
                 </th>
 

@@ -58,6 +58,16 @@ describe "budgets/show.html+desktop.erb" do
       .and(have_css("th", text: t("budgets.show.available")))
   end
 
+  it "renders a select all checkbox wired to the selection controller" do
+    expect(html).to have_css(
+      "input[type=checkbox][data-selection-target=all][data-action='selection#toggleAll']"
+    )
+  end
+
+  it "labels the select all checkbox" do
+    expect(html).to have_field(t("budgets.show.select_all"), type: :checkbox)
+  end
+
   it "renders the available to assign partial" do
     expect(html).to include("AVAILABLE_TO_ASSIGN_PARTIAL")
   end
