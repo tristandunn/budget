@@ -27,11 +27,21 @@ export default class extends Controller {
     const row = event.target.closest("tr"),
           box = row?.querySelector("[data-selection-target='subcategory']");
 
-    if (box && !box.checked) {
-      box.checked = true;
-
-      this.toggle();
+    if (!box) {
+      return;
     }
+
+    const ids = this.#selectedIds();
+
+    if (ids.length === 1 && ids[0] === box.dataset.subcategoryId) {
+      return;
+    }
+
+    this.subcategoryTargets.forEach((target) => {
+      target.checked = target === box;
+    });
+
+    this.toggle();
   }
 
   toggle() {
