@@ -12,6 +12,9 @@ Rails.application.routes.draw do
       resource :reconciliation, only: %i(create), controller: "accounts/reconciliations"
     end
     resources :categories, only: %i(show edit update) do
+      collection do
+        get :summary
+      end
       resource :assignment, only: %i(edit update)
       resource :snooze, only: %i(create destroy)
       resource :target, only: %i(edit update destroy)

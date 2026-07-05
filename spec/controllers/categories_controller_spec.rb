@@ -189,4 +189,67 @@ describe CategoriesController do
       it { is_expected.to render_template(:edit) }
     end
   end
+
+  describe "#summary" do
+    let(:subcategories) { create_list(:category, 2, :subcategory, budget: budget, with_snapshot: false) }
+    let(:summary)       { instance_double(CategorySummary) }
+
+    before do
+      allow(CategorySummary).to receive(:new).and_return(summary)
+    end
+
+    context "when on the first month" do
+      before do
+        get :summary, params: {
+          budget_id: budget.id,
+          ids:       subcategories.map(&:id)
+        }
+      end
+
+      it { is_expected.to respond_with(200) }
+      it { is_expected.to render_template(:summary) }
+
+      it "assigns the budget snapshot" do
+        expect(assigns(:budget_snapshot)).to be_a(BudgetSnapshot)
+      end
+
+      it "initializes the summary without a previous budget snapshot" do
+        expect(CategorySummary).to have_received(:new).with(
+          budget,
+          budget_snapshot:          assigns(:budget_snapshot),
+          ids:                      subcategories.map { |subcategory| subcategory.id.to_s },
+          previous_budget_snapshot: nil
+        )
+      end
+
+      it "assigns the summary" do
+        expect(assigns(:summary)).to eq(summary)
+      end
+    end
+
+    context "when not on the first month" do
+      before do
+        create(:category_snapshot,
+               budget:          budget,
+               category:        subcategories.first,
+               amount_assigned: 10_000,
+               amount_used:     0,
+               date:            1.month.ago.beginning_of_month)
+
+        get :summary, params: {
+          budget_id: budget.id,
+          ids:       subcategories.map(&:id)
+        }
+      end
+
+      it "initializes the summary with the previous month's budget snapshot" do
+        expect(CategorySummary).to have_received(:new).with(
+          budget,
+          budget_snapshot:          assigns(:budget_snapshot),
+          ids:                      subcategories.map { |subcategory| subcategory.id.to_s },
+          previous_budget_snapshot: have_attributes(date: Date.current.prev_month.beginning_of_month)
+        )
+      end
+    end
+  end
 end

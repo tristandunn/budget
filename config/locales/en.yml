@@ -97,6 +97,9 @@ en:
         unsnooze: "Unsnooze for this month"
     subcategory_row:
       select: "Select %{name}"
+    summary:
+      heading: "%{month}'s Summary"
+      title: "%{count} Categories Selected"
 
   budgets:
     available_to_assign:
