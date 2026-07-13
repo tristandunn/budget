@@ -1,0 +1,48 @@
+<%# locals: (budget:, category:, budget_snapshot:) %>
+<%= turbo_frame_tag dom_id(category, :target) do %>
+  <div class="p-4">
+    <% if category.target_type? %>
+      <%= render "categories/target_summary", category: category, budget_snapshot: budget_snapshot %>
+      <div class="flex items-center gap-2 mt-4">
+        <%= button_to t("categories.show.target.desktop.#{budget_snapshot.snoozed?(category) ? "unsnooze" : "snooze"}"),
+                      budget_category_snooze_path(budget, category,
+                                                  year:  budget_snapshot.date.year,
+                                                  month: budget_snapshot.date.month),
+                      method: budget_snapshot.snoozed?(category) ? :delete : :post,
+                      class:  "
+                        px-3 py-1.5 text-sm font-medium text-indigo-600 rounded-lg cursor-pointer hover:bg-indigo-50
+                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500
+                        focus-visible:ring-offset-2 focus-visible:ring-offset-taupe-50
+                      " %>
+
+        <%= link_to t("categories.show.target.desktop.edit"),
+                    edit_budget_category_target_path(budget, category,
+                                                     year:  budget_snapshot.date.year,
+                                                     month: budget_snapshot.date.month),
+                    class: "
+                      ml-auto px-3 py-1.5 text-sm font-medium text-white bg-indigo-600 rounded-lg no-underline cursor-pointer
+                      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500
+                      focus-visible:ring-offset-2 focus-visible:ring-offset-taupe-50
+                    " %>
+      </div>
+    <% else %>
+      <p class="px-2 pb-2 text-center font-bold">
+        <%= t("categories.show.target.question", name: category.name) %>
+      </p>
+      <p class="px-2 pb-3 text-sm text-center text-taupe-600">
+        <%= t("categories.show.target.description") %>
+      </p>
+      <div class="flex justify-center mt-4">
+        <%= link_to t("categories.show.target.desktop.create"),
+                    edit_budget_category_target_path(budget, category,
+                                                     year:  budget_snapshot.date.year,
+                                                     month: budget_snapshot.date.month),
+                    class: "
+                      px-3 py-1.5 text-sm font-medium text-white bg-indigo-600 rounded-lg no-underline cursor-pointer
+                      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500
+                      focus-visible:ring-offset-2 focus-visible:ring-offset-taupe-50
+                    " %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

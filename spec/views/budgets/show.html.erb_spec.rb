@@ -59,6 +59,12 @@ describe "budgets/show.html.erb" do
     )
   end
 
+  it "renders the category target dialog" do
+    expect(html).to have_css(
+      "dialog#category_target_dialog_modal turbo-frame#category_target_dialog"
+    )
+  end
+
   it "renders the payees dialog" do
     expect(html).to have_css("dialog#payees_dialog_modal turbo-frame#payees_dialog")
   end

@@ -28,7 +28,7 @@ describe "targets/_response.turbo_stream+desktop.erb" do
     stub_template("categories/_available.html.erb" => "AVAILABLE_PARTIAL")
   end
 
-  it "replaces the target section" do
+  it "replaces the target frame" do
     expect(html).to have_turbo_stream_element(action: "replace", target: dom_id(subcategory, :target))
   end
 
@@ -42,13 +42,5 @@ describe "targets/_response.turbo_stream+desktop.erb" do
 
   it "renders the available partial inside the available badge stream" do
     expect(html).to include("AVAILABLE_PARTIAL")
-  end
-
-  it "updates the target dialog frame" do
-    expect(html).to have_turbo_stream_element(action: "update", target: "category_target_dialog")
-  end
-
-  it "renders the dismisser controller inside the target dialog stream" do
-    expect(html).to include('data-controller="dialog-dismisser"')
   end
 end
