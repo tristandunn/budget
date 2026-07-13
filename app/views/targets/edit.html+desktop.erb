@@ -1,0 +1,81 @@
+<%= turbo_frame_tag dom_id(@category, :target) do %>
+  <div
+    class="p-4"
+    data-controller="edit-dismisser"
+    data-action="keydown.esc->edit-dismisser#cancel"
+  >
+    <%= form_with model:  @form,
+                  url:    budget_category_target_path(@budget, @category,
+                                                      year:  @budget_snapshot.date.year,
+                                                      month: @budget_snapshot.date.month),
+                  method: :patch,
+                  id:     "target_form",
+                  class:  "highlight-errors space-y-4" do |f| %>
+      <div
+        class="
+          flex items-center gap-3 px-4 py-3 bg-white border border-taupe-200 rounded-xl
+          focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-500
+          focus-within:ring-inset
+        "
+      >
+        <%= render "targets/amount_field", form: f, placeholder: t(".amount_placeholder") %>
+      </div>
+
+      <div
+        role="radiogroup"
+        aria-label="<%= t(".type") %>"
+        class="flex w-full gap-1 p-1 rounded-xl bg-taupe-200"
+      >
+        <%= f.radio_button :target_type, "monthly_spending",
+                           class:   "peer/refill sr-only",
+                           checked: @form.target_type != "monthly_savings" %>
+
+        <%= label_tag :target_form_target_type_monthly_spending, t(".refill_option"),
+                      class: "flex-1 rounded-lg py-1.5 text-center text-sm font-medium text-taupe-500 cursor-pointer transition peer-checked/refill:bg-white peer-checked/refill:text-taupe-800 peer-checked/refill:shadow peer-focus-visible/refill:ring-2 peer-focus-visible/refill:ring-taupe-500" %>
+
+        <%= f.radio_button :target_type, "monthly_savings",
+                           class:   "peer/savings sr-only",
+                           checked: @form.target_type == "monthly_savings" %>
+
+        <%= label_tag :target_form_target_type_monthly_savings, t(".set_aside_option"),
+                      class: "flex-1 rounded-lg py-1.5 text-center text-sm font-medium text-taupe-500 cursor-pointer transition peer-checked/savings:bg-white peer-checked/savings:text-taupe-800 peer-checked/savings:shadow peer-focus-visible/savings:ring-2 peer-focus-visible/savings:ring-taupe-500" %>
+      </div>
+    <% end %>
+
+    <div class="flex items-center gap-2 mt-4">
+      <% if @category.target_type_in_database.present? %>
+        <%= button_to budget_category_target_path(@budget, @category,
+                                                  year:  @budget_snapshot.date.year,
+                                                  month: @budget_snapshot.date.month),
+                      method: :delete,
+                      form:   { data: { turbo_confirm: t(".delete_confirmation") } },
+                      class:  "
+                        px-3 py-1.5 text-sm font-medium text-red-600 rounded-lg cursor-pointer hover:bg-red-50
+                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500
+                        focus-visible:ring-offset-2 focus-visible:ring-offset-taupe-50
+                      " do %>
+          <%= t(".desktop.delete") %>
+        <% end %>
+      <% end %>
+
+      <%= link_to t(".cancel"),
+                  budget_category_path(@budget, @category,
+                                       year:  @budget_snapshot.date.year,
+                                       month: @budget_snapshot.date.month),
+                  class: "
+                    ml-auto px-3 py-1.5 text-sm font-medium text-taupe-600 rounded-lg no-underline cursor-pointer hover:bg-taupe-200
+                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500
+                    focus-visible:ring-offset-2 focus-visible:ring-offset-taupe-50
+                  ",
+                  data:  { edit_dismisser_target: "cancel" } %>
+
+      <%= submit_tag t(".submit"),
+                     form:  "target_form",
+                     class: "
+                       px-3 py-1.5 text-sm font-medium text-white bg-indigo-600 rounded-lg cursor-pointer
+                       focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500
+                       focus-visible:ring-offset-2 focus-visible:ring-offset-taupe-50
+                     " %>
+    </div>
+  </div>
+<% end %>

@@ -16,19 +16,47 @@ describe "Category target editing" do
       check(subcategory.name)
 
       wait_for(have_css("#category_panel", text: subcategory.name)) do
-        within("#category_panel") { click_on t("categories.show.target.edit") }
+        within("#category_panel") { click_on t("categories.show.target.desktop.edit") }
       end
     end
 
-    it "edits the target amount and refreshes the panel" do
-      within "#category_target_dialog_modal" do
+    it "edits the target amount inline and refreshes the panel" do
+      within "#category_panel" do
         fill_in t("activemodel.attributes.target_form.target_amount_input"), with: "350.00"
         click_on t("targets.edit.submit")
-      end
 
-      within("#category_panel") do
         expect(page).to have_text("$350.00")
       end
+    end
+
+    it "persists a change to the target type" do
+      within "#category_panel" do
+        choose t("targets.edit.set_aside_option"), allow_label_click: true
+        click_on t("targets.edit.submit")
+
+        expect(page).to have_text(t("categories.show.target.monthly_savings_label"))
+      end
+    end
+
+    it "restores the display without saving when cancelling" do
+      within "#category_panel" do
+        fill_in t("activemodel.attributes.target_form.target_amount_input"), with: "999.00"
+        click_on t("targets.edit.cancel")
+
+        expect(page).to have_link(t("categories.show.target.desktop.edit"))
+          .and(have_text("$200.00"))
+          .and(have_no_field(t("activemodel.attributes.target_form.target_amount_input")))
+      end
+    end
+
+    it "dismisses the edit and keeps the subcategory selected on escape" do
+      within("#category_panel") do
+        find_field(t("activemodel.attributes.target_form.target_amount_input")).send_keys(:escape)
+      end
+
+      expect(page).to have_css("tr[data-selected]", text: subcategory.name)
+        .and(have_link(t("categories.show.target.desktop.edit")))
+        .and(have_no_field(t("activemodel.attributes.target_form.target_amount_input")))
     end
   end
 

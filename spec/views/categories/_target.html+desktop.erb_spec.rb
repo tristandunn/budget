@@ -2,15 +2,16 @@
 
 require "rails_helper"
 
-describe "categories/_target.html.erb" do
+describe "categories/_target.html+desktop.erb" do
   subject(:html) do
     render(
-      locals:  {
+      locals:   {
         budget:          budget,
         category:        subcategory,
         budget_snapshot: budget_snapshot
       },
-      partial: "categories/target"
+      partial:  "categories/target",
+      variants: [:desktop]
     )
 
     rendered
@@ -24,6 +25,10 @@ describe "categories/_target.html.erb" do
     stub_template("categories/_target_summary.html.erb" => "TARGET_SUMMARY_PARTIAL")
   end
 
+  it "wraps the target in its own turbo frame" do
+    expect(html).to have_css("turbo-frame##{dom_id(subcategory, :target)}")
+  end
+
   context "with a target" do
     let(:subcategory) { build_stubbed(:category, :subcategory, :with_monthly_spending_target) }
 
@@ -33,7 +38,7 @@ describe "categories/_target.html.erb" do
 
     it "links the edit target button to the edit form with month and year" do
       expect(html).to have_link(
-        t("categories.show.target.edit"),
+        t("categories.show.target.desktop.edit"),
         href: edit_budget_category_target_path(budget, subcategory,
                                                year:  budget_snapshot.date.year,
                                                month: budget_snapshot.date.month)
@@ -41,7 +46,7 @@ describe "categories/_target.html.erb" do
     end
 
     it "renders a snooze button" do
-      expect(html).to have_button(t("categories.show.target.snooze"))
+      expect(html).to have_button(t("categories.show.target.desktop.snooze"))
     end
 
     it "posts the snooze button to the snooze path" do
@@ -58,7 +63,7 @@ describe "categories/_target.html.erb" do
       end
 
       it "renders an unsnooze button" do
-        expect(html).to have_button(t("categories.show.target.unsnooze"))
+        expect(html).to have_button(t("categories.show.target.desktop.unsnooze"))
       end
 
       it "submits the unsnooze button as a DELETE to the snooze path" do
@@ -78,22 +83,21 @@ describe "categories/_target.html.erb" do
       expect(html).to have_text(t("categories.show.target.question", name: subcategory.name))
     end
 
+    it "renders the target description" do
+      expect(html).to have_text(t("categories.show.target.description"))
+    end
+
     it "links the create target button to the edit form with month and year" do
       expect(html).to have_link(
-        t("categories.show.target.create"),
+        t("categories.show.target.desktop.create"),
         href: edit_budget_category_target_path(budget, subcategory,
                                                year:  budget_snapshot.date.year,
                                                month: budget_snapshot.date.month)
       )
     end
 
-    it "targets the target dialog frame from the create link" do
-      expect(html).to have_css("a[data-turbo-frame='category_target_dialog']",
-                               text: t("categories.show.target.create"))
-    end
-
     it "does not render a snooze button" do
-      expect(html).to have_no_button(t("categories.show.target.snooze"))
+      expect(html).to have_no_button(t("categories.show.target.desktop.snooze"))
     end
   end
 end
