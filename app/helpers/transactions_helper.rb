@@ -15,6 +15,18 @@ module TransactionsHelper
     end
   end
 
+  # Returns a formatted last-reconciled timestamp for an account when it has
+  # been reconciled.
+  #
+  # @param account [Account] The account to describe.
+  # @return [String] The formatted timestamp, when reconciled.
+  # @return [nil] When the account has never been reconciled.
+  def account_reconciled_title(account)
+    if account.last_reconciled_at
+      l(account.last_reconciled_at, format: :full_date_and_time)
+    end
+  end
+
   # Returns "Today", "Yesterday", or the long date format for the given date.
   #
   # @param date [Date] The date to format.
