@@ -63,6 +63,13 @@ describe "categories/_subcategory_row.html+desktop.erb" do
     expect(html).to have_css("label", text: subcategory.name)
   end
 
+  it "edits the subcategory when its name is clicked" do
+    expect(html).to have_css(
+      "button[data-action~='selection#edit']",
+      text: subcategory.name
+    )
+  end
+
   it "identifies the subcategory name cell so it can be targeted by turbo streams" do
     expect(html).to have_css("th##{dom_id(subcategory, :name)}", text: subcategory.name)
   end

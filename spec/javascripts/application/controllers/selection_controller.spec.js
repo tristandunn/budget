@@ -287,6 +287,50 @@ describe("SelectionController", () => {
     });
   });
 
+  describe("#edit", () => {
+    const rowWithAssignment = (box) => {
+      const row  = rowFor(box),
+            cell = document.createElement("td"),
+            link = document.createElement("a"),
+            name = document.createElement("button");
+
+      cell.setAttribute("data-controller", "inline-edit");
+      link.click = sinon.fake();
+
+      cell.appendChild(link);
+      row.appendChild(name);
+      row.appendChild(cell);
+
+      return { link,
+        name };
+    };
+
+    it("clicks the assignment link in the row", () => {
+      const { link, name } = rowWithAssignment(alpha);
+
+      instance.edit({ "target": name });
+
+      expect(link.click).to.have.been.called;
+    });
+
+    it("does nothing when the clicked element has no row", () => {
+      const orphan = document.createElement("button");
+
+      expect(() => {
+        instance.edit({ "target": orphan });
+      }).to.not.throw();
+    });
+
+    it("does nothing when the row has no assignment link", () => {
+      const name = document.createElement("button");
+      rowFor(name);
+
+      expect(() => {
+        instance.edit({ "target": name });
+      }).to.not.throw();
+    });
+  });
+
   describe("#selectRow", () => {
     it("selects the subcategory in the clicked row", () => {
       rowFor(alpha);
