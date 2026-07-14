@@ -11,7 +11,9 @@
         <div>
           <h1 class="text-lg font-semibold"><%= @account.name %></h1>
 
-          <p class="text-xs text-taupe-500"><%= account_reconciled_summary(@account) %></p>
+          <%= tag.p(account_reconciled_summary(@account),
+                    class: "text-xs text-taupe-500",
+                    title: account_reconciled_title(@account)) %>
         </div>
 
         <%= render "accounts/transactions/actions_bar", account: @account, budget: @budget %>

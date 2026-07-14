@@ -25,6 +25,28 @@ describe TransactionsHelper do
     end
   end
 
+  describe "#account_reconciled_title" do
+    subject { helper.account_reconciled_title(account) }
+
+    let(:account) { build_stubbed(:account) }
+
+    before do
+      allow(account).to receive(:last_reconciled_at).and_return(reconciled_at)
+    end
+
+    context "when the account has been reconciled" do
+      let(:reconciled_at) { Time.current }
+
+      it { is_expected.to eq(I18n.l(reconciled_at, format: :full_date_and_time)) }
+    end
+
+    context "when the account has never been reconciled" do
+      let(:reconciled_at) { nil }
+
+      it { is_expected.to be_nil }
+    end
+  end
+
   describe "#relative_date" do
     it "returns today for the current date" do
       expect(helper.relative_date(Date.current)).to eq(t("dates.today"))

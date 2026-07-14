@@ -21,6 +21,10 @@ en:
       other: "%{count} weeks ago"
     yesterday: "Yesterday"
 
+  time:
+    formats:
+      full_date_and_time: "%B %-d, %Y at %-l:%M %p"
+
   accounts:
     edit:
       cancel: "Cancel"
