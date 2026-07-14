@@ -113,11 +113,9 @@ capital_grille = budget.payees.find_or_create_by!(name: "The Capital Grille")
 costco         = budget.payees.find_or_create_by!(name: "Costco")
 electric       = budget.payees.find_or_create_by!(name: "Electric Company")
 employer       = budget.payees.find_or_create_by!(name: "Employer")
-gym            = budget.payees.find_or_create_by!(name: "Gym")
 landlord       = budget.payees.find_or_create_by!(name: "Landlord")
 netflix        = budget.payees.find_or_create_by!(name: "Netflix")
 opening        = budget.payees.find_or_create_by!(name: "Opening Balance")
-shell          = budget.payees.find_or_create_by!(name: "Shell")
 water_utility  = budget.payees.find_or_create_by!(name: "Water Utility")
 
 budget.categories.find_or_create_by(name: Category::INFLOW, position: 0).tap do |parent|
@@ -188,10 +186,7 @@ budget.categories.find_or_create_by(name: "Food & Drink", position: 2).tap do |p
 
   seeder.snapshot(groceries, on: date, assigned: 30_000, used: 27_500)
 
-  dining_out = parent.subcategories.find_or_create_by(budget: budget, name: "Dining Out", position: 1) do |category|
-    category.target_type   = :monthly_spending
-    category.target_amount = 15_000
-  end
+  dining_out = parent.subcategories.find_or_create_by(budget: budget, name: "Dining Out", position: 1)
 
   seeder.snapshot(dining_out, on: date, assigned: 15_000, used: 17_500)
 
@@ -203,65 +198,33 @@ budget.categories.find_or_create_by(name: "Food & Drink", position: 2).tap do |p
   seeder.rollup(parent)
 end
 
-budget.categories.find_or_create_by(name: "Transportation", position: 3).tap do |parent|
-  gas = parent.subcategories.find_or_create_by(budget: budget, name: "Gas", position: 0) do |category|
-    category.target_type   = :monthly_spending
-    category.target_amount = 6_000
-  end
+budget.categories.find_or_create_by(name: "Quality of Life", position: 3).tap do |parent|
+  fun_money = parent.subcategories.find_or_create_by(budget: budget, name: "Fun Money", position: 0)
 
-  seeder.snapshot(gas, on: date, assigned: 6_000, used: 4_500)
+  seeder.snapshot(fun_money, on: date, assigned: 10_000, used: 6_000)
 
-  seeder.record(account: united_club, payee: shell, subcategory: gas,
-                amount: -4_500, on: date + 10, status: :cleared)
-
-  seeder.rollup(parent)
-end
-
-budget.categories.find_or_create_by(name: "Subscriptions", position: 4).tap do |parent|
-  netflix_category = parent.subcategories.find_or_create_by(budget: budget, name: "Netflix", position: 0) do |category|
+  netflix_category = parent.subcategories.find_or_create_by(budget: budget, name: "Netflix", position: 1) do |category|
     category.target_type   = :monthly_spending
     category.target_amount = 1_500
   end
 
   seeder.snapshot(netflix_category, on: date, assigned: 1_500, used: 1_500)
 
-  gym_category = parent.subcategories.find_or_create_by(budget: budget, name: "Gym", position: 1) do |category|
-    category.target_type   = :monthly_spending
-    category.target_amount = 3_000
-  end
-
-  seeder.snapshot(gym_category, on: date, assigned: 3_000, used: 3_000)
-
-  seeder.record(account: united_club, payee: netflix, subcategory: netflix_category,
-                amount: -1_500, on: date + 7, status: :pending)
-  seeder.record(account: united_club, payee: netflix, subcategory: netflix_category,
-                amount: -1_500, on: next_date + 7, status: :upcoming, frequency: :monthly)
-
-  seeder.record(account: united_club, payee: gym, subcategory: gym_category,
-                amount: -3_000, on: date + 4, status: :cleared)
-
-  seeder.rollup(parent)
-end
-
-budget.categories.find_or_create_by(name: "Quality of Life", position: 5).tap do |parent|
-  fun_money = parent.subcategories.find_or_create_by(budget: budget, name: "Fun Money", position: 0)
-
-  seeder.snapshot(fun_money, on: date, assigned: 10_000, used: 6_000)
-
-  seeder.record(account: united_club, payee: amazon, subcategory: fun_money,
-                amount: -6_000, on: date + 11, status: :reconciled)
-
-  seeder.rollup(parent)
-end
-
-budget.categories.find_or_create_by(name: "Savings Goals", position: 6).tap do |parent|
-  vacation = parent.subcategories.find_or_create_by(budget: budget, name: "Vacation", position: 0) do |category|
+  vacation = parent.subcategories.find_or_create_by(budget: budget, name: "Vacation", position: 2) do |category|
     category.target_type   = :monthly_savings
     category.target_amount = 25_000
   end
 
   seeder.snapshot(vacation, on: date, assigned: 25_000)
   seeder.snapshot(vacation, on: next_date, assigned: 25_000)
+
+  seeder.record(account: united_club, payee: amazon, subcategory: fun_money,
+                amount: -6_000, on: date + 11, status: :reconciled)
+
+  seeder.record(account: united_club, payee: netflix, subcategory: netflix_category,
+                amount: -1_500, on: date + 7, status: :pending)
+  seeder.record(account: united_club, payee: netflix, subcategory: netflix_category,
+                amount: -1_500, on: next_date + 7, status: :upcoming, frequency: :monthly)
 
   seeder.rollup(parent)
 end
