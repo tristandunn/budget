@@ -15,7 +15,13 @@
                           action:           "selection#toggle"
                         } %>
 
-      <span class="truncate"><%= subcategory.name %></span>
+      <button
+        type="button"
+        class="truncate min-w-0 text-left cursor-pointer"
+        data-action="selection#edit"
+      >
+        <%= subcategory.name %>
+      </button>
     </label>
   </th>
 

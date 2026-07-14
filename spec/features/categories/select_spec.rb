@@ -30,11 +30,25 @@ describe "Category selection" do
       visit budget_path(budget)
     end
 
-    it "selects the subcategory by clicking its name without opening the dialog" do
-      find("label", text: first_subcategory.name).click
+    it "selects only the subcategory and opens its assignment when its name is clicked" do
+      click_button(first_subcategory.name)
 
       expect(page).to have_css("#category_panel", text: first_subcategory.name)
-        .and(have_no_css("#category_dialog_title"))
+        .and(have_css("input[inputmode='decimal']"))
+    end
+
+    it "switches to only the clicked name during a multiple selection" do
+      check(first_subcategory.name)
+
+      wait_for(have_css("#category_panel", text: first_subcategory.name)) do
+        check(second_subcategory.name)
+      end
+
+      click_button(second_subcategory.name)
+
+      expect(page).to have_css("#category_panel", text: second_subcategory.name)
+        .and(have_checked_field(second_subcategory.name))
+        .and(have_unchecked_field(first_subcategory.name))
     end
 
     it "selects the subcategory when editing its assignment amount" do

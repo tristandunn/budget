@@ -4,9 +4,10 @@ import { Controller } from "@hotwired/stimulus";
  * Manages selection of subcategory rows on the desktop budget. Checking rows
  * swaps the sidebar summary for a panel loaded into the category frame and
  * highlights the rows. A single selection loads that subcategory's detail and
- * two or more load an aggregate summary of the selection. Category and
- * select-all checkboxes check their subcategories in bulk and reflect the
- * selection with a checked, unchecked, or indeterminate state.
+ * two or more load an aggregate summary of the selection. Clicking a
+ * subcategory's name selects only that row and opens its assignment input.
+ * Category and select-all checkboxes check their subcategories in bulk and
+ * reflect the selection with a checked, unchecked, or indeterminate state.
  */
 export default class extends Controller {
   static targets = ["all", "category", "panelFrame", "subcategory", "summary"];
@@ -24,6 +25,13 @@ export default class extends Controller {
       this.#syncSelectionStates();
       this.panelFrameTarget.reload?.();
     }
+  }
+
+  edit(event) {
+    const row  = event.target.closest("tr"),
+          link = row?.querySelector("[data-controller~='inline-edit'] a");
+
+    link?.click();
   }
 
   selectRow(event) {
