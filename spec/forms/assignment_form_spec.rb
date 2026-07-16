@@ -10,130 +10,43 @@ describe AssignmentForm, type: :form do
 
     let(:form) { described_class.new(amount: amount) }
 
-    context "when amount is blank" do
-      let(:amount) { "" }
+    context "when the amount is a string" do
+      let(:amount) { "10 + 5" }
+      let(:result) { Money.from_amount(BigDecimal("15")) }
 
-      it { is_expected.to be_nil }
+      before do
+        allow(CalculateAmount).to receive(:call).with(amount).and_return(result)
+      end
+
+      it { is_expected.to eq(result) }
+
+      it "calculates the amount once for multiple calls" do
+        2.times { form.amount }
+
+        expect(CalculateAmount).to have_received(:call).once
+      end
     end
 
-    context "when amount is nil" do
+    context "when the amount is already a Money" do
+      let(:amount) { Money.from_amount(BigDecimal("10.50")) }
+
+      before do
+        allow(CalculateAmount).to receive(:call)
+      end
+
+      it { is_expected.to eq(amount) }
+
+      it "does not calculate the amount" do
+        form.amount
+
+        expect(CalculateAmount).not_to have_received(:call)
+      end
+    end
+
+    context "when the amount is nil" do
       let(:amount) { nil }
 
       it { is_expected.to be_nil }
-    end
-
-    context "when amount is zero" do
-      let(:amount) { "0" }
-
-      it { is_expected.to eq(Money.from_amount(BigDecimal("0"))) }
-    end
-
-    context "when amount is positive" do
-      let(:amount) { "10.50" }
-
-      it { is_expected.to eq(Money.from_amount(BigDecimal("10.50"))) }
-    end
-
-    context "when amount is comma-grouped" do
-      let(:amount) { "1,000" }
-
-      it { is_expected.to eq(Money.from_amount(BigDecimal("1000"))) }
-    end
-
-    context "when amount is comma-grouped with a decimal" do
-      let(:amount) { "1,000.50" }
-
-      it { is_expected.to eq(Money.from_amount(BigDecimal("1000.50"))) }
-    end
-
-    context "when amount has a dollar sign and comma" do
-      let(:amount) { "$1,000" }
-
-      it { is_expected.to eq(Money.from_amount(BigDecimal("1000"))) }
-    end
-
-    context "when amount is comma-grouped in an expression" do
-      let(:amount) { "1,000+2,000" }
-
-      it { is_expected.to eq(Money.from_amount(BigDecimal("3000"))) }
-    end
-
-    context "when amount is an addition expression" do
-      let(:amount) { "100.00+13.37" }
-
-      it { is_expected.to eq(Money.from_amount(BigDecimal("113.37"))) }
-    end
-
-    context "when amount is a subtraction expression" do
-      let(:amount) { "100.00-13.37" }
-
-      it { is_expected.to eq(Money.from_amount(BigDecimal("86.63"))) }
-    end
-
-    context "when amount is a chained expression" do
-      let(:amount) { "100+10-5" }
-
-      it { is_expected.to eq(Money.from_amount(BigDecimal("105"))) }
-    end
-
-    context "when amount has whitespace around a subtraction operator" do
-      let(:amount) { "10 - 5" }
-
-      it { is_expected.to eq(Money.from_amount(BigDecimal("5"))) }
-    end
-
-    context "when amount has whitespace around an addition operator" do
-      let(:amount) { "10 + 5" }
-
-      it { is_expected.to eq(Money.from_amount(BigDecimal("15"))) }
-    end
-
-    context "when amount is surrounded by whitespace" do
-      let(:amount) { " 10 " }
-
-      it { is_expected.to eq(Money.from_amount(BigDecimal("10"))) }
-    end
-
-    context "when amount separates an expression with tabs" do
-      let(:amount) { "10\t-\t5" }
-
-      it { is_expected.to eq(Money.from_amount(BigDecimal("5"))) }
-    end
-
-    context "when amount contains other invalid characters" do
-      let(:amount) { "10a-5" }
-
-      it { is_expected.to eq(Money.from_amount(BigDecimal("5"))) }
-    end
-
-    context "when amount starts with a negative part" do
-      let(:amount) { "-50+20" }
-
-      it { is_expected.to eq(Money.from_amount(BigDecimal("-30"))) }
-    end
-
-    context "when amount has a trailing operator" do
-      let(:amount) { "100+" }
-
-      it { is_expected.to eq(Money.from_amount(BigDecimal("100"))) }
-    end
-
-    context "when amount is a bare minus sign" do
-      let(:amount) { "-" }
-
-      it { is_expected.to be_nil }
-    end
-
-    context "when amount is a bare plus sign" do
-      let(:amount) { "+" }
-
-      it { is_expected.to be_nil }
-    end
-
-    context "when amount contains invalid decimal parts" do
-      let(:amount) { "100+.." }
-
-      it { is_expected.to eq(Money.from_amount(BigDecimal("100"))) }
     end
   end
 

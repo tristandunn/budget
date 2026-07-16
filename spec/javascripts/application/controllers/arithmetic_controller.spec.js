@@ -72,12 +72,42 @@ describe("ArithmeticController", () => {
         expect(element.value).to.eq("0.00");
       });
 
-      it("appends + when the expression starts with zero", () => {
+      it("refuses a second operator when the expression starts with zero", () => {
         element.value = "0.00+50.00";
 
         instance.keydown(event);
 
-        expect(element.value).to.eq("0.00+50.00+");
+        expect(element.value).to.eq("0.00+50.00");
+      });
+
+      it("refuses a second operator", () => {
+        element.value = "-50+20";
+
+        instance.keydown(event);
+
+        expect(element.value).to.eq("-50+20");
+      });
+
+      it("keeps the cursor in place when refusing a second operator", () => {
+        document.body.appendChild(element);
+
+        element.value = "-50+20";
+        element.setSelectionRange(2, 2);
+
+        instance.keydown(event);
+
+        expect(element.selectionStart).to.eq(2);
+        expect(element.selectionEnd).to.eq(2);
+
+        document.body.removeChild(element);
+      });
+
+      it("appends + after a leading minus sign", () => {
+        element.value = "-50";
+
+        instance.keydown(event);
+
+        expect(element.value).to.eq("-50+");
       });
 
       it("replaces a trailing + operator", () => {
@@ -149,6 +179,22 @@ describe("ArithmeticController", () => {
         instance.keydown(event);
 
         expect(element.value).to.eq("100.00-");
+      });
+
+      it("refuses a second operator", () => {
+        element.value = "-50+20";
+
+        instance.keydown(event);
+
+        expect(element.value).to.eq("-50+20");
+      });
+
+      it("appends - after a leading minus sign", () => {
+        element.value = "-50";
+
+        instance.keydown(event);
+
+        expect(element.value).to.eq("-50-");
       });
     });
 
@@ -260,9 +306,27 @@ describe("ArithmeticController", () => {
       element.value = "";
       element.setSelectionRange(0, 0);
 
+      instance.paste(createPasteEvent("12+3.45"));
+
+      expect(element.value).to.eq("12+3.45");
+    });
+
+    it("truncates to the first operation", () => {
+      element.value = "";
+      element.setSelectionRange(0, 0);
+
       instance.paste(createPasteEvent("12+3-4.5"));
 
-      expect(element.value).to.eq("12+3-4.5");
+      expect(element.value).to.eq("12+3");
+    });
+
+    it("keeps a leading minus sign when truncating", () => {
+      element.value = "";
+      element.setSelectionRange(0, 0);
+
+      instance.paste(createPasteEvent("-50+20+30"));
+
+      expect(element.value).to.eq("-50+20");
     });
 
     it("strips non-numeric, non-operator characters", () => {
