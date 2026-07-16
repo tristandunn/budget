@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class CalculateAmount
-  EXPRESSION         = /\A(?<left>[+-]?[\d.]+)(?:(?<operator>[+-])(?<right>[\d.]+)?)?\z/
-  INVALID_CHARACTERS = /[^\d.+-]/
+  EXPRESSION         = %r{\A(?<left>[+-]?[\d.]+)(?:(?<operator>[-+*/])(?<right>[\d.]+)?)?\z}
+  INVALID_CHARACTERS = %r{[^\d.+*/-]}
 
   # Initialize the service with a sanitized expression.
   #
@@ -43,7 +43,11 @@ class CalculateAmount
   # @param right [BigDecimal] The right operand.
   # @return [Money] The calculated amount.
   def evaluate(left, operator, right)
-    Money.from_amount(operate(left, operator, right))
+    if right.zero?
+      Money.from_amount(left)
+    else
+      Money.from_amount(operate(left, operator, right))
+    end
   end
 
   # Apply the operator to the operands, defaulting to subtraction.
@@ -53,8 +57,13 @@ class CalculateAmount
   # @param right [BigDecimal] The right operand.
   # @return [BigDecimal] The result of the operation.
   def operate(left, operator, right)
-    if operator == "+"
+    case operator
+    when "+"
       left + right
+    when "*"
+      left * right
+    when "/"
+      left / right
     else
       left - right
     end

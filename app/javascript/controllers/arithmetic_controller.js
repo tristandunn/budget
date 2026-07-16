@@ -2,14 +2,19 @@ import { Controller } from "@hotwired/stimulus";
 
 /*
  * Limits a text input to a single arithmetic operation on decimal numbers,
- * using the plus and minus operators. Handles operator keypresses and pastes,
- * collapsing consecutive operators so only the last one in a run is kept and
- * limiting the value to the first operation. A leading minus sign is a sign
- * rather than an operation, so it never counts against that limit.
+ * using the plus, minus, multiply, and divide operators. Handles operator
+ * keypresses and pastes, collapsing consecutive operators so only the last one
+ * in a run is kept and limiting the value to the first operation. A leading
+ * minus sign is a sign rather than an operation, so it never counts against
+ * that limit.
  */
 export default class extends Controller {
   keydown(event) {
-    if (event.key === "+" || event.key === "-") {
+    if (event.ctrlKey || event.metaKey) {
+      return;
+    }
+
+    if ((/^[-+*/]$/).test(event.key)) {
       event.preventDefault();
 
       this.#handleOperator(event.key);
@@ -22,7 +27,7 @@ export default class extends Controller {
     event.preventDefault();
 
     const element = this.element,
-          cleaned = event.clipboardData.getData("text/plain").replace(/[^\d.+-]/g, "");
+          cleaned = event.clipboardData.getData("text/plain").replace(/[^\d.+*/-]/g, "");
 
     element.setRangeText(cleaned, element.selectionStart, element.selectionEnd, "end");
 
@@ -33,7 +38,7 @@ export default class extends Controller {
   }
 
   #collapseOperators(value) {
-    return value.replace(/[+-]+/g, (match) => {
+    return value.replace(/[-+*/]+/g, (match) => {
       return match.slice(-1);
     });
   }
@@ -49,31 +54,33 @@ export default class extends Controller {
   }
 
   #hasOperator(value) {
-    return (/[+-]/).test(value.slice(1));
+    return (/[-+*/]/).test(value.slice(1));
   }
 
   #isInvalidKey(event) {
-    if (event.ctrlKey || event.metaKey || event.key.length !== 1) {
+    if (event.key.length !== 1) {
       return false;
     } else {
-      return !(/[\d.+-]/).test(event.key);
+      return !(/[\d.+*/-]/).test(event.key);
     }
   }
 
-  #isZeroOrEmpty(value) {
-    return value === "" || !this.#hasOperator(value) && parseFloat(value) === 0;
+  #isZeroOrIncomplete(value) {
+    const number = parseFloat(value);
+
+    return Number.isNaN(number) || !this.#hasOperator(value) && number === 0;
   }
 
   #limitToOperation(value) {
-    return (/^[+-]?[\d.]*(?:[+-][\d.]*)?/).exec(this.#collapseOperators(value))[0];
+    return (/^[-+]?[\d.]*(?:[-+*/][\d.]*)?/).exec(this.#collapseOperators(value))[0];
   }
 
   #replaceTrailingOperator(value) {
-    return value.replace(/[+-]$/, "");
+    return value.replace(/[-+*/]$/, "");
   }
 
   #valueWithOperator(value, operator) {
-    if (this.#isZeroOrEmpty(value)) {
+    if (this.#isZeroOrIncomplete(value)) {
       if (operator === "-") {
         return "-";
       } else {
