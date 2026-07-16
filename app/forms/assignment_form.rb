@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 class AssignmentForm < BaseForm
-  ARITHMETIC_PATTERN = /[+-]?[\d.]+/
-  INVALID_CHARACTERS = /[^\d.+-]/
-
   attr_accessor :budget, :date, :subcategory
   attr_writer   :amount
 
@@ -12,11 +9,14 @@ class AssignmentForm < BaseForm
 
   # Return the amount as a Money object.
   #
-  # @return [Money] The parsed amount.
+  # @return [Money] The calculated amount.
+  # @return [nil] When the amount is not a supported expression.
   def amount
-    if parts.any?
-      Money.from_amount(parts.sum)
+    if @amount.is_a?(String)
+      @amount = CalculateAmount.call(@amount)
     end
+
+    @amount
   end
 
   # Build the assignment.
@@ -47,16 +47,6 @@ class AssignmentForm < BaseForm
   # @return [Range<Date>] The range of navigable months.
   def navigable_range
     BudgetSnapshot.new(budget).snapshot_range
-  end
-
-  # Parse the amount string into numeric parts, supporting arithmetic expressions.
-  #
-  # @return [Array<BigDecimal>] The numeric parts of the amount string.
-  def parts
-    @parts ||= @amount.to_s
-                      .gsub(INVALID_CHARACTERS, "")
-                      .scan(ARITHMETIC_PATTERN)
-                      .filter_map { |part| BigDecimal(part, exception: false) }
   end
 
   # Validate the assignment, merging its errors into the form.
