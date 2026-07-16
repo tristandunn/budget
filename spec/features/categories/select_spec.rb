@@ -68,6 +68,46 @@ describe "Category selection" do
         .and(have_css("#category_panel", text: "$500.00"))
     end
 
+    it "discards the assignment edit and keeps the subcategory selected on escape" do
+      find("a", text: "$400.00").click
+
+      field = find("input[inputmode='decimal']")
+      field.set("500.00")
+      field.send_keys(:escape)
+
+      expect(page).to have_css("tr[data-selected]", text: first_subcategory.name)
+        .and(have_no_css("input[inputmode='decimal']"))
+        .and(have_link("$400.00"))
+    end
+
+    it "deselects the subcategory when escape is pressed after the assignment closes" do
+      find("a", text: "$400.00").click
+      find("input[inputmode='decimal']").send_keys(:escape)
+
+      wait_for(have_link("$400.00").and(have_css("tr[data-selected]", text: first_subcategory.name))) do
+        find("body").send_keys(:escape)
+      end
+
+      expect(page).to have_no_css("tr[data-selected]")
+        .and(have_css("[data-selection-target='summary']", text: t("budgets.show.rollover")))
+    end
+
+    it "deselects every subcategory when escape is pressed during a multiple selection" do
+      check(first_subcategory.name)
+
+      wait_for(have_css("#category_panel", text: first_subcategory.name)) do
+        check(second_subcategory.name)
+      end
+
+      wait_for(have_css("#category_panel", text: t("categories.summary.title", count: 2))) do
+        find("body").send_keys(:escape)
+      end
+
+      expect(page).to have_unchecked_field(first_subcategory.name)
+        .and(have_unchecked_field(second_subcategory.name))
+        .and(have_no_css("tr[data-selected]"))
+    end
+
     it "reveals the sidebar detail for the selected subcategory" do
       check(first_subcategory.name)
 

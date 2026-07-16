@@ -49,6 +49,56 @@ describe("InlineEditController", () => {
     });
   });
 
+  describe("#cancel", () => {
+    const escape = () => {
+      const event = new window.KeyboardEvent("keydown", { "key": "Escape" });
+
+      sinon.spy(event, "preventDefault");
+      sinon.spy(event, "stopPropagation");
+
+      return event;
+    };
+
+    it("prevents the default event", () => {
+      instance.inputTargetConnected();
+      const event = escape();
+
+      instance.cancel(event);
+
+      expect(event.preventDefault).to.have.been.called;
+    });
+
+    it("stops the event propagation", () => {
+      instance.inputTargetConnected();
+      const event = escape();
+
+      instance.cancel(event);
+
+      expect(event.stopPropagation).to.have.been.called;
+    });
+
+    it("restores the original value and blurs the input", () => {
+      instance.inputTargetConnected();
+      input.value = "200.00";
+
+      instance.cancel(escape());
+
+      expect(input.value).to.eq("100.00");
+      expect(input.blur).to.have.been.called;
+    });
+
+    it("discards the edit rather than submitting it", () => {
+      instance.inputTargetConnected();
+      input.value = "200.00";
+
+      instance.cancel(escape());
+      instance.submit();
+
+      expect(form.requestSubmit).not.to.have.been.called;
+      expect(frame.src).to.eq(window.location.href);
+    });
+  });
+
   describe("#prefocus", () => {
     afterEach(() => {
       document.querySelectorAll("input[style]").forEach((el) => {

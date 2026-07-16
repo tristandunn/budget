@@ -5,7 +5,8 @@ const CLEANUP_DELAY_MS = 1000;
 /*
  * Manages an inline edit input, focusing and selecting it when it connects.
  * Submits the form when the value changes to a non-empty string; otherwise
- * reloads the enclosing turbo-frame to discard the edit.
+ * reloads the enclosing turbo-frame to discard the edit. The escape key
+ * restores the original value before blurring, discarding the edit.
  */
 export default class extends Controller {
   static targets = ["input"];
@@ -17,6 +18,16 @@ export default class extends Controller {
     input.select();
 
     this.originalValue = input.value;
+  }
+
+  cancel(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const input = this.inputTarget;
+
+    input.value = this.originalValue;
+    input.blur();
   }
 
   prefocus() {

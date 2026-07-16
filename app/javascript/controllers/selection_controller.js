@@ -17,6 +17,16 @@ export default class extends Controller {
     "summaryUrl": String
   };
 
+  connect() {
+    this.#boundClearOnEscape = this.#clearOnEscape.bind(this);
+
+    document.addEventListener("keydown", this.#boundClearOnEscape);
+  }
+
+  disconnect() {
+    document.removeEventListener("keydown", this.#boundClearOnEscape);
+  }
+
   subcategoryTargetConnected(box) {
     if (!box.checked && this.selectedIdsValue.includes(box.dataset.subcategoryId)) {
       box.checked = true;
@@ -79,6 +89,27 @@ export default class extends Controller {
       return box.dataset.categoryId === categoryId;
     }).forEach((box) => {
       box.checked = checked;
+    });
+
+    this.#syncSelectionStates();
+    this.#updatePanel();
+  }
+
+  #boundClearOnEscape = null;
+
+  #clearable() {
+    return this.#selectedIds().length > 0 && !document.querySelector("dialog[open]");
+  }
+
+  #clearOnEscape(event) {
+    if (event.key === "Escape" && this.#clearable()) {
+      this.#clearSelection();
+    }
+  }
+
+  #clearSelection() {
+    this.subcategoryTargets.forEach((box) => {
+      box.checked = false;
     });
 
     this.#syncSelectionStates();

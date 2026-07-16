@@ -42,4 +42,8 @@ describe "assignments/edit.html+desktop.erb" do
       with: Money.from_cents(subcategory_snapshot.amount_assigned).to_s
     )
   end
+
+  it "discards the edit on the escape key" do
+    expect(html).to have_css("input[data-action~='keydown.esc->inline-edit#cancel']")
+  end
 end

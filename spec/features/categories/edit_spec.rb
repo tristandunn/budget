@@ -31,6 +31,13 @@ describe "Category editing" do
       expect(page).to have_css("tr[data-selected]", text: "Renamed Subcategory")
         .and(have_css("#category_panel", text: "Renamed Subcategory"))
     end
+
+    it "keeps the subcategory selected when escape dismisses the dialog" do
+      find_by_id("category_rename_dialog_modal").send_keys(:escape)
+
+      expect(page).to have_no_css("#category_rename_dialog_modal[open]")
+        .and(have_css("tr[data-selected]", text: subcategory.name))
+    end
   end
 
   context "when on a mobile browser", :mobile do

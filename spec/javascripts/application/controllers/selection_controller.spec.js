@@ -1,7 +1,7 @@
 import SelectionController from "@app/controllers/selection_controller.js";
 
 describe("SelectionController", () => {
-  let all, alpha, beta, group, instance, panelFrame, summary;
+  let all, alpha, beta, element, group, instance, panelFrame, summary;
 
   const selectAll = () => {
     const box = document.createElement("input");
@@ -49,9 +49,10 @@ describe("SelectionController", () => {
     panelFrame = document.createElement("turbo-frame");
     panelFrame.classList.add("hidden");
 
-    instance = new SelectionController({
-      "scope": { "element": document.createElement("div") }
-    });
+    element = document.createElement("div");
+    document.body.appendChild(element);
+
+    instance = new SelectionController({ "scope": { element } });
     instance.allTarget          = all;
     instance.categoryTargets    = [group];
     instance.subcategoryTargets = [alpha, beta];
@@ -59,6 +60,12 @@ describe("SelectionController", () => {
     instance.summaryTarget      = summary;
     instance.selectedIdsValue   = [];
     instance.summaryUrlValue    = "/budgets/1/categories/summary?year=2026&month=7";
+    instance.connect();
+  });
+
+  afterEach(() => {
+    instance.disconnect();
+    element.remove();
   });
 
   describe("#toggle", () => {
@@ -432,6 +439,127 @@ describe("SelectionController", () => {
       instance.subcategoryTargetConnected(box);
 
       expect(panelFrame.reload).to.have.callCount(0);
+    });
+  });
+
+  describe("#disconnect", () => {
+    const boundFor = (type) => {
+      return document.addEventListener.
+        getCalls().
+        find((call) => {
+          return call.args[0] === type;
+        }).args[1];
+    };
+
+    beforeEach(() => {
+      instance.disconnect();
+
+      sinon.spy(document, "addEventListener");
+      sinon.spy(document, "removeEventListener");
+
+      instance.connect();
+      instance.disconnect();
+    });
+
+    it("stops listening for the escape key", () => {
+      expect(document.removeEventListener).to.have.been.calledWith(
+        "keydown",
+        boundFor("keydown")
+      );
+    });
+  });
+
+  describe("when the escape key is pressed", () => {
+    const escape = () => {
+      document.dispatchEvent(new window.KeyboardEvent("keydown", { "key": "Escape" }));
+    };
+
+    beforeEach(() => {
+      rowFor(alpha);
+      rowFor(beta);
+    });
+
+    it("clears a single selection", () => {
+      alpha.checked = true;
+      instance.toggle({ "target": alpha });
+
+      escape();
+
+      expect(alpha.checked).to.eq(false);
+      expect(panelFrame.hasAttribute("src")).to.eq(false);
+      expect(panelFrame.classList.contains("hidden")).to.eq(true);
+      expect(summary.classList.contains("hidden")).to.eq(false);
+    });
+
+    it("clears a multiple selection", () => {
+      alpha.checked = true;
+      instance.toggle({ "target": alpha });
+
+      beta.checked = true;
+      instance.toggle({ "target": beta });
+
+      escape();
+
+      expect(alpha.checked).to.eq(false);
+      expect(beta.checked).to.eq(false);
+      expect(instance.selectedIdsValue).to.eql([]);
+    });
+
+    it("unhighlights the selected rows", () => {
+      alpha.checked = true;
+      instance.toggle({ "target": alpha });
+
+      escape();
+
+      expect(alpha.closest("tr").hasAttribute("data-selected")).to.eq(false);
+    });
+
+    it("clears the category and select all states", () => {
+      alpha.checked = true;
+      beta.checked  = true;
+      instance.toggle({ "target": beta });
+
+      escape();
+
+      expect(all.checked).to.eq(false);
+      expect(all.indeterminate).to.eq(false);
+      expect(group.checked).to.eq(false);
+      expect(group.indeterminate).to.eq(false);
+    });
+
+    it("ignores an empty selection", () => {
+      escape();
+
+      expect(panelFrame.classList.contains("hidden")).to.eq(true);
+      expect(summary.classList.contains("hidden")).to.eq(false);
+    });
+
+    it("ignores other keys", () => {
+      alpha.checked = true;
+      instance.toggle({ "target": alpha });
+
+      document.dispatchEvent(new window.KeyboardEvent("keydown", { "key": "Enter" }));
+
+      expect(alpha.checked).to.eq(true);
+    });
+  });
+
+  describe("when a dialog is open", () => {
+    it("keeps the selection on the escape key", () => {
+      const dialog = document.createElement("dialog");
+      dialog.setAttribute("open", "");
+      document.body.appendChild(dialog);
+
+      rowFor(alpha);
+      alpha.checked = true;
+      instance.toggle({ "target": alpha });
+
+      document.dispatchEvent(new window.KeyboardEvent("keydown", { "key": "Escape" }));
+
+      expect(alpha.checked).to.eq(true);
+      expect(panelFrame.getAttribute("src")).to.eq("/budgets/1/categories/1/panel");
+
+      dialog.remove();
     });
   });
 });
