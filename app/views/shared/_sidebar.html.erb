@@ -5,10 +5,39 @@
 
 <%= render "shared/dialog", id: "payee_rename_dialog", dismissable: true %>
 
+<%= render "shared/dialog", id: "budget_settings_dialog", dismissable: true, floating: true %>
+
 <aside class="flex w-72 shrink-0 flex-col bg-indigo-950 text-indigo-100">
   <div class="flex shrink-0 items-center gap-3 px-5 py-4">
     <div class="min-w-0 flex-1">
-      <div class="truncate text-lg font-semibold text-white"><%= t("title") %></div>
+      <div class="flex items-center gap-1">
+        <span id="budget_title" class="truncate text-lg font-semibold text-white">
+          <%= budget.name %>
+        </span>
+
+        <%= link_to edit_budget_path(budget),
+                    id:    "edit-budget",
+                    aria:  { label: t("budgets.edit.title") },
+                    data:  { turbo_frame: "budget_settings_dialog" },
+                    class: "
+                      flex h-6 w-6 shrink-0 items-center justify-center rounded text-indigo-300 no-underline
+                      hover:text-white focus-visible:outline-none focus-visible:ring-2
+                      focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-indigo-950
+                    " do %>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 16 16"
+            class="h-4 w-4"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"
+            />
+          </svg>
+        <% end %>
+      </div>
+
       <div class="truncate text-xs text-indigo-300"><%= Current.user.email %></div>
     </div>
 

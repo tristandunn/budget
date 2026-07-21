@@ -25,8 +25,22 @@ describe "shared/_sidebar.html.erb" do
     end
   end
 
-  it "renders the application title" do
-    expect(html).to have_text(t("title"))
+  it "renders the budget name" do
+    expect(html).to have_css("#budget_title", text: budget.name)
+  end
+
+  it "renders the edit budget link targeting the settings dialog frame" do
+    expect(html).to have_css(
+      "a#edit-budget[href='#{edit_budget_path(budget)}']" \
+      "[aria-label='#{t("budgets.edit.title")}'][data-turbo-frame='budget_settings_dialog']"
+    )
+  end
+
+  it "renders the budget settings dialog" do
+    expect(html).to have_css(
+      "dialog.floating-dialog#budget_settings_dialog_modal turbo-frame#budget_settings_dialog",
+      visible: :all
+    )
   end
 
   it "renders the current user email" do

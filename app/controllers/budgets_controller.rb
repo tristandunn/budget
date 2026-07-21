@@ -14,9 +14,34 @@ class BudgetsController < ApplicationController
     @budget_snapshot = current_budget_snapshot
   end
 
+  # Render the budget settings form.
+  def edit
+    @budget = current_budget
+  end
+
+  # Update the budget from form parameters.
+  def update
+    @budget = current_budget
+
+    if @budget.update(budget_parameters)
+      unless request.format.turbo_stream?
+        redirect_to budget_path(@budget)
+      end
+    else
+      render :edit, status: :unprocessable_content, formats: [:html]
+    end
+  end
+
   private
 
   delegate :date, to: :current_budget_snapshot, prefix: :snapshot
+
+  # Return the permitted budget parameters.
+  #
+  # @return [ActionController::Parameters] The permitted parameters.
+  def budget_parameters
+    params.expect(budget: %i(name))
+  end
 
   # Return the budget for the current request, or fall back to the
   # first budget.

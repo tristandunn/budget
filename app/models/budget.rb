@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Budget < ApplicationRecord
+  MAXIMUM_NAME_LENGTH = 64
+
   has_many :accounts, dependent: :destroy
   has_many :categories, -> { where(parent_id: nil) }, inverse_of: :budget, dependent: :destroy
   has_many :category_snapshots, dependent: :destroy
@@ -12,7 +14,11 @@ class Budget < ApplicationRecord
   has_many :users, through: :memberships
 
   validates :available_to_assign, numericality: { only_integer: true }
+  validates :name,                presence: true,
+                                  length:   { maximum: MAXIMUM_NAME_LENGTH }
   validates :users, presence: true, on: :create
+
+  normalizes :name, with: ->(value) { value.strip }
 
   # Return the top-level categories that can hold assignments, excluding inflow
   # categories, sorted by position.

@@ -5,12 +5,13 @@ require "rails_helper"
 describe "shared/_dialog.html.erb" do
   subject(:html) do
     render partial: "shared/dialog",
-           locals:  { id: id, dismissable: dismissable }
+           locals:  { id: id, dismissable: dismissable, floating: floating }
 
     rendered
   end
 
   let(:dismissable) { false }
+  let(:floating)    { false }
   let(:id)          { "category_dialog" }
 
   it "renders the dialog controller wrapper" do
@@ -19,6 +20,14 @@ describe "shared/_dialog.html.erb" do
 
   it "renders the modal with the derived id" do
     expect(html).to have_css("dialog.dialog#category_dialog_modal", visible: :all)
+  end
+
+  context "when floating" do
+    let(:floating) { true }
+
+    it "renders the modal with the floating variant class" do
+      expect(html).to have_css("dialog.floating-dialog#category_dialog_modal", visible: :all)
+    end
   end
 
   it "labels the modal with the derived title id" do

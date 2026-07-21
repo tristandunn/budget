@@ -1,0 +1,7 @@
+<%= turbo_stream.replace "budget_title" do %>
+  <span id="budget_title" class="truncate text-lg font-semibold text-white"><%= @budget.name %></span>
+<% end %>
+
+<%= turbo_stream.update "budget_settings_dialog" do %>
+  <div data-controller="dialog-dismisser"></div>
+<% end %>

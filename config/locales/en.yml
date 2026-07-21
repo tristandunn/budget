@@ -113,6 +113,12 @@ en:
   budgets:
     available_to_assign:
       title: "Available to Assign"
+    edit:
+      cancel: "Cancel"
+      close: "Close"
+      name: "Name"
+      submit: "Apply"
+      title: "Settings"
     show:
       activity: "Activity"
       assigned: "Assigned"
@@ -132,6 +138,8 @@ en:
 
   activerecord:
     attributes:
+      budget:
+        name: "Name"
       user:
         email: "E-mail Address"
         password: "Password"

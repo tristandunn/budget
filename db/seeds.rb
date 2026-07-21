@@ -99,7 +99,7 @@ user = User.find_or_create_by!(email: "user@example.com") do |new_user|
   new_user.password = "password"
 end
 
-budget = user.budgets.first || Budget.create!(users: [user])
+budget = user.budgets.first || Budget.create!(name: "Budget", users: [user])
 seeder = BudgetSeeder.new(budget)
 
 checking    = budget.accounts.find_or_create_by!(name: "Checking")
