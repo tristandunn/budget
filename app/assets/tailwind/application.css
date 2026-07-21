@@ -43,25 +43,59 @@ tr[data-selected] {
     transform: translateY(100%);
   }
 
-  .dialog::backdrop {
+  /* Floating window styling (centered card variant of the dialog) */
+  .floating-dialog {
+    @apply fixed inset-0 m-auto h-fit max-h-[85vh] w-[calc(100%-2rem)] max-w-md overflow-y-auto overscroll-contain rounded-xl bg-white p-0 shadow-xl;
+
+    opacity: 0;
+    transform: scale(0.97);
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .floating-dialog[open].open {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .floating-dialog[open].closing {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+
+  /*
+   * Backdrop shared by both dialog variants. The closing rules must stay after
+   * the open rules, since both classes are present while a dialog animates out.
+   */
+  .dialog::backdrop,
+  .floating-dialog::backdrop {
     background: rgb(0 0 0 / 0%);
+  }
+
+  .dialog::backdrop {
     transition: background 0.3s ease;
   }
 
-  .dialog[open].open::backdrop {
+  .floating-dialog::backdrop {
+    transition: background 0.2s ease;
+  }
+
+  .dialog[open].open::backdrop,
+  .floating-dialog[open].open::backdrop {
     background: rgb(0 0 0 / 30%);
   }
 
-  .dialog[open].closing::backdrop {
+  .dialog[open].closing::backdrop,
+  .floating-dialog[open].closing::backdrop {
     background: rgb(0 0 0 / 0%);
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .dialog {
-      transition: none;
-    }
-
-    .dialog::backdrop {
+    .dialog,
+    .dialog::backdrop,
+    .floating-dialog,
+    .floating-dialog::backdrop {
       transition: none;
     }
   }

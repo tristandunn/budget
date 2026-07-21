@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  resources :budgets, only: [:show] do
+  resources :budgets, only: %i(show edit update) do
     get ":year/:month", action:      :show,
                         as:          :month,
                         constraints: { year: /\d{4}/, month: /\d{1,2}/ },

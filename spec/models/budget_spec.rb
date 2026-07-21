@@ -34,6 +34,13 @@ describe Budget do
   describe "validations" do
     it { is_expected.to validate_numericality_of(:available_to_assign).only_integer }
     it { is_expected.to validate_presence_of(:users).on(:create) }
+
+    it { is_expected.to validate_presence_of(:name) }
+
+    it "limits the name to the maximum length" do
+      expect(build(:budget)).to validate_length_of(:name)
+        .is_at_most(described_class::MAXIMUM_NAME_LENGTH)
+    end
   end
 
   describe "#assignable_categories" do
@@ -111,6 +118,14 @@ describe Budget do
       budget.uncleared_balance
 
       expect(budget.transactions).to have_received(:pending).once
+    end
+  end
+
+  describe "normalizations" do
+    it "strips the name" do
+      budget = build(:budget, name: "  Household  ")
+
+      expect(budget.name).to eq("Household")
     end
   end
 end

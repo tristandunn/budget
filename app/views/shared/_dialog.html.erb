@@ -1,8 +1,8 @@
-<%# locals: (id:, dismissable: false) %>
+<%# locals: (id:, dismissable: false, floating: false) %>
 <%= tag.div(data: { controller: "dialog", action: ("dialog:close->dialog#close" if dismissable) }) do %>
   <dialog
     id="<%= id %>_modal"
-    class="dialog"
+    class="<%= floating ? "floating-dialog" : "dialog" %>"
     aria-labelledby="<%= id %>_title"
     data-dialog-target="dialog"
     data-action="click->dialog#backdropClose cancel->dialog#cancel"

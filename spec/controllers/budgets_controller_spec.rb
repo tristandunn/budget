@@ -153,4 +153,111 @@ describe BudgetsController do
       it { is_expected.to redirect_to(new_session_url) }
     end
   end
+
+  describe "#edit" do
+    let(:budget) { create(:budget) }
+
+    context "when signed in with a budget belonging to the current user" do
+      before do
+        sign_in_for(budget)
+
+        get :edit, params: { id: budget.id }
+      end
+
+      it { is_expected.to respond_with(200) }
+      it { is_expected.to render_template(:edit) }
+
+      it "assigns the budget" do
+        expect(assigns(:budget)).to eq(budget)
+      end
+    end
+
+    context "when signed in with a budget belonging to another user" do
+      before do
+        sign_in
+      end
+
+      it "raises an ActiveRecord::RecordNotFound error" do
+        expect { get :edit, params: { id: budget.id } }
+          .to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    context "when signed out" do
+      before do
+        get :edit, params: { id: budget.id }
+      end
+
+      it { is_expected.to redirect_to(new_session_url) }
+    end
+  end
+
+  describe "#update" do
+    let(:budget) { create(:budget, name: "Old Name") }
+
+    context "when valid with the turbo_stream format" do
+      before do
+        sign_in_for(budget)
+
+        patch :update,
+              params: { id: budget.id, budget: { name: "New Name" } },
+              format: :turbo_stream
+      end
+
+      it { is_expected.to respond_with(200) }
+      it { is_expected.to render_template(:update) }
+
+      it "renames the budget" do
+        expect(budget.reload.name).to eq("New Name")
+      end
+    end
+
+    context "when valid with the html format" do
+      before do
+        sign_in_for(budget)
+
+        patch :update, params: { id: budget.id, budget: { name: "New Name" } }
+      end
+
+      it { is_expected.to redirect_to(budget_url(budget)) }
+
+      it "renames the budget" do
+        expect(budget.reload.name).to eq("New Name")
+      end
+    end
+
+    context "when invalid" do
+      before do
+        sign_in_for(budget)
+
+        patch :update, params: { id: budget.id, budget: { name: " " } }
+      end
+
+      it { is_expected.to respond_with(422) }
+      it { is_expected.to render_template(:edit) }
+
+      it "does not rename the budget" do
+        expect(budget.reload.name).to eq("Old Name")
+      end
+    end
+
+    context "when signed in with a budget belonging to another user" do
+      before do
+        sign_in
+      end
+
+      it "raises an ActiveRecord::RecordNotFound error" do
+        expect { patch :update, params: { id: budget.id, budget: { name: "New Name" } } }
+          .to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    context "when signed out" do
+      before do
+        patch :update, params: { id: budget.id, budget: { name: "New Name" } }
+      end
+
+      it { is_expected.to redirect_to(new_session_url) }
+    end
+  end
 end
