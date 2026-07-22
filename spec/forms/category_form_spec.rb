@@ -3,7 +3,9 @@
 require "rails_helper"
 
 describe CategoryForm, type: :form do
-  it { is_expected.to be_a(BaseForm) }
+  describe "class" do
+    it { is_expected.to be_a(BaseForm) }
+  end
 
   describe ".from" do
     subject { described_class.from(category: category) }

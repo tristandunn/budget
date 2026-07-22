@@ -5,7 +5,9 @@ require "rails_helper"
 describe Current do
   let(:budget) { build_stubbed(:budget, settings: { time_zone: "Asia/Tokyo" }) }
 
-  it { is_expected.to be_a(ActiveSupport::CurrentAttributes) }
+  describe "class" do
+    it { is_expected.to be_a(ActiveSupport::CurrentAttributes) }
+  end
 
   describe ".reset" do
     let(:user) { build_stubbed(:user) }
