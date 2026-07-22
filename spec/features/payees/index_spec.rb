@@ -13,6 +13,7 @@ describe "Listing payees", :js do
   end
 
   it "navigates from the sidebar to the payees list" do
+    find("button[aria-label='#{t("budgets.show.menu")}']").click
     click_on t("budgets.show.manage_payees")
 
     expect(page).to have_text(payee_one.name).and(have_text(payee_two.name))
