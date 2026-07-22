@@ -12,6 +12,7 @@ describe "Budget editing" do
 
   context "when on a desktop browser", :js do
     before do
+      find("button[aria-label='#{t("budgets.show.menu")}']").click
       find_by_id("edit-budget").click
     end
 
@@ -33,6 +34,7 @@ describe "Budget editing" do
 
       page.assert_no_selector("#budget_settings_dialog_modal[open]")
 
+      find("button[aria-label='#{t("budgets.show.menu")}']").click
       find_by_id("edit-budget").click
 
       within "#budget_settings_dialog_modal" do

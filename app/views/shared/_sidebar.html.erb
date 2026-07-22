@@ -8,38 +8,38 @@
 <%= render "shared/dialog", id: "budget_settings_dialog", dismissable: true, floating: true %>
 
 <aside class="flex w-72 shrink-0 flex-col bg-indigo-950 text-indigo-100">
-  <div class="flex shrink-0 items-center gap-3 px-5 py-4">
-    <div class="min-w-0 flex-1">
-      <div class="flex items-center gap-1">
+  <div data-controller="popover" class="relative flex shrink-0 items-center gap-4 px-5 py-4">
+    <button
+      type="button"
+      data-action="popover#toggle"
+      aria-label="<%= t("budgets.show.menu") %>"
+      class="
+        -ml-2 -my-1 min-w-0 flex-1 cursor-pointer rounded-lg px-2 py-1 text-left
+        hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2
+        focus-visible:ring-indigo-400 focus-visible:ring-offset-2
+        focus-visible:ring-offset-indigo-950
+      "
+    >
+      <span class="flex items-center gap-1">
         <span id="budget_title" class="truncate text-lg font-semibold text-white">
           <%= budget.name %>
         </span>
 
-        <%= link_to edit_budget_path(budget),
-                    id:    "edit-budget",
-                    aria:  { label: t("budgets.edit.title") },
-                    data:  { turbo_frame: "budget_settings_dialog" },
-                    class: "
-                      flex h-6 w-6 shrink-0 items-center justify-center rounded text-indigo-300 no-underline
-                      hover:text-white focus-visible:outline-none focus-visible:ring-2
-                      focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-indigo-950
-                    " do %>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 16 16"
-            class="h-4 w-4"
-            fill="currentColor"
-            aria-hidden="true"
-          >
-            <path
-              d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"
-            />
-          </svg>
-        <% end %>
-      </div>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 16 16"
+          class="h-4 w-4 shrink-0 text-indigo-300"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            d="M3.22 6.22a.75.75 0 0 1 1.06 0L8 9.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L3.22 7.28a.75.75 0 0 1 0-1.06Z"
+          />
+        </svg>
+      </span>
 
-      <div class="truncate text-xs text-indigo-300"><%= Current.user.email %></div>
-    </div>
+      <span class="block truncate text-xs text-indigo-300"><%= Current.user.email %></span>
+    </button>
 
     <%= link_to new_budget_transaction_path(budget, account_id: account_id),
                 id:    "add-transaction",
@@ -67,6 +67,79 @@
         />
       </svg>
     <% end %>
+
+    <div
+      data-popover-target="menu"
+      class="
+        absolute top-full left-3 right-3 z-20 hidden flex flex-col gap-1 rounded-lg border
+        border-taupe-200 bg-white p-1 shadow-lg
+      "
+    >
+      <%= link_to edit_budget_path(budget),
+                  id:    "edit-budget",
+                  data:  { turbo_frame: "budget_settings_dialog" },
+                  class: "flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-left text-sm text-taupe-800 no-underline hover:bg-taupe-200" do %>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 16 16"
+          class="h-4 w-4 shrink-0 text-taupe-800"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"
+          />
+        </svg>
+
+        <%= t("budgets.edit.title") %>
+      <% end %>
+
+      <%= link_to budget_payees_path(budget),
+                  id:    "manage-payees",
+                  data:  { turbo_frame: "payees_dialog" },
+                  class: "flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-left text-sm text-taupe-800 no-underline hover:bg-taupe-200" do %>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 16 16"
+          class="h-4 w-4 shrink-0 text-taupe-800"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            d="M10.561 8.073a6.005 6.005 0 0 1 3.432 5.142.75.75 0 1 1-1.498.07 4.5 4.5 0 0 0-8.99 0 .75.75 0 0 1-1.498-.07 6.004 6.004 0 0 1 3.431-5.142 3.999 3.999 0 1 1 5.123 0ZM10.5 5a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Z"
+          />
+        </svg>
+
+        <%= t("budgets.show.manage_payees") %>
+      <% end %>
+
+      <div class="my-1 border-t border-taupe-200"></div>
+
+      <%= button_to session_path,
+                    method: :delete,
+                    class:  "
+                      flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2
+                      text-left text-sm text-taupe-800 hover:bg-taupe-200
+                    " do %>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 16 16"
+          class="h-4 w-4 shrink-0 text-taupe-800"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            d="M2 2.75C2 1.784 2.784 1 3.75 1h2.5a.75.75 0 0 1 0 1.5h-2.5a.25.25 0 0 0-.25.25v10.5c0 .138.112.25.25.25h2.5a.75.75 0 0 1 0 1.5h-2.5A1.75 1.75 0 0 1 2 13.25Z"
+          />
+
+          <path
+            d="M10.273 5.18a.75.75 0 0 1 1.06 0l2.5 2.5a.75.75 0 0 1 0 1.06l-2.5 2.5a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734L11.44 8.75H6.75a.75.75 0 0 1 0-1.5h4.69L10.273 6.24a.75.75 0 0 1 0-1.06Z"
+          />
+        </svg>
+
+        <%= t("budgets.show.sign_out") %>
+      <% end %>
+    </div>
   </div>
 
   <div class="min-h-0 flex-1 overflow-y-auto px-3">
@@ -211,50 +284,5 @@
         </div>
       <% end %>
     </div>
-  </div>
-
-  <div class="shrink-0 px-3 pt-2 pb-3">
-    <%= link_to budget_payees_path(budget),
-                id:    "manage-payees",
-                data:  { turbo_frame: "payees_dialog" },
-                class: "#{sidebar_item_class(active: false)} text-sm" do %>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 16 16"
-        class="h-5 w-5"
-        fill="currentColor"
-        aria-hidden="true"
-      >
-        <path
-          d="M10.561 8.073a6.005 6.005 0 0 1 3.432 5.142.75.75 0 1 1-1.498.07 4.5 4.5 0 0 0-8.99 0 .75.75 0 0 1-1.498-.07 6.004 6.004 0 0 1 3.431-5.142 3.999 3.999 0 1 1 5.123 0ZM10.5 5a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Z"
-        />
-      </svg>
-
-      <%= t("budgets.show.manage_payees") %>
-    <% end %>
-
-    <% if signed_in? %>
-      <%= button_to session_path,
-                    method: :delete,
-                    class:  "#{sidebar_item_class(active: false)} w-full text-sm" do %>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 16 16"
-          class="h-5 w-5"
-          fill="currentColor"
-          aria-hidden="true"
-        >
-          <path
-            d="M2 2.75C2 1.784 2.784 1 3.75 1h2.5a.75.75 0 0 1 0 1.5h-2.5a.25.25 0 0 0-.25.25v10.5c0 .138.112.25.25.25h2.5a.75.75 0 0 1 0 1.5h-2.5A1.75 1.75 0 0 1 2 13.25Z"
-          />
-
-          <path
-            d="M10.273 5.18a.75.75 0 0 1 1.06 0l2.5 2.5a.75.75 0 0 1 0 1.06l-2.5 2.5a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734L11.44 8.75H6.75a.75.75 0 0 1 0-1.5h4.69L10.273 6.24a.75.75 0 0 1 0-1.06Z"
-          />
-        </svg>
-
-        <%= t("budgets.show.sign_out") %>
-      <% end %>
-    <% end %>
   </div>
 </aside>

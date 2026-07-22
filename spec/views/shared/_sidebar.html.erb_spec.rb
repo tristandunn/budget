@@ -19,20 +19,28 @@ describe "shared/_sidebar.html.erb" do
     Current.user = user
 
     view.extend(SidebarHelper)
-
-    without_partial_double_verification do
-      allow(view).to receive(:signed_in?).and_return(true)
-    end
   end
 
   it "renders the budget name" do
     expect(html).to have_css("#budget_title", text: budget.name)
   end
 
-  it "renders the edit budget link targeting the settings dialog frame" do
+  it "renders the menu toggle button within the popover" do
     expect(html).to have_css(
-      "a#edit-budget[href='#{edit_budget_path(budget)}']" \
-      "[aria-label='#{t("budgets.edit.title")}'][data-turbo-frame='budget_settings_dialog']"
+      "[data-controller='popover'] button[aria-label='#{t("budgets.show.menu")}']" \
+      "[data-action~='popover#toggle']"
+    )
+  end
+
+  it "renders the dropdown menu hidden by default" do
+    expect(html).to have_css("[data-controller='popover'] [data-popover-target='menu'].hidden")
+  end
+
+  it "renders the settings link in the menu targeting the settings dialog frame" do
+    expect(html).to have_css(
+      "[data-popover-target='menu'] a#edit-budget[href='#{edit_budget_path(budget)}']" \
+      "[data-turbo-frame='budget_settings_dialog']",
+      text: t("budgets.edit.title")
     )
   end
 
@@ -81,9 +89,9 @@ describe "shared/_sidebar.html.erb" do
     )
   end
 
-  it "targets the payees dialog frame from the manage payees link" do
+  it "targets the payees dialog frame from the manage payees link in the menu" do
     expect(html).to have_css(
-      "a#manage-payees[data-turbo-frame='payees_dialog']",
+      "[data-popover-target='menu'] a#manage-payees[data-turbo-frame='payees_dialog']",
       text: t("budgets.show.manage_payees")
     )
   end
@@ -118,9 +126,10 @@ describe "shared/_sidebar.html.erb" do
       .and(have_text(number_to_money(credit_account.balance)))
   end
 
-  it "renders a sign out form when signed in" do
+  it "renders a sign out form in the menu" do
     expect(html).to have_css(
-      "form[action='#{session_path}'] input[name='_method'][value='delete']",
+      "[data-popover-target='menu'] form[action='#{session_path}'] " \
+      "input[name='_method'][value='delete']",
       visible: :all
     ).and(have_button(t("budgets.show.sign_out")))
   end
@@ -132,18 +141,6 @@ describe "shared/_sidebar.html.erb" do
       expect(html).to have_css(
         "a#add-transaction[href='#{new_budget_transaction_path(budget, account_id: cash_account.id)}']"
       )
-    end
-  end
-
-  context "when signed out" do
-    before do
-      without_partial_double_verification do
-        allow(view).to receive(:signed_in?).and_return(false)
-      end
-    end
-
-    it "does not render a sign out form" do
-      expect(html).to have_no_button(t("budgets.show.sign_out"))
     end
   end
 end
