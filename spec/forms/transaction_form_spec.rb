@@ -3,7 +3,9 @@
 require "rails_helper"
 
 describe TransactionForm, type: :form do
-  it { is_expected.to be_a(BaseForm) }
+  describe "class" do
+    it { is_expected.to be_a(BaseForm) }
+  end
 
   describe "validations" do
     it { is_expected.to validate_presence_of(:subcategory) }

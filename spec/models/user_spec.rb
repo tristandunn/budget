@@ -3,7 +3,9 @@
 require "rails_helper"
 
 describe User do
-  it { is_expected.to be_a(ApplicationRecord) }
+  describe "class" do
+    it { is_expected.to be_a(ApplicationRecord) }
+  end
 
   describe "associations" do
     it { is_expected.to have_many(:memberships).dependent(:destroy) }
