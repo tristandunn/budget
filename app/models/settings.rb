@@ -22,6 +22,19 @@ class Settings
     store["time_zone"]
   end
 
+  # Set the time zone, storing only recognized zones and clearing the key for
+  # a blank or unknown value. Does not persist; the containing save does.
+  #
+  # @param value [String] The Rails time zone name.
+  # @return [void]
+  def time_zone=(value)
+    if ActiveSupport::TimeZone[value.to_s]
+      store["time_zone"] = value
+    else
+      store.delete("time_zone")
+    end
+  end
+
   # Update settings from a permitted parameters hash.
   #
   # @param attributes [Hash] The settings to update.

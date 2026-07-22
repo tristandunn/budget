@@ -25,6 +25,21 @@ describe "Budget editing" do
         .and(have_css("#budget_title", text: "New Name"))
     end
 
+    it "updates the time zone" do
+      within "#budget_settings_dialog_modal" do
+        select "(GMT-05:00) Eastern Time (US & Canada)", from: "budget_time_zone"
+        click_on t("budgets.edit.submit")
+      end
+
+      page.assert_no_selector("#budget_settings_dialog_modal[open]")
+
+      find_by_id("edit-budget").click
+
+      within "#budget_settings_dialog_modal" do
+        expect(page).to have_select("budget_time_zone", selected: "(GMT-05:00) Eastern Time (US & Canada)")
+      end
+    end
+
     it "shows an error and keeps the window open when the name is invalid" do
       within "#budget_settings_dialog_modal" do
         fill_in "budget_name", with: "   "

@@ -5,6 +5,9 @@ require "rails_helper"
 describe Budget do
   describe "class" do
     it { is_expected.to be_a(ApplicationRecord) }
+
+    it { is_expected.to delegate_method(:time_zone).to(:settings) }
+    it { is_expected.to delegate_method(:time_zone=).to(:settings).with_arguments("Asia/Tokyo") }
   end
 
   describe "associations" do
