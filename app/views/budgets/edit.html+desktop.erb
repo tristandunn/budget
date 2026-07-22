@@ -59,6 +59,23 @@
           <%= Budget.human_attribute_name(:name) %> <%= @budget.errors[:name].first %>.
         </p>
       <% end %>
+
+      <%= f.label :time_zone, t(".time_zone"),
+                  class: "mt-4 mb-1 block text-sm font-medium text-taupe-700" %>
+
+      <div class="field-card rounded-lg border border-taupe-300">
+        <div
+          class="
+            flex items-center px-3 py-2 rounded-lg focus-within:outline-none focus-within:ring-2
+            focus-within:ring-indigo-500 focus-within:ring-inset
+          "
+        >
+          <%= f.time_zone_select :time_zone,
+                                 ActiveSupport::TimeZone.us_zones,
+                                 { include_blank: true },
+                                 class: "w-full bg-transparent border-none outline-none text-base text-taupe-800 focus:ring-0" %>
+        </div>
+      </div>
     <% end %>
 
     <div class="mt-6 flex items-center justify-end gap-2">

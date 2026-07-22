@@ -27,6 +27,27 @@ describe Settings do
     end
   end
 
+  describe "#time_zone=" do
+    it "stores a valid zone" do
+      settings.time_zone = "Asia/Tokyo"
+
+      expect(settings.time_zone).to eq("Asia/Tokyo")
+    end
+
+    it "clears the zone when blank" do
+      settings.time_zone = "Asia/Tokyo"
+      settings.time_zone = ""
+
+      expect(settings.time_zone).to be_nil
+    end
+
+    it "ignores an invalid zone" do
+      settings.time_zone = "Not/AZone"
+
+      expect(settings.time_zone).to be_nil
+    end
+  end
+
   describe "#update" do
     it "enables a boolean setting" do
       settings.update(hide_reconciled: "1")

@@ -40,7 +40,7 @@ class BudgetsController < ApplicationController
   #
   # @return [ActionController::Parameters] The permitted parameters.
   def budget_parameters
-    params.expect(budget: %i(name))
+    params.expect(budget: %i(name time_zone))
   end
 
   # Return the budget for the current request, or fall back to the

@@ -3,6 +3,8 @@
 class Budget < ApplicationRecord
   MAXIMUM_NAME_LENGTH = 64
 
+  delegate :time_zone, :time_zone=, to: :settings
+
   has_many :accounts, dependent: :destroy
   has_many :categories, -> { where(parent_id: nil) }, inverse_of: :budget, dependent: :destroy
   has_many :category_snapshots, dependent: :destroy

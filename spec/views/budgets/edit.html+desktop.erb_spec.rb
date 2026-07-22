@@ -9,7 +9,7 @@ describe "budgets/edit.html+desktop.erb" do
     rendered
   end
 
-  let(:budget) { build_stubbed(:budget) }
+  let(:budget) { build_stubbed(:budget, settings: { "time_zone" => "Eastern Time (US & Canada)" }) }
 
   before do
     assign :budget, budget
@@ -44,6 +44,10 @@ describe "budgets/edit.html+desktop.erb" do
     expect(html).to have_css(
       "input#budget_name[required][maxlength='#{Budget::MAXIMUM_NAME_LENGTH}']"
     )
+  end
+
+  it "renders the time zone field with the current zone selected" do
+    expect(html).to have_select("budget_time_zone", selected: "(GMT-05:00) Eastern Time (US & Canada)")
   end
 
   it "renders the cancel button bound to the dialog controller" do

@@ -241,6 +241,54 @@ describe BudgetsController do
       end
     end
 
+    context "when setting the time zone" do
+      before do
+        sign_in_for(budget)
+
+        patch :update,
+              params: {
+                id:     budget.id,
+                budget: { time_zone: "Eastern Time (US & Canada)" }
+              }
+      end
+
+      it { is_expected.to redirect_to(budget_url(budget)) }
+
+      it "stores the time zone in the settings" do
+        expect(budget.reload.settings.time_zone).to eq("Eastern Time (US & Canada)")
+      end
+    end
+
+    context "when clearing the time zone" do
+      let(:budget) do
+        create(:budget, name: "Old Name", settings: { time_zone: "Eastern Time (US & Canada)" })
+      end
+
+      before do
+        sign_in_for(budget)
+
+        patch :update, params: { id: budget.id, budget: { name: "New Name", time_zone: "" } }
+      end
+
+      it "clears the time zone" do
+        expect(budget.reload.settings.time_zone).to be_nil
+      end
+    end
+
+    context "when the time zone is invalid" do
+      before do
+        sign_in_for(budget)
+
+        patch :update, params: { id: budget.id, budget: { name: "New Name", time_zone: "Not/AZone" } }
+      end
+
+      it { is_expected.to redirect_to(budget_url(budget)) }
+
+      it "does not store the time zone" do
+        expect(budget.reload.settings.time_zone).to be_nil
+      end
+    end
+
     context "when signed in with a budget belonging to another user" do
       before do
         sign_in

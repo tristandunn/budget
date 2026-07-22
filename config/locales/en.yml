@@ -118,6 +118,7 @@ en:
       close: "Close"
       name: "Name"
       submit: "Apply"
+      time_zone: "Time zone"
       title: "Settings"
     show:
       activity: "Activity"
