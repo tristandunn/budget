@@ -113,6 +113,22 @@ describe "shared/_sidebar.html.erb" do
       .and(have_text(t("accounts.index.credit")))
   end
 
+  context "when there are no cash accounts" do
+    let(:cash_account) { nil }
+
+    it "does not render the cash group" do
+      expect(html).to have_no_css("[data-collapsible-id-value='sidebar-cash']")
+    end
+  end
+
+  context "when there are no credit accounts" do
+    let(:credit_account) { nil }
+
+    it "does not render the credit group" do
+      expect(html).to have_no_css("[data-collapsible-id-value='sidebar-credit']")
+    end
+  end
+
   it "lists each account with a link to its register" do
     expect(html).to have_link(
       cash_account.name, href: budget_account_transactions_path(budget, cash_account)
