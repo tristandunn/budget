@@ -58,6 +58,16 @@ describe "accounts/index.html.erb" do
     it "links the account to its transaction register" do
       expect(html).to have_link(account.name, href: budget_account_transactions_path(budget, account))
     end
+
+    context "when there are no cash accounts" do
+      before do
+        assign :cash_accounts, []
+      end
+
+      it "does not render the cash section" do
+        expect(html).to have_no_css("h2", text: t("accounts.index.cash"))
+      end
+    end
   end
 
   describe "credit section" do
@@ -76,6 +86,16 @@ describe "accounts/index.html.erb" do
 
     it "links the account to its transaction register" do
       expect(html).to have_link(account.name, href: budget_account_transactions_path(budget, account))
+    end
+
+    context "when there are no credit accounts" do
+      before do
+        assign :credit_accounts, []
+      end
+
+      it "does not render the credit section" do
+        expect(html).to have_no_css("h2", text: t("accounts.index.credit"))
+      end
     end
   end
 end
