@@ -58,15 +58,18 @@ class BudgetSnapshotMonth
     end
   end
 
-  # Returns the range of navigable months for this budget.
+  # Returns the range of navigable months for this budget, always covering the
+  # current month.
+  #
+  # Any past snapshot extends the lower bound and only months with activity
+  # extend the upper bound.
   #
   # @return [Range<Date>] The range of navigable months for this budget.
   def snapshot_range
     @snapshot_range ||= begin
-      assigned = budget.category_snapshots.where.not(amount_assigned: 0)
-
-      earliest = assigned.minimum(:date) || current_month
-      latest   = [assigned.maximum(:date), current_month].compact.max.next_month
+      snapshots = budget.category_snapshots
+      earliest  = [snapshots.minimum(:date), current_month].compact.min
+      latest    = [snapshots.with_activity.maximum(:date), current_month].compact.max.next_month
 
       earliest..latest
     end

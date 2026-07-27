@@ -190,13 +190,51 @@ describe BudgetSnapshotMonth do
       end
     end
 
-    context "with unassigned snapshots" do
+    context "with zeroed out past snapshots" do
       before do
-        create(:category_snapshot, budget: budget, date: 3.months.ago.beginning_of_month, amount_assigned: 0)
+        create(
+          :category_snapshot,
+          amount_assigned: 0,
+          amount_used:     0,
+          budget:          budget,
+          date:            3.months.ago.beginning_of_month
+        )
       end
 
-      it "excludes unassigned snapshots" do
+      it "includes the month of the zeroed out snapshot" do
+        expect(snapshot_range).to eq(3.months.ago.beginning_of_month..1.month.from_now.beginning_of_month)
+      end
+    end
+
+    context "with zeroed out future snapshots" do
+      before do
+        create(
+          :category_snapshot,
+          amount_assigned: 0,
+          amount_used:     0,
+          budget:          budget,
+          date:            2.months.from_now.beginning_of_month
+        )
+      end
+
+      it "excludes the month of the zeroed out snapshot" do
         expect(snapshot_range).to eq(Date.current.beginning_of_month..1.month.from_now.beginning_of_month)
+      end
+    end
+
+    context "with a future snapshot that only has spending" do
+      before do
+        create(
+          :category_snapshot,
+          amount_assigned: 0,
+          amount_used:     100,
+          budget:          budget,
+          date:            2.months.from_now.beginning_of_month
+        )
+      end
+
+      it "returns the current month to one month past the latest spending" do
+        expect(snapshot_range).to eq(Date.current.beginning_of_month..3.months.from_now.beginning_of_month)
       end
     end
 

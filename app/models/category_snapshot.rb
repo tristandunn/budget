@@ -9,7 +9,8 @@ class CategorySnapshot < ApplicationRecord
   validates :category_id,     uniqueness: { scope: %i(budget_id date) }
   validates :date,            presence: true
 
-  scope :for_month, ->(month_date) { where(date: month_date.beginning_of_month) }
+  scope :for_month,     ->(month_date) { where(date: month_date.beginning_of_month) }
+  scope :with_activity, -> { where.not(amount_assigned: 0).or(where.not(amount_used: 0)) }
 
   # Returns the amount remaining in the category snapshot.
   #
