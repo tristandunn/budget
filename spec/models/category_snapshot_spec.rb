@@ -33,6 +33,16 @@ describe CategorySnapshot do
     end
   end
 
+  describe ".with_activity" do
+    it "returns snapshots with an assigned or used amount" do
+      assigned = create(:category_snapshot, amount_assigned: 100, amount_used: 0)
+      used     = create(:category_snapshot, amount_assigned: 0,   amount_used: 100)
+      create(:category_snapshot, amount_assigned: 0, amount_used: 0)
+
+      expect(described_class.with_activity).to contain_exactly(assigned, used)
+    end
+  end
+
   describe "#amount_remaining" do
     subject { category_snapshot.amount_remaining }
 
