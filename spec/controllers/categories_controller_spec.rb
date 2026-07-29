@@ -64,6 +64,15 @@ describe CategoriesController do
           .to raise_error(ActiveRecord::RecordNotFound)
       end
     end
+
+    context "with a category belonging to a different budget" do
+      let(:other_subcategory) { create(:category, :subcategory) }
+
+      it "raises an ActiveRecord::RecordNotFound error" do
+        expect { get :show, params: { budget_id: budget.id, id: other_subcategory.id } }
+          .to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
   end
 
   describe "#edit" do
@@ -100,6 +109,15 @@ describe CategoriesController do
 
       it "raises an ActiveRecord::RecordNotFound error" do
         expect { get :edit, params: { budget_id: budget.id, id: inflow.id } }
+          .to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    context "with a category belonging to a different budget" do
+      let(:other_subcategory) { create(:category, :subcategory) }
+
+      it "raises an ActiveRecord::RecordNotFound error" do
+        expect { get :edit, params: { budget_id: budget.id, id: other_subcategory.id } }
           .to raise_error(ActiveRecord::RecordNotFound)
       end
     end
@@ -216,6 +234,20 @@ describe CategoriesController do
             budget_id:     budget.id,
             id:            inflow.id,
             category_form: { name: "Paychecks" }
+          }
+        end.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    context "with a category belonging to a different budget" do
+      let(:other_subcategory) { create(:category, :subcategory) }
+
+      it "raises an ActiveRecord::RecordNotFound error" do
+        expect do
+          patch :update, params: {
+            budget_id:     budget.id,
+            id:            other_subcategory.id,
+            category_form: { name: "New Name" }
           }
         end.to raise_error(ActiveRecord::RecordNotFound)
       end

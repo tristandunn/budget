@@ -43,6 +43,15 @@ describe TargetsController do
     it "assigns the budget snapshot" do
       expect(assigns(:budget_snapshot)).to be_a(BudgetSnapshot)
     end
+
+    context "with a category belonging to a different budget" do
+      let(:other_subcategory) { create(:category, :subcategory) }
+
+      it "raises an ActiveRecord::RecordNotFound error" do
+        expect { get :edit, params: { budget_id: budget.id, category_id: other_subcategory.id } }
+          .to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
   end
 
   describe "#update" do
@@ -150,6 +159,20 @@ describe TargetsController do
       it { is_expected.to respond_with(422) }
       it { is_expected.to render_template(:edit) }
     end
+
+    context "with a category belonging to a different budget" do
+      let(:other_subcategory) { create(:category, :subcategory) }
+
+      it "raises an ActiveRecord::RecordNotFound error" do
+        expect do
+          patch :update, params: {
+            budget_id:   budget.id,
+            category_id: other_subcategory.id,
+            target_form: form_parameters
+          }
+        end.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
   end
 
   describe "#destroy" do
@@ -219,6 +242,15 @@ describe TargetsController do
         expect(response).to redirect_to(
           month_budget_url(budget, month: Date.current.month, year: Date.current.year)
         )
+      end
+    end
+
+    context "with a category belonging to a different budget" do
+      let(:other_subcategory) { create(:category, :subcategory) }
+
+      it "raises an ActiveRecord::RecordNotFound error" do
+        expect { delete :destroy, params: { budget_id: budget.id, category_id: other_subcategory.id } }
+          .to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end
