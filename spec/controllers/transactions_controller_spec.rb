@@ -558,16 +558,24 @@ describe TransactionsController do
     let(:transaction) { create(:transaction, budget: budget) }
 
     before do
-      allow(DestroyTransaction).to receive(:call)
-
-      delete :destroy, params: { budget_id: budget.id, id: transaction.id }
+      allow(DestroyTransaction).to receive(:call).and_call_original
     end
 
-    it { is_expected.to respond_with(:see_other) }
-    it { is_expected.to redirect_to(budget_transactions_path(budget)) }
+    context "when the transaction is pending" do
+      before do
+        delete :destroy, params: { budget_id: budget.id, id: transaction.id }
+      end
 
-    it "calls the destroy service with the transaction" do
-      expect(DestroyTransaction).to have_received(:call).with(transaction: transaction)
+      it { is_expected.to respond_with(:see_other) }
+      it { is_expected.to redirect_to(budget_transactions_path(budget)) }
+
+      it "calls the destroy service with the transaction" do
+        expect(DestroyTransaction).to have_received(:call).with(transaction: transaction)
+      end
+
+      it "destroys the transaction" do
+        expect(Transaction.exists?(transaction.id)).to be(false)
+      end
     end
 
     context "with a stored return location" do
@@ -588,11 +596,15 @@ describe TransactionsController do
     context "when the transaction is reconciled" do
       let(:transaction) { create(:transaction, :reconciled, budget: budget) }
 
+      before do
+        delete :destroy, params: { budget_id: budget.id, id: transaction.id }
+      end
+
       it { is_expected.to respond_with(:see_other) }
       it { is_expected.to redirect_to(budget_transactions_path(budget)) }
 
       it "does not call the destroy service" do
-        expect(DestroyTransaction).not_to have_received(:call).with(transaction: transaction)
+        expect(DestroyTransaction).not_to have_received(:call)
       end
 
       it "does not destroy the transaction" do
@@ -604,11 +616,15 @@ describe TransactionsController do
       let(:partner)     { create(:transaction, :reconciled, budget: budget) }
       let(:transaction) { create(:transaction, budget: budget, transfer_pair: partner) }
 
+      before do
+        delete :destroy, params: { budget_id: budget.id, id: transaction.id }
+      end
+
       it { is_expected.to respond_with(:see_other) }
       it { is_expected.to redirect_to(budget_transactions_path(budget)) }
 
       it "does not call the destroy service" do
-        expect(DestroyTransaction).not_to have_received(:call).with(transaction: transaction)
+        expect(DestroyTransaction).not_to have_received(:call)
       end
 
       it "does not destroy the transaction" do
