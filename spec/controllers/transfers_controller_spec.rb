@@ -79,6 +79,20 @@ describe TransfersController do
         expect(TransferForm).to have_received(:new).with(budget: budget, to_account: nil)
       end
     end
+
+    context "with a to_account_id belonging to a different budget" do
+      let(:other_credit_card) { create(:account, :credit) }
+
+      before do
+        get :new, params: { budget_id: budget.id, to_account_id: other_credit_card.id }
+      end
+
+      it { is_expected.to respond_with(200) }
+
+      it "initializes the form without a destination account" do
+        expect(TransferForm).to have_received(:new).with(budget: budget, to_account: nil)
+      end
+    end
   end
 
   describe "#create" do
@@ -174,6 +188,32 @@ describe TransfersController do
 
       it "passes nil for the unresolved account" do
         expect(TransferForm).to have_received(:new).with(hash_including(to_account: nil))
+      end
+    end
+
+    context "with account IDs belonging to a different budget" do
+      let(:form)              { instance_double(TransferForm, save: false) }
+      let(:other_account)     { create(:account) }
+      let(:other_credit_card) { create(:account, :credit) }
+
+      before do
+        post :create, params: {
+          budget_id:     budget.id,
+          transfer_form: {
+            amount:          "50.00",
+            date:            "2026-04-15",
+            from_account_id: other_account.id,
+            to_account_id:   other_credit_card.id
+          }
+        }
+      end
+
+      it { is_expected.to render_template(:new) }
+      it { is_expected.to respond_with(:unprocessable_content) }
+
+      it "passes nil for both unresolved accounts" do
+        expect(TransferForm).to have_received(:new)
+          .with(hash_including(from_account: nil, to_account: nil))
       end
     end
   end

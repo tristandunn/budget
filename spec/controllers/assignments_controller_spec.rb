@@ -64,6 +64,15 @@ describe AssignmentsController do
           .with(budget: budget, subcategory: subcategory, date: date)
       end
     end
+
+    context "with a category belonging to a different budget" do
+      let(:other_subcategory) { create(:category, :subcategory) }
+
+      it "raises an ActiveRecord::RecordNotFound error" do
+        expect { get :edit, params: { budget_id: budget.id, category_id: other_subcategory.id } }
+          .to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
   end
 
   describe "#update" do
@@ -207,6 +216,20 @@ describe AssignmentsController do
 
       it { is_expected.to respond_with(422) }
       it { is_expected.to render_template(:edit) }
+    end
+
+    context "with a category belonging to a different budget" do
+      let(:other_subcategory) { create(:category, :subcategory) }
+
+      it "raises an ActiveRecord::RecordNotFound error" do
+        expect do
+          patch :update, params: {
+            budget_id:       budget.id,
+            category_id:     other_subcategory.id,
+            assignment_form: { amount: "100.00" }
+          }
+        end.to raise_error(ActiveRecord::RecordNotFound)
+      end
     end
   end
 end

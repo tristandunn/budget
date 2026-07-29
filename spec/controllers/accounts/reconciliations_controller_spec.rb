@@ -11,17 +11,28 @@ describe Accounts::ReconciliationsController do
   end
 
   describe "#create" do
-    before do
-      create(:transaction, :cleared, account: account)
+    context "with cleared transactions" do
+      before do
+        create(:transaction, :cleared, account: account)
 
-      post :create, params: { budget_id: budget.id, account_id: account.id }
+        post :create, params: { budget_id: budget.id, account_id: account.id }
+      end
+
+      it { is_expected.to redirect_to(budget_account_transactions_path(budget, account)) }
+      it { is_expected.to respond_with(:see_other) }
+
+      it "marks cleared transactions as reconciled" do
+        expect(account.transactions.reconciled.count).to eq(1)
+      end
     end
 
-    it { is_expected.to redirect_to(budget_account_transactions_path(budget, account)) }
-    it { is_expected.to respond_with(:see_other) }
+    context "with an account belonging to a different budget" do
+      let(:other_account) { create(:account) }
 
-    it "marks cleared transactions as reconciled" do
-      expect(account.transactions.reconciled.count).to eq(1)
+      it "raises an ActiveRecord::RecordNotFound error" do
+        expect { post :create, params: { budget_id: budget.id, account_id: other_account.id } }
+          .to raise_error(ActiveRecord::RecordNotFound)
+      end
     end
   end
 end

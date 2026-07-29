@@ -130,6 +130,15 @@ describe TransactionsController do
         expect(assigns(:payees)).to eq([payee])
       end
     end
+
+    context "with an account belonging to a different budget" do
+      let(:other_account) { create(:account) }
+
+      it "raises an ActiveRecord::RecordNotFound error" do
+        expect { get :new, params: { budget_id: budget.id, account_id: other_account.id } }
+          .to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
   end
 
   describe "#create" do
@@ -289,6 +298,33 @@ describe TransactionsController do
         expect(TransactionForm).to have_received(:new).with(hash_including(subcategory: nil))
       end
     end
+
+    context "with an account belonging to a different budget" do
+      let(:other_account) { create(:account) }
+
+      it "raises an ActiveRecord::RecordNotFound error" do
+        expect do
+          post :create, params: {
+            budget_id:        budget.id,
+            transaction_form: { account_id: other_account.id }
+          }
+        end.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    context "with a subcategory belonging to a different budget" do
+      let(:account)           { create(:account, budget: budget) }
+      let(:other_subcategory) { create(:category, :subcategory) }
+
+      it "raises an ActiveRecord::RecordNotFound error" do
+        expect do
+          post :create, params: {
+            budget_id:        budget.id,
+            transaction_form: { account_id: account.id, subcategory_id: other_subcategory.id }
+          }
+        end.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
   end
 
   describe "#edit" do
@@ -357,6 +393,15 @@ describe TransactionsController do
 
       it "does not assign a form" do
         expect(assigns(:form)).to be_nil
+      end
+    end
+
+    context "with a transaction belonging to a different budget" do
+      let(:other_transaction) { create(:transaction) }
+
+      it "raises an ActiveRecord::RecordNotFound error" do
+        expect { get :edit, params: { budget_id: budget.id, id: other_transaction.id } }
+          .to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end
@@ -552,6 +597,51 @@ describe TransactionsController do
         expect(transaction.reload.payee.name).not_to eq("Test Payee")
       end
     end
+
+    context "with a transaction belonging to a different budget" do
+      let(:form)        { instance_double(TransactionForm) }
+      let(:transaction) { create(:transaction) }
+
+      it "raises an ActiveRecord::RecordNotFound error" do
+        expect do
+          patch :update, params: {
+            budget_id:        budget.id,
+            id:               transaction.id,
+            transaction_form: { account_id: account.id, subcategory_id: subcategory.id }
+          }
+        end.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    context "with an account belonging to a different budget" do
+      let(:account) { create(:account) }
+      let(:form)    { instance_double(TransactionForm) }
+
+      it "raises an ActiveRecord::RecordNotFound error" do
+        expect do
+          patch :update, params: {
+            budget_id:        budget.id,
+            id:               transaction.id,
+            transaction_form: { account_id: account.id, subcategory_id: subcategory.id }
+          }
+        end.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    context "with a subcategory belonging to a different budget" do
+      let(:form)        { instance_double(TransactionForm) }
+      let(:subcategory) { create(:category, :subcategory) }
+
+      it "raises an ActiveRecord::RecordNotFound error" do
+        expect do
+          patch :update, params: {
+            budget_id:        budget.id,
+            id:               transaction.id,
+            transaction_form: { account_id: account.id, subcategory_id: subcategory.id }
+          }
+        end.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
   end
 
   describe "#destroy" do
@@ -635,6 +725,15 @@ describe TransactionsController do
         expect(Transaction.exists?(partner.id)).to be(true)
       end
     end
+
+    context "with a transaction belonging to a different budget" do
+      let(:other_transaction) { create(:transaction) }
+
+      it "raises an ActiveRecord::RecordNotFound error" do
+        expect { delete :destroy, params: { budget_id: budget.id, id: other_transaction.id } }
+          .to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
   end
 
   describe "#clear" do
@@ -681,6 +780,16 @@ describe TransactionsController do
         expect(transaction.reload).to be_upcoming
       end
     end
+
+    context "with a transaction belonging to a different budget" do
+      let(:other_transaction) { create(:transaction) }
+
+      it "raises an ActiveRecord::RecordNotFound error" do
+        expect do
+          patch :clear, params: { budget_id: budget.id, id: other_transaction.id }, format: :turbo_stream
+        end.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
   end
 
   describe "#unclear" do
@@ -725,6 +834,16 @@ describe TransactionsController do
 
       it "does not change the status" do
         expect(transaction.reload).to be_upcoming
+      end
+    end
+
+    context "with a transaction belonging to a different budget" do
+      let(:other_transaction) { create(:transaction) }
+
+      it "raises an ActiveRecord::RecordNotFound error" do
+        expect do
+          delete :unclear, params: { budget_id: budget.id, id: other_transaction.id }, format: :turbo_stream
+        end.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end
