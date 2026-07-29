@@ -90,7 +90,7 @@ module Transactions
     #
     # @return [Array<Category>] The suggested subcategories, or an empty array.
     def suggested_subcategories
-      payee = form.budget.payees.find_by(name: form.payee.to_s.strip)
+      payee = form.budget.payees.by_name(form.payee).first
 
       if payee
         subcategories = categories.flat_map(&:subcategories).index_by(&:id)

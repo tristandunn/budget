@@ -141,6 +141,14 @@ describe AccountForm, type: :form do
         expect(payee.reload.name).to eq(t("transfers.payee.to", account: "New"))
       end
 
+      it "renames a transfer payee whose name differs only in case" do
+        payee = create(:payee, budget: account.budget, name: t("transfers.payee.from", account: "Old").downcase)
+
+        update
+
+        expect(payee.reload.name).to eq(t("transfers.payee.from", account: "New"))
+      end
+
       it "does not rename unrelated payees in the budget" do
         payee = create(:payee, budget: account.budget, name: "Grocery Store")
 
@@ -211,6 +219,38 @@ describe AccountForm, type: :form do
         update
 
         expect(Payee.exists?(from_stale.id)).to be(false)
+      end
+    end
+
+    context "when a transfer payee matching the new name only in case already exists" do
+      let(:form)  { described_class.new(account: account, budget: account.budget, name: "New", credit: "false") }
+      let(:stale) { create(:payee, budget: account.budget, name: t("transfers.payee.to", account: "Old")) }
+
+      let!(:existing) do
+        create(:payee, budget: account.budget, name: t("transfers.payee.to", account: "New").downcase)
+      end
+
+      let!(:transaction) { create(:transaction, budget: account.budget, payee: stale) }
+
+      it "merges the stale transfer payee into the existing payee" do
+        update
+
+        expect(transaction.reload.payee).to eq(existing)
+      end
+    end
+
+    context "when the name changes only in case" do
+      let(:form)  { described_class.new(account: account, budget: account.budget, name: "old", credit: "false") }
+      let(:payee) { create(:payee, budget: account.budget, name: t("transfers.payee.to", account: "Old")) }
+
+      before do
+        create(:transaction, budget: account.budget, payee: payee)
+      end
+
+      it "renames the transfer payee in place rather than merging it into itself" do
+        update
+
+        expect(payee.reload.name).to eq(t("transfers.payee.to", account: "old"))
       end
     end
 

@@ -71,19 +71,21 @@ class AccountForm < BaseForm
   end
 
   # Rename a single direction's transfer payee to mirror the account's new name.
-  # When a payee already uses the new name, the renamed payee is merged into it
-  # instead so the uniqueness validation is not violated.
+  #
+  # Names are matched case-insensitively to stay consistent with the payee
+  # uniqueness validation. When another payee already uses the new name, the
+  # renamed payee is merged into it instead so that validation is not violated.
   #
   # @param direction [Symbol] The transfer direction.
   # @param old_name [String] The account's previous name.
   # @param new_name [String] The account's new name.
   # @return [void]
   def rename_transfer_payee(direction, old_name, new_name)
-    payee = budget.payees.find_by(name: transfer_payee_name(direction, old_name))
+    payee = budget.payees.by_name(transfer_payee_name(direction, old_name)).first
 
     if payee
       renamed  = transfer_payee_name(direction, new_name)
-      existing = budget.payees.find_by(name: renamed)
+      existing = budget.payees.where.not(id: payee.id).by_name(renamed).first
 
       if existing
         payee.merge_into(existing)

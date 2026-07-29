@@ -121,6 +121,16 @@ describe Transactions::CategoryPicker do
         expect(suggested.items).to contain_exactly(an_object_having_attributes(selected: true))
       end
 
+      it "prepends a suggested group when the payee differs only in case" do
+        payee = create(:payee, budget: budget)
+        create(:transaction, budget: budget, payee: payee, subcategory: groceries)
+        form = TransactionForm.new(budget: budget, payee: payee.name.downcase)
+
+        expect(described_class.new(form: form).groups.map(&:name)).to include(
+          I18n.t("transactions.category_picker.suggested")
+        )
+      end
+
       it "does not include a suggested group when the payee is blank" do
         expect(described_class.new(form: form).groups.map(&:name)).not_to include(
           I18n.t("transactions.category_picker.suggested")
