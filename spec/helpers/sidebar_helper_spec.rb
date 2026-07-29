@@ -50,6 +50,33 @@ describe SidebarHelper do
     end
   end
 
+  describe "#sidebar_budgets" do
+    subject(:sidebar_budgets) { helper.sidebar_budgets }
+
+    let(:user) { create(:user) }
+
+    before do
+      Current.user = user
+    end
+
+    it "returns the user's budgets ordered by name" do
+      create(:budget, name: "Other")
+      zebra = create(:budget, user: user, name: "Zebra")
+      apple = create(:budget, user: user, name: "Apple")
+
+      expect(sidebar_budgets).to eq([apple, zebra])
+    end
+
+    it "memoizes the user's budgets" do
+      allow(user).to receive(:budgets).and_call_original
+
+      helper.sidebar_budgets
+      helper.sidebar_budgets
+
+      expect(user).to have_received(:budgets).once
+    end
+  end
+
   describe "#sidebar_item_class" do
     subject { helper.sidebar_item_class(active: active) }
 
