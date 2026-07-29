@@ -99,7 +99,7 @@ user = User.find_or_create_by!(email: "user@example.com") do |new_user|
   new_user.password = "password"
 end
 
-budget = user.budgets.first || Budget.create!(name: "Budget", users: [user])
+budget = user.budgets.find_by(name: "Budget") || Budget.create!(name: "Budget", users: [user])
 seeder = BudgetSeeder.new(budget)
 
 checking    = budget.accounts.find_or_create_by!(name: "Checking")
@@ -230,3 +230,35 @@ budget.categories.find_or_create_by(name: "Quality of Life", position: 3).tap do
 end
 
 seeder.recalculate!
+
+vacation_fund   = user.budgets.find_by(name: "Vacation") || Budget.create!(name: "Vacation", users: [user])
+vacation_seeder = BudgetSeeder.new(vacation_fund)
+
+vacation_savings = vacation_fund.accounts.find_or_create_by!(name: "Savings")
+
+vacation_airline = vacation_fund.payees.find_or_create_by!(name: "Airline")
+vacation_opening = vacation_fund.payees.find_or_create_by!(name: "Opening Balance")
+
+vacation_fund.categories.find_or_create_by(name: Category::INFLOW, position: 0).tap do |parent|
+  available_to_assign = parent.subcategories.find_or_create_by(budget: vacation_fund,
+                                                               name: Category::AVAILABLE_TO_ASSIGN, position: 0)
+
+  vacation_seeder.record(account: vacation_savings, payee: vacation_opening, subcategory: available_to_assign,
+                         amount: 150_000, on: date, status: :reconciled)
+end
+
+vacation_fund.categories.find_or_create_by(name: "Travel", position: 1).tap do |parent|
+  flights = parent.subcategories.find_or_create_by(budget: vacation_fund, name: "Flights", position: 0) do |category|
+    category.target_type   = :monthly_savings
+    category.target_amount = 50_000
+  end
+
+  vacation_seeder.snapshot(flights, on: date, assigned: 50_000, used: 45_000)
+
+  vacation_seeder.record(account: vacation_savings, payee: vacation_airline, subcategory: flights,
+                         amount: -45_000, on: date + 3, status: :cleared)
+
+  vacation_seeder.rollup(parent)
+end
+
+vacation_seeder.recalculate!

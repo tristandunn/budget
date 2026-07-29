@@ -36,6 +36,34 @@ describe "shared/_sidebar.html.erb" do
     expect(html).to have_css("[data-controller='popover'] [data-popover-target='menu'].hidden")
   end
 
+  it "does not list budgets when the user belongs to a single budget" do
+    expect(html).to have_no_css("[data-popover-target='menu'] a[href='#{budget_path(budget)}']")
+  end
+
+  context "when the user belongs to more than one budget" do
+    it "lists each budget in the menu linking to its budget page" do
+      other_budget = create(:budget, user: user)
+
+      expect(html).to have_css(
+        "[data-popover-target='menu'] a[href='#{budget_path(budget)}']", text: budget.name
+      ).and(
+        have_css(
+          "[data-popover-target='menu'] a[href='#{budget_path(other_budget)}']", text: other_budget.name
+        )
+      )
+    end
+
+    it "marks the current budget with aria-current" do
+      other_budget = create(:budget, user: user)
+
+      expect(html).to have_css(
+        "[data-popover-target='menu'] a[href='#{budget_path(budget)}'][aria-current='true']"
+      ).and(
+        have_no_css("[data-popover-target='menu'] a[href='#{budget_path(other_budget)}'][aria-current]")
+      )
+    end
+  end
+
   it "renders the settings link in the menu targeting the settings dialog frame" do
     expect(html).to have_css(
       "[data-popover-target='menu'] a#edit-budget[href='#{edit_budget_path(budget)}']" \

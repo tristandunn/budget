@@ -22,6 +22,13 @@ module SidebarHelper
     class_names(SIDEBAR_ACCOUNT_CLASSES, { "bg-indigo-800" => active, "hover:bg-white/5" => !active })
   end
 
+  # Returns the current user's budgets, ordered by name.
+  #
+  # @return [Array<Budget>] The user's budgets.
+  def sidebar_budgets
+    @sidebar_budgets ||= Current.user.budgets.order(:name).to_a
+  end
+
   # Returns the CSS classes for a sidebar item.
   #
   # @param active [Boolean] Whether the item is active.
