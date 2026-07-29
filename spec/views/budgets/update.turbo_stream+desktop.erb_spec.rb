@@ -20,7 +20,8 @@ describe "budgets/update.turbo_stream+desktop.erb" do
   end
 
   it "renders the budget name inside the title stream" do
-    expect(html).to include('id="budget_title"').and(include(budget.name))
+    expect(turbo_stream_content(html, action: "replace", target: "budget_title"))
+      .to include('id="budget_title"').and(include(budget.name))
   end
 
   it "updates the settings dialog frame" do
@@ -28,6 +29,7 @@ describe "budgets/update.turbo_stream+desktop.erb" do
   end
 
   it "renders the dismisser controller inside the settings dialog stream" do
-    expect(html).to include('data-controller="dialog-dismisser"')
+    expect(turbo_stream_content(html, action: "update", target: "budget_settings_dialog"))
+      .to include('data-controller="dialog-dismisser"')
   end
 end

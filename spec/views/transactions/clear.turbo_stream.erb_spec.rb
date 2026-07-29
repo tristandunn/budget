@@ -27,36 +27,36 @@ describe "transactions/clear.turbo_stream.erb" do
     expect(html).to have_turbo_stream_element(action: "replace", target: dom_id(transaction, :status))
   end
 
-  it "renders the status indicator" do
-    expect(html).to include("STATUS_INDICATOR")
+  it "renders the status indicator inside the status stream" do
+    expect(turbo_stream_content(html, action: "replace", target: dom_id(transaction, :status)))
+      .to include("STATUS_INDICATOR")
   end
 
   it "replaces the account actions" do
     expect(html).to have_turbo_stream_element(action: "replace", target: "account_actions")
   end
 
-  it "renders the account actions" do
-    expect(html).to include("ACTIONS_BAR")
+  it "renders the actions bar inside the account actions stream" do
+    expect(turbo_stream_content(html, action: "replace", target: "account_actions"))
+      .to include("ACTIONS_BAR")
   end
 
   it "replaces the cleared balance" do
     expect(html).to have_turbo_stream_element(action: "replace", target: "cleared_balance")
   end
 
-  it "renders the cleared balance" do
-    expect(html).to include(
-      number_to_money(transaction.account.cleared_balance)
-    )
+  it "renders the amount inside the cleared balance stream" do
+    expect(turbo_stream_content(html, action: "replace", target: "cleared_balance"))
+      .to include(number_to_money(transaction.account.cleared_balance))
   end
 
   it "replaces the uncleared balance" do
     expect(html).to have_turbo_stream_element(action: "replace", target: "uncleared_balance")
   end
 
-  it "renders the uncleared balance" do
-    expect(html).to include(
-      number_to_money(transaction.account.uncleared_balance)
-    )
+  it "renders the amount inside the uncleared balance stream" do
+    expect(turbo_stream_content(html, action: "replace", target: "uncleared_balance"))
+      .to include(number_to_money(transaction.account.uncleared_balance))
   end
 
   context "when clearing from a single-account register" do

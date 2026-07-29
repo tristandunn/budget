@@ -33,7 +33,8 @@ describe "targets/_response.turbo_stream+desktop.erb" do
   end
 
   it "renders the target partial inside the target stream" do
-    expect(html).to include("TARGET_PARTIAL")
+    expect(turbo_stream_content(html, action: "replace", target: dom_id(subcategory, :target)))
+      .to include("TARGET_PARTIAL")
   end
 
   it "replaces the subcategory available badge" do
@@ -41,6 +42,7 @@ describe "targets/_response.turbo_stream+desktop.erb" do
   end
 
   it "renders the available partial inside the available badge stream" do
-    expect(html).to include("AVAILABLE_PARTIAL")
+    expect(turbo_stream_content(html, action: "replace", target: dom_id(subcategory, :available)))
+      .to include("AVAILABLE_PARTIAL")
   end
 end

@@ -30,8 +30,9 @@ describe "assignments/update.turbo_stream.erb" do
     )
   end
 
-  it "renders the subcategory row partial" do
-    expect(html).to include("SUBCATEGORY_ROW_PARTIAL")
+  it "renders the subcategory row partial inside the row stream" do
+    expect(turbo_stream_content(html, action: "replace", target: dom_id(subcategory, :row)))
+      .to include("SUBCATEGORY_ROW_PARTIAL")
   end
 
   it "replaces the parent category header" do
@@ -41,15 +42,17 @@ describe "assignments/update.turbo_stream.erb" do
     )
   end
 
-  it "renders the category header partial" do
-    expect(html).to include("CATEGORY_HEADER_PARTIAL")
+  it "renders the category header partial inside the header stream" do
+    expect(turbo_stream_content(html, action: "replace", target: dom_id(subcategory.parent, :header)))
+      .to include("CATEGORY_HEADER_PARTIAL")
   end
 
   it "replaces the available to assign badge" do
     expect(html).to have_turbo_stream_element(action: "replace", target: "available_to_assign")
   end
 
-  it "renders the available to assign partial" do
-    expect(html).to include("AVAILABLE_TO_ASSIGN_PARTIAL")
+  it "renders the available to assign partial inside the badge stream" do
+    expect(turbo_stream_content(html, action: "replace", target: "available_to_assign"))
+      .to include("AVAILABLE_TO_ASSIGN_PARTIAL")
   end
 end
