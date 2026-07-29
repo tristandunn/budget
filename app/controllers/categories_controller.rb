@@ -56,9 +56,16 @@ class CategoriesController < ApplicationController
 
   # Return the category for the given id parameter.
   #
+  # Inflow categories are marked as not found to prevent viewing and renaming.
+  #
+  # @raise [ActiveRecord::RecordNotFound] If the category is an inflow category.
   # @return [Category] The requested category.
   def category
-    @category ||= current_budget.subcategories.find(params.expect(:id))
+    @category ||= current_budget.subcategories.find(params.expect(:id)).tap do |record|
+      if record.inflow?
+        raise ActiveRecord::RecordNotFound
+      end
+    end
   end
 
   # Return the permitted form parameters.
