@@ -50,19 +50,15 @@ describe CategoryForm, type: :form do
       end
     end
 
-    context "when the category would be an inflow category" do
-      let(:form) { described_class.new(category: category, name: "Reserved") }
-
-      before do
-        allow(category).to receive(:inflow?).and_return(true)
-      end
+    context "when renaming to a reserved inflow name" do
+      let(:form) { described_class.new(category: category, name: Category::INFLOW) }
 
       it { is_expected.to be_nil }
 
       it "does not update the category" do
         update
 
-        expect(category.reload.name).not_to eq("Reserved")
+        expect(category.reload.name).not_to eq(Category::INFLOW)
       end
 
       it "adds a reserved error to the name" do

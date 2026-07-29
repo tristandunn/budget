@@ -25,9 +25,9 @@ describe "Transaction clearing", :js do
     let(:status) { :pending }
 
     it "clears the transaction" do
-      click_button "Pending"
+      click_button t("transactions.status_indicator.pending")
 
-      expect(page).to have_button("Cleared")
+      expect(page).to have_button(t("transactions.status_indicator.cleared"))
     end
   end
 
@@ -35,17 +35,23 @@ describe "Transaction clearing", :js do
     let(:status) { :cleared }
 
     it "unclears the transaction" do
-      click_button "Cleared"
+      click_button t("transactions.status_indicator.cleared")
 
-      expect(page).to have_button("Pending")
+      expect(page).to have_button(t("transactions.status_indicator.pending"))
     end
   end
 
   context "when the transaction is reconciled" do
     let(:status) { :reconciled }
 
+    it "shows the reconciled indicator" do
+      expect(page).to have_css("[aria-label='#{t("transactions.status_indicator.reconciled")}']")
+    end
+
     it "does not show a clear button" do
-      expect(page).to have_css("[aria-label='Reconciled']")
+      expect(page).to have_text(transaction.payee.name)
+        .and(have_no_button(t("transactions.status_indicator.pending")))
+        .and(have_no_button(t("transactions.status_indicator.cleared")))
     end
   end
 end

@@ -13,6 +13,8 @@ describe "accounts/transactions/index.html.erb" do
   let(:budget)  { build_stubbed(:budget) }
 
   before do
+    allow(account).to receive_messages(balance: 7_500, cleared_balance: 5_000, uncleared_balance: 2_500)
+
     stub_template("accounts/transactions/_actions_bar.html.erb" => "ACTIONS_BAR_PARTIAL")
     stub_template("shared/_toolbar.html.erb"                    => "TOOLBAR_PARTIAL")
     stub_template("transactions/_list.html.erb"                 => "LIST_PARTIAL")
@@ -42,11 +44,11 @@ describe "accounts/transactions/index.html.erb" do
   end
 
   it "renders the cleared balance" do
-    expect(html).to have_text(number_to_money(account.cleared_balance))
+    expect(html).to have_css("#cleared_balance", text: number_to_money(account.cleared_balance))
   end
 
   it "renders the uncleared balance" do
-    expect(html).to have_text(number_to_money(account.uncleared_balance))
+    expect(html).to have_css("#uncleared_balance", text: number_to_money(account.uncleared_balance))
   end
 
   it "renders the actions bar partial" do

@@ -46,15 +46,15 @@ describe "accounts/transactions/index.html+desktop.erb" do
   end
 
   it "renders the working balance" do
-    expect(html).to have_text(number_to_money(7_500))
+    expect(html).to have_text(number_to_money(account.balance))
   end
 
   it "renders the cleared balance" do
-    expect(html).to have_css("#cleared_balance", text: number_to_money(5_000))
+    expect(html).to have_css("#cleared_balance", text: number_to_money(account.cleared_balance))
   end
 
   it "renders the uncleared balance" do
-    expect(html).to have_css("#uncleared_balance", text: number_to_money(2_500))
+    expect(html).to have_css("#uncleared_balance", text: number_to_money(account.uncleared_balance))
   end
 
   it "renders the actions bar partial" do
