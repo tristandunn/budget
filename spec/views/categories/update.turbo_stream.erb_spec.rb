@@ -26,7 +26,8 @@ describe "categories/update.turbo_stream.erb" do
   end
 
   it "renders the details partial inside the category dialog stream" do
-    expect(html).to include("DETAILS_PARTIAL")
+    expect(turbo_stream_content(html, action: "update", target: "category_dialog"))
+      .to include("DETAILS_PARTIAL")
   end
 
   it "updates the subcategory name in the budget table" do
@@ -38,7 +39,8 @@ describe "categories/update.turbo_stream.erb" do
                                 year:  budget_snapshot.date.year,
                                 month: budget_snapshot.date.month)
 
-    expect(html).to include(%(href="#{ERB::Util.html_escape(href)}"))
+    expect(turbo_stream_content(html, action: "update", target: dom_id(subcategory, :name)))
+      .to include(%(href="#{ERB::Util.html_escape(href)}"))
   end
 
   it "updates the rename dialog frame" do
@@ -46,6 +48,7 @@ describe "categories/update.turbo_stream.erb" do
   end
 
   it "renders the dismisser controller inside the rename dialog stream" do
-    expect(html).to include('data-controller="dialog-dismisser"')
+    expect(turbo_stream_content(html, action: "update", target: "category_rename_dialog"))
+      .to include('data-controller="dialog-dismisser"')
   end
 end

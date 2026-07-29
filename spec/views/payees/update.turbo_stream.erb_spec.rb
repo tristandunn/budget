@@ -24,7 +24,8 @@ describe "payees/update.turbo_stream.erb" do
   end
 
   it "renders the list partial inside the payees list stream" do
-    expect(html).to include("LIST_PARTIAL")
+    expect(turbo_stream_content(html, action: "update", target: "payees_list"))
+      .to include("LIST_PARTIAL")
   end
 
   it "updates the rename dialog frame" do
@@ -32,6 +33,7 @@ describe "payees/update.turbo_stream.erb" do
   end
 
   it "renders the dismisser controller inside the rename dialog stream" do
-    expect(html).to include('data-controller="dialog-dismisser"')
+    expect(turbo_stream_content(html, action: "update", target: "payee_rename_dialog"))
+      .to include('data-controller="dialog-dismisser"')
   end
 end

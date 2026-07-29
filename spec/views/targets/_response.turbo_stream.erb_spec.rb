@@ -32,7 +32,8 @@ describe "targets/_response.turbo_stream.erb" do
   end
 
   it "renders the details partial inside the category dialog stream" do
-    expect(html).to include("DETAILS_PARTIAL")
+    expect(turbo_stream_content(html, action: "update", target: "category_dialog"))
+      .to include("DETAILS_PARTIAL")
   end
 
   it "replaces the subcategory available badge" do
@@ -40,7 +41,8 @@ describe "targets/_response.turbo_stream.erb" do
   end
 
   it "renders the available partial inside the available badge stream" do
-    expect(html).to include("AVAILABLE_PARTIAL")
+    expect(turbo_stream_content(html, action: "replace", target: dom_id(subcategory, :available)))
+      .to include("AVAILABLE_PARTIAL")
   end
 
   it "updates the target dialog frame" do
@@ -48,6 +50,7 @@ describe "targets/_response.turbo_stream.erb" do
   end
 
   it "renders the dismisser controller inside the target dialog stream" do
-    expect(html).to include('data-controller="dialog-dismisser"')
+    expect(turbo_stream_content(html, action: "update", target: "category_target_dialog"))
+      .to include('data-controller="dialog-dismisser"')
   end
 end
