@@ -7,6 +7,9 @@ module Transactions
 
     attr_reader :groups
 
+    # Initialize the category picker.
+    #
+    # @param form [TransactionForm] The transaction form to build the picker for.
     def initialize(form:)
       @form   = form
       @groups = [suggested_group, *category_groups].compact

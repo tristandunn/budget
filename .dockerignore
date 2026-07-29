@@ -50,10 +50,10 @@ bin/terraform
 # Ignore Terraform related files.
 /config/terraform/*
 
+# Ignore documentation.
+/docs/
+
 # Ignore development Rake tasks.
-lib/tasks/check.rake
-lib/tasks/css.rake
-lib/tasks/javascript.rake
 lib/tasks/ruby.rake
 
 # Ignore all logs and temporary files.
@@ -73,7 +73,7 @@ lib/tasks/ruby.rake
 .yarnrc.yml
 Procfile.dev
 README.md
-eslint.config.cjs
+eslint.config.js
 package.json
 yarn.lock
 

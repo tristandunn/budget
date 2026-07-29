@@ -10,7 +10,7 @@ APP_ROOT = File.expand_path("..", __dir__)
 FileUtils.chdir APP_ROOT do
   # This script is a way to set up or update your development environment
   # automatically. This script is idempotent, so that you can run it at any
-  # time and get an expectable outcome.
+  # time and get an expected outcome.
   #
   # Add necessary setup steps to this file.
 

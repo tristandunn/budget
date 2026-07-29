@@ -14,7 +14,7 @@ You need the following software installed for local development:
 
 - [Ruby](https://www.ruby-lang.org/en/documentation/installation/)
 - [Node.js](https://nodejs.dev/learn/how-to-install-nodejs)
-- [Yarn](https://classic.yarnpkg.com/en/docs/install/)
+- [Yarn](https://yarnpkg.com/getting-started/install)
 
 ### Setup
 
@@ -37,15 +37,11 @@ You can verify everything is installed and set up correctly by running
 bin/ci
 ```
 
-You can run the application using [Foreman](https://github.com/ddollar/foreman)
-and a [development `Procfile`](/Procfile.dev).
+You can run the application processes using a [development
+`Procfile`](/Procfile.dev).
 
 ```sh
-# Install Foreman if you haven't before.
-gem install foreman
-
-# Run with the development `Procfile` option.
-foreman start -f Procfile.dev
+bin/dev
 ```
 
 ## Issues and Feature Requests

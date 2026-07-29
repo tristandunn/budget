@@ -3,6 +3,7 @@
 module BudgetHelper
   # Returns the CSS classes for an amount.
   #
+  # @param amount [Integer] The amount in cents.
   # @return [String] A string representing the CSS classes for the given amount.
   def amount_color(amount)
     if amount.zero?
@@ -18,6 +19,8 @@ module BudgetHelper
   # yellow when a monthly spending target has not yet been fully funded for
   # the displayed month and the available amount has not gone overspent.
   #
+  # @param category [Category] The subcategory to color.
+  # @param budget_snapshot [BudgetSnapshot] The snapshot for the displayed month.
   # @return [String] A string representing the CSS classes for the badge.
   def available_color(category, budget_snapshot)
     if budget_snapshot.underfunded?(category)
@@ -45,6 +48,7 @@ module BudgetHelper
 
   # Returns the CSS classes for a navigation arrow link.
   #
+  # @param disabled [Boolean] Whether the link is disabled.
   # @return [String] A string representing the CSS classes for the navigation arrow link.
   def navigation_arrow_class(disabled)
     class_names("h-5 w-5", "text-taupe-300 pointer-events-none" => disabled)
@@ -79,6 +83,7 @@ module BudgetHelper
 
   # Returns the CSS classes for a subcategory amount in the picker.
   #
+  # @param amount [Integer] The amount in cents.
   # @return [String] A string representing the CSS classes for the given amount.
   def picker_amount_class(amount)
     if amount.zero?
