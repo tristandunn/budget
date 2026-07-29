@@ -55,6 +55,15 @@ describe CategoriesController do
         expect(assigns(:previous_budget_snapshot)).to be_a(BudgetSnapshot)
       end
     end
+
+    context "with an inflow category" do
+      let(:inflow) { create(:category, :inflow_subcategory, budget: budget) }
+
+      it "raises an ActiveRecord::RecordNotFound error" do
+        expect { get :show, params: { budget_id: budget.id, id: inflow.id } }
+          .to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
   end
 
   describe "#edit" do
@@ -84,6 +93,15 @@ describe CategoriesController do
 
     it "assigns the form" do
       expect(assigns(:form)).to eq(form)
+    end
+
+    context "with an inflow category" do
+      let(:inflow) { create(:category, :inflow_subcategory, budget: budget) }
+
+      it "raises an ActiveRecord::RecordNotFound error" do
+        expect { get :edit, params: { budget_id: budget.id, id: inflow.id } }
+          .to raise_error(ActiveRecord::RecordNotFound)
+      end
     end
   end
 
@@ -187,6 +205,20 @@ describe CategoriesController do
 
       it { is_expected.to respond_with(422) }
       it { is_expected.to render_template(:edit) }
+    end
+
+    context "with an inflow category" do
+      let(:inflow) { create(:category, :inflow_subcategory, budget: budget) }
+
+      it "raises an ActiveRecord::RecordNotFound error" do
+        expect do
+          patch :update, params: {
+            budget_id:     budget.id,
+            id:            inflow.id,
+            category_form: { name: "Paychecks" }
+          }
+        end.to raise_error(ActiveRecord::RecordNotFound)
+      end
     end
   end
 
