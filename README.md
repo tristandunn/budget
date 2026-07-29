@@ -16,7 +16,7 @@ See the [contributing guidelines](docs/CONTRIBUTING.md).
 
 ## Development
 
-Install the dependencies and setup the database.
+Install the dependencies and set up the database.
 
 ```
 bin/setup

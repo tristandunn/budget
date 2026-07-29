@@ -28,7 +28,7 @@ registry:
   server: localhost:5555
 
 # Inject ENV variables into containers. The secrets come from the
-# .kamal/secrets file.
+# .kamal/secrets-common and .kamal/secrets.production files.
 env:
   secret:
     - SECRET_KEY_BASE
@@ -84,7 +84,7 @@ builder:
 
   # # Pass arguments and secrets to the Docker build process.
   # args:
-  #   RUBY_VERSION: ruby-3.4.2
+  #   RUBY_VERSION: 4.0.6-alpine3.24
   # secrets:
   #   - GITHUB_TOKEN
   #   - RAILS_MASTER_KEY
@@ -93,7 +93,8 @@ builder:
 # ssh:
 #   user: app
 
-# Use accessory services with secrets coming from the .kamal/secrets file.
+# Use accessory services with secrets coming from the .kamal/secrets-common
+# and .kamal/secrets.production files.
 # accessories:
 #   db:
 #     image: mysql:8.0

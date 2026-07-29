@@ -43,7 +43,7 @@ RUN bundle exec bootsnap precompile --gemfile --jobs 0
 COPY . .
 
 # Precompile the Bootsnap cache for the application.
-RUN bundle exec bootsnap precompile  --jobs 0 app/ lib/
+RUN bundle exec bootsnap precompile --jobs 0 app/ lib/
 
 # Compile the assets without requiring the secret RAILS_MASTER_KEY.
 RUN SECRET_KEY_BASE_DUMMY=1 bundle exec rails assets:precompile
