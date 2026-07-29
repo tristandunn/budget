@@ -50,7 +50,7 @@ describe "transfers/_show.html.erb" do
   end
 
   it "renders the formatted date" do
-    expect(html).to have_css("dd", text: I18n.l(Date.new(2026, 4, 30)))
+    expect(html).to have_css("dd", text: I18n.l(Date.new(2026, 4, 30), format: :numeric))
   end
 
   it "renders the memo label" do

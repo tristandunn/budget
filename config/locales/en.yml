@@ -117,7 +117,7 @@ en:
       cancel: "Cancel"
       close: "Close"
       name: "Name"
-      submit: "Apply"
+      submit: "Save"
       time_zone: "Time zone"
       title: "Settings"
     show:
