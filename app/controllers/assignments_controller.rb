@@ -74,9 +74,17 @@ class AssignmentsController < ApplicationController
 
   # Return the subcategory for the given category_id parameter.
   #
+  # Subcategories of an inflow category are marked as not found to prevent
+  # assigning to inflow.
+  #
+  # @raise [ActiveRecord::RecordNotFound] If the parent is an inflow category.
   # @return [Category] The requested subcategory.
   def subcategory
-    @subcategory ||= current_budget.subcategories.find(params.expect(:category_id))
+    @subcategory ||= current_budget.subcategories.find(params.expect(:category_id)).tap do |record|
+      if record.parent.inflow?
+        raise ActiveRecord::RecordNotFound
+      end
+    end
   end
 
   # Return the current category snapshot for the subcategory.
