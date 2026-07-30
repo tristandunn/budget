@@ -15,34 +15,36 @@ describe AssignmentsController do
     let(:form)        { instance_double(AssignmentForm) }
     let(:subcategory) { create(:category, :subcategory, budget: budget) }
 
-    before do
-      allow(AssignmentForm).to receive(:new).and_return(form)
+    context "with an assignable subcategory" do
+      before do
+        allow(AssignmentForm).to receive(:new).and_return(form)
 
-      get :edit, params: { budget_id: budget.id, category_id: subcategory.id }
-    end
+        get :edit, params: { budget_id: budget.id, category_id: subcategory.id }
+      end
 
-    it { is_expected.to respond_with(200) }
-    it { is_expected.to render_template(:edit) }
+      it { is_expected.to respond_with(200) }
+      it { is_expected.to render_template(:edit) }
 
-    it "initializes the form with the budget, subcategory, and date" do
-      expect(AssignmentForm).to have_received(:new)
-        .with(budget: budget, subcategory: subcategory, date: Date.current.beginning_of_month)
-    end
+      it "initializes the form with the budget, subcategory, and date" do
+        expect(AssignmentForm).to have_received(:new)
+          .with(budget: budget, subcategory: subcategory, date: Date.current.beginning_of_month)
+      end
 
-    it "assigns the budget" do
-      expect(assigns(:budget)).to eq(budget)
-    end
+      it "assigns the budget" do
+        expect(assigns(:budget)).to eq(budget)
+      end
 
-    it "assigns the subcategory" do
-      expect(assigns(:subcategory)).to eq(subcategory)
-    end
+      it "assigns the subcategory" do
+        expect(assigns(:subcategory)).to eq(subcategory)
+      end
 
-    it "assigns the category snapshot" do
-      expect(assigns(:subcategory_snapshot)).to eq(subcategory.snapshots.for_month(Date.current).first)
-    end
+      it "assigns the category snapshot" do
+        expect(assigns(:subcategory_snapshot)).to eq(subcategory.snapshots.for_month(Date.current).first)
+      end
 
-    it "assigns the form" do
-      expect(assigns(:form)).to eq(form)
+      it "assigns the form" do
+        expect(assigns(:form)).to eq(form)
+      end
     end
 
     context "with year and month parameters" do
@@ -70,6 +72,26 @@ describe AssignmentsController do
 
       it "raises an ActiveRecord::RecordNotFound error" do
         expect { get :edit, params: { budget_id: budget.id, category_id: other_subcategory.id } }
+          .to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    context "with an inflow subcategory" do
+      let(:inflow_subcategory) { create(:category, :inflow_subcategory, budget: budget) }
+
+      it "raises an ActiveRecord::RecordNotFound error" do
+        expect { get :edit, params: { budget_id: budget.id, category_id: inflow_subcategory.id } }
+          .to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    context "with a regularly named subcategory of an inflow category" do
+      let(:inflow_subcategory) do
+        create(:category, budget: budget, name: "Paycheck", parent: create(:category, :inflow, budget: budget))
+      end
+
+      it "raises an ActiveRecord::RecordNotFound error" do
+        expect { get :edit, params: { budget_id: budget.id, category_id: inflow_subcategory.id } }
           .to raise_error(ActiveRecord::RecordNotFound)
       end
     end
@@ -226,6 +248,36 @@ describe AssignmentsController do
           patch :update, params: {
             budget_id:       budget.id,
             category_id:     other_subcategory.id,
+            assignment_form: { amount: "100.00" }
+          }
+        end.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    context "with an inflow subcategory" do
+      let(:inflow_subcategory) { create(:category, :inflow_subcategory, budget: budget) }
+
+      it "raises an ActiveRecord::RecordNotFound error" do
+        expect do
+          patch :update, params: {
+            budget_id:       budget.id,
+            category_id:     inflow_subcategory.id,
+            assignment_form: { amount: "100.00" }
+          }
+        end.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    context "with a regularly named subcategory of an inflow category" do
+      let(:inflow_subcategory) do
+        create(:category, budget: budget, name: "Paycheck", parent: create(:category, :inflow, budget: budget))
+      end
+
+      it "raises an ActiveRecord::RecordNotFound error" do
+        expect do
+          patch :update, params: {
+            budget_id:       budget.id,
+            category_id:     inflow_subcategory.id,
             assignment_form: { amount: "100.00" }
           }
         end.to raise_error(ActiveRecord::RecordNotFound)
