@@ -22,6 +22,26 @@ describe "Transfer", :mobile do
     expect(page).to have_css("li", text: "#{t("transfers.payee.from", account: checking.name)} $50.00")
   end
 
+  it "pre-selects the only cash account in the from-account picker" do
+    within("[data-controller~='from-account-picker']") do
+      expect(page).to have_css("[role='option'][aria-selected='true']", text: checking.name)
+    end
+  end
+
+  context "with multiple cash accounts" do
+    before do
+      create(:account, budget: budget, name: "Savings")
+
+      visit new_budget_transfer_path(budget)
+    end
+
+    it "does not pre-select a source account" do
+      within("[data-controller~='from-account-picker']") do
+        expect(page).to have_no_css("[role='option'][aria-selected='true']")
+      end
+    end
+  end
+
   context "with a to_account_id in the URL" do
     before do
       visit new_budget_transfer_path(budget, to_account_id: credit_card.id)

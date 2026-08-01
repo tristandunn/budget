@@ -3,16 +3,20 @@
 class TransfersController < ApplicationController
   # Render the new transfer form.
   def new
-    @form     = TransferForm.new(budget: current_budget, to_account: default_to_account)
+    @accounts = accounts
     @budget   = current_budget
-    @accounts = current_budget.accounts.to_a
+    @form     = TransferForm.new(
+      budget:       current_budget,
+      from_account: default_from_account,
+      to_account:   default_to_account
+    )
   end
 
   # Create a transfer between two accounts.
   def create
-    @form     = TransferForm.new(transfer_parameters)
+    @accounts = accounts
     @budget   = current_budget
-    @accounts = current_budget.accounts.to_a
+    @form     = TransferForm.new(transfer_parameters)
 
     if @form.save
       redirect_to budget_account_transactions_path(current_budget, to_account), status: :see_other
@@ -23,14 +27,44 @@ class TransfersController < ApplicationController
 
   private
 
+  # Return the accounts for the current budget.
+  #
+  # @return [Array<Account>] The accounts for the current budget.
+  def accounts
+    @accounts ||= current_budget.accounts.to_a
+  end
+
+  # Return the default source account, which is the budget's only cash account.
+  #
+  # @return [Account] The sole cash account.
+  # @return [nil] When the budget has zero or multiple cash accounts.
+  def default_from_account
+    cash_accounts = accounts.reject(&:credit?)
+
+    if cash_accounts.one?
+      cash_accounts.first
+    end
+  end
+
   # Return the default destination account from the query parameter, if present.
   #
   # @return [Account] The requested credit destination account.
   # @return [nil] When no destination account is provided or it does not resolve to a credit account.
   def default_to_account
-    if params[:to_account_id].present?
-      current_budget.accounts.credit.find_by(id: params[:to_account_id])
+    account = find_account(params[:to_account_id])
+
+    if account&.credit?
+      account
     end
+  end
+
+  # Return the account matching the given identifier.
+  #
+  # @param id [String, nil] The identifier of the account.
+  # @return [Account] The matching account.
+  # @return [nil] When no account matches the identifier.
+  def find_account(id)
+    accounts.find { |account| account.id == id.to_i }
   end
 
   # Return the source account for the transfer.
@@ -38,7 +72,7 @@ class TransfersController < ApplicationController
   # @return [Account] The requested source account.
   # @return [nil] When no source account is provided or it does not exist.
   def from_account
-    current_budget.accounts.find_by(id: parameters[:from_account_id])
+    find_account(parameters[:from_account_id])
   end
 
   # Return the permitted form parameters.
@@ -55,11 +89,7 @@ class TransfersController < ApplicationController
   # @return [Account] The requested destination account.
   # @return [nil] When no destination account is provided or it does not exist.
   def to_account
-    if defined?(@to_account)
-      @to_account
-    else
-      @to_account = current_budget.accounts.find_by(id: parameters[:to_account_id])
-    end
+    find_account(parameters[:to_account_id])
   end
 
   # Return the permitted parameters merged with budget and resolved accounts.

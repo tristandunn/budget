@@ -40,7 +40,11 @@ describe TransfersController do
       end
 
       it "initializes the form without a destination account" do
-        expect(TransferForm).to have_received(:new).with(budget: budget, to_account: nil)
+        expect(TransferForm).to have_received(:new).with(
+          budget:       budget,
+          from_account: checking,
+          to_account:   nil
+        )
       end
     end
 
@@ -52,7 +56,29 @@ describe TransfersController do
       it { is_expected.to respond_with(200) }
 
       it "initializes the form with the resolved destination account" do
-        expect(TransferForm).to have_received(:new).with(budget: budget, to_account: credit_card)
+        expect(TransferForm).to have_received(:new).with(
+          budget:       budget,
+          from_account: checking,
+          to_account:   credit_card
+        )
+      end
+    end
+
+    context "with multiple cash accounts" do
+      before do
+        create(:account, budget: budget, name: "Savings")
+
+        get :new, params: { budget_id: budget.id, to_account_id: credit_card.id }
+      end
+
+      it { is_expected.to respond_with(200) }
+
+      it "initializes the form without a source account" do
+        expect(TransferForm).to have_received(:new).with(
+          budget:       budget,
+          from_account: nil,
+          to_account:   credit_card
+        )
       end
     end
 
@@ -64,7 +90,11 @@ describe TransfersController do
       it { is_expected.to respond_with(200) }
 
       it "initializes the form without a destination account" do
-        expect(TransferForm).to have_received(:new).with(budget: budget, to_account: nil)
+        expect(TransferForm).to have_received(:new).with(
+          budget:       budget,
+          from_account: checking,
+          to_account:   nil
+        )
       end
     end
 
@@ -76,7 +106,11 @@ describe TransfersController do
       it { is_expected.to respond_with(200) }
 
       it "initializes the form without a destination account" do
-        expect(TransferForm).to have_received(:new).with(budget: budget, to_account: nil)
+        expect(TransferForm).to have_received(:new).with(
+          budget:       budget,
+          from_account: checking,
+          to_account:   nil
+        )
       end
     end
 
@@ -90,7 +124,11 @@ describe TransfersController do
       it { is_expected.to respond_with(200) }
 
       it "initializes the form without a destination account" do
-        expect(TransferForm).to have_received(:new).with(budget: budget, to_account: nil)
+        expect(TransferForm).to have_received(:new).with(
+          budget:       budget,
+          from_account: checking,
+          to_account:   nil
+        )
       end
     end
   end
