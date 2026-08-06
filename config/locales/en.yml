@@ -3,6 +3,7 @@ en:
 
   date:
     formats:
+      full_date: "%B %-d, %Y"
       full_month_and_year: "%B %Y"
       month: "%B"
       month_and_year: "%b %Y"
@@ -210,35 +211,20 @@ en:
     add_transaction: "Add transaction"
 
   transactions:
-    qualified_category: "%{category}: %{subcategory}"
-    transfer_category: "Credit Card Payment"
     balances:
       cleared: "Cleared"
       uncleared: "Uncleared"
       working: "Working Balance"
-    transaction:
-      recurring: "Recurring"
     category_picker:
       suggested: "Suggested"
-    reconciled:
-      hide: "Hide Reconciled"
-      show: "Show Reconciled"
-    list:
-      columns:
-        account: "Account"
-        category: "Category"
-        date: "Date"
-        inflow: "Inflow"
-        memo: "Memo"
-        outflow: "Outflow"
-        payee: "Payee"
-        status: "Status"
-      scheduled: "Scheduled"
-    status_indicator:
-      cleared: "Cleared"
-      pending: "Pending"
-      reconciled: "Reconciled"
-      upcoming: "Upcoming"
+    edit:
+      cancel: "Cancel"
+      delete:
+        confirmation: "Are you sure you want to delete this transaction?"
+        submit: "Delete Transaction"
+      submit: "Save"
+      title: "Edit Transaction"
+      transfer_title: "Payment"
     form:
       enter_memo: "Enter a memo..."
       enter_payee: "Enter a Payee"
@@ -254,22 +240,37 @@ en:
         never: "Never"
         weekly: "Weekly"
         yearly: "Yearly"
-    edit:
-      cancel: "Cancel"
-      delete:
-        confirmation: "Are you sure you want to delete this transaction?"
-        submit: "Delete Transaction"
-      submit: "Save"
-      title: "Edit Transaction"
-      transfer_title: "Payment"
     index:
       actions: "Actions"
       empty: "No transactions yet."
       title: "Spending"
+    list:
+      columns:
+        account: "Account"
+        category: "Category"
+        date: "Date"
+        inflow: "Inflow"
+        memo: "Memo"
+        outflow: "Outflow"
+        payee: "Payee"
+        status: "Status"
+      scheduled: "Scheduled"
     new:
       cancel: "Cancel"
       submit: "Save"
       title: "Add Transaction"
+    qualified_category: "%{category}: %{subcategory}"
+    reconciled:
+      hide: "Hide Reconciled"
+      show: "Show Reconciled"
+    status_indicator:
+      cleared: "Cleared"
+      pending: "Pending"
+      reconciled: "Reconciled"
+      upcoming: "Upcoming"
+    transaction:
+      recurring: "Recurring"
+    transfer_category: "Credit Card Payment"
 
   payees:
     edit:

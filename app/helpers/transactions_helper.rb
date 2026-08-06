@@ -27,10 +27,10 @@ module TransactionsHelper
     end
   end
 
-  # Returns "Today", "Yesterday", or the long date format for the given date.
+  # Returns "Today", "Yesterday", or the full date format for the given date.
   #
   # @param date [Date] The date to format.
-  # @return [String] A relative or long-formatted date label.
+  # @return [String] A relative or full-formatted date label.
   def relative_date(date)
     case date
     when Date.current
@@ -38,7 +38,7 @@ module TransactionsHelper
     when Date.yesterday
       t("dates.yesterday")
     else
-      l(date, format: :long)
+      l(date, format: :full_date)
     end
   end
 
