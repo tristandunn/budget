@@ -29,7 +29,7 @@ describe "transactions/_list.html.erb" do
     end
 
     it "renders the date" do
-      expect(html).to have_css("h3", text: I18n.l(date, format: :long))
+      expect(html).to have_css("h3", text: I18n.l(date, format: :full_date))
     end
 
     it "renders the payee" do

@@ -56,10 +56,10 @@ describe TransactionsHelper do
       expect(helper.relative_date(Date.yesterday)).to eq(t("dates.yesterday"))
     end
 
-    it "returns the long date format for older dates" do
+    it "returns the full date format for older dates" do
       date = 2.days.ago.to_date
 
-      expect(helper.relative_date(date)).to eq(I18n.l(date, format: :long))
+      expect(helper.relative_date(date)).to eq(I18n.l(date, format: :full_date))
     end
   end
 
