@@ -1,7 +1,11 @@
 <%# locals: (controller:, placeholder: nil) %>
 <%= tag.div(
       class: "picker hidden absolute inset-0 flex flex-col bg-taupe-100",
-      data:  { "#{controller}-target": "picker" }
+      data:  {
+        action:                 "keydown.esc@window->#{controller}#backOnCloseRequest " \
+                                "dialog:cancel@window->#{controller}#backOnCloseRequest",
+        "#{controller}-target": "picker"
+      }
     ) do %>
   <header class="flex items-center gap-3 p-4">
     <button

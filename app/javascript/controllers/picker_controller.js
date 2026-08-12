@@ -37,6 +37,23 @@ export default class extends Controller {
     this.#closePanel();
   }
 
+  /*
+   * Return to the form on a close request. Cancelling the Escape keydown stops
+   * the browser from raising a close request for the surrounding dialog, while
+   * cancelling the dialog:cancel event claims a request the dialog already
+   * received, such as the back button on Android. Either way the dialog stays
+   * open rather than closing and discarding the form.
+   */
+  backOnCloseRequest(event) {
+    if (!this.pickerTarget.classList.contains("open")) {
+      return;
+    }
+
+    event.preventDefault();
+
+    this.back();
+  }
+
   // Show only items whose label contains the query; an empty query shows all items.
   filter() {
     if (!this.hasSearchTarget) {

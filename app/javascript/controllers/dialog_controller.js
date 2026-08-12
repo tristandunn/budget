@@ -66,9 +66,20 @@ export default class extends Controller {
     }
   }
 
-  // Prevent the Escape key from closing the dialog without animation.
+  /*
+   * Handle a close request, such as the Escape key on desktop or the back
+   * button on Android, preventing the default so the dialog closes with the
+   * slide-out animation. An open panel, such as a picker, can cancel the
+   * announcement to claim the request and close itself instead.
+   */
   cancel(event) {
     event.preventDefault();
+
+    const request = new window.CustomEvent("dialog:cancel", { "cancelable": true });
+
+    if (!window.dispatchEvent(request)) {
+      return;
+    }
 
     this.close();
   }
