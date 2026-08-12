@@ -56,7 +56,9 @@ describe "categories/_category_header.html+desktop.erb" do
     )
   end
 
-  it "wires the collapsible controller to the arrow" do
-    expect(html).to have_css("[data-collapsible-arrow][data-action='click->collapsible#toggle']")
+  it "wires the collapsible controller to the element wrapping the arrow" do
+    expect(html).to have_css(
+      "[data-action='click->collapsible#toggle'] [data-collapsible-arrow]"
+    )
   end
 end
