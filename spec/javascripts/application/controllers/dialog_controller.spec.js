@@ -209,6 +209,19 @@ describe("DialogController", () => {
     expect(controller.close).to.have.been.calledOnce;
   });
 
+  it("does not close when an open panel claims the close request", () => {
+    sinon.stub(controller, "close");
+    sinon.stub(window, "dispatchEvent").returns(false);
+
+    controller.cancel({ "preventDefault": sinon.fake() });
+
+    const request = window.dispatchEvent.firstCall.args[0];
+
+    expect(request.type).to.eq("dialog:cancel");
+    expect(request.cancelable).to.be.true;
+    expect(controller.close).not.to.have.been.called;
+  });
+
   it("dismisses and visits the redirect URL after a form submission", () => {
     const frame = dialog.querySelector("turbo-frame");
     frame.innerHTML = "";

@@ -202,6 +202,42 @@ describe("PickerController", () => {
     });
   });
 
+  describe("#backOnCloseRequest", () => {
+    it("hides the picker and cancels the event when the picker is open", () => {
+      const event = { "preventDefault": sinon.fake() };
+
+      controller.open();
+
+      controller.backOnCloseRequest(event);
+
+      expect(event.preventDefault).to.have.been.called;
+      expect(picker.classList.contains("hidden")).to.be.true;
+    });
+
+    it("ignores the request when the picker is closed", () => {
+      const event = { "preventDefault": sinon.fake() };
+
+      controller.backOnCloseRequest(event);
+
+      expect(event.preventDefault).not.to.have.been.called;
+      expect(picker.classList.contains("hidden")).to.be.true;
+    });
+
+    it("ignores the request while the picker is animating closed", () => {
+      const event = { "preventDefault": sinon.fake() };
+
+      window.matchMedia.returns({ "matches": false });
+
+      controller.open();
+      controller.back();
+
+      controller.backOnCloseRequest(event);
+
+      expect(event.preventDefault).not.to.have.been.called;
+      expect(picker.classList.contains("closing")).to.be.true;
+    });
+  });
+
   describe("#filter", () => {
     it("hides items whose label does not include the query", () => {
       search.value = "alp";

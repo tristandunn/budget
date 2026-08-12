@@ -23,6 +23,30 @@ describe "Transaction" do
     expect(page).to have_text("Test Payee").and(have_text("$13.37"))
   end
 
+  it "closes an open picker on escape without discarding the form", :js do
+    fill_in t("transactions.form.enter_memo"), with: "Groceries"
+
+    find("[data-payee-picker-target='display']").click
+
+    search = find("input[data-payee-picker-target='search']")
+    search.send_keys("Test")
+    search.send_keys(:escape)
+
+    expect(page).to have_no_css("input[data-payee-picker-target='search']")
+      .and(have_field(t("transactions.form.enter_memo"), with: "Groceries"))
+  end
+
+  it "closes an open picker on a close request without discarding the form", :js do
+    fill_in t("transactions.form.enter_memo"), with: "Groceries"
+
+    find("[data-payee-picker-target='display']").click
+
+    find_by_id("transaction_dialog_modal").execute_script("this.requestClose()")
+
+    expect(page).to have_no_css("input[data-payee-picker-target='search']")
+      .and(have_field(t("transactions.form.enter_memo"), with: "Groceries"))
+  end
+
   it "displays a scheduled recurring transaction", :js do
     fill_in t("activemodel.attributes.transaction_form.date"), with: 1.month.from_now.to_date.to_s
     fill_in_frequency(:monthly)

@@ -21,6 +21,14 @@ describe "shared/_picker.html.erb" do
     expect(html).to have_css("button[data-action='example-picker#back']")
   end
 
+  it "wires close requests to the controller" do
+    expect(html).to have_css(
+      "div[data-example-picker-target='picker']" \
+      "[data-action='keydown.esc@window->example-picker#backOnCloseRequest " \
+      "dialog:cancel@window->example-picker#backOnCloseRequest']"
+    )
+  end
+
   it "yields the block inside the scroll region" do
     expect(html).to have_text("BLOCK_CONTENT")
   end
