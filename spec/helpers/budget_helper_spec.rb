@@ -143,4 +143,26 @@ describe BudgetHelper do
       it { is_expected.to eq(t("categories.show.target.percent_funded", percentage: 75)) }
     end
   end
+
+  describe "#upcoming_color" do
+    subject { helper.upcoming_color(amount) }
+
+    context "when the amount is negative" do
+      let(:amount) { -1 }
+
+      it { is_expected.to eq("bg-yellow-100") }
+    end
+
+    context "when the amount is zero" do
+      let(:amount) { 0 }
+
+      it { is_expected.to eq("bg-lime-100") }
+    end
+
+    context "when the amount is positive" do
+      let(:amount) { 1 }
+
+      it { is_expected.to eq("bg-lime-100") }
+    end
+  end
 end

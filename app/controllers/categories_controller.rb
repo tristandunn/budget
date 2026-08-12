@@ -7,6 +7,10 @@ class CategoriesController < ApplicationController
     @category                 = category
     @budget_snapshot          = budget_snapshot
     @previous_budget_snapshot = previous_budget_snapshot
+    @upcoming_transactions    = UpcomingTransactions.new(
+      budget_snapshot: @budget_snapshot,
+      category:        @category
+    )
   end
 
   # Render the summary for the selected subcategories.

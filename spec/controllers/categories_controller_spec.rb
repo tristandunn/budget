@@ -12,7 +12,15 @@ describe CategoriesController do
   it { is_expected.to be_a(ApplicationController) }
 
   describe "#show" do
-    let(:subcategory) { create(:category, :subcategory, budget: budget) }
+    let(:subcategory)           { create(:category, :subcategory, budget: budget) }
+    let(:upcoming_transactions) { instance_double(UpcomingTransactions) }
+
+    before do
+      allow(UpcomingTransactions).to receive(:new).with(
+        budget_snapshot: an_instance_of(BudgetSnapshot),
+        category:        subcategory
+      ).and_return(upcoming_transactions)
+    end
 
     context "when on the first month" do
       before do
@@ -36,6 +44,10 @@ describe CategoriesController do
 
       it "assigns no previous budget snapshot" do
         expect(assigns(:previous_budget_snapshot)).to be_nil
+      end
+
+      it "assigns the upcoming transactions" do
+        expect(assigns(:upcoming_transactions)).to eq(upcoming_transactions)
       end
     end
 

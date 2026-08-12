@@ -80,6 +80,7 @@ en:
       activity: "Activity"
       assigned: "Assigned"
       available: "Available"
+      available_after_upcoming: "Available After Upcoming"
       balance: "Balance"
       done: "Done"
       rename: "Rename Category"
@@ -105,6 +106,9 @@ en:
         snoozed_label: "Target snoozed for this month."
         to_go: "To go"
         unsnooze: "Unsnooze for this month"
+      upcoming:
+        one: "%{count} Upcoming Transaction"
+        other: "%{count} Upcoming Transactions"
     subcategory_row:
       select: "Select %{name}"
     summary:
