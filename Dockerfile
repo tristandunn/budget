@@ -16,7 +16,7 @@ WORKDIR /rails
 
 # Install dependency requirements.
 RUN apk -U upgrade \
-  && apk add --no-cache bash gcompat jemalloc libxml2-dev libxslt-dev sqlite tzdata yaml-dev
+  && apk add --no-cache bash jemalloc sqlite tzdata
 
 # Create a builder image for Ruby.
 FROM base AS build
