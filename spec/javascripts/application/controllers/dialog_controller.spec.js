@@ -15,9 +15,7 @@ describe("DialogController", () => {
     });
     sinon.stub(window, "clearTimeout");
 
-    window.matchMedia = () => {
-      return { "matches": false };
-    };
+    stubMatchMedia(false);
 
     dialog = document.createElement("dialog");
     dialog.showModal = sinon.fake();
@@ -31,10 +29,6 @@ describe("DialogController", () => {
       "scope": { "element": document.createElement("div") }
     });
     controller.dialogTarget = dialog;
-  });
-
-  afterEach(() => {
-    sinon.restore();
   });
 
   it("opens the dialog when open is called", () => {
@@ -55,12 +49,14 @@ describe("DialogController", () => {
   });
 
   it("opens without reflow when prefers-reduced-motion is enabled", () => {
-    sinon.stub(window, "matchMedia").returns({ "matches": true });
+    window.matchMedia.returns({ "matches": true });
+
+    const order = recordTransitionOrder(dialog);
 
     controller.open();
 
+    expect(order).to.eql(["add:open"]);
     expect(dialog.showModal).to.have.been.calledOnce;
-    expect(dialog.classList.contains("open")).to.be.true;
   });
 
   it("adds the closing class when close is called", () => {
@@ -70,23 +66,7 @@ describe("DialogController", () => {
   });
 
   it("forces a reflow before adding the closing class on close", () => {
-    const order = [];
-
-    Object.defineProperty(dialog, "offsetHeight", {
-      "configurable": true,
-      "get": () => {
-        order.push("reflow");
-
-        return 0;
-      }
-    });
-
-    const originalAdd = dialog.classList.add.bind(dialog.classList);
-    sinon.stub(dialog.classList, "add").callsFake((...args) => {
-      order.push(`add:${args.join(",")}`);
-
-      return originalAdd(...args);
-    });
+    const order = recordTransitionOrder(dialog);
 
     controller.close();
 
@@ -99,23 +79,7 @@ describe("DialogController", () => {
     frame.src = "/redirected";
     globalThis.Turbo = { "visit": sinon.fake() };
 
-    const order = [];
-
-    Object.defineProperty(dialog, "offsetHeight", {
-      "configurable": true,
-      "get": () => {
-        order.push("reflow");
-
-        return 0;
-      }
-    });
-
-    const originalAdd = dialog.classList.add.bind(dialog.classList);
-    sinon.stub(dialog.classList, "add").callsFake((...args) => {
-      order.push(`add:${args.join(",")}`);
-
-      return originalAdd(...args);
-    });
+    const order = recordTransitionOrder(dialog);
 
     controller.open();
 
@@ -163,7 +127,7 @@ describe("DialogController", () => {
   it("tears down an in-flight close when reduced motion is toggled on", () => {
     controller.close();
 
-    sinon.stub(window, "matchMedia").returns({ "matches": true });
+    window.matchMedia.returns({ "matches": true });
 
     controller.close();
     dialog.dispatchEvent(new window.Event("transitionend"));
@@ -207,7 +171,7 @@ describe("DialogController", () => {
   });
 
   it("closes immediately when prefers-reduced-motion is enabled", () => {
-    sinon.stub(window, "matchMedia").returns({ "matches": true });
+    window.matchMedia.returns({ "matches": true });
 
     dialog.classList.add("open");
     controller.close();
@@ -308,7 +272,7 @@ describe("DialogController", () => {
     frame.src = "/redirected";
 
     globalThis.Turbo = { "visit": sinon.fake() };
-    sinon.stub(window, "matchMedia").returns({ "matches": true });
+    window.matchMedia.returns({ "matches": true });
 
     controller.open();
 

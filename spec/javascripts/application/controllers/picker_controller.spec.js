@@ -67,7 +67,7 @@ describe("PickerController", () => {
     controller.itemTargets       = [alpha, beta, gamma];
     controller.groupTargets      = [groupOne, groupTwo];
 
-    sinon.stub(window, "matchMedia").returns({ "matches": true });
+    stubMatchMedia(true);
 
     scheduledTimeouts = [];
 
@@ -99,12 +99,14 @@ describe("PickerController", () => {
       document.body.removeChild(search);
     });
 
-    it("forces a reflow when motion is enabled", () => {
+    it("forces a reflow before adding the open class", () => {
       window.matchMedia.returns({ "matches": false });
+
+      const order = recordTransitionOrder(picker);
 
       controller.open();
 
-      expect(picker.classList.contains("open")).to.be.true;
+      expect(order).to.eql(["reflow", "add:open"]);
     });
 
     it("reveals items that were hidden by a previous search", () => {

@@ -12,10 +12,6 @@ describe("DialogDismisserController", () => {
     });
   });
 
-  afterEach(() => {
-    sinon.restore();
-  });
-
   it("dispatches a bubbling dialog:close event on connect", () => {
     const listener = sinon.fake();
     element.addEventListener("dialog:close", listener);

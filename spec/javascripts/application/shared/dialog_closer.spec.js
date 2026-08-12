@@ -27,10 +27,6 @@ describe("DialogCloser", () => {
     closer     = new DialogCloser();
   });
 
-  afterEach(() => {
-    sinon.restore();
-  });
-
   describe("#close", () => {
     it("runs startClose to trigger the slide-out", () => {
       closer.close(element, startClose, onClosed);
