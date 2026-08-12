@@ -66,7 +66,9 @@ export default [
         "expect": "readonly",
         "global": "readonly",
         "it": "readonly",
-        "sinon": "readonly"
+        "recordTransitionOrder": "readonly",
+        "sinon": "readonly",
+        "stubMatchMedia": "readonly"
       }
     },
     "rules": {

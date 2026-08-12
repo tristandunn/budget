@@ -5,6 +5,8 @@
   "require": [
     "spec/javascripts/register.js",
     "spec/javascripts/helpers.js",
-    "spec/javascripts/helpers/hooks.js"
+    "spec/javascripts/helpers/hooks.js",
+    "spec/javascripts/helpers/match-media.js",
+    "spec/javascripts/helpers/transitions.js"
   ]
 }
