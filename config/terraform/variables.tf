@@ -5,7 +5,7 @@ variable "droplet_name" {
 
 variable "droplet_image" {
   type    = string
-  default = "ubuntu-24-10-x64"
+  default = "ubuntu-26-04-x64"
 }
 
 variable "droplet_region" {

@@ -1,8 +1,9 @@
 resource "digitalocean_droplet" "web" {
-  name   = var.droplet_name
-  image  = var.droplet_image
-  region = var.droplet_region
-  size   = var.droplet_size
+  name       = var.droplet_name
+  image      = var.droplet_image
+  region     = var.droplet_region
+  size       = var.droplet_size
+  monitoring = true
 
   connection {
     host    = self.ipv4_address
