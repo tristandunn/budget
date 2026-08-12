@@ -13,7 +13,7 @@
 /config/master.key
 
 # Ignore Terraform files that may contain credentials.
-/config/terraform/.terraform*
+/config/terraform/.terraform/
 /config/terraform/terraform.tfstate*
 /config/terraform/terraform.tfvars
 
