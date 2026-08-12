@@ -61,7 +61,7 @@ describe "categories/edit.html.erb" do
 
     it "displays the name error message" do
       expect(html).to have_css(
-        "p",
+        "[role='alert']",
         normalize_ws: true,
         text:         "#{CategoryForm.human_attribute_name(:name).humanize} #{t("errors.messages.blank")}."
       )
