@@ -1,4 +1,4 @@
-<%# locals: (budget:, category:, budget_snapshot:, previous_budget_snapshot:) %>
+<%# locals: (budget:, category:, budget_snapshot:, previous_budget_snapshot:, upcoming_transactions:) %>
 <div class="p-4 space-y-4">
   <div
     class="group bg-white rounded-xl"
@@ -43,6 +43,22 @@
           <%= number_to_money budget_snapshot.available_for(category) %>
         </span>
       </div>
+
+      <% if upcoming_transactions.any? %>
+        <div class="p-4">
+          <div class="rounded-xl p-4 space-y-2 text-sm <%= upcoming_color(upcoming_transactions.available_after) %>">
+            <div class="flex items-center justify-between">
+              <span><%= t("categories.show.upcoming", count: upcoming_transactions.count) %></span>
+              <span><%= number_to_money upcoming_transactions.total %></span>
+            </div>
+
+            <div class="flex items-center justify-between">
+              <span><%= t("categories.show.available_after_upcoming") %></span>
+              <span><%= number_to_money upcoming_transactions.available_after %></span>
+            </div>
+          </div>
+        </div>
+      <% end %>
     </div>
   </div>
 

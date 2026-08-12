@@ -94,4 +94,18 @@ module BudgetHelper
       "text-green-600"
     end
   end
+
+  # Returns the CSS class for the upcoming transactions card, signaling yellow
+  # when the upcoming transactions would overspend the category and lime when
+  # they would not.
+  #
+  # @param amount [Integer] The available amount after the upcoming transactions, in cents.
+  # @return [String] The CSS class for the upcoming transactions card.
+  def upcoming_color(amount)
+    if amount.negative?
+      "bg-yellow-100"
+    else
+      "bg-lime-100"
+    end
+  end
 end
