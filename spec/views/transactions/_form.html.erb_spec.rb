@@ -22,6 +22,12 @@ describe "transactions/_form.html.erb" do
     )
   end
 
+  it "renders the amount field blank with a placeholder" do
+    expect(html).to have_css(
+      %(input#transaction_form_amount:not([value])[placeholder="#{t("transactions.form.amount_placeholder")}"])
+    )
+  end
+
   it "renders the payee hidden field" do
     expect(html).to have_field("transaction_form_payee", type: :hidden)
   end

@@ -230,6 +230,7 @@ en:
       title: "Edit Transaction"
       transfer_title: "Payment"
     form:
+      amount_placeholder: "$0.00"
       enter_memo: "Enter a memo..."
       enter_payee: "Enter a Payee"
       search_categories: "Find a category"
@@ -291,7 +292,7 @@ en:
 
   targets:
     edit:
-      amount_placeholder: "0.00"
+      amount_placeholder: "$0.00"
       cancel: "Cancel"
       create_title: "Create Target"
       delete: "Delete Target"
@@ -306,6 +307,7 @@ en:
 
   transfers:
     form:
+      amount_placeholder: "$0.00"
       enter_memo: "Enter a memo..."
     new:
       cancel: "Cancel"

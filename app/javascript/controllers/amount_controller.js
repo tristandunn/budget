@@ -3,7 +3,8 @@ import { Controller } from "@hotwired/stimulus";
 /*
  * Formats a currency input as the user types, pastes, or presses keys,
  * tracking the sign and restoring the cursor position while typing reformats
- * the value. Unformats the value back to a plain number when the form is
+ * the value. Values without any digits are left blank so a placeholder remains
+ * visible. Unformats the value back to a plain number when the form is
  * submitted.
  */
 export default class extends Controller {
@@ -44,7 +45,7 @@ export default class extends Controller {
   input() {
     const oldValue   = this.element.value,
           oldCursor  = this.element.selectionStart,
-          digitCount = this.#countTypedCharacters(oldValue.slice(0, oldCursor));
+          digitCount = this.#countCursorCharacters(oldValue.slice(0, oldCursor));
 
     this.element.value = this.#format(oldValue);
 
@@ -69,9 +70,7 @@ export default class extends Controller {
       this.#positive = true;
       sign = "";
     } else {
-      sign = this.#positive
-        ? ""
-        : "-";
+      sign = this.#sign();
     }
 
     this.#render(`${sign}${cleaned}`);
@@ -94,17 +93,19 @@ export default class extends Controller {
     } else if (event.key === "+") {
       this.#positive = true;
       this.#makePositive();
+    } else if (event.key === ".") {
+      this.#render(`${this.#sign()}0.`);
     } else if ((/^\d$/).test(event.key)) {
-      const sign = this.#positive
-        ? ""
-        : "-";
-
-      this.#render(`${sign}${event.key}`);
+      this.#render(`${this.#sign()}${event.key}`);
     }
   }
 
-  #countTypedCharacters(text) {
-    return (text.match(/[\d.]/g) || []).length;
+  #countCursorCharacters(text) {
+    const characters = text.match(/[\d.]/g) || [];
+
+    return characters[0] === "."
+      ? characters.length + 1
+      : characters.length;
   }
 
   #format(value) {
@@ -112,8 +113,8 @@ export default class extends Controller {
           isNegative = text.includes("-"),
           cleaned    = text.replace(/[^\d.]/g, "");
 
-    if (cleaned === "" || cleaned === "." || cleaned === "0") {
-      return "$0.00";
+    if (cleaned === "") {
+      return "";
     }
 
     const parts        = cleaned.split("."),
@@ -122,7 +123,7 @@ export default class extends Controller {
           decimalPart  = parts.length > 1
             ? `.${fractional.slice(0, 2)}`
             : "",
-          sign         = isNegative && parseFloat(cleaned)
+          sign         = isNegative
             ? "-"
             : "";
 
@@ -136,7 +137,9 @@ export default class extends Controller {
   }
 
   #isZero() {
-    return !parseFloat(this.#unformat(this.element.value));
+    const text = this.#unformat(this.element.value);
+
+    return !parseFloat(text) && !text.includes(".");
   }
 
   #makePositive() {
@@ -199,7 +202,13 @@ export default class extends Controller {
       return true;
     }
 
-    return event.key === ".";
+    return event.key === "." && !this.#isZero() && !this.#isAllSelected();
+  }
+
+  #sign() {
+    return this.#positive
+      ? ""
+      : "-";
   }
 
   #toggleSign() {

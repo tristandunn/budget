@@ -140,23 +140,33 @@ describe("AmountController", () => {
     });
 
     it("places the cursor after the dollar sign when there are no digits before it", () => {
+      element.value = "$.";
+      element.setSelectionRange(1, 1);
+
+      instance.input();
+
+      expect(element.value).to.eq("$0.");
+      expect(element.selectionStart).to.eq(1);
+    });
+
+    it("clears the value when only the dollar sign remains", () => {
       element.value = "$";
       element.setSelectionRange(1, 1);
 
       instance.input();
 
-      expect(element.value).to.eq("$0.00");
-      expect(element.selectionStart).to.eq(1);
+      expect(element.value).to.eq("");
+      expect(element.selectionStart).to.eq(0);
     });
 
-    it("places the cursor after the dollar sign for a negative value with no digits", () => {
+    it("clears the value when only a negative dollar sign remains", () => {
       element.value = "-$";
       element.setSelectionRange(2, 2);
 
       instance.input();
 
-      expect(element.value).to.eq("$0.00");
-      expect(element.selectionStart).to.eq(1);
+      expect(element.value).to.eq("");
+      expect(element.selectionStart).to.eq(0);
     });
 
     it("places the cursor at the end when the formatted value has fewer typed characters", () => {
@@ -206,12 +216,12 @@ describe("AmountController", () => {
         expect(element.value).to.eq("$42.50");
       });
 
-      it("keeps an empty value at zero", () => {
+      it("keeps an empty value blank", () => {
         element.value = "";
 
         instance.keydown(event);
 
-        expect(element.value).to.eq("$0.00");
+        expect(element.value).to.eq("");
       });
 
       it("prevents the default behavior", () => {
@@ -263,12 +273,12 @@ describe("AmountController", () => {
         expect(element.value).to.eq("$42.50");
       });
 
-      it("keeps an empty value at zero", () => {
+      it("keeps an empty value blank", () => {
         element.value = "";
 
         instance.keydown(event);
 
-        expect(element.value).to.eq("$0.00");
+        expect(element.value).to.eq("");
       });
 
       it("prevents the default behavior", () => {
@@ -295,6 +305,8 @@ describe("AmountController", () => {
           "cancelable": true,
           "key": "5"
         });
+
+        element.value = "0";
       });
 
       it("replaces the value with the negative digit", () => {
@@ -344,6 +356,33 @@ describe("AmountController", () => {
         instance.keydown(event);
 
         expect(element.classList.contains("text-red-700")).to.eq(true);
+      });
+    });
+
+    describe("when pressing a digit and the value is a zero with a decimal point", () => {
+      let event;
+
+      beforeEach(() => {
+        event = new window.KeyboardEvent("keydown", {
+          "cancelable": true,
+          "key": "5"
+        });
+      });
+
+      it("appends to a trailing decimal point instead of replacing", () => {
+        element.value = "$0.";
+
+        instance.keydown(event);
+
+        expect(event.defaultPrevented).to.eq(false);
+      });
+
+      it("appends to a zero fraction instead of replacing", () => {
+        element.value = "$0.0";
+
+        instance.keydown(event);
+
+        expect(event.defaultPrevented).to.eq(false);
       });
     });
 
@@ -512,12 +551,12 @@ describe("AmountController", () => {
         expect(element.value).to.eq("$42.50");
       });
 
-      it("ignores non-numeric content", () => {
+      it("clears the value for non-numeric content", () => {
         const event = createPasteEvent("abc");
 
         instance.paste(event);
 
-        expect(element.value).to.eq("$0.00");
+        expect(element.value).to.eq("");
       });
 
       it("prevents the default behavior", () => {
@@ -666,6 +705,8 @@ describe("AmountController", () => {
     });
 
     it("uses the unsigned digit when pressing a digit on a zero value", () => {
+      element.value = "0";
+
       instance.connect();
 
       const event = new window.KeyboardEvent("keydown", {
@@ -680,20 +721,139 @@ describe("AmountController", () => {
   });
 
   describe("when the value is empty or only a sign", () => {
-    it("falls back to zero for an empty value", () => {
+    it("leaves an empty value blank so the placeholder remains visible", () => {
       element.value = "";
 
       instance.connect();
 
-      expect(element.value).to.eq("$0.00");
+      expect(element.value).to.eq("");
     });
 
-    it("falls back to zero for a lone minus sign", () => {
+    it("leaves a lone minus sign blank", () => {
       element.value = "-";
 
       instance.connect();
 
-      expect(element.value).to.eq("$0.00");
+      expect(element.value).to.eq("");
+    });
+  });
+
+  describe("when the value is zero or only a decimal point", () => {
+    it("formats a lone zero without decimals", () => {
+      element.value = "0";
+
+      instance.connect();
+
+      expect(element.value).to.eq("$0");
+    });
+
+    it("keeps a lone decimal point so a fraction can be typed", () => {
+      element.value = ".";
+
+      instance.connect();
+
+      expect(element.value).to.eq("$0.");
+    });
+  });
+
+  describe("when pressing the decimal point key", () => {
+    let event;
+
+    beforeEach(() => {
+      event = new window.KeyboardEvent("keydown", {
+        "cancelable": true,
+        "key": "."
+      });
+
+      element.value = "";
+    });
+
+    it("starts the fraction with a leading zero", () => {
+      instance.keydown(event);
+
+      expect(event.defaultPrevented).to.eq(true);
+      expect(element.value).to.eq("-$0.");
+    });
+
+    it("keeps the value negative so the sign survives the fraction", () => {
+      instance.keydown(event);
+
+      element.value = `${element.value}5`;
+
+      instance.input();
+
+      expect(element.value).to.eq("-$0.5");
+    });
+
+    it("uses no sign after pressing +", () => {
+      const plusEvent = new window.KeyboardEvent("keydown", {
+        "cancelable": true,
+        "key": "+"
+      });
+
+      instance.keydown(plusEvent);
+      instance.keydown(event);
+
+      expect(element.value).to.eq("$0.");
+    });
+
+    it("replaces a fully selected value", () => {
+      element.value = "42.50";
+      instance.element.setSelectionRange(0, element.value.length);
+
+      instance.keydown(event);
+
+      expect(element.value).to.eq("-$0.");
+    });
+  });
+
+  describe("when restoring the cursor in a value without an integer part", () => {
+    it("places the cursor inside the fraction", () => {
+      element.value = "$.";
+      element.setSelectionRange(2, 2);
+
+      instance.input();
+
+      expect(element.value).to.eq("$0.");
+      expect(element.selectionStart).to.eq(3);
+    });
+
+    it("keeps the cursor after a digit typed into the fraction", () => {
+      element.value = "$0.5";
+      element.setSelectionRange(4, 4);
+
+      instance.input();
+
+      expect(element.value).to.eq("$0.5");
+      expect(element.selectionStart).to.eq(4);
+    });
+
+    it("places the cursor after a fraction that was pasted in", () => {
+      element.value = ".5";
+      element.setSelectionRange(2, 2);
+
+      instance.input();
+
+      expect(element.value).to.eq("$0.5");
+      expect(element.selectionStart).to.eq(4);
+    });
+  });
+
+  describe("when formatting an amount below a dollar", () => {
+    it("formats the completed fraction", () => {
+      element.value = "$0.50";
+
+      instance.input();
+
+      expect(element.value).to.eq("$0.50");
+    });
+
+    it("keeps the sign on a negative fraction", () => {
+      element.value = "-$0.5";
+
+      instance.input();
+
+      expect(element.value).to.eq("-$0.5");
     });
   });
 
@@ -708,20 +868,20 @@ describe("AmountController", () => {
   });
 
   describe("when the value has only the formatted prefix", () => {
-    it("falls back to zero for a positive value", () => {
+    it("leaves a positive value blank", () => {
       element.value = "$";
 
       instance.connect();
 
-      expect(element.value).to.eq("$0.00");
+      expect(element.value).to.eq("");
     });
 
-    it("falls back to zero for a negative value", () => {
+    it("leaves a negative value blank", () => {
       element.value = "-$";
 
       instance.connect();
 
-      expect(element.value).to.eq("$0.00");
+      expect(element.value).to.eq("");
     });
   });
 

@@ -68,7 +68,13 @@ describe TransferForm, type: :form do
     context "when the destination credit account is overpaid" do
       let(:form) { described_class.new(to_account: create(:account, :credit, balance: 5000)) }
 
-      it { is_expected.to eq("0.00") }
+      it { is_expected.to be_nil }
+    end
+
+    context "when the destination credit account has no balance owed" do
+      let(:form) { described_class.new(to_account: create(:account, :credit, balance: 0)) }
+
+      it { is_expected.to be_nil }
     end
   end
 
