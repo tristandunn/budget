@@ -7,7 +7,7 @@
       <%= f.text_field :amount,
                        autocomplete: "off",
                        autofocus:    true,
-                       class:        "w-full text-4xl font-semibold text-center bg-transparent outline-none",
+                       class:        "w-full text-4xl font-semibold text-center bg-transparent outline-none placeholder:text-taupe-400",
                        data:         {
                          action:                  "input->amount#input keydown->amount#keydown paste->amount#paste",
                          "amount-positive-value": "true",
@@ -15,8 +15,9 @@
                          "transfer-form-target":  "amount"
                        },
                        inputmode:    "decimal",
+                       placeholder:  t(".amount_placeholder"),
                        required:     true,
-                       value:        form.amount || form.default_amount || "0" %>
+                       value:        form.amount || form.default_amount %>
     </div>
 
     <div class="mt-6 bg-white rounded-xl divide-y divide-taupe-200">

@@ -20,6 +20,13 @@ describe "Category target creation" do
       end
     end
 
+    it "opens with a blank amount so the placeholder is visible" do
+      within "#category_panel" do
+        expect(page).to have_field(t("activemodel.attributes.target_form.target_amount_input"),
+                                   with: "")
+      end
+    end
+
     it "creates a target inline and renders the funded progress" do
       within "#category_panel" do
         fill_in t("activemodel.attributes.target_form.target_amount_input"), with: "200.00"

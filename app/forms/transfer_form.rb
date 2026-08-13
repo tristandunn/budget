@@ -24,14 +24,18 @@ class TransferForm < BaseForm
   # Return the default amount derived from the destination credit account's
   # cleared balance owed.
   #
-  # The balance is clamped at zero so an overpaid account never produces a
-  # negative default.
+  # Returns nil when nothing is owed, so an overpaid account leaves the input
+  # blank and its placeholder visible rather than defaulting to zero.
   #
   # @return [String] The default amount.
-  # @return [nil] When there is no credit destination account.
+  # @return [nil] When there is no credit destination account or nothing is owed.
   def default_amount
     if to_account&.credit?
-      Money.from_cents([-to_account.cleared_balance, 0].max).to_s
+      owed = -to_account.cleared_balance
+
+      if owed.positive?
+        Money.from_cents(owed).to_s
+      end
     end
   end
 

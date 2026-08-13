@@ -54,6 +54,12 @@ describe "transfers/_form.html.erb" do
     )
   end
 
+  it "renders the amount field blank with a placeholder" do
+    expect(html).to have_css(
+      %(input#transfer_form_amount:not([value])[placeholder="#{t("transfers.form.amount_placeholder")}"])
+    )
+  end
+
   it "renders the date field" do
     expect(html).to have_field("transfer_form_date")
   end
