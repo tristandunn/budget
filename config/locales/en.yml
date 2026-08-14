@@ -55,10 +55,7 @@ en:
         record_payment: "Record Payment"
       index:
         back: "Back"
-        cleared_balance: "Cleared"
         empty: "No transactions yet."
-        uncleared_balance: "Uncleared"
-        working_balance: "Working Balance"
       reconcile:
         accept: "Yes"
         decline: "No"

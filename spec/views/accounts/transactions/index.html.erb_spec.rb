@@ -51,6 +51,10 @@ describe "accounts/transactions/index.html.erb" do
     expect(html).to have_css("#uncleared_balance", text: number_to_money(account.uncleared_balance))
   end
 
+  it "styles the balances container for mobile" do
+    expect(html).to have_css("div.border-y.border-taupe-200.px-4:has(#cleared_balance)")
+  end
+
   it "renders the actions bar partial" do
     expect(html).to include("ACTIONS_BAR_PARTIAL")
   end

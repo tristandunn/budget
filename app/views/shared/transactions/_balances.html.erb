@@ -1,5 +1,5 @@
-<%# locals: (record:, prefix: "") %>
-<div class="flex items-baseline gap-3 border-y border-taupe-300 bg-white px-6 py-2">
+<%# locals: (record:, prefix: "", container_class: "border-taupe-300 px-6") %>
+<div class="flex items-baseline gap-3 border-y bg-white py-2 <%= container_class %>">
   <div>
     <p id="<%= prefix %>cleared_balance" class="text-base font-semibold">
       <%= number_to_money record.cleared_balance %>
