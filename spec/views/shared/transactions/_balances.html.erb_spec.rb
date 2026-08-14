@@ -38,6 +38,23 @@ describe "shared/transactions/_balances.html.erb" do
     expect(html).to have_text(t("transactions.balances.working"))
   end
 
+  it "styles the balances container with the default classes" do
+    expect(html).to have_css("div.border-y.border-taupe-300.px-6:has(#cleared_balance)")
+  end
+
+  context "when given a container class" do
+    let(:locals) { { record: record, container_class: "border-taupe-200 px-4" } }
+
+    it "styles the balances container with the given classes" do
+      expect(html).to have_css("div.border-y.border-taupe-200.px-4:has(#cleared_balance)")
+    end
+
+    it "does not retain the default styling" do
+      expect(html).to have_no_css("div.border-taupe-300:has(#cleared_balance)")
+        .and(have_no_css("div.px-6:has(#cleared_balance)"))
+    end
+  end
+
   context "when given a prefix" do
     let(:locals) { { record: record, prefix: "budget_" } }
 
