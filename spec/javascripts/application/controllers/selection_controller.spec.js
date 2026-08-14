@@ -336,6 +336,41 @@ describe("SelectionController", () => {
         instance.edit({ "target": name });
       }).to.not.throw();
     });
+
+    it("ignores clicks inside the selection label", () => {
+      const { link, name } = rowWithAssignment(alpha),
+            label = document.createElement("label"),
+            span  = document.createElement("span");
+
+      label.appendChild(span);
+      name.parentNode.appendChild(label);
+
+      instance.edit({ "target": span });
+
+      expect(link.click).to.not.have.been.called;
+    });
+
+    it("ignores clicks on a link", () => {
+      const { link } = rowWithAssignment(alpha);
+
+      instance.edit({ "target": link });
+
+      expect(link.click).to.not.have.been.called;
+    });
+
+    it("ignores clicks inside the rename popover", () => {
+      const { link, name } = rowWithAssignment(alpha),
+            menu   = document.createElement("div"),
+            button = document.createElement("button");
+
+      menu.classList.add("rename-menu");
+      menu.appendChild(button);
+      name.parentNode.appendChild(menu);
+
+      instance.edit({ "target": button });
+
+      expect(link.click).to.not.have.been.called;
+    });
   });
 
   describe("#selectRow", () => {
@@ -560,6 +595,29 @@ describe("SelectionController", () => {
       expect(panelFrame.getAttribute("src")).to.eq("/budgets/1/categories/1/panel");
 
       dialog.remove();
+    });
+  });
+
+  describe("when a rename popover is open", () => {
+    it("keeps the selection on the escape key", () => {
+      const menu  = document.createElement("div"),
+            frame = document.createElement("turbo-frame");
+
+      menu.classList.add("rename-menu");
+      frame.setAttribute("src", "/budgets/1/categories/1/edit");
+      menu.appendChild(frame);
+      document.body.appendChild(menu);
+
+      rowFor(alpha);
+      alpha.checked = true;
+      instance.toggle({ "target": alpha });
+
+      document.dispatchEvent(new window.KeyboardEvent("keydown", { "key": "Escape" }));
+
+      expect(alpha.checked).to.eq(true);
+      expect(panelFrame.getAttribute("src")).to.eq("/budgets/1/categories/1/panel");
+
+      menu.remove();
     });
   });
 });

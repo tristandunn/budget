@@ -1,0 +1,16 @@
+<%# locals: (form:, field_class: "w-full bg-transparent border-none outline-none text-base placeholder:text-taupe-400 focus:ring-0") %>
+<%= form.label :name, class: "sr-only" %>
+
+<%= form.text_field :name,
+                    autocapitalize: "words",
+                    autocorrect:    "off",
+                    autofocus:      true,
+                    class:          field_class,
+                    placeholder:    t("categories.edit.enter_name"),
+                    required:       true %>
+
+<% if form.object.errors[:name].present? %>
+  <p role="alert" class="mt-2 text-xs text-red-700">
+    <%= CategoryForm.human_attribute_name(:name).humanize %> <%= form.object.errors[:name].first %>.
+  </p>
+<% end %>

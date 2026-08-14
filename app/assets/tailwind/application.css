@@ -129,6 +129,15 @@ tr[data-selected] {
     }
   }
 
+  /* Inline rename popover: stays hidden until its turbo-frame finishes loading. */
+  .rename-menu {
+    display: none;
+
+    &:has(turbo-frame[complete]) {
+      display: block;
+    }
+  }
+
   /* Hide number input spinners */
   .no-spinner::-webkit-outer-spin-button,
   .no-spinner::-webkit-inner-spin-button {

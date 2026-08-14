@@ -34,7 +34,7 @@ describe "Category upcoming transactions", :js do
     end
 
     it "summarizes them and the available amount after them" do
-      click_button(subcategory.name)
+      check(subcategory.name)
 
       within("#category_panel") do
         expect(page).to have_text(t("categories.show.upcoming", count: 2))
@@ -51,7 +51,7 @@ describe "Category upcoming transactions", :js do
     end
 
     it "omits the upcoming summary" do
-      click_button(subcategory.name)
+      check(subcategory.name)
 
       within("#category_panel") do
         expect(page).to have_text(subcategory.name)

@@ -105,12 +105,6 @@ describe "budgets/show.html+desktop.erb" do
     expect(html).to include("SUBCATEGORY_ROW_PARTIAL")
   end
 
-  it "renders the category rename dialog" do
-    expect(html).to have_css(
-      "dialog#category_rename_dialog_modal turbo-frame#category_rename_dialog"
-    )
-  end
-
   context "when on the current month" do
     it "renders the month and year as plain text" do
       expect(html).to have_no_link(

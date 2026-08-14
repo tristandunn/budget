@@ -29,6 +29,10 @@ describe "categories/_subcategory_row.html+desktop.erb" do
     expect(html).to have_css("tr##{dom_id(subcategory, :row)}")
   end
 
+  it "opens the assignment when the row is clicked" do
+    expect(html).to have_css("tr[data-action~='click->selection#edit']")
+  end
+
   it "renders a selection checkbox for the subcategory" do
     expect(html).to have_css(
       "input[type=checkbox][data-selection-target=subcategory]" \
@@ -63,15 +67,39 @@ describe "categories/_subcategory_row.html+desktop.erb" do
     expect(html).to have_css("label", text: subcategory.name)
   end
 
-  it "edits the subcategory when its name is clicked" do
+  it "identifies the subcategory name cell so it can be targeted by turbo streams" do
+    expect(html).to have_css("th##{dom_id(subcategory, :name)}", text: subcategory.name)
+  end
+
+  it "mounts the rename controller on the name cell with the edit url" do
     expect(html).to have_css(
-      "button[data-action~='selection#edit']",
-      text: subcategory.name
+      "th##{dom_id(subcategory, :name)}[data-controller~='category-rename']" \
+      "[data-category-rename-url-value='#{edit_budget_category_path(budget, subcategory,
+                                                                    year:  budget_snapshot.date.year,
+                                                                    month: budget_snapshot.date.month)}']"
     )
   end
 
-  it "identifies the subcategory name cell so it can be targeted by turbo streams" do
-    expect(html).to have_css("th##{dom_id(subcategory, :name)}", text: subcategory.name)
+  it "marks the selection checkbox as the rename gate" do
+    expect(html).to have_css(
+      "input[data-selection-target=subcategory][data-category-rename-target=checkbox]"
+    )
+  end
+
+  it "opens the rename popover when the name is clicked" do
+    expect(html).to have_css(
+      "span[data-action~='click->category-rename#open']", text: subcategory.name
+    )
+  end
+
+  it "renders a rename popover that reveals its turbo frame once loaded" do
+    expect(html).to have_css(
+      "div.rename-menu " \
+      "turbo-frame##{dom_id(subcategory, :rename)}" \
+      "[data-category-rename-target=frame]" \
+      "[data-action~='turbo:frame-load->category-rename#focus']",
+      visible: :all
+    )
   end
 
   it "selects the row when the assignment amount is edited" do

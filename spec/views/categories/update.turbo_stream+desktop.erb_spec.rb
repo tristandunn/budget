@@ -30,12 +30,7 @@ describe "categories/update.turbo_stream+desktop.erb" do
       .to include("SUBCATEGORY_ROW_PARTIAL")
   end
 
-  it "updates the rename dialog frame" do
-    expect(html).to have_turbo_stream_element(action: "update", target: "category_rename_dialog")
-  end
-
-  it "renders the dismisser controller inside the rename dialog stream" do
-    expect(turbo_stream_content(html, action: "update", target: "category_rename_dialog"))
-      .to include('data-controller="dialog-dismisser"')
+  it "does not dismiss a rename dialog" do
+    expect(html).not_to include('data-controller="dialog-dismisser"')
   end
 end

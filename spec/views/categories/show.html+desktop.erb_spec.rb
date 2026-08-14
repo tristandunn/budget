@@ -29,18 +29,29 @@ describe "categories/show.html+desktop.erb" do
     expect(html).to have_css("h2", text: subcategory.name)
   end
 
-  it "links the rename button to the edit form with month and year" do
+  it "mounts the rename controller on the panel with the panel edit url" do
     expect(html).to have_css(
-      "a[aria-label='#{t("categories.show.rename")}']" \
-      "[href='#{edit_budget_category_path(budget, subcategory,
-                                          year:  budget_snapshot.date.year,
-                                          month: budget_snapshot.date.month)}']"
+      "[data-controller~='category-rename']" \
+      "[data-category-rename-url-value='#{edit_budget_category_path(budget, subcategory,
+                                                                    year:  budget_snapshot.date.year,
+                                                                    month: budget_snapshot.date.month,
+                                                                    panel: true)}']"
     )
   end
 
-  it "targets the rename dialog frame from the rename button" do
+  it "opens the rename popover from the rename button" do
     expect(html).to have_css(
-      "a[aria-label='#{t("categories.show.rename")}'][data-turbo-frame='category_rename_dialog']"
+      "button[aria-label='#{t("categories.show.rename")}'][data-action~='category-rename#open']"
+    )
+  end
+
+  it "renders a rename popover that reveals its turbo frame once loaded" do
+    expect(html).to have_css(
+      "div.rename-menu " \
+      "turbo-frame##{dom_id(subcategory, :panel_rename)}" \
+      "[data-category-rename-target=frame]" \
+      "[data-action~='turbo:frame-load->category-rename#focus']",
+      visible: :all
     )
   end
 

@@ -4,8 +4,9 @@ import { Controller } from "@hotwired/stimulus";
  * Manages selection of subcategory rows on the desktop budget. Checking rows
  * swaps the sidebar summary for a panel loaded into the category frame and
  * highlights the rows. A single selection loads that subcategory's detail and
- * two or more load an aggregate summary of the selection. Clicking a
- * subcategory's name selects only that row and opens its assignment input.
+ * two or more load an aggregate summary of the selection. Clicking a row
+ * outside the selection label, its links, and the rename popover opens that
+ * subcategory's assignment input.
  * Category and select-all checkboxes check their subcategories in bulk and
  * reflect the selection with a checked, unchecked, or indeterminate state.
  */
@@ -38,6 +39,11 @@ export default class extends Controller {
   }
 
   edit(event) {
+    // The selection label, links, and rename popover handle their own clicks.
+    if (event.target.closest("label, a, .rename-menu")) {
+      return;
+    }
+
     const row  = event.target.closest("tr"),
           link = row?.querySelector("[data-controller~='inline-edit'] a");
 
@@ -98,7 +104,8 @@ export default class extends Controller {
   #boundClearOnEscape = null;
 
   #clearable() {
-    return this.#selectedIds().length > 0 && !document.querySelector("dialog[open]");
+    return this.#selectedIds().length > 0 &&
+      !document.querySelector("dialog[open], .rename-menu turbo-frame[src]");
   }
 
   #clearOnEscape(event) {
