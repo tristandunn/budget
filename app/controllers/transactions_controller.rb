@@ -178,11 +178,11 @@ class TransactionsController < ApplicationController
     session.delete(:return_to) || budget_transactions_path(current_budget)
   end
 
-  # Store the referer in the session.
+  # Store the referrer in the session, ignoring locations on other hosts.
   #
   # @return [void]
   def store_return_location
-    session[:return_to] = request.referer
+    session[:return_to] = url_from(request.referer)
   end
 
   # Return the subcategory for the given `subcategory_id` parameter.
