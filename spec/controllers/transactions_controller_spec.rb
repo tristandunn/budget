@@ -59,13 +59,14 @@ describe TransactionsController do
   describe "#new" do
     let(:account_id) { nil }
     let(:form)       { instance_double(TransactionForm, budget: budget, payee: nil, subcategory: nil) }
+    let(:referrer)   { "/previous-page" }
 
     before do
       allow(TransactionForm).to receive(:new).and_return(form)
 
-      request.headers["HTTP_REFERER"] = "/previous-page"
+      request.headers["HTTP_REFERER"] = referrer
 
-      get :new, params: { budget_id: budget.id, account_id: account_id }
+      get :new, params: { account_id: account_id, budget_id: budget.id }
     end
 
     it { is_expected.to respond_with(200) }
@@ -79,7 +80,7 @@ describe TransactionsController do
       expect(assigns(:form)).to eq(form)
     end
 
-    it "stores the referer in the session" do
+    it "stores the referrer in the session" do
       expect(session[:return_to]).to eq("/previous-page")
     end
 
@@ -105,17 +106,19 @@ describe TransactionsController do
     end
 
     context "with accounts" do
-      let(:cash_account) { create(:account, budget: budget, name: "Checking") }
-      let(:credit_card)  { create(:account, :credit, budget: budget, name: "Visa") }
+      let!(:accounts) do
+        [
+          create(:account, budget: budget, name: "Checking"),
+          create(:account, :credit, budget: budget, name: "Visa")
+        ]
+      end
 
       before do
-        credit_card
-
-        get :new, params: { budget_id: cash_account.budget_id }
+        get :new, params: { budget_id: budget.id }
       end
 
       it "assigns the accounts" do
-        expect(assigns(:accounts)).to eq([cash_account, credit_card])
+        expect(assigns(:accounts)).to eq(accounts)
       end
     end
 
@@ -128,6 +131,14 @@ describe TransactionsController do
 
       it "assigns the payees" do
         expect(assigns(:payees)).to eq([payee])
+      end
+    end
+
+    context "with a referrer from another host" do
+      let(:referrer) { "https://example.com/other" }
+
+      it "does not store the referrer in the session" do
+        expect(session[:return_to]).to be_nil
       end
     end
 
@@ -329,12 +340,13 @@ describe TransactionsController do
 
   describe "#edit" do
     let(:form)        { instance_double(TransactionForm, budget: budget, payee: nil, subcategory: nil) }
+    let(:referrer)    { "/previous-page" }
     let(:transaction) { create(:transaction, budget: budget) }
 
     before do
       allow(TransactionForm).to receive(:from).and_return(form)
 
-      request.headers["HTTP_REFERER"] = "/previous-page"
+      request.headers["HTTP_REFERER"] = referrer
 
       get :edit, params: { budget_id: budget.id, id: transaction.id }
     end
@@ -354,7 +366,7 @@ describe TransactionsController do
       expect(TransactionForm).to have_received(:from).with(transaction: transaction)
     end
 
-    it "stores the referer in the session" do
+    it "stores the referrer in the session" do
       expect(session[:return_to]).to eq("/previous-page")
     end
 
@@ -393,6 +405,14 @@ describe TransactionsController do
 
       it "does not assign a form" do
         expect(assigns(:form)).to be_nil
+      end
+    end
+
+    context "with a referrer from another host" do
+      let(:referrer) { "https://example.com/other" }
+
+      it "does not store the referrer in the session" do
+        expect(session[:return_to]).to be_nil
       end
     end
 
