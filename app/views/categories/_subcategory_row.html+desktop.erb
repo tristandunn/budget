@@ -1,28 +1,50 @@
 <%# locals: (budget:, subcategory:, budget_snapshot:) %>
-<tr id="<%= dom_id(subcategory, :row) %>" class="bg-white border-b border-taupe-300">
-  <th scope="row" id="<%= dom_id(subcategory, :name) %>" class="py-2 pr-4 pl-9 text-sm font-normal">
+<tr
+  id="<%= dom_id(subcategory, :row) %>"
+  class="bg-white border-b border-taupe-300"
+  data-action="click->selection#edit"
+>
+  <th
+    scope="row"
+    id="<%= dom_id(subcategory, :name) %>"
+    class="relative py-2 pr-4 pl-9 text-sm font-normal"
+    data-controller="category-rename"
+    data-category-rename-url-value="<%= edit_budget_category_path(budget, subcategory,
+                                                                  year:  budget_snapshot.date.year,
+                                                                  month: budget_snapshot.date.month) %>"
+  >
     <label class="flex items-center gap-2 min-w-0 cursor-pointer">
       <%= check_box_tag dom_id(subcategory, :select), subcategory.id, false,
                         class: "shrink-0",
                         aria:  { label: t(".select", name: subcategory.name) },
                         data:  {
-                          selection_target: "subcategory",
-                          category_id:      subcategory.parent_id,
-                          subcategory_id:   subcategory.id,
-                          detail_url:       budget_category_path(budget, subcategory,
-                                                                 year:  budget_snapshot.date.year,
-                                                                 month: budget_snapshot.date.month),
-                          action:           "selection#toggle"
+                          selection_target:       "subcategory",
+                          category_rename_target: "checkbox",
+                          category_id:            subcategory.parent_id,
+                          subcategory_id:         subcategory.id,
+                          detail_url:             budget_category_path(budget, subcategory,
+                                                                       year:  budget_snapshot.date.year,
+                                                                       month: budget_snapshot.date.month),
+                          action:                 "selection#toggle"
                         } %>
 
-      <button
-        type="button"
-        class="truncate min-w-0 text-left cursor-pointer"
-        data-action="selection#edit"
-      >
+      <span class="truncate min-w-0" data-action="click->category-rename#open">
         <%= subcategory.name %>
-      </button>
+      </span>
     </label>
+
+    <div
+      class="
+        rename-menu absolute left-9 top-full z-20 mt-1 w-64 rounded-lg border border-taupe-300
+        bg-white p-3 shadow-lg
+      "
+    >
+      <%= turbo_frame_tag dom_id(subcategory, :rename),
+                          data: {
+                            category_rename_target: "frame",
+                            action:                 "turbo:frame-load->category-rename#focus"
+                          } %>
+    </div>
   </th>
 
   <td class="py-2 px-4 text-sm text-right whitespace-nowrap" data-controller="inline-edit">

@@ -30,21 +30,21 @@ describe "Category selection" do
       visit budget_path(budget)
     end
 
-    it "selects only the subcategory and opens its assignment when its name is clicked" do
-      click_button(first_subcategory.name)
+    it "opens the assignment when the row is clicked" do
+      find("td", text: "-$100.00").click
 
       expect(page).to have_css("#category_panel", text: first_subcategory.name)
         .and(have_css("input[inputmode='decimal']"))
     end
 
-    it "switches to only the clicked name during a multiple selection" do
+    it "switches to only the edited subcategory during a multiple selection" do
       check(first_subcategory.name)
 
       wait_for(have_css("#category_panel", text: first_subcategory.name)) do
         check(second_subcategory.name)
       end
 
-      click_button(second_subcategory.name)
+      find("a", text: "$250.00").click
 
       expect(page).to have_css("#category_panel", text: second_subcategory.name)
         .and(have_checked_field(second_subcategory.name))

@@ -4,33 +4,53 @@
       <%= @category.name %>
     </h2>
 
-    <%= link_to edit_budget_category_path(@budget, @category,
-                                          year:  @budget_snapshot.date.year,
-                                          month: @budget_snapshot.date.month),
-                aria:  { label: t("categories.show.rename") },
-                data:  { turbo_frame: "category_rename_dialog" },
-                class: "
-                  flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-indigo-600
-                  no-underline hover:bg-taupe-200 focus-visible:outline-none focus-visible:ring-2
-                  focus-visible:ring-indigo-500 focus-visible:ring-offset-2
-                  focus-visible:ring-offset-taupe-50
-                " do %>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="w-4 h-4"
-        viewBox="0 0 20 20"
-        fill="currentColor"
-        aria-hidden="true"
-      >
-        <path
-          d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z"
-        />
+    <div
+      class="relative shrink-0"
+      data-controller="category-rename"
+      data-category-rename-url-value="<%= edit_budget_category_path(@budget, @category,
+                                                                    year:  @budget_snapshot.date.year,
+                                                                    month: @budget_snapshot.date.month,
+                                                                    panel: true) %>"
+    >
+      <%= button_tag type:  "button",
+                     aria:  { label: t("categories.show.rename") },
+                     data:  { action: "category-rename#open" },
+                     class: "
+                       flex h-8 w-8 items-center justify-center rounded-lg text-indigo-600
+                       hover:bg-taupe-200 focus-visible:outline-none focus-visible:ring-2
+                       focus-visible:ring-indigo-500 focus-visible:ring-offset-2
+                       focus-visible:ring-offset-taupe-50
+                     " do %>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-4 h-4"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z"
+          />
 
-        <path
-          d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z"
-        />
-      </svg>
-    <% end %>
+          <path
+            d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z"
+          />
+        </svg>
+      <% end %>
+
+      <div
+        class="
+          rename-menu absolute right-0 top-full z-20 mt-1 w-64 rounded-lg border
+          border-taupe-300 bg-white p-3 shadow-lg
+        "
+      >
+        <%= turbo_frame_tag dom_id(@category, :panel_rename),
+                            data: {
+                              category_rename_target: "frame",
+                              action:                 "turbo:frame-load->category-rename#focus"
+                            } %>
+      </div>
+    </div>
   </header>
 
   <%= render "details",

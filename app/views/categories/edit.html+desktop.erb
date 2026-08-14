@@ -1,0 +1,32 @@
+<%= turbo_frame_tag dom_id(@category, params[:panel].present? ? :panel_rename : :rename) do %>
+  <%= form_with model:  @form,
+                url:    budget_category_path(@budget, @category, year: params[:year], month: params[:month], panel: params[:panel]),
+                method: :patch,
+                class:  "highlight-errors flex flex-col gap-3" do |f| %>
+    <%= render "categories/rename_form", form:        f,
+                                         field_class: "w-full rounded-lg border border-taupe-300 bg-white px-3 py-1.5 text-sm outline-none placeholder:text-taupe-400 focus:ring-1 focus:ring-indigo-500" %>
+
+    <div class="grid grid-cols-2 gap-2">
+      <button
+        type="button"
+        data-action="category-rename#close"
+        class="
+          cursor-pointer rounded-lg bg-taupe-200 px-3 py-2.5 text-center text-base font-medium
+          text-taupe-800 sm:py-1.5 sm:text-sm
+        "
+      >
+        <%= t("categories.edit.cancel") %>
+      </button>
+
+      <button
+        type="submit"
+        class="
+          cursor-pointer rounded-lg bg-indigo-600 px-3 py-2.5 text-center text-base font-medium
+          text-white sm:py-1.5 sm:text-sm
+        "
+      >
+        <%= t("categories.edit.submit") %>
+      </button>
+    </div>
+  <% end %>
+<% end %>
