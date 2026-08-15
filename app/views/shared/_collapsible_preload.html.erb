@@ -11,6 +11,7 @@
              + root + " [data-collapsible-arrow]{inset-block:0;rotate:-45deg;translate:var(--collapsible-arrow-shift)}";
       }).join("");
       var style = document.createElement("style");
+      style.nonce = document.currentScript.nonce;
       style.id = "collapsible-preload";
       style.textContent = rules;
       document.head.appendChild(style);
