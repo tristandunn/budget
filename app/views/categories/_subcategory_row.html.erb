@@ -3,7 +3,7 @@
   <th
     scope="row"
     id="<%= dom_id(subcategory, :name) %>"
-    class="py-3 px-4 font-normal whitespace-nowrap"
+    class="py-3 px-4 font-normal truncate w-full max-w-0"
   >
     <%= link_to subcategory.name,
                 budget_category_path(budget, subcategory,
