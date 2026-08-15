@@ -18,15 +18,16 @@ Capybara.register_driver :selenium_chrome_headless_reduced_motion_mobile do |app
   driver
 end
 
-# Feature specs default to a desktop User-Agent, so the desktop request variant
-# renders. Tag a spec with `:mobile` to exercise the mobile variant instead,
-# switching the Selenium driver or setting the rack-test header as appropriate.
 RSpec.configure do |config|
-  config.before(:each, :mobile) do |example|
+  config.before(:each, type: :feature) do |example|
     if example.metadata[:js]
-      Capybara.current_driver = :selenium_chrome_headless_reduced_motion_mobile
-    else
+      if example.metadata[:mobile]
+        Capybara.current_driver = :selenium_chrome_headless_reduced_motion_mobile
+      end
+    elsif example.metadata[:mobile]
       page.driver.header("User-Agent", UserAgents::MOBILE)
+    else
+      page.driver.header("User-Agent", UserAgents::DESKTOP)
     end
   end
 end
