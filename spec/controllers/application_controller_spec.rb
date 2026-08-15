@@ -15,6 +15,29 @@ describe ApplicationController do
     expect(described_class.ancestors).to include(Authentication)
   end
 
+  describe "#block_bots" do
+    subject { response }
+
+    before do
+      request.headers["User-Agent"] = user_agent
+
+      get :index
+    end
+
+    context "when the User-Agent is from a bot" do
+      let(:user_agent) { UserAgents::BOT }
+
+      it { is_expected.to have_http_status(:not_found) }
+      it { is_expected.to have_attributes(body: be_empty) }
+    end
+
+    context "when the User-Agent is from a browser" do
+      let(:user_agent) { UserAgents::DESKTOP }
+
+      it { is_expected.to redirect_to(new_session_url) }
+    end
+  end
+
   describe "#current_budget" do
     context "when the budget belongs to the current user" do
       let(:budget) { create(:budget, settings: { time_zone: "Asia/Tokyo" }) }

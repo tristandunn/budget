@@ -7,11 +7,21 @@ class ApplicationController < ActionController::Base
   # maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
 
+  before_action :block_bots
   before_action :authenticate
   before_action :set_request_variant
   before_action :current_budget
 
   private
+
+  # Respond with not found for any bots.
+  #
+  # @return [void]
+  def block_bots
+    if browser.bot?
+      head :not_found
+    end
+  end
 
   # Return the budget for the current request, resolved from route params.
   #
