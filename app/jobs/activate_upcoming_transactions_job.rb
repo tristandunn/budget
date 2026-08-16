@@ -14,7 +14,9 @@ class ActivateUpcomingTransactionsJob < ApplicationJob
               .includes(:account, :payee, subcategory: :parent)
               .reorder(nil)
               .find_each do |transaction|
-          activate(transaction)
+          Rails.error.handle(context: { transaction_id: transaction.id }) do
+            activate(transaction)
+          end
         end
       end
     end
