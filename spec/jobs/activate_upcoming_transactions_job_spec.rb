@@ -47,6 +47,42 @@ describe ActivateUpcomingTransactionsJob do
       expect(ActivateTransaction).not_to have_received(:call)
     end
 
+    context "when a transaction fails to activate" do
+      let(:budget)  { create(:budget) }
+      let(:error)   { ActiveRecord::RecordInvalid.new(Transaction.new) }
+      let(:failing) { create(:transaction, :upcoming, budget: budget, date: Date.current) }
+
+      before do
+        allow(ActivateTransaction).to receive(:call).with(transaction: failing).and_raise(error)
+      end
+
+      it "activates the remaining transactions in the same budget" do
+        remaining = create(:transaction, :upcoming, budget: budget, date: Date.current)
+
+        described_class.new.perform
+
+        expect(ActivateTransaction).to have_received(:call).with(transaction: remaining)
+      end
+
+      it "activates the transactions in the remaining budgets" do
+        remaining = create(:transaction, :upcoming, date: Date.current)
+
+        described_class.new.perform
+
+        expect(ActivateTransaction).to have_received(:call).with(transaction: remaining)
+      end
+
+      it "reports the error with the transaction" do
+        allow(Rails.error).to receive(:report).and_call_original
+
+        described_class.new.perform
+
+        expect(Rails.error).to have_received(:report).with(
+          error, hash_including(context: { transaction_id: failing.id })
+        )
+      end
+    end
+
     context "when budgets are on different calendar dates" do
       before do
         travel_to(Time.utc(2026, 4, 19, 3))
