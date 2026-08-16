@@ -2,15 +2,20 @@
 
 class ActivateUpcomingTransactionsJob < ApplicationJob
   # Activate all upcoming transactions that are due in each budget's configured
-  # time zone. A long-overdue transaction activates one period per run; the
-  # every 30 minute schedule bounds catch-up.
+  # time zone.
+  #
+  # A long-overdue transaction activates one period per run. If a transaction
+  # fails to activate it is reported and skipped so it does not block the rest
+  # of the run.
   #
   # @return [void]
   def perform
     Budget.find_each do |budget|
       Current.set(budget: budget) do
         budget.transactions.activation_due.reorder(nil).find_each do |transaction|
-          activate(transaction)
+          Rails.error.handle(context: { transaction_id: transaction.id }, severity: :error) do
+            activate(transaction)
+          end
         end
       end
     end
