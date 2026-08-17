@@ -9,7 +9,7 @@ class ActivateUpcomingTransactionsJob < ApplicationJob
   def perform
     Budget.find_each do |budget|
       Current.set(budget: budget) do
-        budget.transactions.activation_due.find_each do |transaction|
+        budget.transactions.activation_due.reorder(nil).find_each do |transaction|
           activate(transaction)
         end
       end
