@@ -445,16 +445,79 @@ describe("ArithmeticController", () => {
 
         expect(event.defaultPrevented).to.eq(false);
       });
+    });
 
-      it("allows the decimal point", () => {
-        const event = new window.KeyboardEvent("keydown", {
+    describe("when pressing .", () => {
+      let event;
+
+      beforeEach(() => {
+        event = new window.KeyboardEvent("keydown", {
           "cancelable": true,
           "key": "."
         });
+      });
+
+      it("allows one without an existing decimal point", () => {
+        element.value = "100";
+        element.setSelectionRange(3, 3);
 
         instance.keydown(event);
 
         expect(event.defaultPrevented).to.eq(false);
+      });
+
+      it("allows one in the left operand", () => {
+        element.value = "1+2.5";
+        element.setSelectionRange(1, 1);
+
+        instance.keydown(event);
+
+        expect(event.defaultPrevented).to.eq(false);
+      });
+
+      it("allows one in the right operand", () => {
+        element.value = "1.5+2";
+        element.setSelectionRange(5, 5);
+
+        instance.keydown(event);
+
+        expect(event.defaultPrevented).to.eq(false);
+      });
+
+      it("allows one replacing the selected value", () => {
+        element.value = "100.00";
+        element.setSelectionRange(0, 6);
+
+        instance.keydown(event);
+
+        expect(event.defaultPrevented).to.eq(false);
+      });
+
+      it("blocks one after an existing decimal point", () => {
+        element.value = "100.00";
+        element.setSelectionRange(6, 6);
+
+        instance.keydown(event);
+
+        expect(event.defaultPrevented).to.eq(true);
+      });
+
+      it("blocks one before an existing decimal point", () => {
+        element.value = "1.5";
+        element.setSelectionRange(0, 0);
+
+        instance.keydown(event);
+
+        expect(event.defaultPrevented).to.eq(true);
+      });
+
+      it("blocks one before an existing decimal point with a leading sign", () => {
+        element.value = "-.5";
+        element.setSelectionRange(0, 0);
+
+        instance.keydown(event);
+
+        expect(event.defaultPrevented).to.eq(true);
       });
     });
 
@@ -583,6 +646,53 @@ describe("ArithmeticController", () => {
       instance.paste(createPasteEvent("12*3/4.5"));
 
       expect(element.value).to.eq("12*3");
+    });
+
+    it("truncates to the first decimal point", () => {
+      element.value = "";
+      element.setSelectionRange(0, 0);
+
+      instance.paste(createPasteEvent("1.2.3"));
+
+      expect(element.value).to.eq("1.2");
+    });
+
+    it("truncates to the first decimal point in the right operand", () => {
+      element.value = "";
+      element.setSelectionRange(0, 0);
+
+      instance.paste(createPasteEvent("12+3.4.5"));
+
+      expect(element.value).to.eq("12+3.4");
+    });
+
+    it("truncates to the first decimal point across the insertion boundary", () => {
+      element.value = "1.5";
+      element.setSelectionRange(3, 3);
+
+      instance.paste(createPasteEvent(".2"));
+
+      expect(element.value).to.eq("1.5");
+      expect(element.selectionStart).to.eq(3);
+      expect(element.selectionEnd).to.eq(3);
+    });
+
+    it("truncates a pasted decimal point before a leading sign", () => {
+      element.value = "-.5";
+      element.setSelectionRange(0, 0);
+
+      instance.paste(createPasteEvent("."));
+
+      expect(element.value).to.eq("-.5");
+    });
+
+    it("keeps a pasted decimal point in the right operand", () => {
+      element.value = "3.4";
+      element.setSelectionRange(3, 3);
+
+      instance.paste(createPasteEvent("1+2.5"));
+
+      expect(element.value).to.eq("3.41+2.5");
     });
 
     it("keeps a leading minus sign when truncating", () => {
