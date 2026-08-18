@@ -30,7 +30,7 @@ describe "accounts/transactions/_reconcile_confirmation.html.erb" do
     )
   end
 
-  it "renders an accept button wired to the reconcilation path" do
+  it "renders an accept button wired to the reconciliation path" do
     expect(html).to have_css(
       "form[action='#{budget_account_reconciliation_path(budget, account)}'] button",
       text: t("accounts.transactions.reconcile.accept")

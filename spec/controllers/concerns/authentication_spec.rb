@@ -67,6 +67,8 @@ describe Authentication do
   end
 
   describe "#resume_session" do
+    subject(:resume_session) { instance.resume_session }
+
     let(:user) { build_stubbed(:user) }
 
     before do
@@ -74,17 +76,25 @@ describe Authentication do
     end
 
     it "assigns Current.user" do
-      instance.resume_session
+      resume_session
 
       expect(Current.user).to eq(user)
     end
 
-    it "returns the current user without re-fetching when already assigned" do
-      Current.user = user
+    context "with a user already assigned" do
+      let(:existing_user) { build_stubbed(:user) }
 
-      instance.resume_session
+      before do
+        Current.user = existing_user
+      end
 
-      expect(instance).not_to have_received(:user_from_session)
+      it { is_expected.to eq(existing_user) }
+
+      it "does not re-fetch the user" do
+        resume_session
+
+        expect(instance).not_to have_received(:user_from_session)
+      end
     end
   end
 

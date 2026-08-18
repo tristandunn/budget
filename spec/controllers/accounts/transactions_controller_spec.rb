@@ -34,7 +34,7 @@ describe Accounts::TransactionsController do
         expect(assigns(:account)).to eq(account)
       end
 
-      it "assigns current transactions for the requested account limited to the previous 31 days" do
+      it "assigns current transactions for the requested account limited to the previous 30 days" do
         expect(assigns(:current_transactions)).to eq([transaction])
       end
 
