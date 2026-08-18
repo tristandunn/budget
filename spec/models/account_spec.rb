@@ -71,7 +71,7 @@ describe Account do
   end
 
   describe "#cleared_balance" do
-    it "returns the sum of cleared and reconciled transaction amounts" do
+    it "returns the balance minus pending transaction amounts" do
       account = create(:account, balance: -9000)
       create(:transaction, account: account, amount: -2000, budget: account.budget)
       create(:transaction, :cleared, account: account, amount: -4000, budget: account.budget)
