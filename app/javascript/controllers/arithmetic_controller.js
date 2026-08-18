@@ -2,11 +2,7 @@ import { Controller } from "@hotwired/stimulus";
 
 /*
  * Limits a text input to a single arithmetic operation on decimal numbers,
- * using the plus, minus, multiply, and divide operators. Handles operator
- * keypresses and pastes, collapsing consecutive operators so only the last one
- * in a run is kept and limiting the value to the first operation. A leading
- * minus sign is a sign rather than an operation, so it never counts against
- * that limit.
+ * using the plus, minus, multiply, and divide operators.
  */
 export default class extends Controller {
   keydown(event) {
@@ -27,7 +23,8 @@ export default class extends Controller {
     event.preventDefault();
 
     const element = this.element,
-          cleaned = event.clipboardData.getData("text/plain").replace(/[^\d.+*/-]/g, "");
+          pasted  = event.clipboardData.getData("text/plain").replace(/[^\d.+*/-]/g, ""),
+          cleaned = this.#limitPastedDecimal(pasted);
 
     element.setRangeText(cleaned, element.selectionStart, element.selectionEnd, "end");
 
@@ -53,6 +50,15 @@ export default class extends Controller {
     }
   }
 
+  #hasDecimalInOperand() {
+    const element = this.element,
+          value   = element.value.replace(/^[-+]/, " "),
+          before  = value.slice(0, element.selectionStart),
+          after   = value.slice(element.selectionEnd);
+
+    return (/\.[^-+*/]*$/).test(before) || (/^[^-+*/]*\./).test(after);
+  }
+
   #hasOperator(value) {
     return (/[-+*/]/).test(value.slice(1));
   }
@@ -60,8 +66,10 @@ export default class extends Controller {
   #isInvalidKey(event) {
     if (event.key.length !== 1) {
       return false;
+    } else if (event.key === ".") {
+      return this.#hasDecimalInOperand();
     } else {
-      return !(/[\d.+*/-]/).test(event.key);
+      return !(/\d/).test(event.key);
     }
   }
 
@@ -71,8 +79,18 @@ export default class extends Controller {
     return Number.isNaN(number) || !this.#hasOperator(value) && number === 0;
   }
 
+  #limitPastedDecimal(value) {
+    if (this.#hasDecimalInOperand()) {
+      return value.replace(/^[^-+*/]*/, (operand) => {
+        return operand.replace(/\..*/, "");
+      });
+    } else {
+      return value;
+    }
+  }
+
   #limitToOperation(value) {
-    return (/^[-+]?[\d.]*(?:[-+*/][\d.]*)?/).exec(this.#collapseOperators(value))[0];
+    return (/^[-+]?\d*\.?\d*(?:[-+*/]\d*\.?\d*)?/).exec(this.#collapseOperators(value))[0];
   }
 
   #replaceTrailingOperator(value) {
