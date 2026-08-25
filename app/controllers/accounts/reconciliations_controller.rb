@@ -4,9 +4,8 @@ module Accounts
   class ReconciliationsController < ApplicationController
     # Reconcile the account by marking all cleared transactions as reconciled.
     def create
-      # rubocop:disable Rails/SkipsModelValidations
+      # rubocop:disable-next Rails/SkipsModelValidations
       account.transactions.cleared.update_all(status: :reconciled, updated_at: Time.current)
-      # rubocop:enable Rails/SkipsModelValidations
 
       redirect_to budget_account_transactions_path(current_budget, account), status: :see_other
     end
