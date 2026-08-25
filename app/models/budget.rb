@@ -34,7 +34,7 @@ class Budget < ApplicationRecord
   #
   # @return [Integer] The working balance in cents.
   def balance
-    @balance ||= accounts.sum(:balance)
+    @balance ||= accounts.sum(&:balance)
   end
 
   # Return the combined balance minus pending transaction amounts.
