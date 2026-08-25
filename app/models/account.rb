@@ -39,13 +39,17 @@ class Account < ApplicationRecord
   #
   # @return [Boolean] Whether there are cleared transactions to reconcile.
   def reconcilable?
-    transactions.cleared.exists?
+    if defined?(@reconcilable)
+      @reconcilable
+    else
+      @reconcilable = transactions.cleared.exists?
+    end
   end
 
   # Return the sum of pending transaction amounts.
   #
   # @return [Integer] The uncleared balance in cents.
   def uncleared_balance
-    transactions.pending.sum(:amount)
+    @uncleared_balance ||= transactions.pending.sum(:amount)
   end
 end

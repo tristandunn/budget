@@ -119,6 +119,14 @@ describe Account do
     it "returns false when there are no cleared transactions" do
       expect(account).not_to be_reconcilable
     end
+
+    it "memoizes the absence of cleared transactions" do
+      account.reconcilable?
+
+      create(:transaction, :cleared, account: account, budget: account.budget)
+
+      expect(account).not_to be_reconcilable
+    end
   end
 
   describe "#uncleared_balance" do
@@ -144,6 +152,17 @@ describe Account do
       create(:transaction, :upcoming, account: account, amount: -2000, budget: account.budget)
 
       expect(account.uncleared_balance).to eq(-5000)
+    end
+
+    it "memoizes the uncleared balance" do
+      account = create(:account)
+
+      allow(account.transactions).to receive(:pending).and_call_original
+
+      account.uncleared_balance
+      account.uncleared_balance
+
+      expect(account.transactions).to have_received(:pending).once
     end
   end
 
