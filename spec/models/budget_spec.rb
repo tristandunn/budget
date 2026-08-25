@@ -70,6 +70,14 @@ describe Budget do
       expect(budget.balance).to eq(75_00)
     end
 
+    it "sums the accounts already loaded by the association" do
+      create(:account, budget: budget, balance: 100_00)
+      accounts = budget.accounts.load
+      accounts.first.balance = 25_00
+
+      expect(budget.balance).to eq(25_00)
+    end
+
     it "memoizes the combined balance" do
       allow(budget.accounts).to receive(:sum).and_call_original
 
