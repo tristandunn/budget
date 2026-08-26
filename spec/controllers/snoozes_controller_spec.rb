@@ -162,6 +162,81 @@ describe SnoozesController do
         )
       end
     end
+
+    context "with an out-of-range month parameter" do
+      it "raises a bad request error" do
+        expect do
+          post :create,
+               params: {
+                 budget_id:   budget.id,
+                 category_id: subcategory.id,
+                 year:        Date.current.year,
+                 month:       "13"
+               }
+        end.to raise_error(ActionController::BadRequest)
+      end
+    end
+
+    context "with an unparsable year parameter" do
+      it "raises a bad request error" do
+        expect do
+          post :create,
+               params: {
+                 budget_id:   budget.id,
+                 category_id: subcategory.id,
+                 year:        "invalid",
+                 month:       Date.current.month
+               }
+        end.to raise_error(ActionController::BadRequest)
+      end
+    end
+
+    context "with a negative month parameter" do
+      it "raises a bad request error" do
+        expect do
+          post :create,
+               params: {
+                 budget_id:   budget.id,
+                 category_id: subcategory.id,
+                 year:        Date.current.year,
+                 month:       "-1"
+               }
+        end.to raise_error(ActionController::BadRequest)
+      end
+    end
+
+    context "without a month parameter" do
+      it "raises a bad request error" do
+        expect do
+          post :create,
+               params: {
+                 budget_id:   budget.id,
+                 category_id: subcategory.id,
+                 year:        Date.current.year
+               }
+        end.to raise_error(ActionController::BadRequest)
+      end
+    end
+
+    context "with a month after the navigable range" do
+      before do
+        post :create,
+             params: {
+               budget_id:   budget.id,
+               category_id: subcategory.id,
+               year:        5.years.from_now.year,
+               month:       1
+             }
+      end
+
+      it "redirects to the budget for the month that was snoozed" do
+        snapshot = subcategory.snapshots.sole
+
+        expect(response).to redirect_to(
+          month_budget_url(budget, month: snapshot.date.month, year: snapshot.date.year)
+        )
+      end
+    end
   end
 
   describe "#destroy" do
@@ -292,6 +367,81 @@ describe SnoozesController do
       it "redirects to the budget for the displayed month" do
         expect(response).to redirect_to(
           month_budget_url(budget, month: Date.current.month, year: Date.current.year)
+        )
+      end
+    end
+
+    context "with an out-of-range month parameter" do
+      it "raises a bad request error" do
+        expect do
+          delete :destroy,
+                 params: {
+                   budget_id:   budget.id,
+                   category_id: subcategory.id,
+                   year:        Date.current.year,
+                   month:       "13"
+                 }
+        end.to raise_error(ActionController::BadRequest)
+      end
+    end
+
+    context "with an unparsable year parameter" do
+      it "raises a bad request error" do
+        expect do
+          delete :destroy,
+                 params: {
+                   budget_id:   budget.id,
+                   category_id: subcategory.id,
+                   year:        "invalid",
+                   month:       Date.current.month
+                 }
+        end.to raise_error(ActionController::BadRequest)
+      end
+    end
+
+    context "with a negative month parameter" do
+      it "raises a bad request error" do
+        expect do
+          delete :destroy,
+                 params: {
+                   budget_id:   budget.id,
+                   category_id: subcategory.id,
+                   year:        Date.current.year,
+                   month:       "-1"
+                 }
+        end.to raise_error(ActionController::BadRequest)
+      end
+    end
+
+    context "without a month parameter" do
+      it "raises a bad request error" do
+        expect do
+          delete :destroy,
+                 params: {
+                   budget_id:   budget.id,
+                   category_id: subcategory.id,
+                   year:        Date.current.year
+                 }
+        end.to raise_error(ActionController::BadRequest)
+      end
+    end
+
+    context "with a month after the navigable range" do
+      before do
+        delete :destroy,
+               params: {
+                 budget_id:   budget.id,
+                 category_id: subcategory.id,
+                 year:        5.years.from_now.year,
+                 month:       1
+               }
+      end
+
+      it "redirects to the budget for the month that was unsnoozed" do
+        snapshot = subcategory.snapshots.sole
+
+        expect(response).to redirect_to(
+          month_budget_url(budget, month: snapshot.date.month, year: snapshot.date.year)
         )
       end
     end
