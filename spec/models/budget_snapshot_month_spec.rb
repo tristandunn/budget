@@ -30,6 +30,14 @@ describe BudgetSnapshotMonth do
       it "defaults to the current month" do
         expect(budget_snapshot_month.date).to eq(Date.current.beginning_of_month)
       end
+
+      it "does not build the snapshot range" do
+        allow(budget).to receive(:category_snapshots).and_call_original
+
+        budget_snapshot_month.date
+
+        expect(budget).not_to have_received(:category_snapshots)
+      end
     end
 
     context "with valid year and month parameters" do
