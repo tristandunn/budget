@@ -16,10 +16,15 @@ describe "categories/_available.html.erb" do
   end
 
   let(:budget_snapshot) do
-    instance_double(BudgetSnapshot, available_for: 50_00, snoozed?: false, underfunded?: underfunded)
+    instance_double(BudgetSnapshot,
+                    available_for: 50_00,
+                    snoozed?:      false,
+                    uncovered?:    uncovered,
+                    underfunded?:  underfunded)
   end
 
   let(:category)    { build_stubbed(:category, :subcategory) }
+  let(:uncovered)   { false }
   let(:underfunded) { false }
 
   before do
@@ -45,8 +50,20 @@ describe "categories/_available.html.erb" do
   context "when the category is underfunded" do
     let(:underfunded) { true }
 
-    it "uses the underfunded color" do
+    it "uses the warning color" do
       expect(html).to have_css("div.bg-yellow-200")
+    end
+  end
+
+  context "when the upcoming transactions are uncovered" do
+    let(:uncovered) { true }
+
+    it "uses the warning color" do
+      expect(html).to have_css("div.bg-yellow-200")
+    end
+
+    it "renders the uncovered icon" do
+      expect(html).to have_css("svg title", text: t("categories.show.uncovered_label"))
     end
   end
 
@@ -67,11 +84,29 @@ describe "categories/_available.html.erb" do
       end
     end
 
-    context "when overspent" do
-      let(:budget_snapshot) do
-        instance_double(BudgetSnapshot, available_for: -10_00, snoozed?: false, underfunded?: false)
+    context "when the upcoming transactions are uncovered" do
+      let(:snapshot)  { CategorySnapshot.new }
+      let(:uncovered) { true }
+
+      it "renders the uncovered icon" do
+        expect(html).to have_css("svg title", text: t("categories.show.uncovered_label"))
       end
-      let(:snapshot)        { CategorySnapshot.new(amount_assigned: 150_00, amount_used: 160_00) }
+
+      it "does not render the progress pie" do
+        expect(html).not_to include("PROGRESS_PIE_PARTIAL")
+      end
+    end
+
+    context "when overspent" do
+      let(:snapshot) { CategorySnapshot.new(amount_assigned: 150_00, amount_used: 160_00) }
+
+      let(:budget_snapshot) do
+        instance_double(BudgetSnapshot,
+                        available_for: -10_00,
+                        snoozed?:      false,
+                        uncovered?:    false,
+                        underfunded?:  false)
+      end
 
       it "does not render a progress icon" do
         expect(html).to have_no_css("svg")
@@ -83,8 +118,15 @@ describe "categories/_available.html.erb" do
     end
 
     context "when snoozed" do
-      let(:budget_snapshot) { instance_double(BudgetSnapshot, available_for: 0, snoozed?: true, underfunded?: false) }
-      let(:snapshot)        { CategorySnapshot.new(amount_assigned: 0, amount_used: 0) }
+      let(:snapshot) { CategorySnapshot.new(amount_assigned: 0, amount_used: 0) }
+
+      let(:budget_snapshot) do
+        instance_double(BudgetSnapshot,
+                        available_for: 0,
+                        snoozed?:      true,
+                        uncovered?:    uncovered,
+                        underfunded?:  false)
+      end
 
       it "renders the snoozed label as the icon title" do
         expect(html).to have_css("svg title", text: t("categories.show.target.snoozed_label"))
@@ -94,8 +136,29 @@ describe "categories/_available.html.erb" do
         expect(html).to have_no_css("svg circle[stroke-dasharray]")
       end
 
-      it "uses the amount color rather than the underfunded color" do
+      it "uses the amount color rather than the warning color" do
         expect(html).to have_css("div.bg-stone-200")
+      end
+    end
+
+    context "when snoozed and the upcoming transactions are uncovered" do
+      let(:snapshot)  { CategorySnapshot.new }
+      let(:uncovered) { true }
+
+      let(:budget_snapshot) do
+        instance_double(BudgetSnapshot,
+                        available_for: 0,
+                        snoozed?:      true,
+                        uncovered?:    uncovered,
+                        underfunded?:  false)
+      end
+
+      it "renders the uncovered icon" do
+        expect(html).to have_css("svg title", text: t("categories.show.uncovered_label"))
+      end
+
+      it "does not render the snoozed icon" do
+        expect(html).to have_no_css("svg title", text: t("categories.show.target.snoozed_label"))
       end
     end
   end

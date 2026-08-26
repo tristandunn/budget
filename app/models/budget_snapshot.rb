@@ -26,13 +26,7 @@ class BudgetSnapshot
   # @param category [Category] The category or category group.
   # @return [Integer] The available amount in cents.
   def available_for(category)
-    if category.parent_id.nil?
-      category.subcategories.sum do |subcategory|
-        available_amounts_by_category[subcategory.id] || 0
-      end
-    else
-      available_amounts_by_category[category.id] || 0
-    end
+    amount_for(category, available_amounts_by_category)
   end
 
   # Returns true when the budget's monthly targets are fully funded for the
@@ -141,6 +135,18 @@ class BudgetSnapshot
     end
   end
 
+  # Returns true when the available amount does not cover the category's
+  # upcoming transactions for the displayed month. Excludes an overspent
+  # amount, which is signaled in red.
+  #
+  # @param category [Category] The category to evaluate.
+  # @return [Boolean] Whether the upcoming transactions are uncovered.
+  def uncovered?(category)
+    available = available_for(category)
+
+    !available.negative? && (available + upcoming_for(category)).negative?
+  end
+
   # Returns true when the category has a monthly target that has not yet been
   # fully funded for the displayed month and the available amount has not gone
   # overspent.
@@ -154,9 +160,33 @@ class BudgetSnapshot
       target_progress_for(category).underfunded?
   end
 
+  # Returns the upcoming transaction amount for a category, summed across every
+  # transaction dated on or before the end of the displayed month. For a
+  # top-level category, sums the upcoming amounts of its subcategories.
+  #
+  # @param category [Category] The category or category group.
+  # @return [Integer] The upcoming amount in cents.
+  def upcoming_for(category)
+    amount_for(category, upcoming_amounts_by_category)
+  end
+
   private
 
   attr_reader :budget, :month, :year
+
+  # Returns the amount for a category from a hash keyed by category id. For a
+  # top-level category, sums the amounts of its subcategories.
+  #
+  # @param category [Category] The category or category group.
+  # @param amounts [Hash{Integer => Integer}] The amounts by category id.
+  # @return [Integer] The amount in cents.
+  def amount_for(category, amounts)
+    if category.parent_id.nil?
+      category.subcategories.sum { |subcategory| amounts[subcategory.id] || 0 }
+    else
+      amounts[category.id] || 0
+    end
+  end
 
   # Returns a hash of category_id to the available amount (assigned minus used)
   # summed across every snapshot up to and including the displayed month.
@@ -214,5 +244,18 @@ class BudgetSnapshot
   # @return [Hash] The category snapshots indexed by category id.
   def snapshots
     @snapshots ||= budget.category_snapshots.for_month(date).index_by(&:category_id)
+  end
+
+  # Returns a hash of category_id to the summed amount of the upcoming
+  # transactions dated on or before the end of the displayed month.
+  #
+  # @return [Hash{Integer => Integer}] Upcoming amount by category id.
+  def upcoming_amounts_by_category
+    @upcoming_amounts_by_category ||= budget.transactions
+                                            .upcoming
+                                            .where(date: ..date.end_of_month)
+                                            .reorder(nil)
+                                            .group(:category_id)
+                                            .sum(:amount)
   end
 end

@@ -3,37 +3,52 @@
   id="<%= dom_id(category, :available) %>"
   class="inline-flex items-baseline gap-1 py-0.5 px-2 -my-0.5 -mx-2 rounded-full <%= available_color(category, budget_snapshot) %>"
 >
-  <% if category.target_type? && budget_snapshot.available_for(category) >= 0 %>
-    <% if budget_snapshot.snoozed?(category) %>
-      <svg class="h-4 w-3 self-center select-none" viewBox="0 0 15 20" role="img">
-        <title><%= t("categories.show.target.snoozed_label") %></title>
+  <% if budget_snapshot.available_for(category) >= 0 %>
+    <% if budget_snapshot.uncovered?(category) %>
+      <svg
+        class="h-3.5 w-3.5 -ml-0.5 self-center"
+        viewBox="0 0 16 16"
+        fill="currentColor"
+        role="img"
+      >
+        <title><%= t("categories.show.uncovered_label") %></title>
 
-        <text
-          x="0"
-          y="15"
-          font-size="11"
-          font-weight="700"
-          fill="currentColor"
-        >
-          Z
-        </text>
-
-        <text
-          x="8"
-          y="9"
-          font-size="10"
-          font-weight="700"
-          fill="currentColor"
-        >
-          z
-        </text>
+        <path
+          d="M4.75 0a.75.75 0 0 1 .75.75V2h5V.75a.75.75 0 0 1 1.5 0V2h1.25c.966 0 1.75.784 1.75 1.75v10.5A1.75 1.75 0 0 1 13.25 16H2.75A1.75 1.75 0 0 1 1 14.25V3.75C1 2.784 1.784 2 2.75 2H4V.75A.75.75 0 0 1 4.75 0ZM2.5 7.5v6.75c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25V7.5Zm10.75-4H2.75a.25.25 0 0 0-.25.25V6h11V3.75a.25.25 0 0 0-.25-.25Z"
+        />
       </svg>
-    <% else %>
-      <% budget_snapshot.target_progress_for(category).tap do |progress| %>
-        <%= render "shared/progress_pie",
-                   progress:  progress,
-                   label:     progress_label(progress),
-                   css_class: "w-4 h-4 -ml-0.5 self-center" %>
+    <% elsif category.target_type? %>
+      <% if budget_snapshot.snoozed?(category) %>
+        <svg class="h-4 w-3 self-center select-none" viewBox="0 0 15 20" role="img">
+          <title><%= t("categories.show.target.snoozed_label") %></title>
+
+          <text
+            x="0"
+            y="15"
+            font-size="11"
+            font-weight="700"
+            fill="currentColor"
+          >
+            Z
+          </text>
+
+          <text
+            x="8"
+            y="9"
+            font-size="10"
+            font-weight="700"
+            fill="currentColor"
+          >
+            z
+          </text>
+        </svg>
+      <% else %>
+        <% budget_snapshot.target_progress_for(category).tap do |progress| %>
+          <%= render "shared/progress_pie",
+                     progress:  progress,
+                     label:     progress_label(progress),
+                     css_class: "w-4 h-4 -ml-0.5 self-center" %>
+        <% end %>
       <% end %>
     <% end %>
   <% end %>

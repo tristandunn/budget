@@ -15,15 +15,15 @@ module BudgetHelper
     end
   end
 
-  # Returns the CSS classes for a subcategory's available amount, signaling
-  # yellow when a monthly spending target has not yet been fully funded for
-  # the displayed month and the available amount has not gone overspent.
+  # Returns the CSS classes for a subcategory's available amount.
+  #
+  # Yellow when it needs attention, otherwise the standard amount color.
   #
   # @param category [Category] The subcategory to color.
   # @param budget_snapshot [BudgetSnapshot] The snapshot for the displayed month.
   # @return [String] A string representing the CSS classes for the badge.
   def available_color(category, budget_snapshot)
-    if budget_snapshot.underfunded?(category)
+    if needs_attention?(category, budget_snapshot)
       "bg-yellow-200 text-yellow-950"
     else
       amount_color(budget_snapshot.available_for(category))
@@ -107,5 +107,19 @@ module BudgetHelper
     else
       "bg-lime-100"
     end
+  end
+
+  private
+
+  # Returns true when the subcategory's available amount warrants a warning.
+  #
+  # A warning is when the subcategory is not fully funded for either a target
+  # or for upcoming transactions.
+  #
+  # @param category [Category] The subcategory to evaluate.
+  # @param budget_snapshot [BudgetSnapshot] The snapshot for the displayed month.
+  # @return [Boolean] Whether the available amount needs attention.
+  def needs_attention?(category, budget_snapshot)
+    budget_snapshot.underfunded?(category) || budget_snapshot.uncovered?(category)
   end
 end

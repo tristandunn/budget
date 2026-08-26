@@ -18,8 +18,10 @@ describe BudgetSnapshot do
   end
 
   describe "#available_for" do
-    subject(:budget_snapshot) { described_class.new(budget) }
+    subject(:available_for) { instance.available_for(subcategory) }
 
+    let(:date)        { Date.current.beginning_of_month }
+    let(:instance)    { described_class.new(budget) }
     let(:subcategory) { create(:category, :subcategory, budget: budget, with_snapshot: false) }
 
     context "with a single snapshot" do
@@ -28,7 +30,7 @@ describe BudgetSnapshot do
       end
 
       it "returns the difference between assigned and used" do
-        expect(budget_snapshot.available_for(subcategory)).to eq(50)
+        expect(available_for).to eq(50)
       end
     end
 
@@ -37,13 +39,13 @@ describe BudgetSnapshot do
         create(:category_snapshot, budget: budget, category: subcategory, amount_assigned: 100, amount_used: 70)
         create(:category_snapshot, budget:          budget,
                                    category:        subcategory,
-                                   date:            1.month.ago.beginning_of_month,
+                                   date:            date.prev_month,
                                    amount_assigned: 200,
                                    amount_used:     250)
       end
 
       it "sums all snapshots through the displayed month" do
-        expect(budget_snapshot.available_for(subcategory)).to eq(-20)
+        expect(available_for).to eq(-20)
       end
     end
 
@@ -52,34 +54,37 @@ describe BudgetSnapshot do
         create(:category_snapshot, budget: budget, category: subcategory, amount_assigned: 100, amount_used: 20)
         create(:category_snapshot, budget:          budget,
                                    category:        subcategory,
-                                   date:            2.months.from_now.beginning_of_month,
+                                   date:            date.next_month.next_month,
                                    amount_assigned: 500)
       end
 
       it "excludes snapshots after the displayed month" do
-        expect(budget_snapshot.available_for(subcategory)).to eq(80)
+        expect(available_for).to eq(80)
       end
     end
 
     context "with a group category" do
-      let(:first_subcategory)  { create(:category, budget: budget, parent: parent, with_snapshot: false) }
-      let(:parent)             { create(:category, budget: budget, with_snapshot: false) }
-      let(:second_subcategory) { create(:category, budget: budget, parent: parent, with_snapshot: false) }
+      subject(:available_for) { instance.available_for(parent) }
+
+      let(:parent) { create(:category, budget: budget, with_snapshot: false) }
 
       before do
+        first_subcategory  = create(:category, budget: budget, parent: parent, with_snapshot: false)
+        second_subcategory = create(:category, budget: budget, parent: parent, with_snapshot: false)
+
         create(:category_snapshot, budget: budget, category: first_subcategory, amount_assigned: 100, amount_used: 40)
         create(:category_snapshot, budget: budget, category: second_subcategory, amount_assigned: 300, amount_used: 150)
         create(:category_snapshot, budget: budget, category: parent, amount_assigned: 999, amount_used: 999)
       end
 
       it "sums the available amounts of its subcategories and ignores its own snapshot" do
-        expect(budget_snapshot.available_for(parent)).to eq(210)
+        expect(available_for).to eq(210)
       end
     end
 
     context "without snapshots" do
       it "returns zero" do
-        expect(budget_snapshot.available_for(subcategory)).to eq(0)
+        expect(available_for).to eq(0)
       end
     end
   end
@@ -438,6 +443,103 @@ describe BudgetSnapshot do
     end
   end
 
+  describe "#uncovered?" do
+    subject(:uncovered?) { instance.uncovered?(subcategory) }
+
+    let(:amount_assigned) { 50_00 }
+    let(:date)            { Date.current.beginning_of_month }
+    let(:instance)        { described_class.new(budget) }
+    let(:subcategory)     { create(:category, :subcategory, budget: budget, with_snapshot: false) }
+
+    before do
+      create(:category_snapshot, budget:          budget,
+                                 category:        subcategory,
+                                 amount_assigned: amount_assigned,
+                                 amount_used:     0)
+    end
+
+    context "without upcoming transactions" do
+      it { is_expected.to be(false) }
+    end
+
+    context "with an upcoming transaction covered by the available amount" do
+      before do
+        create(:transaction, :upcoming, budget:      budget,
+                                        subcategory: subcategory,
+                                        amount:      -20_00,
+                                        date:        date)
+      end
+
+      it { is_expected.to be(false) }
+    end
+
+    context "with an upcoming transaction matching the available amount" do
+      before do
+        create(:transaction, :upcoming, budget:      budget,
+                                        subcategory: subcategory,
+                                        amount:      -50_00,
+                                        date:        date)
+      end
+
+      it { is_expected.to be(false) }
+    end
+
+    context "with upcoming transactions exceeding the available amount" do
+      before do
+        create(:transaction, :upcoming, budget:      budget,
+                                        subcategory: subcategory,
+                                        amount:      -30_00,
+                                        date:        date)
+        create(:transaction, :upcoming, budget:      budget,
+                                        subcategory: subcategory,
+                                        amount:      -30_00,
+                                        date:        date.end_of_month)
+      end
+
+      it { is_expected.to be(true) }
+    end
+
+    context "with an upcoming inflow" do
+      before do
+        create(:transaction, :upcoming, budget:      budget,
+                                        subcategory: subcategory,
+                                        amount:      20_00,
+                                        date:        date)
+      end
+
+      it { is_expected.to be(false) }
+    end
+
+    context "with an upcoming outflow and no available amount" do
+      let(:amount_assigned) { 0 }
+
+      before do
+        create(:transaction, :upcoming, budget:      budget,
+                                        subcategory: subcategory,
+                                        amount:      -10_00,
+                                        date:        date)
+      end
+
+      it { is_expected.to be(true) }
+    end
+
+    context "with an overspent available amount" do
+      before do
+        create(:category_snapshot, budget:          budget,
+                                   category:        subcategory,
+                                   date:            date.prev_month,
+                                   amount_assigned: 0,
+                                   amount_used:     60_00)
+        create(:transaction, :upcoming, budget:      budget,
+                                        subcategory: subcategory,
+                                        amount:      -30_00,
+                                        date:        date)
+      end
+
+      it { is_expected.to be(false) }
+    end
+  end
+
   describe "#underfunded?" do
     subject(:underfunded?) { instance.underfunded?(subcategory) }
 
@@ -594,6 +696,81 @@ describe BudgetSnapshot do
       end
 
       it { is_expected.to be(false) }
+    end
+  end
+
+  describe "#upcoming_for" do
+    subject(:upcoming_for) { instance.upcoming_for(subcategory) }
+
+    let(:date)        { Date.current.beginning_of_month }
+    let(:instance)    { described_class.new(budget) }
+    let(:subcategory) { create(:category, :subcategory, budget: budget, with_snapshot: false) }
+
+    context "with upcoming transactions for the month" do
+      before do
+        create(:transaction, :upcoming, budget:      budget,
+                                        subcategory: subcategory,
+                                        amount:      -30_00,
+                                        date:        date)
+        create(:transaction, :upcoming, budget:      budget,
+                                        subcategory: subcategory,
+                                        amount:      -20_00,
+                                        date:        date.end_of_month)
+      end
+
+      it "sums the upcoming amounts" do
+        expect(upcoming_for).to eq(-50_00)
+      end
+    end
+
+    context "with an upcoming transaction before a future displayed month" do
+      subject(:upcoming_for) do
+        described_class.new(budget, month: month.month, year: month.year).upcoming_for(subcategory)
+      end
+
+      let(:month) { date.next_month.next_month }
+
+      before do
+        create(:transaction, :upcoming, budget:      budget,
+                                        subcategory: subcategory,
+                                        amount:      -40_00,
+                                        date:        date.next_month)
+      end
+
+      it "sums all transactions through the displayed month" do
+        expect(upcoming_for).to eq(-40_00)
+      end
+    end
+
+    context "with an upcoming transaction in a future month" do
+      before do
+        create(:transaction, :upcoming, budget:      budget,
+                                        subcategory: subcategory,
+                                        amount:      -40_00,
+                                        date:        date.next_month)
+      end
+
+      it "excludes transactions after the displayed month" do
+        expect(upcoming_for).to eq(0)
+      end
+    end
+
+    context "with transactions in another status" do
+      before do
+        create(:transaction, budget: budget, subcategory: subcategory, amount: -10_00, date: date)
+        create(:transaction, :cleared, budget: budget, subcategory: subcategory, amount: -10_00, date: date)
+        create(:transaction, :reconciled, budget: budget, subcategory: subcategory, amount: -10_00, date: date)
+      end
+
+      it "excludes them" do
+        expect(upcoming_for).to eq(0)
+      end
+    end
+
+    context "without upcoming transactions" do
+      it "returns zero" do
+        expect(upcoming_for).to eq(0)
+      end
     end
   end
 end
