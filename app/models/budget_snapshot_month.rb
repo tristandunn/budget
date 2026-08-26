@@ -26,9 +26,16 @@ class BudgetSnapshotMonth
 
   # Return the date for this budget snapshot.
   #
+  # The current month is always inside `snapshot_range`, so clamping it is a
+  # no-op and the range is left unqueried in that case.
+  #
   # @return [Date] The date for this budget snapshot.
   def date
-    @date ||= parsed_date.clamp(snapshot_range.first, snapshot_range.last)
+    @date ||= if parsed_date == current_month
+                current_month
+              else
+                parsed_date.clamp(snapshot_range.first, snapshot_range.last)
+              end
   end
 
   # Return whether this is the first month in the navigable range.
@@ -103,8 +110,8 @@ class BudgetSnapshotMonth
   #
   # @return [Date] The parsed date, or the current month if parsing fails.
   def parsed_date
-    Date.new(year.to_i, month.to_i)
+    @parsed_date ||= Date.new(year.to_i, month.to_i)
   rescue Date::Error
-    current_month
+    @parsed_date = current_month
   end
 end
