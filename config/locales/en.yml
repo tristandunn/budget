@@ -103,6 +103,7 @@ en:
         snoozed_label: "Target snoozed for this month."
         to_go: "To go"
         unsnooze: "Unsnooze for this month"
+      uncovered_label: "Upcoming transactions are not covered."
       upcoming:
         one: "%{count} Upcoming Transaction"
         other: "%{count} Upcoming Transactions"

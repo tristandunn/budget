@@ -28,11 +28,16 @@ describe BudgetHelper do
   describe "#available_color" do
     subject { helper.available_color(category, budget_snapshot) }
 
-    let(:available) { 100_00 }
-    let(:category)  { build_stubbed(:category, :subcategory) }
+    let(:available)   { 100_00 }
+    let(:category)    { build_stubbed(:category, :subcategory) }
+    let(:uncovered)   { false }
+    let(:underfunded) { false }
 
     let(:budget_snapshot) do
-      instance_double(BudgetSnapshot, available_for: available, underfunded?: underfunded)
+      instance_double(BudgetSnapshot,
+                      available_for: available,
+                      uncovered?:    uncovered,
+                      underfunded?:  underfunded)
     end
 
     before do
@@ -45,9 +50,13 @@ describe BudgetHelper do
       it { is_expected.to eq("bg-yellow-200 text-yellow-950") }
     end
 
-    context "when the category is not underfunded" do
-      let(:underfunded) { false }
+    context "when the upcoming transactions are uncovered" do
+      let(:uncovered) { true }
 
+      it { is_expected.to eq("bg-yellow-200 text-yellow-950") }
+    end
+
+    context "when the category is neither underfunded nor uncovered" do
       it { is_expected.to eq("AMOUNT_COLOR") }
     end
   end
