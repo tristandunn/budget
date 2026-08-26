@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class SnoozesController < ApplicationController
+  before_action :require_valid_date
+
   # Snooze the monthly spending target for the displayed month.
   def create
     @budget          = current_budget
@@ -39,7 +41,7 @@ class SnoozesController < ApplicationController
   #
   # @return [BudgetSnapshot] The current budget snapshot.
   def budget_snapshot
-    @budget_snapshot ||= BudgetSnapshot.new(current_budget, month: params[:month], year: params[:year])
+    @budget_snapshot ||= BudgetSnapshot.new(current_budget, month: date.month, year: date.year)
   end
 
   # Return the category for the given category_id parameter, scoped to
@@ -62,10 +64,34 @@ class SnoozesController < ApplicationController
     )
   end
 
+  # Return the requested date when valid.
+  #
+  # @return [Date] The requested date or the current month.
+  # @return [nil] When the requested date is invalid.
+  def date
+    @date ||= if params.values_at(:month, :year).any?(&:present?)
+                Date.strptime("#{params[:year]}-#{params[:month]}", "%Y-%m")
+              else
+                Date.current.beginning_of_month
+              end
+  rescue Date::Error
+    nil
+  end
+
   # Return the budget path for the displayed month.
   #
   # @return [String] The path to the budget for the displayed month.
   def displayed_budget_path
-    month_budget_path(current_budget, year: params[:year], month: params[:month])
+    month_budget_path(current_budget, month: budget_snapshot.date.month, year: budget_snapshot.date.year)
+  end
+
+  # Raise if the date is invalid.
+  #
+  # @raise [ActionController::BadRequest] If the date is not valid.
+  # @return [void]
+  def require_valid_date
+    if date.nil?
+      raise ActionController::BadRequest
+    end
   end
 end
