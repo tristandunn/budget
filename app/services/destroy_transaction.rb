@@ -60,8 +60,8 @@ class DestroyTransaction
 
   # Destroy a transfer, reversing both account balances and removing the
   # partner row. `CreateTransfer` applies both balance changes immediately
-  # regardless of date, so the destroy must reverse them regardless of
-  # `upcoming?`.
+  # regardless of date, so destroying must reverse them no matter what
+  # `upcoming?` reports.
   #
   # @return [void]
   def destroy_transfer

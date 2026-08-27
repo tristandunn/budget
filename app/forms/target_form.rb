@@ -7,12 +7,12 @@ class TargetForm < BaseForm
 
   validate :validate_category
 
-  # Build a form pre-populated from an existing category. Categories without
+  # Build a form prepopulated from an existing category. Categories without
   # a target default to the most common target type so the editor opens to a
   # usable state.
   #
-  # @param category [Category] The category to pre-populate from.
-  # @return [TargetForm] The pre-populated form.
+  # @param category [Category] The category to prepopulate from.
+  # @return [TargetForm] The prepopulated form.
   def self.from(category:)
     new(
       category:      category,
@@ -22,10 +22,13 @@ class TargetForm < BaseForm
   end
 
   # Return the target amount formatted as the decimal string shown in the
-  # form input. Returns nil when the amount is missing or zero so the input
-  # renders blank and the placeholder is visible.
+  # form input.
   #
-  # @return [String, nil] The decimal string representation of the amount.
+  # A missing or zero amount yields nil, so the input renders blank and the
+  # placeholder is visible.
+  #
+  # @return [String] The decimal string representation of the amount.
+  # @return [nil] When the amount is missing or zero.
   def target_amount_input
     if target_amount.to_i.positive?
       Money.new(target_amount).to_s
@@ -38,7 +41,8 @@ class TargetForm < BaseForm
   # unparseable value clears the amount so validation can surface a presence
   # error rather than raising.
   #
-  # @param value [String] The raw input string.
+  # @param value [String, nil] The raw input string.
+  # @return [void]
   def target_amount_input=(value)
     amount = BigDecimal(value.to_s.delete("$,"), exception: false)
 
@@ -50,6 +54,7 @@ class TargetForm < BaseForm
   # Attempt to update the category with the form attributes.
   #
   # @return [Boolean] Whether the category was updated successfully.
+  # @return [nil] When the form is invalid.
   def update
     category.assign_attributes(attributes)
 

@@ -21,9 +21,16 @@ class BudgetSeeder
   end
 
   # Find or create a transaction, keyed on the account, payee, and frequency so
-  # an actual occurrence and its recurring template stay distinct. The remaining
-  # attributes, including the date as on, are passed through.
+  # an actual occurrence and its recurring template stay distinct.
   #
+  # @param account [Account] The account the transaction belongs to.
+  # @param payee [Payee] The payee the transaction is for.
+  # @param frequency [Symbol, nil] The recurring frequency.
+  # @param attributes [Hash] The attributes to assign when creating.
+  # @option attributes [Integer] :amount The amount in cents.
+  # @option attributes [Date] :on The transaction date.
+  # @option attributes [Symbol] :status The status, defaulting to pending.
+  # @option attributes [Category] :subcategory The subcategory to assign.
   # @return [Transaction] The found or created transaction.
   def record(account:, payee:, frequency: nil, **attributes)
     budget.transactions.find_or_create_by!(account: account, payee: payee, frequency: frequency) do |transaction|
@@ -37,6 +44,7 @@ class BudgetSeeder
   # Build a parent category's snapshots by summing the subcategory snapshots
   # already created for each month.
   #
+  # @param parent [Category] The parent category to build snapshots for.
   # @return [void]
   def rollup(parent)
     totals = parent.subcategories
@@ -58,6 +66,10 @@ class BudgetSeeder
 
   # Find or create a category snapshot for a month.
   #
+  # @param category [Category] The category to snapshot.
+  # @param assigned [Integer] The assigned amount in cents.
+  # @param on [Date] The month the snapshot is for.
+  # @param used [Integer] The used amount in cents.
   # @return [CategorySnapshot] The found or created snapshot.
   def snapshot(category, assigned:, on:, used: 0)
     category.snapshots.find_or_create_by!(budget: budget, date: on) do |category_snapshot|
@@ -70,7 +82,7 @@ class BudgetSeeder
 
   attr_reader :budget
 
-  # The total assigned across every subcategory snapshot.
+  # Return the total amount assigned across every subcategory snapshot.
   #
   # @return [Integer] The assigned amount in cents.
   def assigned
@@ -80,7 +92,7 @@ class BudgetSeeder
           .sum(:amount_assigned)
   end
 
-  # The total inflow that is not upcoming.
+  # Return the total inflow from transactions that are not upcoming.
   #
   # @return [Integer] The inflow amount in cents.
   def inflow

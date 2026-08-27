@@ -24,8 +24,8 @@ class TransferForm < BaseForm
   # Return the default amount derived from the destination credit account's
   # cleared balance owed.
   #
-  # Returns nil when nothing is owed, so an overpaid account leaves the input
-  # blank and its placeholder visible rather than defaulting to zero.
+  # Nothing owed yields nil, so an overpaid account leaves the input blank and
+  # its placeholder visible rather than defaulting to zero.
   #
   # @return [String] The default amount.
   # @return [nil] When there is no credit destination account or nothing is owed.
@@ -41,7 +41,7 @@ class TransferForm < BaseForm
 
   # Attempt to create the transfer if the form is valid.
   #
-  # @return [Boolean] When the form is valid and the transfer is created.
+  # @return [Boolean] Whether the transfer was created successfully.
   # @return [nil] When the form is invalid.
   def save
     if valid?
@@ -78,14 +78,16 @@ class TransferForm < BaseForm
     from_account.present? && from_account.credit?
   end
 
-  # Return whether the destination account is present and is not a credit account.
+  # Return whether the destination account is present and is not a
+  # credit account.
   #
   # @return [Boolean] Whether the destination account is the wrong kind.
   def to_account_invalid_kind?
     to_account.present? && !to_account.credit?
   end
 
-  # Validate that the source is a cash account and the destination is a credit account.
+  # Validate that the source is a cash account and the destination is a
+  # credit account.
   #
   # @return [void]
   def validate_account_kinds

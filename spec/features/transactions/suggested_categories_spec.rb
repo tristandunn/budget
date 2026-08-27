@@ -69,6 +69,8 @@ describe "Transaction category suggestions" do
   protected
 
   # Open the category picker panel.
+  #
+  # @return [void]
   def open_category_picker
     find("[data-action~='click->category-picker#open']").click
   end
@@ -76,7 +78,8 @@ describe "Transaction category suggestions" do
   # Give the payee the requested number of transactions for each subcategory.
   #
   # @param payee [Payee] The payee to record usage for.
-  # @param counts [Hash{Category => Integer}] Subcategory to transaction count.
+  # @param counts [Hash{Category => Integer}] A map of subcategory to transaction count.
+  # @return [void]
   def record_subcategory_usage(payee, counts)
     counts.each do |subcategory, count|
       create_list(:transaction, count, account: account, budget: budget, payee: payee, subcategory: subcategory)
@@ -86,6 +89,7 @@ describe "Transaction category suggestions" do
   # Open the payee picker and select the option with the given name.
   #
   # @param name [String] The payee name to select.
+  # @return [void]
   def select_payee(name)
     find("[data-action~='click->payee-picker#open']").click
 

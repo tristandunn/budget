@@ -24,9 +24,10 @@ class TransactionForm < BaseForm
     )
   end
 
-  # Return the amount as a Money object.
+  # Return the amount as a `Money` object.
   #
   # @return [Money] The parsed amount.
+  # @return [nil] When the amount is blank, unparseable, or zero.
   def amount
     value = BigDecimal(@amount.to_s, exception: false)
 
@@ -46,7 +47,7 @@ class TransactionForm < BaseForm
 
   delegate :recurring_scheduled?, to: :transaction
 
-  # Attempt to save the transaction if it's valid.
+  # Attempt to save the transaction if the form is valid.
   #
   # @return [Boolean] Whether the transaction was saved successfully.
   # @return [nil] When the form is invalid.
@@ -74,6 +75,7 @@ class TransactionForm < BaseForm
   #
   # @param transaction [Transaction] The transaction to update.
   # @return [Boolean] Whether the transaction was updated successfully.
+  # @return [nil] When the form is invalid.
   def update(transaction)
     if valid?
       if posting?(transaction)
@@ -140,9 +142,9 @@ class TransactionForm < BaseForm
     end
   end
 
-  # Return the Payee record for the given payee name, initializing one if needed.
-  # Initialization is deferred to autosave when the parent transaction saves so
-  # failed validations do not leak orphan payees.
+  # Return the `Payee` record for the given payee name, initializing one if
+  # needed. Initialization is deferred to autosave when the parent transaction
+  # saves so failed validations do not leak orphan payees.
   #
   # @return [Payee] The found or initialized payee record.
   # @return [nil] When the payee name is blank.

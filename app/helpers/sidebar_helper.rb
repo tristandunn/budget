@@ -5,7 +5,7 @@ module SidebarHelper
     "flex items-center justify-between gap-2 rounded-lg py-1.5 pr-2 pl-7 text-sm no-underline text-white"
   SIDEBAR_ITEM_CLASSES = "flex items-center gap-3 rounded-lg px-3 py-2 no-underline text-white"
 
-  # Returns whether the sidebar account link is active.
+  # Return whether the sidebar account link is active.
   #
   # @param account [Account] The account to check.
   # @return [Boolean] Whether the account is currently active.
@@ -14,7 +14,7 @@ module SidebarHelper
       params[:account_id].to_s == account.id.to_s
   end
 
-  # Returns the CSS classes for a sidebar account link.
+  # Return the CSS classes for a sidebar account link.
   #
   # @param active [Boolean] Whether the account is active.
   # @return [String] The CSS classes for the account link.
@@ -22,14 +22,14 @@ module SidebarHelper
     class_names(SIDEBAR_ACCOUNT_CLASSES, { "bg-indigo-800" => active, "hover:bg-white/5" => !active })
   end
 
-  # Returns the current user's budgets, ordered by name.
+  # Return the current user's budgets, ordered by name.
   #
   # @return [Array<Budget>] The user's budgets.
   def sidebar_budgets
     @sidebar_budgets ||= Current.user.budgets.order(:name).to_a
   end
 
-  # Returns the CSS classes for a sidebar item.
+  # Return the CSS classes for a sidebar item.
   #
   # @param active [Boolean] Whether the item is active.
   # @return [String] The CSS classes for the sidebar item.

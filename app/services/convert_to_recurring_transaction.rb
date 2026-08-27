@@ -11,7 +11,7 @@ class ConvertToRecurringTransaction
   end
 
   # Update the transaction without a frequency, then create the next scheduled
-  # occurrence advanced by the new frequency from the attributes.
+  # occurrence, advancing its date by the new frequency in the attributes.
   #
   # @param attributes [Hash] The new attributes for the transaction.
   # @param transaction [Transaction] The transaction to convert.
@@ -21,7 +21,7 @@ class ConvertToRecurringTransaction
   end
 
   # Update the transaction without a frequency, then create the next scheduled
-  # occurrence advanced by the new frequency from the attributes.
+  # occurrence, advancing its date by the new frequency in the attributes.
   #
   # @return [Boolean] Whether the conversion was successful.
   def call
@@ -49,7 +49,7 @@ class ConvertToRecurringTransaction
     )
   end
 
-  # Update the transaction with the new attributes, keeping frequency nil so
+  # Update the transaction with the new attributes, keeping `frequency` nil so
   # the posted transaction stays out of recurring processing.
   #
   # @return [Boolean] Whether the transaction was updated successfully.

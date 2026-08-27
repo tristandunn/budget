@@ -3,7 +3,7 @@
 class CreateTransfer
   # Initialize the service.
   #
-  # @param accounts [Hash{Symbol => Account}] The :from and :to accounts.
+  # @param accounts [Hash{Symbol => Account}] The `:from` and `:to` accounts.
   # @param amount [Money] The amount being transferred.
   # @param budget [Budget] The budget the transfer belongs to.
   # @param date [Date] The transfer date applied to both rows.
@@ -19,7 +19,7 @@ class CreateTransfer
 
   # Create the paired transactions and update both account balances.
   #
-  # @param accounts [Hash{Symbol => Account}] The :from and :to accounts.
+  # @param accounts [Hash{Symbol => Account}] The `:from` and `:to` accounts.
   # @param amount [Money] The amount being transferred.
   # @param budget [Budget] The budget the transfer belongs to.
   # @param date [Date] The transfer date applied to both rows.
@@ -81,7 +81,7 @@ class CreateTransfer
     )
   end
 
-  # Link the two transactions to each other via transfer_pair_id.
+  # Link the two transactions to each other via `transfer_pair_id`.
   #
   # @param outflow [Transaction] The source-side transaction.
   # @param inflow [Transaction] The destination-side transaction.
@@ -93,7 +93,7 @@ class CreateTransfer
 
   # Find or create the payee for a transfer counterpart account.
   #
-  # @param direction [Symbol] :from for the inflow side, :to for the outflow side.
+  # @param direction [Symbol] The transfer side, `:from` for the inflow and `:to` for the outflow.
   # @param account [Account] The counterpart account whose name labels the payee.
   # @return [Payee] The found or created payee record.
   def payee_for(direction, account)

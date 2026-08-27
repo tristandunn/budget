@@ -56,7 +56,7 @@ class TargetsController < ApplicationController
     @budget_snapshot ||= BudgetSnapshot.new(current_budget, month: params[:month], year: params[:year])
   end
 
-  # Return the category for the given category_id parameter.
+  # Return the category for the given `category_id` parameter.
   #
   # @return [Category] The requested category.
   def category
@@ -79,7 +79,8 @@ class TargetsController < ApplicationController
 
   # Return the budget snapshot for the month preceding the displayed month.
   #
-  # @return [BudgetSnapshot, nil] The previous budget snapshot, or nil on the first month.
+  # @return [BudgetSnapshot] The previous budget snapshot.
+  # @return [nil] When the displayed month is the first month.
   def previous_budget_snapshot
     unless budget_snapshot.first_month?
       @previous_budget_snapshot ||= BudgetSnapshot.new(

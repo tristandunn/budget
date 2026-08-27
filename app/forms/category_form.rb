@@ -17,6 +17,7 @@ class CategoryForm < BaseForm
   # Attempt to update the category if the form is valid.
   #
   # @return [Boolean] Whether the category was updated successfully.
+  # @return [nil] When the form is invalid.
   def update
     category.assign_attributes(attributes)
 

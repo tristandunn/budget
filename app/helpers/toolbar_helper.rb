@@ -3,7 +3,7 @@
 module ToolbarHelper
   DEFAULT_CLASSES = "flex flex-col items-center py-4 px-4"
 
-  # Returns the CSS classes for a toolbar item.
+  # Return the CSS classes for a toolbar item.
   #
   # @param active [Boolean] Whether the item is active.
   # @return [String] The CSS classes for the toolbar item.

@@ -2,8 +2,8 @@
 
 class ActivateUpcomingTransactionsJob < ApplicationJob
   # Activate all upcoming transactions that are due in each budget's configured
-  # time zone. A long-overdue transaction activates one period per run; the
-  # every 30 minute schedule bounds catch-up.
+  # time zone. A long-overdue transaction activates one period per run, so the
+  # recurring schedule bounds how quickly it catches up.
   #
   # @return [void]
   def perform

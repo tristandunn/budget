@@ -12,14 +12,14 @@ class CategorySnapshot < ApplicationRecord
   scope :for_month,     ->(month_date) { where(date: month_date.beginning_of_month) }
   scope :with_activity, -> { where.not(amount_assigned: 0).or(where.not(amount_used: 0)) }
 
-  # Returns the amount remaining in the category snapshot.
+  # Return the amount remaining in the category snapshot.
   #
   # @return [Integer] The amount remaining in the category snapshot.
   def amount_remaining
     amount_assigned - amount_used
   end
 
-  # Returns true when the target for the snapshot's month has been snoozed.
+  # Return whether the target for the snapshot's month has been snoozed.
   #
   # @return [Boolean] Whether the snapshot is snoozed.
   def snoozed?

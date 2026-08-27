@@ -34,16 +34,16 @@ module Authentication
     Current.user ||= user_from_session
   end
 
-  # Determine if a user is signed in.
+  # Return whether a user is signed in.
   #
-  # @return [Boolean]
+  # @return [Boolean] Whether a user is signed in.
   def signed_in?
     resume_session.present?
   end
 
-  # Determine if a user is not signed in.
+  # Return whether a user is not signed in.
   #
-  # @return [Boolean]
+  # @return [Boolean] Whether a user is not signed in.
   def signed_out?
     !signed_in?
   end

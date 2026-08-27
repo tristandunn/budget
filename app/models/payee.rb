@@ -27,25 +27,26 @@ class Payee < ApplicationRecord
     end
   end
 
-  # Return the account id from the most recent transaction for this payee.
+  # Return the account ID from the most recent transaction for this payee.
   #
-  # @return [Integer] The most recent account id.
+  # @return [Integer] The most recent account ID.
   # @return [nil] When the payee has no transactions.
   def previous_account_id
     transactions.reorder(date: :desc, id: :desc).pick(:account_id)
   end
 
-  # Return the subcategory id from the most recent categorized transaction for
+  # Return the subcategory ID from the most recent categorized transaction for
   # this payee.
   #
-  # @return [Integer] The most recent subcategory id.
+  # @return [Integer] The most recent subcategory ID.
   # @return [nil] When the payee has no categorized transactions.
   def previous_subcategory_id
     transactions.where.not(category_id: nil).reorder(date: :desc, id: :desc).pick(:category_id)
   end
 
   # Return the three subcategory IDs most used for this payee, ordered by
-  # usage count descending, tiebroken by most recent transaction date and ID.
+  # usage count descending, with ties broken by the most recent transaction
+  # date and ID.
   #
   # @return [Array<Integer>] The most used subcategory IDs.
   def suggested_subcategory_ids

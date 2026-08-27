@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 module BudgetHelper
-  # Returns the CSS classes for an amount.
+  # Return the CSS classes for an amount.
   #
   # @param amount [Integer] The amount in cents.
-  # @return [String] A string representing the CSS classes for the given amount.
+  # @return [String] The CSS classes for the given amount.
   def amount_color(amount)
     if amount.zero?
       "bg-stone-200 text-stone-950"
@@ -15,7 +15,7 @@ module BudgetHelper
     end
   end
 
-  # Returns the CSS classes for a subcategory's available amount.
+  # Return the CSS classes for a subcategory's available amount.
   #
   # Yellow when it needs attention, otherwise the standard amount color.
   #
@@ -30,7 +30,7 @@ module BudgetHelper
     end
   end
 
-  # Returns the localized label describing a month's funding progress, the
+  # Return the localized label describing a month's funding progress, the
   # snapshot counterpart to {#progress_label}, used as the accessible name for
   # the future-month progress icon.
   #
@@ -46,17 +46,17 @@ module BudgetHelper
     end
   end
 
-  # Returns the CSS classes for a navigation arrow link.
+  # Return the CSS classes for a navigation arrow link.
   #
   # @param disabled [Boolean] Whether the link is disabled.
-  # @return [String] A string representing the CSS classes for the navigation arrow link.
+  # @return [String] The CSS classes for the navigation arrow link.
   def navigation_arrow_class(disabled)
     class_names("h-5 w-5", "text-taupe-300 pointer-events-none" => disabled)
   end
 
-  # Returns the CSS class for a progress icon, signaling lime when fully funded
+  # Return the CSS class for a progress icon, signaling lime when fully funded
   # and yellow when underfunded. Accepts any progress-like object that responds
-  # to +funded?+, such as a month {BudgetSnapshot} or a {TargetProgress}.
+  # to `funded?`, such as a month {BudgetSnapshot} or a {TargetProgress}.
   #
   # @param progress [BudgetSnapshot, TargetProgress] The progress to evaluate.
   # @return [String] The CSS class for the progress icon.
@@ -68,7 +68,7 @@ module BudgetHelper
     end
   end
 
-  # Returns the localized label describing a target's progress, used as the
+  # Return the localized label describing a target's progress, used as the
   # accessible name for the progress icon.
   #
   # @param progress [TargetProgress] The progress to describe.
@@ -81,10 +81,10 @@ module BudgetHelper
     end
   end
 
-  # Returns the CSS classes for a subcategory amount in the picker.
+  # Return the CSS classes for a subcategory amount in the picker.
   #
   # @param amount [Integer] The amount in cents.
-  # @return [String] A string representing the CSS classes for the given amount.
+  # @return [String] The CSS classes for the given amount.
   def picker_amount_class(amount)
     if amount.zero?
       "text-gray-400"
@@ -95,7 +95,7 @@ module BudgetHelper
     end
   end
 
-  # Returns the CSS class for the upcoming transactions card, signaling yellow
+  # Return the CSS class for the upcoming transactions card, signaling yellow
   # when the upcoming transactions would overspend the category and lime when
   # they would not.
   #
@@ -111,10 +111,10 @@ module BudgetHelper
 
   private
 
-  # Returns true when the subcategory's available amount warrants a warning.
+  # Return whether the subcategory's available amount warrants a warning.
   #
-  # A warning is when the subcategory is not fully funded for either a target
-  # or for upcoming transactions.
+  # A warning is warranted when the subcategory is not fully funded for
+  # either a target or its upcoming transactions.
   #
   # @param category [Category] The subcategory to evaluate.
   # @param budget_snapshot [BudgetSnapshot] The snapshot for the displayed month.

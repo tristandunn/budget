@@ -38,6 +38,12 @@ class CalculateAmount
 
   # Calculate the amount from the operands.
   #
+  # A zero right operand short-circuits to the left operand alone. The
+  # expression pattern makes the right operand optional, and `nil.to_d` is
+  # zero, so this covers a trailing operator such as `"5+"`. An explicit zero
+  # takes the same path, which is why both `"5*0"` and `"5/0"` calculate to 5,
+  # rather than dividing by zero.
+  #
   # @param left [BigDecimal] The left operand.
   # @param operator [String, nil] The operator to apply.
   # @param right [BigDecimal] The right operand.

@@ -2,7 +2,7 @@
 
 class AccountsController < ApplicationController
   # Render the accounts index on mobile or redirect to the transactions
-  # on desktop.
+  # list on desktop.
   def index
     if request.variant.mobile?
       @budget          = current_budget
@@ -63,7 +63,7 @@ class AccountsController < ApplicationController
 
   private
 
-  # Return the account for the given id parameter.
+  # Return the account for the given `id` parameter.
   #
   # @return [Account] The requested account.
   def account

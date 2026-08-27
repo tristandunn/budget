@@ -7,7 +7,7 @@ class AssignmentForm < BaseForm
   validate :validate_assignment
   validate :validate_date_within_navigable_range
 
-  # Return the amount as a Money object.
+  # Return the amount as a `Money` object.
   #
   # @return [Money] The calculated amount.
   # @return [nil] When the amount is not a supported expression.
@@ -31,9 +31,10 @@ class AssignmentForm < BaseForm
     )
   end
 
-  # Attempt to save the assignment if it's valid.
+  # Attempt to save the assignment if the form is valid.
   #
   # @return [Boolean] Whether the assignment was saved successfully.
+  # @return [nil] When the form is invalid.
   def save
     if valid?
       AssignCategory.call(budget: budget, subcategory: subcategory, amount: amount, date: date)

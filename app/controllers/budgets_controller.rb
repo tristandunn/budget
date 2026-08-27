@@ -64,10 +64,11 @@ class BudgetsController < ApplicationController
     @current_budget_snapshot ||= BudgetSnapshot.new(current_budget, month: params[:month], year: params[:year])
   end
 
-  # Return whether or not the request supplied a year and month that did not
+  # Return whether the request supplied a year and month that did not
   # resolve to the displayed snapshot date.
   #
   # @return [Boolean] Whether the requested month is out of the snapshot range.
+  # @return [nil] When no year parameter was supplied.
   def out_of_range_month?
     if params[:year].present?
       [params[:year].to_i, params[:month].to_i] != [snapshot_date.year, snapshot_date.month]

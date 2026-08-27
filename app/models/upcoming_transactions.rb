@@ -10,7 +10,7 @@ class UpcomingTransactions
     @category        = category
   end
 
-  # Returns true when the category has upcoming transactions affecting the
+  # Return whether the category has upcoming transactions affecting the
   # displayed month.
   #
   # @return [Boolean] Whether any upcoming transactions exist.
@@ -18,24 +18,24 @@ class UpcomingTransactions
     count.positive?
   end
 
-  # Returns the available amount projected forward by the upcoming total. Upcoming
-  # transactions have no balance effect until activation, so the snapshot's available
-  # amount excludes them and this composes the two.
+  # Return the available amount projected forward by the upcoming total.
+  # Upcoming transactions have no balance effect until activation, so the
+  # snapshot's available amount excludes them and this adds the two together.
   #
   # @return [Integer] The projected available amount in cents.
   def available_after
     budget_snapshot.available_for(category) + total
   end
 
-  # Returns the number of upcoming transactions affecting the displayed month.
+  # Return the number of upcoming transactions affecting the displayed month.
   #
   # @return [Integer] The upcoming transaction count.
   def count
     amounts.size
   end
 
-  # Returns the summed amount of the upcoming transactions. Spending is negative,
-  # so an outflow-only month sums to a negative amount.
+  # Return the summed amount of the upcoming transactions. Spending is
+  # negative, so an outflow-only month sums to a negative amount.
   #
   # @return [Integer] The summed amount in cents.
   def total
@@ -46,7 +46,7 @@ class UpcomingTransactions
 
   attr_reader :budget_snapshot, :category
 
-  # Returns the amounts of the category's upcoming transactions dated on or
+  # Return the amounts of the category's upcoming transactions dated on or
   # before the end of the displayed month, loaded in a single query. The
   # available amount is cumulative through the displayed month, so anything
   # still awaiting activation from an earlier month affects it too.

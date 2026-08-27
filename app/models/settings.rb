@@ -8,24 +8,27 @@ class Settings
     @budget = budget
   end
 
-  # Whether reconciled transactions should be hidden from transaction lists.
+  # Return whether reconciled transactions should be hidden from
+  # transaction lists.
   #
   # @return [Boolean] Whether reconciled transactions should be hidden.
   def hide_reconciled?
     enabled?(:hide_reconciled)
   end
 
-  # The configured time zone.
+  # Return the configured time zone.
   #
   # @return [String] The Rails time zone name.
+  # @return [nil] When no time zone has been configured.
   def time_zone
     store["time_zone"]
   end
 
   # Set the time zone, storing only recognized zones and clearing the key for
-  # a blank or unknown value. Does not persist; the containing save does.
+  # a blank or unknown value. The change is not persisted until the budget
+  # is saved.
   #
-  # @param value [String] The Rails time zone name.
+  # @param value [String, nil] The Rails time zone name.
   # @return [void]
   def time_zone=(value)
     if ActiveSupport::TimeZone[value.to_s]
@@ -55,7 +58,7 @@ class Settings
 
   attr_reader :budget
 
-  # Whether a setting value is truthy.
+  # Return whether a setting value is truthy.
   #
   # @param key [Symbol] The setting key.
   # @return [Boolean] Whether the setting is enabled.
@@ -65,7 +68,7 @@ class Settings
 
   # Return the raw settings hash from the budget.
   #
-  # @return [Hash] The raw settings hash.
+  # @return [Hash{String => Object}] The raw settings hash.
   def store
     budget.read_attribute(:settings)
   end

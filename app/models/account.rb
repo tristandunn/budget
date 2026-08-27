@@ -25,8 +25,8 @@ class Account < ApplicationRecord
 
   # Return the time of the most recent reconciliation.
   #
-  # @return [Time] The time of the last reconciliation.
-  # @return [nil] If no transactions have been reconciled.
+  # @return [ActiveSupport::TimeWithZone] The time of the last reconciliation.
+  # @return [nil] When no transactions have been reconciled.
   def last_reconciled_at
     if defined?(@last_reconciled_at)
       @last_reconciled_at

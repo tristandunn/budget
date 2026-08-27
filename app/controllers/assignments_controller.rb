@@ -72,13 +72,13 @@ class AssignmentsController < ApplicationController
     @parameters ||= params.expect(assignment_form: %i(amount))
   end
 
-  # Return the subcategory for the given category_id parameter.
+  # Return the subcategory for the given `category_id` parameter.
   #
   # Subcategories of an inflow category are marked as not found to prevent
   # assigning to inflow.
   #
-  # @raise [ActiveRecord::RecordNotFound] If the parent is an inflow category.
   # @return [Category] The requested subcategory.
+  # @raise [ActiveRecord::RecordNotFound] When the parent is an inflow category.
   def subcategory
     @subcategory ||= current_budget.subcategories.find(params.expect(:category_id)).tap do |record|
       if record.parent.inflow?
