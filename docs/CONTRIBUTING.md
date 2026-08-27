@@ -15,6 +15,11 @@ You need the following software installed for local development:
 - [Ruby](https://www.ruby-lang.org/en/documentation/installation/)
 - [Node.js](https://nodejs.dev/learn/how-to-install-nodejs)
 - [Yarn](https://yarnpkg.com/getting-started/install)
+- [Terraform](https://developer.hashicorp.com/terraform/install)
+
+If you'd rather not install those manually, the versions used are listed in
+[`.tool-versions`](/.tool-versions), which a version manager, such as
+[mise](https://mise.jdx.dev), can install for you.
 
 ### Setup
 

@@ -5,7 +5,7 @@ This project only accepts pull requests related to open issues. If you're
 suggesting a new feature or change, please discuss it in an issue first. If
 you're fixing a bug, there should be an issue describing it with steps to
 reproduce.
---->
+-->
 
 Fixes #<!-- Replace this comment with the issue number. -->.
 
