@@ -8,7 +8,6 @@ gem "bootsnap",          "1.25.0", require: false
 gem "browser",           "6.2.0"
 gem "importmap-rails",   "2.2.3"
 gem "jbuilder",          "2.15.1"
-gem "kamal",             "2.12.0", require: false
 gem "litestream",        "0.14.0"
 gem "money",             "7.1.1"
 gem "propshaft",         "1.3.2"
@@ -32,6 +31,7 @@ group :development do
   gem "brakeman",            "8.0.6", require: false
   gem "bundler-audit",       "0.9.3", require: false
   gem "erb_lint",            "0.9.0", require: false
+  gem "kamal",               "2.12.0", require: false
   gem "listen",              "3.10.0"
   gem "rack-mini-profiler",  "5.0.0"
   gem "rubocop",             "1.90.0", require: false
