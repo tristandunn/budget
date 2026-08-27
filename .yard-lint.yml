@@ -3,6 +3,7 @@ AllValidators:
    - "db/*migrate/*"
    - "spec/**/*"
    - "vendor/**/*"
+  FailOnSeverity: convention
   YardOptions:
     - --private
 

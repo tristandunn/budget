@@ -88,8 +88,8 @@ class SnoozesController < ApplicationController
 
   # Raise if the date is invalid.
   #
-  # @raise [ActionController::BadRequest] If the date is not valid.
   # @return [void]
+  # @raise [ActionController::BadRequest] When the date is not valid.
   def require_valid_date
     if date.nil?
       raise ActionController::BadRequest
