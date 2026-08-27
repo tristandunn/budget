@@ -21,6 +21,7 @@
 
 # Ignore Kamal related files.
 /.kamal/
+/config/deploy*.yml
 
 # Ignore Ruby-related files.
 /.rubocop.yml
@@ -35,10 +36,13 @@ bin/brakeman
 bin/bundler-audit
 bin/ci
 bin/dev
+bin/importmap
+bin/kamal
 bin/mocha
 bin/rubocop
 bin/setup
 bin/terraform
+bin/yard-lint
 
 # Ignore all default key files.
 /config/master.key
@@ -47,11 +51,18 @@ bin/terraform
 # Ignore CI configuration.
 /config/ci.rb
 
+# Ignore development and test environment configuration.
+/config/environments/development.rb
+/config/environments/test.rb
+
 # Ignore Terraform related files.
 /config/terraform/*
 
 # Ignore documentation.
 /docs/
+
+# Ignore the test authentication middleware.
+lib/middleware/backdoor.rb
 
 # Ignore development Rake tasks.
 lib/tasks/ruby.rake
@@ -67,9 +78,12 @@ lib/tasks/ruby.rake
 /spec/
 /.yarn/
 .erb_lint.yml
+.herb.yml
+.prettierrc.json
 .stylelintignore
 .stylelintrc.json
 .tool-versions
+.yard-lint.yml
 .yarnrc.yml
 Procfile.dev
 README.md
