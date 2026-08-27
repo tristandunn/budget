@@ -44,6 +44,7 @@ group :development do
   gem "rubocop-rspec_rails", "2.32.0", require: false
   gem "rubocop-vibe",        "0.6.0",  require: false
   gem "web-console",         "4.3.0"
+  gem "yard-lint",           "1.11.0", require: false
 end
 
 group :test do

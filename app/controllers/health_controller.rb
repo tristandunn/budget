@@ -13,9 +13,10 @@ class HealthController < ActionController::Base
 
   private
 
-  # Return a true or false result for each check being successful or not.
+  # Return the result of every check, running each one and treating any raised
+  # error as a failure.
   #
-  # @return [Hash] Each check with a true or false value.
+  # @return [Hash{Symbol => Boolean}] Whether each check succeeded, by name.
   def results
     @results ||= CHECKS.transform_values do |method|
       method.call
@@ -26,9 +27,9 @@ class HealthController < ActionController::Base
     end
   end
 
-  # Return the HTTP status based on results all being successful or not.
+  # Return the HTTP status based on whether every check was successful.
   #
-  # @return [Symbol] Either :ok or :service_unavailable based on the results.
+  # @return [Symbol] Either `:ok` or `:service_unavailable`.
   def status
     if results.values.all?
       :ok

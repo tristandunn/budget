@@ -53,12 +53,22 @@ describe "Assigning to a subcategory", :js do
 
   private
 
+  # Open the inline assignment editor for the unassigned subcategory row and
+  # submit the given amount.
+  #
+  # @param amount [String, Integer] The amount to assign.
+  # @return [void]
   def assign_amount(amount)
     find("tbody td a", text: "$0.00").click
     fill_in "assignment_form_amount", with: amount
     find_by_id("assignment_form_amount").native.send_keys(:return)
   end
 
+  # Create a snapshot of the parent category for a month.
+  #
+  # @param date [Date] The month to create the snapshot for.
+  # @param amount_assigned [Integer] The amount assigned in the month.
+  # @return [void]
   def create_parent_snapshot(date, amount_assigned: 0)
     create(:category_snapshot,
            budget:          budget,
@@ -67,6 +77,11 @@ describe "Assigning to a subcategory", :js do
            amount_assigned: amount_assigned)
   end
 
+  # Create a snapshot of the subcategory for a month.
+  #
+  # @param date [Date] The month to create the snapshot for.
+  # @param amount_assigned [Integer] The amount assigned in the month.
+  # @return [void]
   def create_subcategory_snapshot(date, amount_assigned: 0)
     create(:category_snapshot,
            budget:          budget,
@@ -75,6 +90,11 @@ describe "Assigning to a subcategory", :js do
            amount_assigned: amount_assigned)
   end
 
+  # Create snapshots of both the subcategory and its parent for a month.
+  #
+  # @param date [Date] The month to create the snapshots for.
+  # @param amount_assigned [Integer] The amount assigned in the month.
+  # @return [void]
   def create_snapshots_for(date, amount_assigned: 0)
     create_subcategory_snapshot(date, amount_assigned: amount_assigned)
     create_parent_snapshot(date, amount_assigned: amount_assigned)

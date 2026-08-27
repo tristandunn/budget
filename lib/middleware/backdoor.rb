@@ -6,8 +6,7 @@ module Middleware
 
     # Initialize the middleware.
     #
-    # @param app [Class] The Rack application.
-    # @return [void]
+    # @param app [#call] The Rack application.
     def initialize(app)
       @app = app
     end
@@ -16,13 +15,13 @@ module Middleware
     #
     # On the sign-in path, return a no-content response so the feature test
     # sign-in helper can set the session cookie without rendering anything or
-    # following the redirect SessionsController would issue for an
-    # already-authenticated request. This keeps test sign-in a pure side-effect
-    # and the next `visit` in the test is the intended destination.
+    # following the redirect `SessionsController` would issue for an
+    # already-authenticated request. This keeps test sign-in a pure side
+    # effect, so the next `visit` in the test is the intended destination.
     #
     # For other paths, strip the parameter from the query string and continue
-    # to the underlying application so the request is served as it would be in
-    # production.
+    # to the underlying application so the request is served as it would be
+    # in production.
     #
     # @param env [Hash] The request environment.
     # @return [Array] The Rack response.

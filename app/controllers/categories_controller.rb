@@ -58,12 +58,12 @@ class CategoriesController < ApplicationController
     @budget_snapshot ||= BudgetSnapshot.new(current_budget, month: params[:month], year: params[:year])
   end
 
-  # Return the category for the given id parameter.
+  # Return the category for the given `id` parameter.
   #
   # Inflow categories are marked as not found to prevent viewing and renaming.
   #
-  # @raise [ActiveRecord::RecordNotFound] If the category is an inflow category.
   # @return [Category] The requested category.
+  # @raise [ActiveRecord::RecordNotFound] When the category is an inflow category.
   def category
     @category ||= current_budget.subcategories.find(params.expect(:id)).tap do |record|
       if record.inflow?
@@ -81,7 +81,8 @@ class CategoriesController < ApplicationController
 
   # Return the budget snapshot for the month preceding the displayed month.
   #
-  # @return [BudgetSnapshot, nil] The previous budget snapshot, or nil on the first month.
+  # @return [BudgetSnapshot] The previous budget snapshot.
+  # @return [nil] When the displayed month is the first month.
   def previous_budget_snapshot
     unless budget_snapshot.first_month?
       @previous_budget_snapshot ||= BudgetSnapshot.new(

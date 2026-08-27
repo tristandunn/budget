@@ -173,7 +173,7 @@ class TransactionsController < ApplicationController
 
   # Return the stored return location, clearing it from the session.
   #
-  # @return [String] The URL to redirect to after a successful update.
+  # @return [String] The URL to redirect to once the action succeeds.
   def return_location
     session.delete(:return_to) || budget_transactions_path(current_budget)
   end
@@ -204,9 +204,9 @@ class TransactionsController < ApplicationController
                                    .find(params.expect(:id))
   end
 
-  # Return the permitted parameters with budget and subcategory.
+  # Return the permitted parameters with the account, budget, and subcategory.
   #
-  # @return [Hash] The permitted parameters merged with the budget and subcategory.
+  # @return [Hash] The permitted parameters merged with the account, budget, and subcategory.
   def transaction_parameters
     parameters.to_h.slice(:amount, :date, :frequency, :memo, :payee).merge(
       account:     account,

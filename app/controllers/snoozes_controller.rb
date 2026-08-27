@@ -44,7 +44,7 @@ class SnoozesController < ApplicationController
     @budget_snapshot ||= BudgetSnapshot.new(current_budget, month: date.month, year: date.year)
   end
 
-  # Return the category for the given category_id parameter, scoped to
+  # Return the category for the given `category_id` parameter, scoped to
   # subcategories with a monthly target.
   #
   # @return [Category] The requested category.
@@ -54,7 +54,8 @@ class SnoozesController < ApplicationController
                                 .find(params.expect(:category_id))
   end
 
-  # Return the category snapshot for the displayed month, initializing one if needed.
+  # Return the category snapshot for the displayed month, initializing one
+  # if needed.
   #
   # @return [CategorySnapshot] The category snapshot for the displayed month.
   def category_snapshot

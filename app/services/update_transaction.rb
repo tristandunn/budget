@@ -77,10 +77,10 @@ class UpdateTransaction
   end
 
   # Apply a signed amount to the appropriate balance for the subcategory. An
-  # inflow moves available to assign, while any other subcategory moves the used
+  # inflow subcategory moves available to assign, while any other moves the used
   # column of each snapshot by the negated amount, since spending is negative
-  # and a refund is positive. The caller negates the amount to reverse an
-  # effect.
+  # and a refund is positive. The caller negates the amount to reverse
+  # an effect.
   #
   # @param subcategory [Category] The subcategory to apply the effect to.
   # @param date [Date] The date for snapshot lookup.

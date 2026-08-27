@@ -21,12 +21,13 @@ class AccountForm < BaseForm
 
   # Return the credit value cast to a boolean.
   #
-  # @return [Boolean, nil] The cast credit value.
+  # @return [Boolean] The cast credit value.
+  # @return [nil] When the credit value is blank.
   def credit
     ActiveModel::Type::Boolean.new.cast(@credit)
   end
 
-  # Whether the underlying account has been persisted.
+  # Return whether the underlying account has been persisted.
   #
   # @return [Boolean] Whether the account is persisted.
   def persisted?
@@ -36,6 +37,7 @@ class AccountForm < BaseForm
   # Attempt to create the account if the form is valid.
   #
   # @return [Boolean] Whether the account was created successfully.
+  # @return [nil] When the form is invalid.
   def save
     self.account = budget.accounts.new(attributes)
 
@@ -47,6 +49,7 @@ class AccountForm < BaseForm
   # Attempt to update the account if the form is valid.
   #
   # @return [Boolean] Whether the account was updated successfully.
+  # @return [nil] When the form is invalid.
   def update
     account.assign_attributes(attributes)
 
@@ -109,7 +112,7 @@ class AccountForm < BaseForm
 
   # Build the transfer payee name for a direction and account name.
   #
-  # @param direction [Symbol] The transfer direction, :from or :to.
+  # @param direction [Symbol] The transfer direction, `:from` or `:to`.
   # @param account_name [String] The account name to embed in the payee name.
   # @return [String] The translated transfer payee name.
   def transfer_payee_name(direction, account_name)

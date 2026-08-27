@@ -41,6 +41,11 @@ describe "Creating a new session" do
 
   protected
 
+  # Fill in the sign-in form and submit it.
+  #
+  # @param email [String] The e-mail address to sign in with.
+  # @param password [String] The password to sign in with.
+  # @return [void]
   def fill_in_and_submit(email:, password:)
     fill_in SessionForm.human_attribute_name(:email),    with: email
     fill_in SessionForm.human_attribute_name(:password), with: password

@@ -19,7 +19,9 @@ class PayeeForm < BaseForm
   # payees by reassigning the renamed payee's transactions and destroying it.
   # Otherwise, rename the payee in place.
   #
+  # @return [Payee] The destroyed payee when it was merged into the duplicate payee.
   # @return [Boolean] Whether the rename succeeded.
+  # @return [nil] When the form is invalid.
   def update
     if duplicate_payee
       payee.merge_into(duplicate_payee)

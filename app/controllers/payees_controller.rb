@@ -51,7 +51,7 @@ class PayeesController < ApplicationController
     params.expect(payee_form: %i(name)).to_h.symbolize_keys
   end
 
-  # Return the payee for the given id parameter, scoped to the budget.
+  # Return the payee for the given `id` parameter, scoped to the budget.
   #
   # @return [Payee] The requested payee.
   def payee

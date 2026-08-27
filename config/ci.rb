@@ -6,6 +6,7 @@ CI.run do
   step "Setup", "bin/setup --skip-server"
 
   step "Style: Ruby", "bin/rubocop"
+  step "Style: Ruby documentation", "bin/yard-lint ."
   step "Style: ERB", "bin/rails erb:lint"
   step "Style: ERB (Herb)", "yarn lint:erb"
   step "Style: ERB (Herb format)", "yarn check:erb"

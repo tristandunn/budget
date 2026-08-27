@@ -43,7 +43,7 @@ module Transactions
       end
     end
 
-    # Build a Group value object for the given parent category.
+    # Build a `Group` value object for the given parent category.
     #
     # @param category [Category] The parent category to build a group for.
     # @return [Group] When the category has subcategories.
@@ -58,7 +58,7 @@ module Transactions
       end
     end
 
-    # Build an Item value object for the given subcategory.
+    # Build an `Item` value object for the given subcategory.
     #
     # @param subcategory [Category] The subcategory to build an item for.
     # @return [Item] The item for display in the picker.
@@ -71,8 +71,8 @@ module Transactions
       )
     end
 
-    # Build a suggested group of the most-used subcategories for the form's
-    # payee. Returns nil when there are no suggestions to show.
+    # Build a suggested group of the most-used subcategories for the
+    # form's payee.
     #
     # @return [Group] When the payee has suggested subcategories.
     # @return [nil] When the payee is blank, unknown, or has no suggestions.

@@ -3,6 +3,12 @@
 class CategorySummary
   delegate :size, to: :categories
 
+  # Initialize the category summary.
+  #
+  # @param budget [Budget] The budget owning the selected subcategories.
+  # @param budget_snapshot [BudgetSnapshot] The snapshot for the displayed month.
+  # @param ids [Array<Integer>] The IDs of the selected subcategories.
+  # @param previous_budget_snapshot [BudgetSnapshot, nil] The previous month's snapshot.
   def initialize(budget, budget_snapshot:, ids:, previous_budget_snapshot:)
     @budget                   = budget
     @ids                      = ids

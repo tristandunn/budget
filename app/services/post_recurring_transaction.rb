@@ -44,7 +44,7 @@ class PostRecurringTransaction
     )
   end
 
-  # Clear the frequency and delegate to CreateTransaction for balance effects.
+  # Clear the frequency and delegate to `CreateTransaction` for balance effects.
   #
   # @return [Boolean] Whether the transaction was posted successfully.
   def post_transaction

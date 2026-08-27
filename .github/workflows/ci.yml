@@ -83,6 +83,9 @@ jobs:
       - name: Lint the Ruby
         run: bin/rubocop --format github --parallel
 
+      - name: Lint the Ruby documentation
+        run: bin/yard-lint .
+
       - name: Lint the JavaScript
         run: yarn lint:js
 

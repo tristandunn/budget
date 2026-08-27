@@ -66,6 +66,12 @@ describe "Transaction" do
 
   protected
 
+  # Fill in the new transaction form with a test payee and submit it.
+  #
+  # @param account [Account] The account to select.
+  # @param subcategory [Category] The subcategory to select.
+  # @param amount [Integer] The amount to enter.
+  # @return [void]
   def fill_in_transaction_and_submit(account:, subcategory:, amount: -100)
     fill_in t("activemodel.attributes.transaction_form.amount"), with: amount
     fill_in_payee("Test Payee")

@@ -1,0 +1,10 @@
+AllValidators:
+  Exclude:
+   - "db/*migrate/*"
+   - "spec/**/*"
+   - "vendor/**/*"
+  YardOptions:
+    - --private
+
+Documentation/UndocumentedObjects:
+  Enabled: false

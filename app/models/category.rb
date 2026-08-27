@@ -30,22 +30,21 @@ class Category < ApplicationRecord
 
   scope :with_monthly_target, -> { where(target_type: MONTHLY_TARGET_TYPES) }
 
-  # Returns true if this category is an inflow category.
+  # Return whether this category is an inflow category.
   #
   # @return [Boolean] Whether this category is an inflow category.
   def inflow?
     name.to_s.downcase.in?(INFLOW_NAMES.map(&:downcase))
   end
 
-  # Returns true when the category has a per-month funding target, as opposed
-  # to no target.
+  # Return whether the category has a monthly funding target.
   #
   # @return [Boolean] Whether the category has a monthly funding target.
   def monthly_target?
     target_type.in?(MONTHLY_TARGET_TYPES)
   end
 
-  # Returns subcategories sorted by position.
+  # Return the subcategories sorted by position.
   #
   # @return [Array<Category>] The subcategories sorted by position.
   def subcategories_by_position

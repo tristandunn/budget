@@ -33,34 +33,35 @@ class Transaction < ApplicationRecord
   scope :activation_due, -> { upcoming.where(date: ..Date.current) }
   scope :recent,         -> { where(date: 30.days.ago.to_date..) }
 
-  # Returns true when this transaction may be cleared or uncleared. Only pending
-  # and cleared transactions may toggle; upcoming and reconciled may not.
+  # Return whether this transaction may be cleared or uncleared. Only pending
+  # and cleared transactions may be toggled, and upcoming and reconciled
+  # transactions may not.
   #
-  # @return [Boolean]
+  # @return [Boolean] Whether the transaction may be cleared or uncleared.
   def clearable?
     pending? || cleared?
   end
 
-  # Returns the attributes to copy when creating a new occurrence. The payee
+  # Return the attributes to copy when creating a new occurrence. The payee
   # association is included in place of its foreign key so an unsaved new payee
   # is carried over and autosaved with the copy.
   #
-  # @return [Hash]
+  # @return [Hash{Symbol => Object}] The attributes to copy to the new occurrence.
   def copyable_attributes
     attributes.symbolize_keys
               .slice(:account_id, :amount, :budget_id, :category_id, :memo)
               .merge(payee: payee)
   end
 
-  # Returns true when this transaction may be destroyed. Both the
-  # transaction and, if a transfer, its partner must be unreconciled.
+  # Return whether this transaction may be destroyed. Both the transaction and,
+  # if a transfer, its partner must be unreconciled.
   #
-  # @return [Boolean]
+  # @return [Boolean] Whether the transaction may be destroyed.
   def destroyable?
     !reconciled? && !transfer_pair&.reconciled?
   end
 
-  # Returns the date for the next recurring occurrence.
+  # Return the date for the next recurring occurrence.
   #
   # @param frequency [String, Symbol, nil] The frequency to advance by, defaulting to the transaction's frequency.
   # @return [Date] The next recurring date.
@@ -75,45 +76,47 @@ class Transaction < ApplicationRecord
     end
   end
 
-  # Returns true if the transaction has a frequency and a future date. This is
+  # Return whether the transaction has a frequency and a future date. This is
   # distinct from the upcoming status, which is set explicitly.
   #
-  # @return [Boolean]
+  # @return [Boolean] Whether the transaction is a scheduled recurring transaction.
   def recurring_scheduled?
     frequency.present? && scheduled?
   end
 
-  # Returns true if the transaction date is in the future.
+  # Return whether the transaction date is in the future.
   #
-  # @return [Boolean]
+  # @return [Boolean] Whether the transaction date is in the future.
   def scheduled?
     date.future?
   end
 
-  # Returns true when this transaction is one half of a transfer pair.
+  # Return whether this transaction is one half of a transfer pair.
   #
-  # @return [Boolean]
+  # @return [Boolean] Whether the transaction is part of a transfer.
   def transfer?
     transfer_pair_id.present?
   end
 
-  # Returns true when this transaction may not be edited through the standard form.
+  # Return whether this transaction may not be edited through the
+  # standard form.
   #
-  # @return [Boolean]
+  # @return [Boolean] Whether the transaction may not be edited.
   def uneditable?
     reconciled? || transfer?
   end
 
   private
 
-  # Returns true when a subcategory is present but is not actually a subcategory.
+  # Return whether an assigned subcategory is a top-level category, which has
+  # no parent and so cannot hold a transaction.
   #
-  # @return [Boolean]
+  # @return [Boolean] Whether the assigned subcategory is a top-level category.
   def invalid_subcategory?
     subcategory.present? && subcategory.parent.blank?
   end
 
-  # Validate the shape of a present subcategory.
+  # Validate that an assigned subcategory is not a top-level category.
   #
   # @return [void]
   def validate_subcategory

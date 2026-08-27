@@ -60,7 +60,7 @@ class ActivateTransaction
 
   # Update the category and subcategory snapshots based on the transaction
   # amount. A negative amount is spending and a positive amount is a refund, so
-  # both move the used column by the negated amount.
+  # either case moves the used column by the negated amount.
   #
   # @return [void]
   def increment_snapshots
