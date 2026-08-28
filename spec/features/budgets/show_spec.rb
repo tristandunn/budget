@@ -4,9 +4,9 @@ require "rails_helper"
 
 describe "Budget" do
   context "with a budget" do
-    it "renders the current month and year" do
-      budget = create(:budget)
+    let(:budget) { create(:budget, available_to_assign: 10_000) }
 
+    it "renders the current month and year" do
       sign_in_for(budget)
       visit budget_path(budget)
 
@@ -14,17 +14,14 @@ describe "Budget" do
     end
 
     it "renders the available to assign amount" do
-      budget = create(:budget, available_to_assign: 100_000)
-
       sign_in_for(budget)
       visit budget_path(budget)
 
-      expect(page).to have_text("$1,000.00")
+      expect(page).to have_css("#available_to_assign", text: "$100.00")
     end
 
     it "renders the parent categories" do
-      category = create(:category)
-      budget   = category.budget
+      category = create(:category, budget: budget)
 
       sign_in_for(budget)
       visit budget_path(budget)
@@ -33,8 +30,7 @@ describe "Budget" do
     end
 
     it "renders the subcategories" do
-      subcategory = create(:category, :subcategory)
-      budget      = subcategory.budget
+      subcategory = create(:category, :subcategory, budget: budget)
 
       sign_in_for(budget)
       visit budget_path(budget)
@@ -43,21 +39,18 @@ describe "Budget" do
     end
 
     context "when navigating months" do
-      it "navigates to the next month" do
-        budget = create(:budget)
-
+      before do
         sign_in_for(budget)
         visit budget_path(budget)
+      end
+
+      it "navigates to the next month" do
         click_on "next-month"
 
         expect(page).to have_text(I18n.l(1.month.from_now.to_date, format: :month_and_year))
       end
 
       it "navigates back to the previous month" do
-        budget = create(:budget)
-
-        sign_in_for(budget)
-        visit budget_path(budget)
         click_on "next-month"
         click_on "previous-month"
 
@@ -65,12 +58,31 @@ describe "Budget" do
       end
 
       it "navigates back to the current month when clicking the month and year" do
-        budget = create(:budget)
-
-        sign_in_for(budget)
-        visit budget_path(budget)
         click_on "next-month"
         click_on I18n.l(1.month.from_now.to_date, format: :month_and_year)
+
+        expect(page).to have_text(I18n.l(Date.current, format: :month_and_year))
+      end
+    end
+
+    context "when navigating months with the arrow keys", :js do
+      before do
+        sign_in_for(budget)
+        visit budget_path(budget)
+      end
+
+      it "navigates to the next month when the right arrow key is pressed" do
+        find("body").send_keys(:arrow_right)
+
+        expect(page).to have_text(I18n.l(1.month.from_now.to_date, format: :month_and_year))
+      end
+
+      it "navigates back to the previous month when the left arrow key is pressed" do
+        find("body").send_keys(:arrow_right)
+
+        wait_for(have_text(I18n.l(1.month.from_now.to_date, format: :month_and_year))) do
+          find("body").send_keys(:arrow_left)
+        end
 
         expect(page).to have_text(I18n.l(Date.current, format: :month_and_year))
       end
