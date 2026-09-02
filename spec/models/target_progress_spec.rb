@@ -3,11 +3,20 @@
 require "rails_helper"
 
 describe TargetProgress do
-  let(:rollover) { 0 }
-  let(:snapshot) { CategorySnapshot.new(amount_assigned: assigned) }
+  let(:future_month) { false }
+  let(:rollover)     { 0 }
+
+  let(:instance) do
+    described_class.new(
+      category:     category,
+      future_month: future_month,
+      rollover:     rollover,
+      snapshot:     CategorySnapshot.new(amount_assigned: assigned)
+    )
+  end
 
   describe "#funded?" do
-    subject { described_class.new(category: category, rollover: rollover, snapshot: snapshot).funded? }
+    subject { instance.funded? }
 
     let(:category) { build_stubbed(:category, :with_monthly_spending_target) }
 
@@ -43,6 +52,22 @@ describe TargetProgress do
       it { is_expected.to be(false) }
     end
 
+    context "when a future month's rollover would otherwise meet the target" do
+      let(:assigned)     { category.target_amount - 14_06 }
+      let(:future_month) { true }
+      let(:rollover)     { 14_06 }
+
+      it { is_expected.to be(false) }
+    end
+
+    context "when a future month's assignment meets the target despite a negative rollover" do
+      let(:assigned)     { category.target_amount }
+      let(:future_month) { true }
+      let(:rollover)     { -50_00 }
+
+      it { is_expected.to be(true) }
+    end
+
     context "with a monthly_savings target where rollover meets it but nothing is assigned" do
       let(:assigned) { 0 }
       let(:category) { build_stubbed(:category, :with_monthly_savings_target) }
@@ -61,7 +86,7 @@ describe TargetProgress do
   end
 
   describe "#funded_amount" do
-    subject { described_class.new(category: category, rollover: rollover, snapshot: snapshot).funded_amount }
+    subject { instance.funded_amount }
 
     let(:assigned) { 150_00 }
     let(:category) { build_stubbed(:category, :with_monthly_spending_target) }
@@ -79,6 +104,20 @@ describe TargetProgress do
       let(:rollover) { -50_00 }
 
       it { is_expected.to eq(100_00) }
+    end
+
+    context "with a future month and a positive rollover" do
+      let(:future_month) { true }
+      let(:rollover)     { 14_06 }
+
+      it { is_expected.to eq(150_00) }
+    end
+
+    context "with a future month and a negative rollover" do
+      let(:future_month) { true }
+      let(:rollover)     { -50_00 }
+
+      it { is_expected.to eq(150_00) }
     end
 
     context "with a monthly_savings target" do
@@ -106,7 +145,6 @@ describe TargetProgress do
     subject { instance.funded_percentage }
 
     let(:category) { build_stubbed(:category, target_type: :monthly_spending, target_amount: 200_00) }
-    let(:instance) { described_class.new(category: category, rollover: rollover, snapshot: snapshot) }
 
     context "with a monthly_spending target where assigned is below the target" do
       let(:assigned) { 100_00 }
@@ -153,6 +191,22 @@ describe TargetProgress do
       it { is_expected.to eq(50) }
     end
 
+    context "with a future month where the rollover would otherwise complete the target" do
+      let(:assigned)     { 100_00 }
+      let(:future_month) { true }
+      let(:rollover)     { 100_00 }
+
+      it { is_expected.to eq(50) }
+    end
+
+    context "with a future month where a negative rollover would otherwise lower the percentage" do
+      let(:assigned)     { 150_00 }
+      let(:future_month) { true }
+      let(:rollover)     { -50_00 }
+
+      it { is_expected.to eq(75) }
+    end
+
     context "with a monthly_savings target where rollover meets it but nothing is assigned" do
       let(:assigned) { 0 }
       let(:category) { build_stubbed(:category, :with_monthly_savings_target) }
@@ -173,7 +227,6 @@ describe TargetProgress do
     subject { instance.underfunded }
 
     let(:category) { build_stubbed(:category, target_type: :monthly_spending, target_amount: 200_00) }
-    let(:instance) { described_class.new(category: category, rollover: rollover, snapshot: snapshot) }
 
     context "with a monthly_spending target where assigned is below target" do
       let(:assigned) { 120_00 }
@@ -201,6 +254,22 @@ describe TargetProgress do
       it { is_expected.to eq(50_00) }
     end
 
+    context "with a future month where the rollover would otherwise reduce the amount to go" do
+      let(:assigned)     { 100_00 }
+      let(:future_month) { true }
+      let(:rollover)     { 80_00 }
+
+      it { is_expected.to eq(100_00) }
+    end
+
+    context "with a future month where a negative rollover would otherwise increase the amount to go" do
+      let(:assigned)     { 200_00 }
+      let(:future_month) { true }
+      let(:rollover)     { -50_00 }
+
+      it { is_expected.to eq(0) }
+    end
+
     context "with a monthly_savings target where rollover meets it but nothing is assigned" do
       let(:assigned) { 0 }
       let(:category) { build_stubbed(:category, :with_monthly_savings_target) }
@@ -219,7 +288,7 @@ describe TargetProgress do
   end
 
   describe "#underfunded?" do
-    subject { described_class.new(category: category, rollover: rollover, snapshot: snapshot).underfunded? }
+    subject { instance.underfunded? }
 
     let(:category) { build_stubbed(:category, :with_monthly_spending_target) }
 
@@ -251,6 +320,14 @@ describe TargetProgress do
     context "when a negative rollover keeps a fully assigned target underfunded" do
       let(:assigned) { category.target_amount }
       let(:rollover) { -100 }
+
+      it { is_expected.to be(true) }
+    end
+
+    context "when a positive rollover would otherwise complete a future month's target" do
+      let(:assigned)     { category.target_amount - 100 }
+      let(:future_month) { true }
+      let(:rollover)     { 100 }
 
       it { is_expected.to be(true) }
     end

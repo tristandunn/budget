@@ -6,6 +6,7 @@ class BudgetSnapshot
   delegate :current_month?,
            :date,
            :first_month?,
+           :future_month?,
            :last_month?,
            :next_date,
            :previous_date,
@@ -101,9 +102,10 @@ class BudgetSnapshot
     snapshot = snapshot_for(category.id)
 
     TargetProgress.new(
-      category: category,
-      rollover: rollover_for(category, snapshot),
-      snapshot: snapshot
+      category:     category,
+      future_month: future_month?,
+      rollover:     rollover_for(category, snapshot),
+      snapshot:     snapshot
     )
   end
 

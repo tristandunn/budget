@@ -95,6 +95,38 @@ describe BudgetSnapshotMonth do
     end
   end
 
+  describe "#future_month?" do
+    context "when on a month after the current month" do
+      subject(:budget_snapshot_month) do
+        described_class.new(budget, month: next_month.month.to_s, year: next_month.year.to_s)
+      end
+
+      let(:next_month) { 1.month.from_now.beginning_of_month }
+
+      it { is_expected.to be_future_month }
+    end
+
+    context "when on the current month" do
+      subject(:budget_snapshot_month) { described_class.new(budget) }
+
+      it { is_expected.not_to be_future_month }
+    end
+
+    context "when on a month before the current month" do
+      subject(:budget_snapshot_month) do
+        described_class.new(budget, month: previous_month.month.to_s, year: previous_month.year.to_s)
+      end
+
+      let(:previous_month) { 1.month.ago.beginning_of_month }
+
+      before do
+        create(:category_snapshot, budget: budget, date: previous_month)
+      end
+
+      it { is_expected.not_to be_future_month }
+    end
+  end
+
   describe "#last_month?" do
     context "when on the last month of the range" do
       subject(:budget_snapshot_month) do
