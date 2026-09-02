@@ -85,9 +85,10 @@ describe CreateTransaction do
       it "does not fund the savings target" do
         described_class.call(transaction: transaction)
 
-        progress = TargetProgress.new(category: subcategory,
-                                      rollover: 0,
-                                      snapshot: subcategory_snapshot.reload)
+        progress = TargetProgress.new(category:     subcategory,
+                                      future_month: false,
+                                      rollover:     0,
+                                      snapshot:     subcategory_snapshot.reload)
 
         expect(progress.funded_amount).to eq(0)
       end

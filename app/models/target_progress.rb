@@ -6,12 +6,14 @@ class TargetProgress
   # Initialize the target progress.
   #
   # @param category [Category] The category whose target to evaluate.
+  # @param future_month [Boolean] Whether the displayed month is after the current month.
   # @param rollover [Integer] The available amount carried in from prior months, in cents.
   # @param snapshot [CategorySnapshot] The displayed-month snapshot for the category.
-  def initialize(category:, rollover:, snapshot:)
-    @category = category
-    @rollover = rollover
-    @snapshot = snapshot
+  def initialize(category:, future_month:, rollover:, snapshot:)
+    @category     = category
+    @future_month = future_month
+    @rollover     = rollover
+    @snapshot     = snapshot
   end
 
   # Return whether the target has been fully funded.
@@ -21,14 +23,16 @@ class TargetProgress
     funded_percentage == 100
   end
 
-  # Return the amount funded toward the target. A monthly spending target
-  # counts rollover carried in from prior months plus the displayed month's
-  # assignment. A monthly savings target counts only the displayed month's
-  # assignment, so each month requires a fresh contribution.
+  # Return the amount funded toward the target.
+  #
+  # Only a monthly spending target in the current month or earlier counts the
+  # rollover carried in from prior months. A monthly savings target needs a
+  # fresh contribution each month, and a future month's rollover is a
+  # projected balance that any month in between can still spend.
   #
   # @return [Integer] The funded amount in cents.
   def funded_amount
-    if category.target_type_monthly_savings?
+    if assignment_only?
       snapshot.amount_assigned
     else
       rollover + snapshot.amount_assigned
@@ -68,5 +72,13 @@ class TargetProgress
 
   private
 
-  attr_reader :rollover, :snapshot
+  attr_reader :future_month, :rollover, :snapshot
+
+  # Return whether the target counts only the displayed month's assignment,
+  # leaving the rollover carried in from prior months out.
+  #
+  # @return [Boolean] Whether only the displayed month's assignment counts.
+  def assignment_only?
+    category.target_type_monthly_savings? || future_month
+  end
 end

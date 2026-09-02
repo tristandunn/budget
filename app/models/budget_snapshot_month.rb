@@ -45,6 +45,13 @@ class BudgetSnapshotMonth
     date <= snapshot_range.first
   end
 
+  # Return whether this snapshot is for a month after the current month.
+  #
+  # @return [Boolean] Whether this snapshot is for a future month.
+  def future_month?
+    date > current_month
+  end
+
   # Return whether this is the last month in the navigable range.
   #
   # @return [Boolean] Whether this is the last month in the navigable range.

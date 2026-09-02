@@ -11,6 +11,7 @@ describe BudgetSnapshot do
     it { is_expected.to delegate_method(:current_month?).to(:snapshot_month) }
     it { is_expected.to delegate_method(:date).to(:snapshot_month) }
     it { is_expected.to delegate_method(:first_month?).to(:snapshot_month) }
+    it { is_expected.to delegate_method(:future_month?).to(:snapshot_month) }
     it { is_expected.to delegate_method(:last_month?).to(:snapshot_month) }
     it { is_expected.to delegate_method(:next_date).to(:snapshot_month) }
     it { is_expected.to delegate_method(:previous_date).to(:snapshot_month) }
@@ -165,6 +166,25 @@ describe BudgetSnapshot do
       end
 
       it "does not return a negative percentage" do
+        expect(budget_snapshot.funded_percentage).to eq(0)
+      end
+    end
+
+    context "when a future month would be covered by the current month's balance" do
+      subject(:budget_snapshot) do
+        described_class.new(budget, month: next_month.month.to_s, year: next_month.year.to_s)
+      end
+
+      let(:next_month) { 1.month.from_now.beginning_of_month }
+
+      before do
+        target = create(:category, :subcategory, :with_monthly_spending_target, budget:        budget,
+                                                                                with_snapshot: false)
+
+        create(:category_snapshot, budget: budget, category: target, amount_assigned: 200_00, amount_used: 0)
+      end
+
+      it "ignores the balance that has not been assigned to that month" do
         expect(budget_snapshot.funded_percentage).to eq(0)
       end
     end
@@ -343,7 +363,10 @@ describe BudgetSnapshot do
 
     before do
       allow(TargetProgress).to receive(:new)
-        .with(category: subcategory, rollover: 0, snapshot: instance.snapshot_for(subcategory.id))
+        .with(category:     subcategory,
+              future_month: false,
+              rollover:     0,
+              snapshot:     instance.snapshot_for(subcategory.id))
         .and_return(progress)
     end
 
@@ -359,7 +382,30 @@ describe BudgetSnapshot do
                date:            1.month.ago.beginning_of_month)
 
         allow(TargetProgress).to receive(:new)
-          .with(category: subcategory, rollover: 20_00, snapshot: instance.snapshot_for(subcategory.id))
+          .with(category:     subcategory,
+                future_month: false,
+                rollover:     20_00,
+                snapshot:     instance.snapshot_for(subcategory.id))
+          .and_return(progress)
+      end
+
+      it { is_expected.to eq(progress) }
+    end
+
+    context "with a future month" do
+      let(:instance) do
+        described_class.new(budget, month: next_month.month.to_s, year: next_month.year.to_s)
+      end
+
+      let(:next_month)  { 1.month.from_now.beginning_of_month }
+      let(:subcategory) { create(:category, :subcategory, budget: budget, with_snapshot: false) }
+
+      before do
+        allow(TargetProgress).to receive(:new)
+          .with(category:     subcategory,
+                future_month: true,
+                rollover:     0,
+                snapshot:     instance.snapshot_for(subcategory.id))
           .and_return(progress)
       end
 
@@ -637,6 +683,25 @@ describe BudgetSnapshot do
       end
 
       it { is_expected.to be(false) }
+    end
+
+    context "with a positive rollover into a future month with nothing assigned" do
+      let(:instance) do
+        described_class.new(budget, month: next_month.month.to_s, year: next_month.year.to_s)
+      end
+
+      let(:next_month) { 1.month.from_now.beginning_of_month }
+
+      before do
+        create(:category_snapshot,
+               budget:          budget,
+               category:        subcategory,
+               amount_assigned: subcategory.target_amount,
+               amount_used:     0,
+               date:            Date.current.beginning_of_month)
+      end
+
+      it { is_expected.to be(true) }
     end
 
     context "with a negative rollover that keeps a fully assigned target underfunded" do
