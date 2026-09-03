@@ -46,8 +46,6 @@ describe("ArithmeticController", () => {
 
         expect(element.selectionStart).to.eq(7);
         expect(element.selectionEnd).to.eq(7);
-
-        document.body.removeChild(element);
       });
 
       it("prevents the default behavior", () => {
@@ -106,8 +104,6 @@ describe("ArithmeticController", () => {
 
         expect(element.selectionStart).to.eq(2);
         expect(element.selectionEnd).to.eq(2);
-
-        document.body.removeChild(element);
       });
 
       it("appends + after a leading minus sign", () => {
@@ -237,8 +233,6 @@ describe("ArithmeticController", () => {
 
         expect(element.selectionStart).to.eq(7);
         expect(element.selectionEnd).to.eq(7);
-
-        document.body.removeChild(element);
       });
 
       it("prevents the default behavior", () => {
@@ -335,8 +329,6 @@ describe("ArithmeticController", () => {
 
         expect(element.selectionStart).to.eq(7);
         expect(element.selectionEnd).to.eq(7);
-
-        document.body.removeChild(element);
       });
 
       it("prevents the default behavior", () => {
@@ -590,9 +582,6 @@ describe("ArithmeticController", () => {
       document.body.appendChild(element);
     });
 
-    afterEach(() => {
-      document.body.removeChild(element);
-    });
 
     it("inserts the cleaned value at the cursor", () => {
       element.value = "";

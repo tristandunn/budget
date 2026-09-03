@@ -16,6 +16,29 @@ describe "transactions/_form.html.erb" do
   let(:form)        { TransactionForm.new(budget: subcategory.budget, subcategory: subcategory) }
   let(:subcategory) { build_stubbed(:category, :subcategory) }
 
+  it "wires the form to the transaction-form controller" do
+    expect(html).to have_css(
+      "form#transaction_form[data-controller='transaction-form']" \
+      "[data-action='submit->transaction-form#validate']"
+    )
+  end
+
+  it "wires the picker outlets on the form" do
+    %w(payee category account).each do |picker|
+      expect(html).to have_css(
+        %([data-transaction-form-#{picker}-picker-outlet="[data-controller~='#{picker}-picker']"])
+      )
+    end
+  end
+
+  it "wires the amount field to the amount and transaction-form controllers" do
+    expect(html).to have_css(
+      "input#transaction_form_amount[data-controller='amount']" \
+      "[data-action='input->amount#input keydown->amount#keydown paste->amount#paste']" \
+      "[data-transaction-form-target='amount']"
+    )
+  end
+
   it "renders the amount field" do
     expect(html).to have_css(
       %(input#transaction_form_amount[autocomplete="off"][autofocus][required])

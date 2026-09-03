@@ -23,7 +23,6 @@ describe("MonthNavigationController", () => {
 
   afterEach(() => {
     instance.disconnect();
-    element.remove();
   });
 
   describe("#disconnect", () => {
@@ -132,8 +131,6 @@ describe("MonthNavigationController", () => {
 
       expect(previous.click.called).to.eq(false);
       expect(next.click.called).to.eq(false);
-
-      dialog.remove();
     });
   });
 });

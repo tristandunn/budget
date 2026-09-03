@@ -10,9 +10,6 @@ describe("CollapsibleController", () => {
     instance.idValue = "category-1";
   });
 
-  afterEach(() => {
-    localStorage.clear();
-  });
 
   describe("#connect", () => {
     it("collapses the section if it was previously collapsed", () => {

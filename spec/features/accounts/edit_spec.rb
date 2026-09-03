@@ -20,6 +20,18 @@ describe "Account editing", :js do
     expect(page).to have_text("New Name").and(have_no_text("Old Name"))
   end
 
+  it "closes the dialog when clicking the cancel button" do
+    click_on t("accounts.edit.cancel")
+
+    expect(page).to have_no_css("dialog[open]", visible: :all)
+  end
+
+  it "closes the dialog when clicking the backdrop" do
+    page.driver.browser.action.move_to_location(700, 10).click.perform
+
+    expect(page).to have_no_css("dialog[open]", visible: :all)
+  end
+
   it "keeps the dialog open after a validation error" do
     other_account = create(:account, budget: budget)
 

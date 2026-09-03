@@ -24,9 +24,6 @@ describe("EditDismisserController", () => {
     instance.cancelTarget = cancel;
   });
 
-  afterEach(() => {
-    document.body.removeChild(element);
-  });
 
   describe("#cancel", () => {
     it("prevents the default event", () => {

@@ -65,7 +65,6 @@ describe("SelectionController", () => {
 
   afterEach(() => {
     instance.disconnect();
-    element.remove();
   });
 
   describe("#toggle", () => {
@@ -427,6 +426,53 @@ describe("SelectionController", () => {
       expect(panelFrame.reload).to.have.callCount(0);
     });
 
+    it("checks each selected row and settles the bulk states across targets", () => {
+      const first  = subcategory("1", "/budgets/1/categories/1/panel"),
+            second = subcategory("2", "/budgets/1/categories/2/panel"),
+            third  = subcategory("3", "/budgets/1/categories/3/panel"),
+            rows   = [rowFor(first), rowFor(second), rowFor(third)];
+
+      panelFrame.reload = sinon.fake();
+      instance.subcategoryTargets = [first, second, third];
+      instance.selectedIdsValue = ["1", "2"];
+
+      instance.subcategoryTargetConnected(first);
+      instance.subcategoryTargetConnected(second);
+      instance.subcategoryTargetConnected(third);
+
+      expect(first.checked).to.eq(true);
+      expect(second.checked).to.eq(true);
+      expect(third.checked).to.eq(false);
+      expect(rows[0].hasAttribute("data-selected")).to.eq(true);
+      expect(rows[1].hasAttribute("data-selected")).to.eq(true);
+      expect(rows[2].hasAttribute("data-selected")).to.eq(false);
+      expect(panelFrame.reload).to.have.callCount(2);
+    });
+
+    it("leaves the bulk states checked when every row is part of the selection", () => {
+      const first  = subcategory("1", "/budgets/1/categories/1/panel"),
+            second = subcategory("2", "/budgets/1/categories/2/panel");
+
+      rowFor(first);
+      rowFor(second);
+
+      panelFrame.reload = sinon.fake();
+      instance.subcategoryTargets = [first, second];
+      instance.selectedIdsValue = ["1", "2"];
+
+      instance.subcategoryTargetConnected(first);
+
+      expect(all.indeterminate).to.eq(true);
+      expect(group.indeterminate).to.eq(true);
+
+      instance.subcategoryTargetConnected(second);
+
+      expect(all.checked).to.eq(true);
+      expect(all.indeterminate).to.eq(false);
+      expect(group.checked).to.eq(true);
+      expect(group.indeterminate).to.eq(false);
+    });
+
     it("ignores the selected row when it is already checked", () => {
       const box = subcategory("1", "/budgets/1/categories/1/panel");
       box.checked = true;
@@ -558,8 +604,6 @@ describe("SelectionController", () => {
 
       expect(alpha.checked).to.eq(true);
       expect(panelFrame.getAttribute("src")).to.eq("/budgets/1/categories/1/panel");
-
-      dialog.remove();
     });
   });
 });

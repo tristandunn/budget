@@ -29,8 +29,13 @@ module RSpec
 
       private
 
-      # Set the picker hidden field value, using execute_script for
-      # JavaScript-driven tests where the field is not interactable.
+      # Set the picker hidden field value without opening the picker.
+      #
+      # The hidden field is not interactable, so a JavaScript-driven test
+      # scripts its value rather than opening the panel and clicking an
+      # option. That bypasses the picker entirely, so use this in a spec whose
+      # subject is something else and drive the panel itself in a spec that
+      # covers the picker.
       #
       # @param controller [String] The Stimulus controller name.
       # @param account [Account] The account to select.

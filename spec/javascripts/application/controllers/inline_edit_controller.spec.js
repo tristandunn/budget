@@ -25,10 +25,6 @@ describe("InlineEditController", () => {
     instance.inputTarget = input;
   });
 
-  afterEach(() => {
-    document.body.removeChild(cell);
-  });
-
   describe("#inputTargetConnected", () => {
     it("focuses the input", () => {
       instance.inputTargetConnected();
@@ -100,31 +96,30 @@ describe("InlineEditController", () => {
   });
 
   describe("#prefocus", () => {
-    afterEach(() => {
-      document.querySelectorAll("input[style]").forEach((el) => {
-        if (el !== input) {
-          el.remove();
-        }
-      });
-    });
+
+    /*
+     * Return the off-screen inputs the controller appends, which carry a style
+     * attribute the edit input does not.
+     */
+    const temporary = () => {
+      return document.body.querySelectorAll("input[style]");
+    };
 
     it("creates a temporary input and focuses it", () => {
-      const before = document.querySelectorAll("input").length;
-
       instance.prefocus();
 
-      expect(document.querySelectorAll("input").length).to.eq(before + 1);
+      expect(temporary().length).to.eq(1);
+      expect(document.activeElement).to.eq(temporary()[0]);
     });
 
     it("removes the temporary input after a timeout", () => {
       const clock = sinon.useFakeTimers();
-      const before = document.querySelectorAll("input").length;
 
       instance.prefocus();
-      expect(document.querySelectorAll("input").length).to.eq(before + 1);
+      expect(temporary().length).to.eq(1);
 
       clock.tick(1000);
-      expect(document.querySelectorAll("input").length).to.eq(before);
+      expect(temporary().length).to.eq(0);
 
       clock.restore();
     });

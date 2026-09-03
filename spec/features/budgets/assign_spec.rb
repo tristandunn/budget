@@ -11,6 +11,25 @@ describe "Assigning to a subcategory", :js do
     sign_in_for(budget)
   end
 
+  context "when blurring the assignment input" do
+    before do
+      create_snapshots_for(Date.current.beginning_of_month)
+      visit budget_path(budget)
+
+      find("tbody td a", text: "$0.00").click
+      fill_in "assignment_form_amount", with: "250.00"
+      find_by_id("assignment_form_amount").native.send_keys(:tab)
+    end
+
+    it "submits the assignment" do
+      expect(page).to have_text("$250.00")
+    end
+
+    it "updates the available to assign amount" do
+      expect(page).to have_text("$750.00")
+    end
+  end
+
   context "when on the current month" do
     before do
       create_snapshots_for(Date.current.beginning_of_month)

@@ -16,6 +16,29 @@ describe "transfers/_form.html.erb" do
   let(:budget) { build_stubbed(:budget) }
   let(:form)   { TransferForm.new(budget: budget) }
 
+  it "wires the form to the transfer-form controller" do
+    expect(html).to have_css(
+      "form#transaction_form[data-controller='transfer-form']" \
+      "[data-action='submit->transfer-form#validate']"
+    )
+  end
+
+  it "wires the account picker outlets on the form" do
+    %w(from to).each do |direction|
+      expect(html).to have_css(
+        %([data-transfer-form-#{direction}-account-picker-outlet="[data-controller~='#{direction}-account-picker']"])
+      )
+    end
+  end
+
+  it "wires the amount field to the amount and transfer-form controllers" do
+    expect(html).to have_css(
+      "input#transfer_form_amount[data-controller='amount']" \
+      "[data-action='input->amount#input keydown->amount#keydown paste->amount#paste']" \
+      "[data-transfer-form-target='amount']"
+    )
+  end
+
   it "renders the from-account picker opener with a hidden field" do
     expect(html).to have_css(
       "input[type='hidden'][name='transfer_form[from_account_id]']" \

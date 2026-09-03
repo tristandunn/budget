@@ -908,9 +908,6 @@ describe("AmountController", () => {
       document.body.appendChild(form);
     });
 
-    afterEach(() => {
-      document.body.removeChild(form);
-    });
 
     it("submits the unformatted value", () => {
       element.value = "-1234.56";

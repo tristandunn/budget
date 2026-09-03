@@ -55,6 +55,39 @@ describe "Transaction" do
     expect(page).to have_text(t("transactions.list.scheduled")).and(have_text("Test Payee"))
   end
 
+  it "marks only the empty pickers and keeps the form when a payee is missing", :js do
+    fill_in t("activemodel.attributes.transaction_form.amount"), with: -100
+    click_on t("transactions.new.submit")
+
+    expect(page).to have_css("[data-payee-picker-target='icon'].text-red-700")
+      .and(have_css("[data-category-picker-target='icon'].text-red-700"))
+      .and(have_no_css("[data-account-picker-target='icon'].text-red-700"))
+      .and(have_field(t("activemodel.attributes.transaction_form.amount"), with: "-$100"))
+  end
+
+  it "marks the amount and keeps the form when the amount is zero", :js do
+    fill_in t("activemodel.attributes.transaction_form.amount"), with: "0"
+    fill_in_payee("Test Payee")
+    fill_in_category(subcategory)
+    click_on t("transactions.new.submit")
+
+    expect(page).to have_field(
+      t("activemodel.attributes.transaction_form.amount"),
+      class: "text-red-700"
+    )
+  end
+
+  it "creates a transaction using the pickers", :js do
+    fill_in t("activemodel.attributes.transaction_form.amount"), with: -100
+    fill_in_payee("Test Payee")
+    fill_in_category(subcategory)
+    select_in_picker("account-picker", account.name)
+    select_in_picker("frequency-picker", t("transactions.frequency.labels.monthly"))
+    click_on t("transactions.new.submit")
+
+    expect(page).to have_text(t("transactions.list.scheduled")).and(have_text("Test Payee"))
+  end
+
   it "posts a recurring transaction with a new payee" do
     fill_in_frequency(:monthly)
     fill_in_transaction_and_submit(account: account, subcategory: subcategory)
