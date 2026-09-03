@@ -55,6 +55,10 @@ describe "accounts/transactions/index.html.erb" do
     expect(html).to have_css("div.border-y.border-taupe-200.px-4:has(#cleared_balance)")
   end
 
+  it "does not render the selected total" do
+    expect(html).to have_no_css("[data-transaction-selection-target='total']", visible: :all)
+  end
+
   it "renders the actions bar partial" do
     expect(html).to include("ACTIONS_BAR_PARTIAL")
   end
