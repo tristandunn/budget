@@ -36,6 +36,17 @@ describe "transactions/_list.html+desktop.erb" do
         .and(have_css("th", text: t("transactions.list.columns.inflow")))
     end
 
+    it "renders a select all checkbox wired to the selection controller" do
+      expect(html).to have_css(
+        "input[type=checkbox][data-transaction-selection-target=all]" \
+        "[data-action='transaction-selection#toggleAll']"
+      )
+    end
+
+    it "labels the select all checkbox for screen readers" do
+      expect(html).to have_css("th .sr-only", text: t("transactions.list.select_all"))
+    end
+
     it "labels the status column for screen readers" do
       expect(html).to have_css("th .sr-only", text: t("transactions.list.columns.status"))
     end
@@ -83,15 +94,23 @@ describe "transactions/_list.html+desktop.erb" do
       expect(html).to include("TRANSACTION_PARTIAL")
     end
 
+    it "spans the base columns in the scheduled spacer" do
+      expect(html).to have_css("tr[aria-hidden='true'] td[colspan='8']")
+    end
+
     it "spans the base columns in the scheduled header" do
-      expect(html).to have_css("tbody#account-all-scheduled th[scope='rowgroup'][colspan='7']")
+      expect(html).to have_css("tbody#account-all-scheduled th[scope='rowgroup'][colspan='8']")
     end
 
     context "with the all-accounts context" do
       let(:context) { :transactions }
 
+      it "spans the extra account column in the scheduled spacer" do
+        expect(html).to have_css("tr[aria-hidden='true'] td[colspan='9']")
+      end
+
       it "spans the extra account column in the scheduled header" do
-        expect(html).to have_css("tbody#account-all-scheduled th[scope='rowgroup'][colspan='8']")
+        expect(html).to have_css("tbody#account-all-scheduled th[scope='rowgroup'][colspan='9']")
       end
     end
   end

@@ -1,0 +1,5 @@
+<%= turbo_frame_tag "transaction_selection" do %>
+  <p class="text-base font-semibold"><%= number_to_money @summary.total %></p>
+
+  <p class="text-sm"><%= t(".selected_total", number: @summary.size) %></p>
+<% end %>

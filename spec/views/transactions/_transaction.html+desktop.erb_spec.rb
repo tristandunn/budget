@@ -16,6 +16,34 @@ describe "transactions/_transaction.html+desktop.erb" do
     stub_template("transactions/_status_indicator.html.erb" => "STATUS_INDICATOR")
   end
 
+  it "identifies the row so it can be targeted by turbo streams" do
+    expect(html).to have_css("tr##{dom_id(transaction, :row)}")
+  end
+
+  it "renders a selection checkbox in the first column" do
+    expect(html).to have_css(
+      "td:first-child label input[type=checkbox]##{dom_id(transaction, :select)}"
+    )
+  end
+
+  it "carries the transaction id on the selection checkbox" do
+    expect(html).to have_css("input[value='#{transaction.id}']")
+  end
+
+  it "wires the selection checkbox to the transaction selection controller" do
+    expect(html).to have_css(
+      "input[data-transaction-selection-target=transaction]" \
+      "[data-action='transaction-selection#toggle']"
+    )
+  end
+
+  it "labels the selection checkbox with the payee name" do
+    expect(html).to have_css(
+      "input[data-transaction-selection-target=transaction]" \
+      "[aria-label='#{t("transactions.transaction.select", payee: transaction.payee.name)}']"
+    )
+  end
+
   it "renders the date" do
     expect(html).to have_css("td", text: "06/10/2026")
   end
@@ -65,7 +93,7 @@ describe "transactions/_transaction.html+desktop.erb" do
     let(:transaction) { build_stubbed(:transaction, subcategory: nil) }
 
     it "renders no category" do
-      expect(html).to have_no_css("td:nth-child(3)", text: /\S/)
+      expect(html).to have_no_css("td:nth-last-child(5)", text: /\S/)
     end
   end
 
@@ -107,6 +135,10 @@ describe "transactions/_transaction.html+desktop.erb" do
     it "does not render the recurring icon" do
       expect(html).to have_no_css("[aria-label='#{t("transactions.transaction.recurring")}']")
     end
+
+    it "still renders a selection checkbox" do
+      expect(html).to have_css("td:first-child input[type=checkbox]")
+    end
   end
 
   context "when the transaction is recurring and scheduled" do
@@ -134,6 +166,10 @@ describe "transactions/_transaction.html+desktop.erb" do
 
     it "renders the account name" do
       expect(html).to have_css("td", text: transaction.account.name)
+    end
+
+    it "keeps the selection checkbox in the first column" do
+      expect(html).to have_css("td:first-child input[type=checkbox]")
     end
   end
 

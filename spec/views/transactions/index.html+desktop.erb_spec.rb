@@ -49,6 +49,24 @@ describe "transactions/index.html+desktop.erb" do
     expect(html).to have_text(number_to_money(7_500))
   end
 
+  it "wires the transaction selection controller" do
+    expect(html).to have_css("main[data-controller='transaction-selection']")
+  end
+
+  it "provides the selected total summary url" do
+    expect(html).to have_css(
+      "main[data-transaction-selection-summary-url-value=" \
+      "'#{budget_transactions_summary_path(budget)}']"
+    )
+  end
+
+  it "renders the selected total frame hidden until a selection is made" do
+    expect(html).to have_css(
+      "turbo-frame#transaction_selection[hidden][data-transaction-selection-target='total']",
+      visible: :all
+    )
+  end
+
   it "renders the actions partial" do
     expect(html).to include("ACTIONS_PARTIAL")
   end

@@ -3,7 +3,11 @@
 <div class="flex h-dvh">
   <%= render "shared/sidebar", budget: @budget %>
 
-  <main class="flex min-w-0 flex-1 flex-col overflow-hidden bg-white">
+  <main
+    class="flex min-w-0 flex-1 flex-col overflow-hidden bg-white"
+    data-controller="transaction-selection"
+    data-transaction-selection-summary-url-value="<%= budget_transactions_summary_path(@budget) %>"
+  >
     <div class="sticky top-0 z-10 bg-white">
       <header class="flex items-center justify-between gap-4 whitespace-nowrap bg-white px-6 py-4">
         <h1 class="text-lg font-semibold"><%= t("sidebar.all_accounts") %></h1>
@@ -11,7 +15,10 @@
         <%= render "transactions/actions", budget: @budget %>
       </header>
 
-      <%= render "shared/transactions/balances", record: @budget, prefix: "budget_" %>
+      <%= render "shared/transactions/balances",
+                 record:     @budget,
+                 prefix:     "budget_",
+                 selectable: true %>
     </div>
 
     <section class="-mt-px min-w-0 flex-1 overflow-y-auto">

@@ -3,7 +3,11 @@
 <div class="flex h-dvh">
   <%= render "shared/sidebar", budget: @budget, account_id: @account.id %>
 
-  <main class="flex min-w-0 flex-1 flex-col overflow-hidden bg-white">
+  <main
+    class="flex min-w-0 flex-1 flex-col overflow-hidden bg-white"
+    data-controller="transaction-selection"
+    data-transaction-selection-summary-url-value="<%= budget_transactions_summary_path(@budget) %>"
+  >
     <%= render "shared/dialog", id: "account_dialog" %>
 
     <div class="sticky top-0 z-10 bg-white">
@@ -19,7 +23,7 @@
         <%= render "accounts/transactions/actions_bar", account: @account, budget: @budget %>
       </header>
 
-      <%= render "shared/transactions/balances", record: @account %>
+      <%= render "shared/transactions/balances", record: @account, selectable: true %>
     </div>
 
     <section class="-mt-px min-w-0 flex-1 overflow-y-auto">

@@ -1,5 +1,20 @@
 <%# locals: (transaction:, scheduled: false, context: :account) %>
-<tr class="border-b border-taupe-300 <%= scheduled ? "bg-taupe-100 text-taupe-700" : "bg-white" %>">
+<tr
+  id="<%= dom_id(transaction, :row) %>"
+  class="border-b border-taupe-300 <%= scheduled ? "bg-taupe-100 text-taupe-700" : "bg-white" %>"
+>
+  <td class="p-0">
+    <label class="flex cursor-pointer items-center p-2">
+      <%= check_box_tag dom_id(transaction, :select), transaction.id, false,
+                        class: "block cursor-pointer",
+                        aria:  { label: t(".select", payee: transaction.payee.name) },
+                        data:  {
+                          transaction_selection_target: "transaction",
+                          action:                       "transaction-selection#toggle"
+                        } %>
+    </label>
+  </td>
+
   <% if context == :transactions %>
     <td class="truncate p-2 text-sm"><%= transaction.account.name %></td>
   <% end %>

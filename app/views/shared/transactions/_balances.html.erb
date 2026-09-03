@@ -1,4 +1,4 @@
-<%# locals: (record:, prefix: "", container_class: "border-taupe-300 px-6") %>
+<%# locals: (record:, prefix: "", container_class: "border-taupe-300 px-6", selectable: false) %>
 <div class="flex items-baseline gap-3 border-y bg-white py-2 <%= container_class %>">
   <div>
     <p id="<%= prefix %>cleared_balance" class="text-base font-semibold">
@@ -42,4 +42,11 @@
 
     <p class="text-sm"><%= t("transactions.balances.working") %></p>
   </div>
+
+  <% if selectable %>
+    <%= turbo_frame_tag "transaction_selection",
+                        class:  "ml-auto text-right",
+                        hidden: true,
+                        data:   { transaction_selection_target: "total" } %>
+  <% end %>
 </div>

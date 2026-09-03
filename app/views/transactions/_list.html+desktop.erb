@@ -2,6 +2,8 @@
 <% if scheduled_transactions.present? || current_transactions.present? %>
   <table class="w-full table-fixed text-left">
     <colgroup>
+      <col class="w-10">
+
       <% if context == :transactions %>
         <col class="w-[12%]">
       <% end %>
@@ -17,6 +19,17 @@
 
     <thead class="sticky top-0 z-0 bg-white">
       <tr class="text-xs uppercase tracking-wide text-taupe-700">
+        <th scope="col" class="p-0 font-medium shadow-[inset_0_-1px_0_var(--color-taupe-300)]">
+          <label class="flex cursor-pointer items-center p-2">
+            <%= check_box_tag "select_all", "1", false,
+                              class: "block",
+                              data:  {
+                                transaction_selection_target: "all",
+                                action:                       "transaction-selection#toggleAll"
+                              } %><span class="sr-only"><%= t(".select_all") %></span>
+          </label>
+        </th>
+
         <% if context == :transactions %>
           <th
             scope="col"
@@ -115,7 +128,7 @@
         <tr class="cursor-pointer" data-action="click->collapsible#toggle">
           <th
             scope="rowgroup"
-            colspan="<%= context == :transactions ? 8 : 7 %>"
+            colspan="<%= context == :transactions ? 9 : 8 %>"
             class="relative py-2 pr-4 pl-9 text-sm font-semibold"
           >
             <div
@@ -141,7 +154,7 @@
 
         <tr aria-hidden="true">
           <td
-            colspan="<%= context == :transactions ? 8 : 7 %>"
+            colspan="<%= context == :transactions ? 9 : 8 %>"
             class="border-b border-taupe-300 bg-taupe-200 py-0.5"
           ></td>
         </tr>

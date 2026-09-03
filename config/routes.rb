@@ -26,6 +26,10 @@ Rails.application.routes.draw do
     end
     resource :settings, only: :update
     resources :transactions, only: %i(index new create edit update destroy) do
+      collection do
+        resource :summary, only: :show, module: :transactions, as: :transactions_summary
+      end
+
       member do
         patch  "clear", action: :clear
         delete "clear", action: :unclear

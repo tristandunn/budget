@@ -258,6 +258,7 @@ en:
         payee: "Payee"
         status: "Status"
       scheduled: "Scheduled"
+      select_all: "Select all transactions"
     new:
       cancel: "Cancel"
       submit: "Save"
@@ -271,8 +272,12 @@ en:
       pending: "Pending"
       reconciled: "Reconciled"
       upcoming: "Upcoming"
+    summaries:
+      show:
+        selected_total: "Selected Total (%{number})"
     transaction:
       recurring: "Recurring"
+      select: "Select transaction for %{payee}"
     transfer_category: "Credit Card Payment"
 
   payees:
