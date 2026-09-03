@@ -34,6 +34,28 @@
     </div>
   </section>
 
+  <% budget_snapshot.upcoming_transactions_for(category).tap do |upcoming_transactions| %>
+    <% if upcoming_transactions.any? %>
+      <section class="mt-6">
+        <h3 class="px-4 mb-2 text-sm font-medium text-taupe-600 uppercase tracking-wide">
+          <%= t("categories.show.upcoming_heading") %>
+        </h3>
+
+        <div class="rounded-xl divide-y divide-taupe-200 <%= upcoming_color(upcoming_transactions.available_after) %>">
+          <div class="flex items-center justify-between px-4 py-3">
+            <span><%= t("categories.show.upcoming", count: upcoming_transactions.count) %></span>
+            <span><%= number_to_money upcoming_transactions.total %></span>
+          </div>
+
+          <div class="flex items-center justify-between px-4 py-3">
+            <span><%= t("categories.show.available_after_upcoming") %></span>
+            <span><%= number_to_money upcoming_transactions.available_after %></span>
+          </div>
+        </div>
+      </section>
+    <% end %>
+  <% end %>
+
   <section class="mt-6">
     <h3 class="px-4 mb-2 text-sm font-medium text-taupe-600 uppercase tracking-wide">
       <%= t("categories.show.target.heading") %>

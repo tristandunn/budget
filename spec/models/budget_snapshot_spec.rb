@@ -838,4 +838,33 @@ describe BudgetSnapshot do
       end
     end
   end
+
+  describe "#upcoming_transactions_for" do
+    subject(:upcoming_transactions_for) { instance.upcoming_transactions_for(subcategory) }
+
+    let(:date)        { Date.current.beginning_of_month }
+    let(:instance)    { described_class.new(budget) }
+    let(:subcategory) { create(:category, :subcategory, budget: budget, with_snapshot: false) }
+
+    before do
+      create(:category_snapshot, budget:          budget,
+                                 category:        subcategory,
+                                 amount_assigned: 500_00,
+                                 amount_used:     0,
+                                 date:            date)
+
+      create(:transaction, :upcoming, budget:      budget,
+                                      subcategory: subcategory,
+                                      amount:      -50_00,
+                                      date:        date)
+    end
+
+    it "summarizes the category's upcoming transactions" do
+      expect(upcoming_transactions_for).to have_attributes(count: 1, total: -50_00)
+    end
+
+    it "projects the available amount for the displayed month" do
+      expect(upcoming_transactions_for.available_after).to eq(450_00)
+    end
+  end
 end

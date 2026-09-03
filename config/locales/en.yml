@@ -107,6 +107,7 @@ en:
       upcoming:
         one: "%{count} Upcoming Transaction"
         other: "%{count} Upcoming Transactions"
+      upcoming_heading: "Upcoming"
     subcategory_row:
       select: "Select %{name}"
     summary:

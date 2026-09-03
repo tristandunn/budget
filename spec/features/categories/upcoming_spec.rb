@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe "Category upcoming transactions", :js do
+describe "Category upcoming transactions" do
   let(:budget)   { create(:budget) }
   let(:category) { create(:category, budget: budget) }
 
@@ -19,43 +19,85 @@ describe "Category upcoming transactions", :js do
     sign_in_for(budget)
   end
 
-  context "with upcoming transactions in the displayed month" do
-    before do
-      create(:transaction, :upcoming, budget:      budget,
-                                      subcategory: subcategory,
-                                      amount:      -3_000,
-                                      date:        Date.current.beginning_of_month)
-      create(:transaction, :upcoming, budget:      budget,
-                                      subcategory: subcategory,
-                                      amount:      -2_000,
-                                      date:        Date.current.end_of_month)
+  context "when on a desktop browser", :js do
+    context "with upcoming transactions in the displayed month" do
+      before do
+        create(:transaction, :upcoming, budget:      budget,
+                                        subcategory: subcategory,
+                                        amount:      -3_000,
+                                        date:        Date.current.beginning_of_month)
+        create(:transaction, :upcoming, budget:      budget,
+                                        subcategory: subcategory,
+                                        amount:      -2_000,
+                                        date:        Date.current.end_of_month)
 
-      visit budget_path(budget)
+        visit budget_path(budget)
+      end
+
+      it "summarizes them and the available amount after them" do
+        click_button(subcategory.name)
+
+        within("#category_panel") do
+          expect(page).to have_text(t("categories.show.upcoming", count: 2))
+            .and(have_text("-$50.00"))
+            .and(have_text(t("categories.show.available_after_upcoming")))
+            .and(have_text("$250.00"))
+        end
+      end
     end
 
-    it "summarizes them and the available amount after them" do
-      click_button(subcategory.name)
+    context "without upcoming transactions in the displayed month" do
+      before do
+        visit budget_path(budget)
+      end
 
-      within("#category_panel") do
-        expect(page).to have_text(t("categories.show.upcoming", count: 2))
+      it "omits the upcoming summary" do
+        click_button(subcategory.name)
+
+        within("#category_panel") do
+          expect(page).to have_text(subcategory.name)
+            .and(have_no_text(t("categories.show.available_after_upcoming")))
+        end
+      end
+    end
+  end
+
+  context "when on a mobile browser", :mobile do
+    context "with upcoming transactions in the displayed month" do
+      before do
+        create(:transaction, :upcoming, budget:      budget,
+                                        subcategory: subcategory,
+                                        amount:      -3_000,
+                                        date:        Date.current.beginning_of_month)
+        create(:transaction, :upcoming, budget:      budget,
+                                        subcategory: subcategory,
+                                        amount:      -2_000,
+                                        date:        Date.current.end_of_month)
+
+        visit budget_path(budget)
+      end
+
+      it "summarizes them and the available amount after them" do
+        click_on subcategory.name
+
+        expect(page).to have_text(t("categories.show.upcoming_heading"))
+          .and(have_text(t("categories.show.upcoming", count: 2)))
           .and(have_text("-$50.00"))
           .and(have_text(t("categories.show.available_after_upcoming")))
           .and(have_text("$250.00"))
       end
     end
-  end
 
-  context "without upcoming transactions in the displayed month" do
-    before do
-      visit budget_path(budget)
-    end
+    context "without upcoming transactions in the displayed month" do
+      before do
+        visit budget_path(budget)
+      end
 
-    it "omits the upcoming summary" do
-      click_button(subcategory.name)
+      it "omits the upcoming summary" do
+        click_on subcategory.name
 
-      within("#category_panel") do
-        expect(page).to have_text(subcategory.name)
-          .and(have_no_text(t("categories.show.available_after_upcoming")))
+        expect(page).to have_css("#category_dialog_title", text: subcategory.name)
+          .and(have_no_text(t("categories.show.upcoming_heading")))
       end
     end
   end

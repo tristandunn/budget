@@ -182,6 +182,14 @@ class BudgetSnapshot
     amount_for(category, upcoming_amounts_by_category)
   end
 
+  # Returns the upcoming transactions for a category in the displayed month.
+  #
+  # @param category [Category] The subcategory to summarize.
+  # @return [UpcomingTransactions] The upcoming transactions summary.
+  def upcoming_transactions_for(category)
+    UpcomingTransactions.new(budget_snapshot: self, category: category)
+  end
+
   private
 
   attr_reader :budget, :month, :year
