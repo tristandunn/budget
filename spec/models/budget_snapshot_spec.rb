@@ -255,6 +255,35 @@ describe BudgetSnapshot do
         expect(budget_snapshot.future_months.size).to eq(1)
       end
     end
+
+    context "with snapshots before and after the displayed month" do
+      let(:future_date) { 1.month.from_now.beginning_of_month }
+      let(:subcategory) { create(:category, :subcategory, budget: budget, with_snapshot: false) }
+
+      before do
+        create(:category_snapshot, budget:          budget,
+                                   category:        subcategory,
+                                   date:            1.month.ago.beginning_of_month,
+                                   amount_assigned: 300,
+                                   amount_used:     120)
+        create(:category_snapshot, budget:          budget,
+                                   category:        subcategory,
+                                   date:            Date.current.beginning_of_month,
+                                   amount_assigned: 200,
+                                   amount_used:     260)
+        create(:category_snapshot, budget:          budget,
+                                   category:        subcategory,
+                                   date:            future_date,
+                                   amount_assigned: 100,
+                                   amount_used:     40)
+      end
+
+      it "returns the available amount the month would query for itself" do
+        expect(budget_snapshot.future_months.first.available_for(subcategory)).to eq(
+          described_class.new(budget, month: future_date.month, year: future_date.year).available_for(subcategory)
+        )
+      end
+    end
   end
 
   describe "#snapshot_for" do

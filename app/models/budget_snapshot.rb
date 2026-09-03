@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class BudgetSnapshot
-  FUTURE_MONTH_LIMIT = 6
+  Preload = Data.define(:available_amounts, :monthly_target_categories, :snapshots)
 
   delegate :current_month?,
            :date,
@@ -20,13 +20,20 @@ class BudgetSnapshot
   #
   # @param budget [Budget] The budget to summarize.
   # @param month [Integer, String, nil] The month to display.
+  # @param preload [Preload, nil] The state a future month is built with, which avoids three queries when supplied.
   # @param snapshot_range [Range<Date>, nil] The known range of navigable months, which avoids a query when supplied.
   # @param year [Integer, String, nil] The year to display.
-  def initialize(budget, month: nil, snapshot_range: nil, year: nil)
+  def initialize(budget, month: nil, preload: nil, snapshot_range: nil, year: nil)
     @budget         = budget
     @month          = month
     @snapshot_range = snapshot_range
     @year           = year
+
+    if preload
+      @available_amounts_by_category = preload.available_amounts
+      @monthly_target_categories     = preload.monthly_target_categories
+      @snapshots                     = preload.snapshots
+    end
   end
 
   # Return the available amount for a category, summed across every snapshot
@@ -66,14 +73,21 @@ class BudgetSnapshot
     end
   end
 
-  # Return snapshots for the future months that have assignments, capped at
-  # `FUTURE_MONTH_LIMIT` and ordered from the nearest month.
+  # Return snapshots for the future months that have assignments, ordered from
+  # the nearest month.
+  #
+  # The displayed month's own state seeds the future months, so each one is
+  # built without querying for itself.
   #
   # @return [Array<BudgetSnapshot>] The future month snapshots.
   def future_months
-    @future_months ||= future_month_dates.map do |future_date|
-      self.class.new(budget, month: future_date.month, snapshot_range: snapshot_range, year: future_date.year)
-    end
+    @future_months ||= BudgetSnapshotFutureMonths.new(
+      budget,
+      available_amounts:         available_amounts_by_category,
+      date:                      date,
+      monthly_target_categories: monthly_target_categories,
+      snapshot_range:            snapshot_range
+    ).to_a
   end
 
   # Return the category snapshot for the given category ID, initializing a new
@@ -209,20 +223,6 @@ class BudgetSnapshot
                                              .where(date: ..date)
                                              .group(:category_id)
                                              .sum("amount_assigned - amount_used")
-  end
-
-  # Return the dates of the future months that have assignments, capped at
-  # `FUTURE_MONTH_LIMIT` and ordered from the nearest month.
-  #
-  # @return [Array<Date>] The future month dates.
-  def future_month_dates
-    budget.category_snapshots
-          .where(date: date.next_month..)
-          .where.not(amount_assigned: 0)
-          .order(:date)
-          .distinct
-          .limit(FUTURE_MONTH_LIMIT)
-          .pluck(:date)
   end
 
   # Return the subcategories that have a monthly funding target.
