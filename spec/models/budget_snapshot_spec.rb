@@ -255,6 +255,49 @@ describe BudgetSnapshot do
         expect(budget_snapshot.future_months.size).to eq(1)
       end
     end
+
+    context "with more assigned future months than the limit" do
+      before do
+        (0..8).each do |offset|
+          create(:category_snapshot, budget:          budget,
+                                     category:        category,
+                                     date:            offset.months.from_now.beginning_of_month,
+                                     amount_assigned: 100)
+        end
+      end
+
+      it "returns the next months for a future month snapshot" do
+        expect(budget_snapshot.future_months.first.future_months.map(&:date)).to eq(
+          (2..7).map { |offset| offset.months.from_now.beginning_of_month }
+        )
+      end
+    end
+
+    context "with a future month that only has spending" do
+      let(:category) { create(:category, :subcategory, budget: budget, with_snapshot: false) }
+
+      before do
+        create(:category_snapshot, budget:          budget,
+                                   category:        category,
+                                   date:            Date.current.beginning_of_month,
+                                   amount_assigned: 100,
+                                   amount_used:     20)
+        create(:category_snapshot, budget:          budget,
+                                   category:        category,
+                                   date:            1.month.from_now.beginning_of_month,
+                                   amount_assigned: 0,
+                                   amount_used:     30)
+        create(:category_snapshot, budget:          budget,
+                                   category:        category,
+                                   date:            2.months.from_now.beginning_of_month,
+                                   amount_assigned: 50,
+                                   amount_used:     5)
+      end
+
+      it "carries the spending forward into the later month" do
+        expect(budget_snapshot.future_months.first.available_for(category)).to eq(95)
+      end
+    end
   end
 
   describe "#snapshot_for" do
