@@ -1,9 +1,8 @@
 <%= turbo_stream.update "category_dialog" do %>
   <%= render "details",
-             budget:                   @budget,
-             category:                 @category,
-             budget_snapshot:          @budget_snapshot,
-             previous_budget_snapshot: @previous_budget_snapshot %>
+             budget:          @budget,
+             category:        @category,
+             budget_snapshot: @budget_snapshot %>
 <% end %>
 
 <%= turbo_stream.update dom_id(@category, :name) do %>

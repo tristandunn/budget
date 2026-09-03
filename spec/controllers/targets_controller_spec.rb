@@ -207,26 +207,6 @@ describe TargetsController do
       it "assigns the budget snapshot" do
         expect(assigns(:budget_snapshot)).to be_a(BudgetSnapshot)
       end
-
-      it "assigns no previous budget snapshot" do
-        expect(assigns(:previous_budget_snapshot)).to be_nil
-      end
-    end
-
-    context "with a previous month" do
-      before do
-        create(:category_snapshot,
-               budget:          budget,
-               category:        subcategory,
-               amount_assigned: 50_000,
-               date:            1.month.ago.beginning_of_month)
-
-        delete :destroy, params: { budget_id: budget.id, category_id: subcategory.id }, format: :turbo_stream
-      end
-
-      it "assigns the previous budget snapshot" do
-        expect(assigns(:previous_budget_snapshot)).to be_a(BudgetSnapshot)
-      end
     end
 
     context "with the html format" do

@@ -42,29 +42,8 @@ describe CategoriesController do
         expect(assigns(:budget_snapshot)).to be_a(BudgetSnapshot)
       end
 
-      it "assigns no previous budget snapshot" do
-        expect(assigns(:previous_budget_snapshot)).to be_nil
-      end
-
       it "assigns the upcoming transactions" do
         expect(assigns(:upcoming_transactions)).to eq(upcoming_transactions)
-      end
-    end
-
-    context "when not on the first month" do
-      before do
-        create(:category_snapshot,
-               budget:          budget,
-               category:        subcategory,
-               amount_assigned: 50_000,
-               amount_used:     20_000,
-               date:            1.month.ago.beginning_of_month)
-
-        get :show, params: { budget_id: budget.id, id: subcategory.id }
-      end
-
-      it "assigns the previous budget snapshot" do
-        expect(assigns(:previous_budget_snapshot)).to be_a(BudgetSnapshot)
       end
     end
 
@@ -272,60 +251,30 @@ describe CategoriesController do
 
     before do
       allow(CategorySummary).to receive(:new).and_return(summary)
+
+      get :summary, params: {
+        budget_id: budget.id,
+        ids:       subcategories.map(&:id)
+      }
     end
 
-    context "when on the first month" do
-      before do
-        get :summary, params: {
-          budget_id: budget.id,
-          ids:       subcategories.map(&:id)
-        }
-      end
+    it { is_expected.to respond_with(200) }
+    it { is_expected.to render_template(:summary) }
 
-      it { is_expected.to respond_with(200) }
-      it { is_expected.to render_template(:summary) }
-
-      it "assigns the budget snapshot" do
-        expect(assigns(:budget_snapshot)).to be_a(BudgetSnapshot)
-      end
-
-      it "initializes the summary without a previous budget snapshot" do
-        expect(CategorySummary).to have_received(:new).with(
-          budget,
-          budget_snapshot:          assigns(:budget_snapshot),
-          ids:                      subcategories.map { |subcategory| subcategory.id.to_s },
-          previous_budget_snapshot: nil
-        )
-      end
-
-      it "assigns the summary" do
-        expect(assigns(:summary)).to eq(summary)
-      end
+    it "assigns the budget snapshot" do
+      expect(assigns(:budget_snapshot)).to be_a(BudgetSnapshot)
     end
 
-    context "when not on the first month" do
-      before do
-        create(:category_snapshot,
-               budget:          budget,
-               category:        subcategories.first,
-               amount_assigned: 10_000,
-               amount_used:     0,
-               date:            1.month.ago.beginning_of_month)
+    it "initializes the summary with the displayed budget snapshot" do
+      expect(CategorySummary).to have_received(:new).with(
+        budget,
+        budget_snapshot: assigns(:budget_snapshot),
+        ids:             subcategories.map { |subcategory| subcategory.id.to_s }
+      )
+    end
 
-        get :summary, params: {
-          budget_id: budget.id,
-          ids:       subcategories.map(&:id)
-        }
-      end
-
-      it "initializes the summary with the previous month's budget snapshot" do
-        expect(CategorySummary).to have_received(:new).with(
-          budget,
-          budget_snapshot:          assigns(:budget_snapshot),
-          ids:                      subcategories.map { |subcategory| subcategory.id.to_s },
-          previous_budget_snapshot: have_attributes(date: Date.current.prev_month.beginning_of_month)
-        )
-      end
+    it "assigns the summary" do
+      expect(assigns(:summary)).to eq(summary)
     end
   end
 end

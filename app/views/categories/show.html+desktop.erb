@@ -34,9 +34,8 @@
   </header>
 
   <%= render "details",
-             budget:                   @budget,
-             category:                 @category,
-             budget_snapshot:          @budget_snapshot,
-             previous_budget_snapshot: @previous_budget_snapshot,
-             upcoming_transactions:    @upcoming_transactions %>
+             budget:                @budget,
+             category:              @category,
+             budget_snapshot:       @budget_snapshot,
+             upcoming_transactions: @upcoming_transactions %>
 <% end %>

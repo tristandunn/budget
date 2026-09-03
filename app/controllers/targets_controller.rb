@@ -17,8 +17,6 @@ class TargetsController < ApplicationController
     @form            = TargetForm.new(category: category, **form_parameters)
 
     if @form.update
-      @previous_budget_snapshot = previous_budget_snapshot
-
       respond_to do |format|
         format.html do
           redirect_to displayed_budget_path
@@ -32,10 +30,9 @@ class TargetsController < ApplicationController
 
   # Clear the target on the category.
   def destroy
-    @budget                   = current_budget
-    @category                 = category
-    @budget_snapshot          = budget_snapshot
-    @previous_budget_snapshot = previous_budget_snapshot
+    @budget          = current_budget
+    @category        = category
+    @budget_snapshot = budget_snapshot
 
     category.update!(target_type: nil, target_amount: nil)
 
@@ -75,18 +72,5 @@ class TargetsController < ApplicationController
   # @return [Hash] The permitted parameters for the form.
   def form_parameters
     params.expect(target_form: %i(target_type target_amount_input)).to_h.symbolize_keys
-  end
-
-  # Return the budget snapshot for the month preceding the displayed month.
-  #
-  # @return [BudgetSnapshot, nil] The previous budget snapshot, or nil on the first month.
-  def previous_budget_snapshot
-    unless budget_snapshot.first_month?
-      @previous_budget_snapshot ||= BudgetSnapshot.new(
-        current_budget,
-        month: budget_snapshot.previous_date.month,
-        year:  budget_snapshot.previous_date.year
-      )
-    end
   end
 end

@@ -72,6 +72,23 @@ class BudgetSnapshot
     end
   end
 
+  # Returns the available amount carried in from prior months for the category,
+  # derived from the cumulative balance through the displayed month minus the
+  # displayed month's own remaining amount. For a top-level category, sums the
+  # rolled-over amounts of its subcategories.
+  #
+  # @param category [Category] The category or category group.
+  # @return [Integer] The rolled-over amount in cents.
+  def rollover_for(category)
+    if category.parent_id.nil?
+      category.subcategories.sum do |subcategory|
+        rollover_for(subcategory)
+      end
+    else
+      (available_amounts_by_category[category.id] || 0) - snapshot_for(category.id).amount_remaining
+    end
+  end
+
   # Returns the category snapshot for the given category id, initializing a new
   # one if none exists.
   #
@@ -94,12 +111,10 @@ class BudgetSnapshot
   # @param category [Category] The category to evaluate.
   # @return [TargetProgress] The target progress for the category.
   def target_progress_for(category)
-    snapshot = snapshot_for(category.id)
-
     TargetProgress.new(
       category: category,
-      rollover: rollover_for(category, snapshot),
-      snapshot: snapshot
+      rollover: rollover_for(category),
+      snapshot: snapshot_for(category.id)
     )
   end
 
@@ -188,17 +203,6 @@ class BudgetSnapshot
   # @return [ActiveRecord::Relation] The categories with a monthly target.
   def monthly_target_categories
     @monthly_target_categories ||= budget.subcategories.with_monthly_target
-  end
-
-  # Returns the available amount carried in from prior months for the category,
-  # derived from the cumulative balance through the displayed month minus the
-  # displayed month's own remaining amount.
-  #
-  # @param category [Category] The category to evaluate.
-  # @param snapshot [CategorySnapshot] The displayed-month snapshot.
-  # @return [Integer] The rolled-over amount in cents.
-  def rollover_for(category, snapshot)
-    (available_amounts_by_category[category.id] || 0) - snapshot.amount_remaining
   end
 
   # Returns the budget snapshot month, which owns the displayed month and the

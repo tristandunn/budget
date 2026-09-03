@@ -6,10 +6,9 @@ describe "targets/_response.turbo_stream+desktop.erb" do
   subject(:html) do
     render(
       locals:   {
-        budget:                   budget,
-        budget_snapshot:          budget_snapshot,
-        category:                 subcategory,
-        previous_budget_snapshot: previous_budget_snapshot
+        budget:          budget,
+        budget_snapshot: budget_snapshot,
+        category:        subcategory
       },
       partial:  "targets/response",
       variants: [:desktop]
@@ -18,10 +17,9 @@ describe "targets/_response.turbo_stream+desktop.erb" do
     rendered
   end
 
-  let(:budget)                   { subcategory.budget }
-  let(:budget_snapshot)          { BudgetSnapshot.new(budget) }
-  let(:previous_budget_snapshot) { nil }
-  let(:subcategory)              { build_stubbed(:category, :subcategory) }
+  let(:budget)          { subcategory.budget }
+  let(:budget_snapshot) { BudgetSnapshot.new(budget) }
+  let(:subcategory)     { build_stubbed(:category, :subcategory) }
 
   before do
     stub_template("categories/_target.html.erb"    => "TARGET_PARTIAL")

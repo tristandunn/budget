@@ -6,9 +6,8 @@ describe CategorySummary do
   subject(:summary) do
     described_class.new(
       budget,
-      budget_snapshot:          budget_snapshot,
-      ids:                      [first.id, second.id],
-      previous_budget_snapshot: previous_budget_snapshot
+      budget_snapshot: budget_snapshot,
+      ids:             [first.id, second.id]
     )
   end
 
@@ -16,10 +15,6 @@ describe CategorySummary do
   let(:budget_snapshot) { BudgetSnapshot.new(budget) }
   let(:first)           { create(:category, :subcategory, budget: budget, name: "Rent", with_snapshot: false) }
   let(:second)          { create(:category, :subcategory, budget: budget, name: "Groceries", with_snapshot: false) }
-
-  let(:previous_budget_snapshot) do
-    BudgetSnapshot.new(budget, month: 1.month.ago.month, year: 1.month.ago.year)
-  end
 
   before do
     create(:category_snapshot, budget:          budget,
@@ -73,9 +68,8 @@ describe CategorySummary do
       other   = create(:category, :subcategory)
       summary = described_class.new(
         budget,
-        budget_snapshot:          budget_snapshot,
-        ids:                      [first.id, other.id],
-        previous_budget_snapshot: previous_budget_snapshot
+        budget_snapshot: budget_snapshot,
+        ids:             [first.id, other.id]
       )
 
       expect(summary.categories).to contain_exactly(first)
@@ -91,14 +85,6 @@ describe CategorySummary do
   describe "#rollover" do
     it "sums the previous month's available across the selection" do
       expect(summary.rollover).to eq(23_000)
-    end
-
-    context "without a previous budget snapshot" do
-      let(:previous_budget_snapshot) { nil }
-
-      it "treats the rollover as zero" do
-        expect(summary.rollover).to eq(0)
-      end
     end
   end
 end

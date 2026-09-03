@@ -6,10 +6,9 @@ describe "categories/_details.html.erb" do
   subject(:html) do
     render(
       locals:  {
-        budget:                   budget,
-        category:                 subcategory,
-        budget_snapshot:          budget_snapshot,
-        previous_budget_snapshot: previous_budget_snapshot
+        budget:          budget,
+        category:        subcategory,
+        budget_snapshot: budget_snapshot
       },
       partial: "categories/details"
     )
@@ -17,15 +16,15 @@ describe "categories/_details.html.erb" do
     rendered
   end
 
-  let(:budget)                   { subcategory.budget }
-  let(:previous_budget_snapshot) { instance_double(BudgetSnapshot, available_for: 20_000) }
-  let(:snapshot)                 { CategorySnapshot.new(amount_assigned: 40_000, amount_used: 10_000) }
-  let(:subcategory)              { build_stubbed(:category, :subcategory) }
+  let(:budget)      { subcategory.budget }
+  let(:snapshot)    { CategorySnapshot.new(amount_assigned: 40_000, amount_used: 10_000) }
+  let(:subcategory) { build_stubbed(:category, :subcategory) }
 
   let(:budget_snapshot) do
     instance_double(BudgetSnapshot,
                     snapshot_for:  snapshot,
                     available_for: 50_000,
+                    rollover_for:  20_000,
                     date:          Date.current)
   end
 
@@ -65,13 +64,5 @@ describe "categories/_details.html.erb" do
   it "targets the rename dialog frame from the rename link" do
     expect(html).to have_css("a[data-turbo-frame='category_rename_dialog']",
                              text: t("categories.show.rename"))
-  end
-
-  context "without a previous budget snapshot" do
-    let(:previous_budget_snapshot) { nil }
-
-    it "renders a zero rollover amount" do
-      expect(html).to have_css("div", normalize_ws: true, text: "#{t("categories.show.rollover")} $0.00")
-    end
   end
 end

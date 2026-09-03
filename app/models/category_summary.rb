@@ -3,11 +3,10 @@
 class CategorySummary
   delegate :size, to: :categories
 
-  def initialize(budget, budget_snapshot:, ids:, previous_budget_snapshot:)
-    @budget                   = budget
-    @ids                      = ids
-    @budget_snapshot          = budget_snapshot
-    @previous_budget_snapshot = previous_budget_snapshot
+  def initialize(budget, budget_snapshot:, ids:)
+    @budget          = budget
+    @ids             = ids
+    @budget_snapshot = budget_snapshot
   end
 
   # Return the activity this month across the selection.
@@ -56,7 +55,7 @@ class CategorySummary
   # @return [Integer] The summed rollover amount.
   def rollover
     categories.sum do |category|
-      @previous_budget_snapshot&.available_for(category) || 0
+      @budget_snapshot.rollover_for(category)
     end
   end
 end
