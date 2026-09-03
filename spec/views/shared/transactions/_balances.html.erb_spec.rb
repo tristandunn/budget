@@ -38,6 +38,10 @@ describe "shared/transactions/_balances.html.erb" do
     expect(html).to have_text(t("transactions.balances.working"))
   end
 
+  it "does not render the selected total" do
+    expect(html).to have_no_css("[data-transaction-selection-target='total']", visible: :all)
+  end
+
   it "styles the balances container with the default classes" do
     expect(html).to have_css("div.border-y.border-taupe-300.px-6:has(#cleared_balance)")
   end
@@ -52,6 +56,25 @@ describe "shared/transactions/_balances.html.erb" do
     it "does not retain the default styling" do
       expect(html).to have_no_css("div.border-taupe-300:has(#cleared_balance)")
         .and(have_no_css("div.px-6:has(#cleared_balance)"))
+    end
+  end
+
+  context "when selectable" do
+    let(:locals) { { record: record, selectable: true } }
+
+    it "renders an empty selected total frame hidden until a selection is made" do
+      expect(html).to have_css(
+        "turbo-frame#transaction_selection[hidden][data-transaction-selection-target='total']",
+        text:    "",
+        visible: :all
+      )
+    end
+
+    it "aligns the selected total to the right" do
+      expect(html).to have_css(
+        "turbo-frame#transaction_selection.ml-auto.text-right",
+        visible: :all
+      )
     end
   end
 
