@@ -15,6 +15,15 @@ module BudgetHelper
     end
   end
 
+  # Return the CSS classes for an amount pill, combining the pill shape with
+  # the color for the amount.
+  #
+  # @param amount [Integer] The amount in cents.
+  # @return [String] The CSS classes for the amount pill.
+  def amount_pill(amount)
+    "inline-block py-0.5 px-2 -my-0.5 rounded-full #{amount_color(amount)}"
+  end
+
   # Return the CSS classes for a subcategory's available amount.
   #
   # Yellow when it needs attention, otherwise the standard amount color.

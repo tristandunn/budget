@@ -27,12 +27,37 @@
       <div class="flex items-center justify-between px-4 py-3">
         <span><%= t("categories.show.available") %></span>
 
-        <span class="inline-block py-0.5 px-2 -my-0.5 rounded-full <%= amount_color(budget_snapshot.available_for(category)) %>">
+        <span class="<%= amount_pill(budget_snapshot.available_for(category)) %>">
           <%= number_to_money budget_snapshot.available_for(category) %>
         </span>
       </div>
     </div>
   </section>
+
+  <% budget_snapshot.upcoming_transactions_for(category).tap do |upcoming_transactions| %>
+    <% if upcoming_transactions.any? %>
+      <section class="mt-6">
+        <h3 class="px-4 mb-2 text-sm font-medium text-taupe-600 uppercase tracking-wide">
+          <%= t("categories.show.upcoming_heading") %>
+        </h3>
+
+        <div class="bg-white rounded-xl divide-y divide-taupe-200">
+          <div class="flex items-center justify-between px-4 py-3">
+            <span><%= t("categories.show.upcoming", count: upcoming_transactions.count) %></span>
+            <span><%= number_to_money upcoming_transactions.total %></span>
+          </div>
+
+          <div class="flex items-center justify-between px-4 py-3">
+            <span><%= t("categories.show.available_after_upcoming") %></span>
+
+            <span class="<%= class_names(amount_pill(upcoming_transactions.available_after) => upcoming_transactions.available_after.negative?) %>">
+              <%= number_to_money upcoming_transactions.available_after %>
+            </span>
+          </div>
+        </div>
+      </section>
+    <% end %>
+  <% end %>
 
   <section class="mt-6">
     <h3 class="px-4 mb-2 text-sm font-medium text-taupe-600 uppercase tracking-wide">

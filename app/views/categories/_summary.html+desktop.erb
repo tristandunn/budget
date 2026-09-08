@@ -46,7 +46,7 @@
       <div class="flex items-center justify-between px-4 py-2 text-sm">
         <span><%= t("categories.show.available") %></span>
 
-        <span class="inline-block py-0.5 px-2 -my-0.5 rounded-full <%= amount_color(summary.available) %>">
+        <span class="<%= amount_pill(summary.available) %>">
           <%= number_to_money summary.available %>
         </span>
       </div>
