@@ -25,6 +25,18 @@ describe BudgetHelper do
     end
   end
 
+  describe "#amount_pill" do
+    subject { helper.amount_pill(amount) }
+
+    let(:amount) { 100_00 }
+
+    before do
+      allow(helper).to receive(:amount_color).with(amount).and_return("AMOUNT_COLOR")
+    end
+
+    it { is_expected.to eq("inline-block py-0.5 px-2 -my-0.5 rounded-full AMOUNT_COLOR") }
+  end
+
   describe "#available_color" do
     subject { helper.available_color(category, budget_snapshot) }
 

@@ -1,4 +1,4 @@
-<%# locals: (budget:, category:, budget_snapshot:, previous_budget_snapshot:, upcoming_transactions:) %>
+<%# locals: (budget:, category:, budget_snapshot:, previous_budget_snapshot:) %>
 <div class="p-4 space-y-4">
   <div
     class="group bg-white rounded-xl"
@@ -39,25 +39,27 @@
       <div class="flex items-center justify-between px-4 py-2 text-sm">
         <span><%= t("categories.show.available") %></span>
 
-        <span class="inline-block py-0.5 px-2 -my-0.5 rounded-full <%= amount_color(budget_snapshot.available_for(category)) %>">
+        <span class="<%= amount_pill(budget_snapshot.available_for(category)) %>">
           <%= number_to_money budget_snapshot.available_for(category) %>
         </span>
       </div>
 
-      <% if upcoming_transactions.any? %>
-        <div class="p-4">
-          <div class="rounded-xl p-4 space-y-2 text-sm <%= upcoming_color(upcoming_transactions.available_after) %>">
-            <div class="flex items-center justify-between">
-              <span><%= t("categories.show.upcoming", count: upcoming_transactions.count) %></span>
-              <span><%= number_to_money upcoming_transactions.total %></span>
-            </div>
+      <% budget_snapshot.upcoming_transactions_for(category).tap do |upcoming_transactions| %>
+        <% if upcoming_transactions.any? %>
+          <div class="p-4">
+            <div class="rounded-xl p-4 space-y-2 text-sm <%= upcoming_color(upcoming_transactions.available_after) %>">
+              <div class="flex items-center justify-between">
+                <span><%= t("categories.show.upcoming", count: upcoming_transactions.count) %></span>
+                <span><%= number_to_money upcoming_transactions.total %></span>
+              </div>
 
-            <div class="flex items-center justify-between">
-              <span><%= t("categories.show.available_after_upcoming") %></span>
-              <span><%= number_to_money upcoming_transactions.available_after %></span>
+              <div class="flex items-center justify-between">
+                <span><%= t("categories.show.available_after_upcoming") %></span>
+                <span><%= number_to_money upcoming_transactions.available_after %></span>
+              </div>
             </div>
           </div>
-        </div>
+        <% end %>
       <% end %>
     </div>
   </div>

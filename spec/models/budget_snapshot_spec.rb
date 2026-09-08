@@ -838,4 +838,20 @@ describe BudgetSnapshot do
       end
     end
   end
+
+  describe "#upcoming_transactions_for" do
+    subject { instance.upcoming_transactions_for(subcategory) }
+
+    let(:instance)              { described_class.new(budget) }
+    let(:subcategory)           { create(:category, :subcategory, budget: budget) }
+    let(:upcoming_transactions) { instance_double(UpcomingTransactions) }
+
+    before do
+      allow(UpcomingTransactions).to receive(:new)
+        .with(budget_snapshot: instance, category: subcategory)
+        .and_return(upcoming_transactions)
+    end
+
+    it { is_expected.to eq(upcoming_transactions) }
+  end
 end

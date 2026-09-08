@@ -9,8 +9,7 @@ describe "categories/_details.html+desktop.erb" do
         budget:                   subcategory.budget,
         category:                 subcategory,
         budget_snapshot:          budget_snapshot,
-        previous_budget_snapshot: previous_budget_snapshot,
-        upcoming_transactions:    upcoming_transactions
+        previous_budget_snapshot: previous_budget_snapshot
       },
       partial:  "categories/details",
       variants: [:desktop]
@@ -25,9 +24,10 @@ describe "categories/_details.html+desktop.erb" do
 
   let(:budget_snapshot) do
     instance_double(BudgetSnapshot,
-                    snapshot_for:  snapshot,
-                    available_for: 50_000,
-                    date:          Date.current)
+                    snapshot_for:              snapshot,
+                    available_for:             50_000,
+                    date:                      Date.current,
+                    upcoming_transactions_for: upcoming_transactions)
   end
 
   let(:upcoming_transactions) do
