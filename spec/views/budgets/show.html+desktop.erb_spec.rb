@@ -64,6 +64,12 @@ describe "budgets/show.html+desktop.erb" do
     )
   end
 
+  it "disables autocomplete on the select all checkbox to avoid state caching" do
+    expect(html).to have_css(
+      "input[type=checkbox][data-selection-target=all][autocomplete=off]"
+    )
+  end
+
   it "labels the select all checkbox" do
     expect(html).to have_field(t("budgets.show.select_all"), type: :checkbox)
   end

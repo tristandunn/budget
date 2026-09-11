@@ -16,8 +16,9 @@
 
       <label class="cursor-pointer">
         <%= check_box_tag dom_id(category, :select), category.id, false,
-                          class: "mr-2 align-middle",
-                          data:  {
+                          autocomplete: "off",
+                          class:        "mr-2 align-middle",
+                          data:         {
                             selection_target: "category",
                             category_id:      category.id,
                             action:           "selection#toggleCategory"
