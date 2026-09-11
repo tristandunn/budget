@@ -30,6 +30,12 @@ describe "categories/_category_header.html+desktop.erb" do
     )
   end
 
+  it "disables autocomplete on the selection checkbox to avoid state caching" do
+    expect(html).to have_css(
+      "input[type=checkbox][data-selection-target=category][autocomplete=off]"
+    )
+  end
+
   it "labels the selection checkbox with the category name" do
     expect(html).to have_field(category.name, type: :checkbox)
   end

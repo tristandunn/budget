@@ -92,8 +92,9 @@
                 >
                   <label class="cursor-pointer">
                     <%= check_box_tag "select_all", "1", false,
-                                      class: "mr-2 align-middle",
-                                      data:  {
+                                      autocomplete: "off",
+                                      class:        "mr-2 align-middle",
+                                      data:         {
                                         selection_target: "all",
                                         action:           "selection#toggleAll"
                                       } %><span class="sr-only"><%= t(".select_all") %></span>

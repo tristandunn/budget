@@ -36,6 +36,12 @@ describe "categories/_subcategory_row.html+desktop.erb" do
     )
   end
 
+  it "disables autocomplete on the selection checkbox to avoid state caching" do
+    expect(html).to have_css(
+      "input[type=checkbox][data-selection-target=subcategory][autocomplete=off]"
+    )
+  end
+
   it "carries the parent category id on the selection checkbox" do
     expect(html).to have_css(
       "input[data-selection-target=subcategory]" \
