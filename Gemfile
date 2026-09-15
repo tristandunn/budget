@@ -4,10 +4,11 @@ ruby   "4.0.6"
 source "https://rubygems.org"
 
 gem "bcrypt",            "3.1.22"
-gem "bootsnap",          "1.25.0", require: false
+gem "bootsnap",          "1.26.0", require: false
 gem "browser",           "6.2.0"
 gem "importmap-rails",   "2.2.3"
 gem "jbuilder",          "2.15.1"
+gem "json",              "2.21.2"
 gem "litestream",        "0.14.0"
 gem "money",             "7.1.1"
 gem "propshaft",         "1.3.2"
@@ -34,7 +35,7 @@ group :development do
   gem "kamal",               "2.12.0", require: false
   gem "listen",              "3.10.0"
   gem "rack-mini-profiler",  "5.0.0"
-  gem "rubocop",             "1.90.0", require: false
+  gem "rubocop",             "1.91.0", require: false
   gem "rubocop-capybara",    "3.0.0", require: false
   gem "rubocop-factory_bot", "2.28.0", require: false
   gem "rubocop-performance", "1.27.0", require: false
@@ -53,7 +54,7 @@ group :test do
   gem "factory_bot_rails",        "6.5.1"
   gem "faker",                    "3.8.0"
   gem "rails-controller-testing", "1.0.5"
-  gem "selenium-webdriver",       "4.47.0"
+  gem "selenium-webdriver",       "4.49.0"
   gem "shoulda-matchers",         "8.0.1"
   gem "simplecov-console",        "0.9.5", require: false
 end
