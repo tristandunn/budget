@@ -31,7 +31,7 @@ describe "Category target editing" do
 
     it "persists a change to the target type" do
       within "#category_panel" do
-        choose t("targets.edit.set_aside_option"), allow_label_click: true
+        find(:label, t("targets.edit.set_aside_option")).click
         click_on t("targets.edit.submit")
 
         expect(page).to have_text(t("categories.show.target.monthly_savings_label"))
