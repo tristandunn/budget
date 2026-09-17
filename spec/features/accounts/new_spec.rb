@@ -20,7 +20,7 @@ describe "Account creation", :js, :mobile do
 
   it "creates a credit account" do
     fill_in AccountForm.human_attribute_name(:name), with: "Visa"
-    choose t("accounts.form.credit"), allow_label_click: true
+    find(:label, t("accounts.form.credit")).click
     click_on t("accounts.new.submit")
 
     expect(page).to have_css("[data-collapsible-id-value='credit'] li", text: "Visa", visible: :all)

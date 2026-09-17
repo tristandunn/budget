@@ -38,7 +38,7 @@ describe "Budget editing" do
       find_by_id("edit-budget").click
 
       within "#budget_settings_dialog_modal" do
-        expect(page).to have_select("budget_time_zone", selected: "(GMT-05:00) Eastern Time (US & Canada)")
+        expect(page).to have_field("budget_time_zone", with: "Eastern Time (US & Canada)")
       end
     end
 
