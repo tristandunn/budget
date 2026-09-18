@@ -125,5 +125,15 @@ describe CreateTransfer do
     it "returns true on success" do
       expect(perform).to be(true)
     end
+
+    context "when the transaction is rolled back" do
+      before do
+        allow(to_account).to receive(:increment!).and_raise(ActiveRecord::Rollback)
+      end
+
+      it "returns nil" do
+        expect(perform).to be_nil
+      end
+    end
   end
 end

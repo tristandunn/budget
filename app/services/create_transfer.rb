@@ -44,9 +44,9 @@ class CreateTransfer
 
       from_account.increment!(:balance, -amount.cents)
       to_account.increment!(:balance,    amount.cents)
-    end
 
-    true
+      true
+    end
   end
 
   private
