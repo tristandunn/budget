@@ -15,7 +15,7 @@ class User < ApplicationRecord
   validates :email, presence:   true,
                     length:     { maximum: MAXIMUM_EMAIL_LENGTH },
                     format:     { with: EMAIL_MATCHER },
-                    uniqueness: { case_sensitive: false }
+                    uniqueness: true
 
   validates :password, length: { minimum: MINIMUM_PASSWORD_LENGTH, allow_blank: true }
 end
