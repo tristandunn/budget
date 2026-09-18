@@ -42,15 +42,16 @@ class Transaction < ApplicationRecord
     pending? || cleared?
   end
 
-  # Return the attributes to copy when creating a new occurrence. The payee
-  # association is included in place of its foreign key so an unsaved new payee
-  # is carried over and autosaved with the copy.
+  # Return the attributes to copy when creating a new occurrence. Associations
+  # are included in place of their foreign keys so an unsaved new payee is
+  # carried over and autosaved with the copy, and so validating the copy reuses
+  # the loaded records rather than querying for each one again.
   #
   # @return [Hash{Symbol => Object}] The attributes to copy to the new occurrence.
   def copyable_attributes
     attributes.symbolize_keys
-              .slice(:account_id, :amount, :budget_id, :category_id, :memo)
-              .merge(payee: payee)
+              .slice(:amount, :memo)
+              .merge(account: account, budget: budget, payee: payee, subcategory: subcategory)
   end
 
   # Return whether this transaction may be destroyed. Both the transaction and,

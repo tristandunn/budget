@@ -132,12 +132,12 @@ describe Transaction do
       transaction = create(:transaction)
 
       expect(transaction.copyable_attributes).to eq(
-        account_id:  transaction.account_id,
+        account:     transaction.account,
         amount:      transaction.amount,
-        budget_id:   transaction.budget_id,
-        category_id: transaction.category_id,
+        budget:      transaction.budget,
         memo:        transaction.memo,
-        payee:       transaction.payee
+        payee:       transaction.payee,
+        subcategory: transaction.subcategory
       )
     end
   end
