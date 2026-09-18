@@ -16,7 +16,7 @@ describe User do
     subject(:user) { build(:user) }
 
     it { is_expected.to validate_presence_of(:email) }
-    it { is_expected.to validate_uniqueness_of(:email).case_insensitive }
+    it { is_expected.to validate_uniqueness_of(:email).ignoring_case_sensitivity }
     it { is_expected.to allow_value("MrBoB@example.com").for(:email) }
     it { is_expected.not_to allow_value("@.com").for(:email) }
 
@@ -30,6 +30,12 @@ describe User do
     it "requires the password to meet the minimum length" do
       expect(user).to validate_length_of(:password)
         .is_at_least(described_class::MINIMUM_PASSWORD_LENGTH)
+    end
+
+    it "requires the e-mail to be unique regardless of case" do
+      create(:user, email: user.email)
+
+      expect(user).not_to allow_value(user.email.upcase).for(:email).with_message(:taken)
     end
   end
 
