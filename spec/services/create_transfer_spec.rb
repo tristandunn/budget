@@ -61,7 +61,9 @@ describe CreateTransfer do
     end
 
     it "does not create or modify any category snapshots" do
-      expect { perform }.not_to change(CategorySnapshot, :count).from(0)
+      create(:category_snapshot, budget: budget, date: Date.new(2026, 4, 1))
+
+      expect { perform }.not_to(change { CategorySnapshot.pluck(:id, :amount_assigned, :amount_used, :updated_at) })
     end
 
     it "uses the i18n payee name on the outflow row" do

@@ -528,10 +528,11 @@ describe("SelectionController", () => {
     });
 
     it("ignores an empty selection", () => {
+      sinon.spy(panelFrame, "removeAttribute");
+
       escape();
 
-      expect(panelFrame.classList.contains("hidden")).to.eq(true);
-      expect(summary.classList.contains("hidden")).to.eq(false);
+      expect(panelFrame.removeAttribute).not.to.have.been.called;
     });
 
     it("ignores other keys", () => {

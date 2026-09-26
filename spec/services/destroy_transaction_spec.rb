@@ -178,8 +178,12 @@ describe DestroyTransaction do
       end
 
       it "does not touch category snapshots" do
+        [subcategory.parent, subcategory].each do |category|
+          create(:category_snapshot, category: category, date: transaction.date.beginning_of_month)
+        end
+
         expect { described_class.call(transaction: transaction) }
-          .not_to change(CategorySnapshot, :count).from(0)
+          .not_to(change { CategorySnapshot.pluck(:id, :amount_assigned, :amount_used, :updated_at) })
       end
 
       it "destroys the transaction" do
@@ -224,8 +228,10 @@ describe DestroyTransaction do
       end
 
       it "does not modify any category snapshots" do
+        create(:category_snapshot, budget: source.budget, date: transaction.date.beginning_of_month)
+
         expect { described_class.call(transaction: transaction) }
-          .not_to change(CategorySnapshot, :count).from(0)
+          .not_to(change { CategorySnapshot.pluck(:id, :amount_assigned, :amount_used, :updated_at) })
       end
     end
 

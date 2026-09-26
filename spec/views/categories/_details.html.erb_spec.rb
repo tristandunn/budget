@@ -82,12 +82,11 @@ describe "categories/_details.html.erb" do
       .and(have_no_css("span.rounded-full", text: view.number_to_money(45_000)))
   end
 
-  it "renders the upcoming section on the same card as the balance section" do
-    expect(html).to have_css(
-      "div.bg-white",
-      normalize_ws: true,
-      text:         "#{t("categories.show.available_after_upcoming")} #{view.number_to_money(45_000)}"
-    )
+  it "renders the upcoming section on a separate card from the balance section" do
+    card = Capybara.string(html).find("section", text: t("categories.show.upcoming_heading")).find("div.bg-white")
+
+    expect(card).to have_text(t("categories.show.available_after_upcoming"))
+      .and(have_no_text(t("categories.show.rollover")))
   end
 
   it "renders the target partial" do

@@ -59,9 +59,10 @@ describe "Transaction" do
     fill_in_frequency(:monthly)
     fill_in_transaction_and_submit(account: account, subcategory: subcategory)
 
-    expect(page).to have_text(t("transactions.list.scheduled"))
-      .and(have_text("Test Payee"))
-      .and(have_text("$100.00"))
+    scheduled = "[data-collapsible-content='collapsible-account-#{account.id}-scheduled']"
+
+    expect(page).to have_css("#{scheduled} tr", text: "Test Payee")
+      .and(have_css("tbody:not(#{scheduled}) tr", text: "Test Payee"))
   end
 
   protected

@@ -113,7 +113,10 @@ describe("InlineEditController", () => {
 
       instance.prefocus();
 
-      expect(document.querySelectorAll("input").length).to.eq(before + 1);
+      const inputs = document.querySelectorAll("input");
+
+      expect(inputs.length).to.eq(before + 1);
+      expect(document.activeElement).to.eq(inputs[inputs.length - 1]);
     });
 
     it("removes the temporary input after a timeout", () => {

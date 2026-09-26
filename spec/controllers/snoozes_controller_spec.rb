@@ -218,7 +218,9 @@ describe SnoozesController do
       end
     end
 
-    context "with a month after the navigable range" do
+    context "with a month after the snapshot range" do
+      let(:next_month) { Date.current.next_month.beginning_of_month }
+
       before do
         post :create,
              params: {
@@ -229,11 +231,15 @@ describe SnoozesController do
              }
       end
 
-      it "redirects to the budget for the month that was snoozed" do
-        snapshot = subcategory.snapshots.sole
+      it "snoozes the snapshot for the last month of the snapshot range" do
+        snapshot = subcategory.snapshots.for_month(next_month).first
 
+        expect(snapshot).to be_snoozed
+      end
+
+      it "redirects to the budget for the last month of the snapshot range" do
         expect(response).to redirect_to(
-          month_budget_url(budget, month: snapshot.date.month, year: snapshot.date.year)
+          month_budget_url(budget, month: next_month.month, year: next_month.year)
         )
       end
     end
@@ -426,7 +432,19 @@ describe SnoozesController do
       end
     end
 
-    context "with a month after the navigable range" do
+    context "with a month after the snapshot range" do
+      let(:next_month) { Date.current.next_month.beginning_of_month }
+
+      let!(:snapshot) do
+        create(:category_snapshot,
+               budget:          budget,
+               category:        subcategory,
+               amount_assigned: 0,
+               amount_used:     0,
+               date:            next_month,
+               metadata:        { "snoozed" => true })
+      end
+
       before do
         delete :destroy,
                params: {
@@ -437,11 +455,13 @@ describe SnoozesController do
                }
       end
 
-      it "redirects to the budget for the month that was unsnoozed" do
-        snapshot = subcategory.snapshots.sole
+      it "clears the snoozed flag on the snapshot for the last month of the snapshot range" do
+        expect(snapshot.reload).not_to be_snoozed
+      end
 
+      it "redirects to the budget for the last month of the snapshot range" do
         expect(response).to redirect_to(
-          month_budget_url(budget, month: snapshot.date.month, year: snapshot.date.year)
+          month_budget_url(budget, month: next_month.month, year: next_month.year)
         )
       end
     end
