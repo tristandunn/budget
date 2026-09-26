@@ -4,7 +4,7 @@
     <span class="<%= progress_color(month_snapshot) %>">
       <%= render "shared/progress_pie",
                  progress: month_snapshot,
-                 label:    month_progress_label(month_snapshot) %>
+                 title:    month_progress_label(month_snapshot) %>
     </span>
 
     <%= l(month_snapshot.date, format: :month) %>

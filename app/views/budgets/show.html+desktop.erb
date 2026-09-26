@@ -65,7 +65,7 @@
       </div>
 
       <div class="leading-tight">
-        <%= render "available_to_assign", budget: @budget %>
+        <%= render "budgets/available_to_assign", budget: @budget %>
       </div>
     </header>
 
@@ -156,7 +156,7 @@
         </section>
       </main>
 
-      <%= render "summary", budget_snapshot: @budget_snapshot %>
+      <%= render "budgets/summary", budget_snapshot: @budget_snapshot %>
     </div>
   </div>
 

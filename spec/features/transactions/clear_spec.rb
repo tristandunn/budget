@@ -41,6 +41,16 @@ describe "Transaction clearing", :js do
     end
   end
 
+  context "when on a mobile browser", :mobile do
+    let(:status) { :pending }
+
+    it "clears the transaction" do
+      click_button t("transactions.status_indicator.pending")
+
+      expect(page).to have_button(t("transactions.status_indicator.cleared"))
+    end
+  end
+
   context "when the transaction is reconciled" do
     let(:status) { :reconciled }
 

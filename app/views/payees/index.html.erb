@@ -49,7 +49,7 @@
 
     <div class="flex-1 px-4 pb-4 overflow-y-auto">
       <%= turbo_frame_tag "payees_list" do %>
-        <%= render "list", budget: @budget, payees: @payees %>
+        <%= render "payees/list", budget: @budget, payees: @payees %>
       <% end %>
 
       <p data-payee-manager-target="empty" class="hidden mt-4 text-center text-sm text-taupe-600">

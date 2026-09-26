@@ -7,7 +7,7 @@ describe "shared/_progress_pie.html.erb" do
     render(
       locals:  {
         progress:  progress,
-        label:     "Halfway there",
+        title:     "Halfway there",
         css_class: "size-8"
       },
       partial: "shared/progress_pie"
