@@ -22,23 +22,11 @@
         <svg class="h-4 w-3 self-center select-none" viewBox="0 0 15 20" role="img">
           <title><%= t("categories.show.target.snoozed_label") %></title>
 
-          <text
-            x="0"
-            y="15"
-            font-size="11"
-            font-weight="700"
-            fill="currentColor"
-          >
+          <text x="0" y="15" font-size="11" font-weight="700" fill="currentColor">
             Z
           </text>
 
-          <text
-            x="8"
-            y="9"
-            font-size="10"
-            font-weight="700"
-            fill="currentColor"
-          >
+          <text x="8" y="9" font-size="10" font-weight="700" fill="currentColor">
             z
           </text>
         </svg>
@@ -46,7 +34,7 @@
         <% budget_snapshot.target_progress_for(category).tap do |progress| %>
           <%= render "shared/progress_pie",
                      progress:  progress,
-                     label:     progress_label(progress),
+                     title:     progress_label(progress),
                      css_class: "w-4 h-4 -ml-0.5 self-center" %>
         <% end %>
       <% end %>

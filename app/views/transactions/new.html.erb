@@ -24,7 +24,7 @@
         </button>
       </header>
 
-      <%= render "form",
+      <%= render "transactions/form",
                  form:   @form,
                  method: :post,
                  url:    budget_transactions_path(@form.budget) %>
@@ -35,8 +35,8 @@
                controller: "account-picker",
                selected:   @form.account %>
 
-    <%= render "category_picker", picker: @category_picker %>
-    <%= render "frequency_picker", form: @form %>
-    <%= render "payee_picker", form: @form, payees: @payees %>
+    <%= render "transactions/category_picker", picker: @category_picker %>
+    <%= render "transactions/frequency_picker", form: @form %>
+    <%= render "transactions/payee_picker", form: @form, payees: @payees %>
   </div>
 <% end %>

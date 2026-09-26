@@ -1,15 +1,8 @@
-<%# locals: (progress:, label:, css_class: "w-4 h-4 self-center") %>
+<%# locals: (progress:, title:, css_class: "w-4 h-4 self-center") %>
 <svg class="<%= css_class %>" viewBox="0 0 20 20" role="img">
-  <title><%= label %></title>
+  <title><%= title %></title>
 
-  <circle
-    cx="10"
-    cy="10"
-    r="8"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="2"
-  />
+  <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="2" />
 
   <% if progress.funded? %>
     <path

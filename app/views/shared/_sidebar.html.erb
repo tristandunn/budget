@@ -249,7 +249,7 @@
       <% [
            ["sidebar-cash", t("accounts.index.cash"), budget.accounts.reject(&:credit?)],
            ["sidebar-credit", t("accounts.index.credit"), budget.accounts.select(&:credit?)]
-         ].each do |group_id, label, accounts| %>
+         ].each do |group_id, group_name, accounts| %>
         <% if accounts.any? %>
           <div
             class="group"
@@ -275,7 +275,7 @@
                   data-collapsible-arrow
                 ></span>
 
-                <%= label %>
+                <%= group_name %>
               </span>
 
               <% accounts.sum(&:balance).then do |total| %>
