@@ -64,8 +64,8 @@ describe Transaction do
     end
 
     it "orders transactions with the same date by created_at ascending" do
-      first  = create(:transaction, date: Date.new(2026, 3, 15))
-      second = create(:transaction, date: Date.new(2026, 3, 15), budget: first.budget)
+      second = create(:transaction, date: Date.new(2026, 3, 15), created_at: 1.minute.from_now)
+      first  = create(:transaction, date: Date.new(2026, 3, 15), created_at: 1.minute.ago, budget: second.budget)
 
       expect(described_class.all).to eq([first, second])
     end

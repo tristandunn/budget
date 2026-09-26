@@ -322,9 +322,11 @@ describe("TransactionSelectionController", () => {
     });
 
     it("ignores an empty selection", () => {
+      sinon.spy(total, "replaceChildren");
+
       escape();
 
-      expect(total.hasAttribute("hidden")).to.eq(true);
+      expect(total.replaceChildren).not.to.have.been.called;
     });
 
     it("ignores other keys", () => {

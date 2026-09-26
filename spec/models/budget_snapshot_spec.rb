@@ -790,7 +790,8 @@ describe BudgetSnapshot do
 
     context "with an upcoming transaction before a future displayed month" do
       subject(:upcoming_for) do
-        described_class.new(budget, month: month.month, year: month.year).upcoming_for(subcategory)
+        described_class.new(budget, month: month.month, snapshot_range: date..month, year: month.year)
+                       .upcoming_for(subcategory)
       end
 
       let(:month) { date.next_month.next_month }
