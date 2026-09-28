@@ -17,31 +17,60 @@ describe TargetsController do
 
     before do
       allow(TargetForm).to receive(:from).and_return(form)
-
-      get :edit, params: { budget_id: budget.id, category_id: subcategory.id }
     end
 
-    it { is_expected.to respond_with(200) }
-    it { is_expected.to render_template(:edit) }
+    context "without a month and year" do
+      let(:requested_date) { 1.month.ago.beginning_of_month }
 
-    it "assigns the budget" do
-      expect(assigns(:budget)).to eq(budget)
+      before do
+        get :edit, params: { budget_id: budget.id, category_id: subcategory.id }
+      end
+
+      it { is_expected.to respond_with(200) }
+      it { is_expected.to render_template(:edit) }
+
+      it "assigns the budget" do
+        expect(assigns(:budget)).to eq(budget)
+      end
+
+      it "assigns the category" do
+        expect(assigns(:category)).to eq(subcategory)
+      end
+
+      it "initializes the form from the category" do
+        expect(TargetForm).to have_received(:from).with(category: subcategory)
+      end
+
+      it "assigns the form" do
+        expect(assigns(:form)).to eq(form)
+      end
+
+      it "assigns the budget snapshot for the current month" do
+        expect(assigns(:budget_snapshot)).to have_attributes(date: Date.current.beginning_of_month)
+      end
     end
 
-    it "assigns the category" do
-      expect(assigns(:category)).to eq(subcategory)
-    end
+    context "with a month and year" do
+      let(:requested_date) { 1.month.ago.beginning_of_month }
 
-    it "initializes the form from the category" do
-      expect(TargetForm).to have_received(:from).with(category: subcategory)
-    end
+      let(:subcategory) do
+        create(:category, :subcategory, budget: budget).tap do |record|
+          create(:category_snapshot, budget: budget, category: record, date: 3.months.ago.beginning_of_month)
+        end
+      end
 
-    it "assigns the form" do
-      expect(assigns(:form)).to eq(form)
-    end
+      before do
+        get :edit, params: {
+          budget_id:   budget.id,
+          category_id: subcategory.id,
+          month:       requested_date.month,
+          year:        requested_date.year
+        }
+      end
 
-    it "assigns the budget snapshot" do
-      expect(assigns(:budget_snapshot)).to be_a(BudgetSnapshot)
+      it "assigns the budget snapshot for the requested month" do
+        expect(assigns(:budget_snapshot)).to have_attributes(date: requested_date)
+      end
     end
 
     context "with a category belonging to a different budget" do
@@ -105,8 +134,70 @@ describe TargetsController do
       it { is_expected.to respond_with(200) }
       it { is_expected.to render_template(:update) }
 
-      it "assigns the budget snapshot" do
-        expect(assigns(:budget_snapshot)).to be_a(BudgetSnapshot)
+      it "assigns the budget snapshot for the current month" do
+        expect(assigns(:budget_snapshot)).to have_attributes(date: Date.current.beginning_of_month)
+      end
+    end
+
+    context "when valid with the turbo_stream format and a month and year" do
+      let(:requested_date) { 1.month.ago.beginning_of_month }
+
+      let(:form)        { instance_double(TargetForm, update: true) }
+      let(:subcategory) do
+        create(:category, :subcategory, budget: budget).tap do |record|
+          create(:category_snapshot, budget: budget, category: record, date: 3.months.ago.beginning_of_month)
+        end
+      end
+
+      before do
+        allow(TargetForm).to receive(:new).and_return(form)
+
+        patch :update,
+              params: {
+                budget_id:   budget.id,
+                category_id: subcategory.id,
+                target_form: form_parameters,
+                month:       requested_date.month,
+                year:        requested_date.year
+              },
+              format: :turbo_stream
+      end
+
+      it "assigns the budget snapshot for the requested month" do
+        expect(assigns(:budget_snapshot)).to have_attributes(date: requested_date)
+      end
+
+      it "assigns the previous budget snapshot for the preceding month" do
+        expect(assigns(:previous_budget_snapshot)).to have_attributes(date: requested_date.prev_month)
+      end
+    end
+
+    context "when valid with the html format and a month and year" do
+      let(:requested_date) { 1.month.ago.beginning_of_month }
+
+      let(:form)        { instance_double(TargetForm, update: true) }
+      let(:subcategory) do
+        create(:category, :subcategory, budget: budget).tap do |record|
+          create(:category_snapshot, budget: budget, category: record, date: 3.months.ago.beginning_of_month)
+        end
+      end
+
+      before do
+        allow(TargetForm).to receive(:new).and_return(form)
+
+        patch :update, params: {
+          budget_id:   budget.id,
+          category_id: subcategory.id,
+          target_form: form_parameters,
+          month:       requested_date.month,
+          year:        requested_date.year
+        }
+      end
+
+      it "redirects to the budget for the requested month" do
+        expect(response).to redirect_to(
+          month_budget_url(budget, month: requested_date.month, year: requested_date.year)
+        )
       end
     end
 
@@ -204,8 +295,8 @@ describe TargetsController do
         expect(assigns(:category)).to eq(subcategory)
       end
 
-      it "assigns the budget snapshot" do
-        expect(assigns(:budget_snapshot)).to be_a(BudgetSnapshot)
+      it "assigns the budget snapshot for the current month" do
+        expect(assigns(:budget_snapshot)).to have_attributes(date: Date.current.beginning_of_month)
       end
 
       it "assigns no previous budget snapshot" do
@@ -224,8 +315,55 @@ describe TargetsController do
         delete :destroy, params: { budget_id: budget.id, category_id: subcategory.id }, format: :turbo_stream
       end
 
-      it "assigns the previous budget snapshot" do
-        expect(assigns(:previous_budget_snapshot)).to be_a(BudgetSnapshot)
+      it "assigns the previous budget snapshot for the preceding month" do
+        expect(assigns(:previous_budget_snapshot)).to have_attributes(date: Date.current.prev_month.beginning_of_month)
+      end
+    end
+
+    context "with a month and year" do
+      let(:requested_date) { 1.month.ago.beginning_of_month }
+
+      before do
+        create(:category_snapshot, budget: budget, category: subcategory, date: 3.months.ago.beginning_of_month)
+
+        delete :destroy,
+               params: {
+                 budget_id:   budget.id,
+                 category_id: subcategory.id,
+                 month:       requested_date.month,
+                 year:        requested_date.year
+               },
+               format: :turbo_stream
+      end
+
+      it "assigns the budget snapshot for the requested month" do
+        expect(assigns(:budget_snapshot)).to have_attributes(date: requested_date)
+      end
+
+      it "assigns the previous budget snapshot for the preceding month" do
+        expect(assigns(:previous_budget_snapshot)).to have_attributes(date: requested_date.prev_month)
+      end
+    end
+
+    context "with the html format and a month and year" do
+      let(:requested_date) { 1.month.ago.beginning_of_month }
+
+      before do
+        create(:category_snapshot, budget: budget, category: subcategory, date: 3.months.ago.beginning_of_month)
+
+        delete :destroy,
+               params: {
+                 budget_id:   budget.id,
+                 category_id: subcategory.id,
+                 month:       requested_date.month,
+                 year:        requested_date.year
+               }
+      end
+
+      it "redirects to the budget for the requested month" do
+        expect(response).to redirect_to(
+          month_budget_url(budget, month: requested_date.month, year: requested_date.year)
+        )
       end
     end
 
