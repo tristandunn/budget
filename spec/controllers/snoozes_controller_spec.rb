@@ -139,6 +139,15 @@ describe SnoozesController do
       end
     end
 
+    context "with a category belonging to a different budget" do
+      let(:other_subcategory) { create(:category, :subcategory, :with_monthly_spending_target) }
+
+      it "raises an ActiveRecord::RecordNotFound error" do
+        expect { post :create, params: { budget_id: budget.id, category_id: other_subcategory.id } }
+          .to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
     context "with the html format" do
       before do
         post :create,
@@ -316,6 +325,15 @@ describe SnoozesController do
 
       it "clears the snoozed flag" do
         expect(snapshot.reload).not_to be_snoozed
+      end
+    end
+
+    context "with a category belonging to a different budget" do
+      let(:other_subcategory) { create(:category, :subcategory, :with_monthly_spending_target) }
+
+      it "raises an ActiveRecord::RecordNotFound error" do
+        expect { delete :destroy, params: { budget_id: budget.id, category_id: other_subcategory.id } }
+          .to raise_error(ActiveRecord::RecordNotFound)
       end
     end
 
