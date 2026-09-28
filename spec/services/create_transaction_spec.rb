@@ -211,6 +211,64 @@ describe CreateTransaction do
       end
     end
 
+    context "when saving the transaction fails" do
+      let(:transaction) do
+        build(:transaction, account:     account,
+                            budget:      subcategory.budget,
+                            subcategory: subcategory,
+                            amount:      -1000)
+      end
+
+      before do
+        allow(transaction).to receive(:save!).and_raise(ActiveRecord::RecordInvalid)
+      end
+
+      it "does not change the account balance" do
+        expect { described_class.call(transaction: transaction) }
+          .to raise_error(ActiveRecord::RecordInvalid)
+          .and(not_change { account.reload.balance })
+      end
+
+      it "does not change the amount used in the category snapshot" do
+        expect { described_class.call(transaction: transaction) }
+          .to raise_error(ActiveRecord::RecordInvalid)
+          .and(not_change { category_snapshot.reload.amount_used })
+      end
+
+      it "does not change the amount used in the subcategory snapshot" do
+        expect { described_class.call(transaction: transaction) }
+          .to raise_error(ActiveRecord::RecordInvalid)
+          .and(not_change { subcategory_snapshot.reload.amount_used })
+      end
+    end
+
+    context "when saving an inflow transaction fails" do
+      let(:subcategory) { create(:category, :inflow_subcategory) }
+
+      let(:transaction) do
+        build(:transaction, account:     account,
+                            budget:      subcategory.budget,
+                            subcategory: subcategory,
+                            amount:      5000)
+      end
+
+      before do
+        allow(transaction).to receive(:save!).and_raise(ActiveRecord::RecordInvalid)
+      end
+
+      it "does not change the account balance" do
+        expect { described_class.call(transaction: transaction) }
+          .to raise_error(ActiveRecord::RecordInvalid)
+          .and(not_change { account.reload.balance })
+      end
+
+      it "does not change available to assign on the budget" do
+        expect { described_class.call(transaction: transaction) }
+          .to raise_error(ActiveRecord::RecordInvalid)
+          .and(not_change { subcategory.budget.reload.available_to_assign })
+      end
+    end
+
     context "with a backdated transaction" do
       let(:subcategory) { create(:category, :subcategory, with_snapshot: false) }
 
