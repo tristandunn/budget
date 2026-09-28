@@ -96,23 +96,43 @@ describe("MonthNavigationController", () => {
   });
 
   describe("when a modifier key is held", () => {
-    it("clicks neither link", () => {
-      document.dispatchEvent(
-        new window.KeyboardEvent("keydown", { "key": "ArrowLeft",
-          "metaKey": true })
-      );
+    ["altKey", "ctrlKey", "metaKey"].forEach((modifier) => {
+      it(`clicks neither link for ${modifier}`, () => {
+        document.dispatchEvent(
+          new window.KeyboardEvent("keydown", { "key": "ArrowLeft",
+            [modifier]: true })
+        );
 
-      expect(previous.click.called).to.eq(false);
-      expect(next.click.called).to.eq(false);
+        expect(previous.click.called).to.eq(false);
+        expect(next.click.called).to.eq(false);
+      });
     });
   });
 
   describe("when the event originates from an editable field", () => {
-    it("clicks neither link", () => {
-      const input = document.createElement("input");
-      element.appendChild(input);
+    ["input", "select", "textarea"].forEach((tag) => {
+      it(`clicks neither link for a ${tag}`, () => {
+        const field = document.createElement(tag);
+        element.appendChild(field);
 
-      input.dispatchEvent(
+        field.dispatchEvent(
+          new window.KeyboardEvent("keydown", { "bubbles": true,
+            "key": "ArrowLeft" })
+        );
+
+        expect(previous.click.called).to.eq(false);
+        expect(next.click.called).to.eq(false);
+      });
+    });
+
+    it("clicks neither link for a content-editable element", () => {
+      const editable = document.createElement("div");
+
+      // The test DOM does not implement isContentEditable, so define it.
+      Object.defineProperty(editable, "isContentEditable", { "value": true });
+      element.appendChild(editable);
+
+      editable.dispatchEvent(
         new window.KeyboardEvent("keydown", { "bubbles": true,
           "key": "ArrowLeft" })
       );
