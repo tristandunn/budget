@@ -14,12 +14,16 @@ describe AssignCategory do
       subcategory_snapshot.update!(amount_assigned: 0)
       category_snapshot.update!(amount_assigned: 0)
       budget.update!(available_to_assign: 100_000)
-
-      described_class.call(budget: budget, subcategory: subcategory, amount: amount,
-                           date: Date.current)
     end
 
     context "when assigning for the first time" do
+      before do
+        described_class.call(budget:      budget,
+                             subcategory: subcategory,
+                             amount:      amount,
+                             date:        Date.current)
+      end
+
       it "sets the subcategory snapshot amount assigned" do
         expect(subcategory_snapshot.reload.amount_assigned).to eq(5000)
       end
@@ -39,8 +43,10 @@ describe AssignCategory do
         category_snapshot.update!(amount_assigned: 3000)
         budget.update!(available_to_assign: 100_000)
 
-        described_class.call(budget: budget, subcategory: subcategory, amount: amount,
-                             date: Date.current)
+        described_class.call(budget:      budget,
+                             subcategory: subcategory,
+                             amount:      amount,
+                             date:        Date.current)
       end
 
       it "updates the subcategory snapshot amount assigned" do
@@ -64,8 +70,10 @@ describe AssignCategory do
         category_snapshot.update!(amount_assigned: 5000)
         budget.update!(available_to_assign: 100_000)
 
-        described_class.call(budget: budget, subcategory: subcategory, amount: amount,
-                             date: Date.current)
+        described_class.call(budget:      budget,
+                             subcategory: subcategory,
+                             amount:      amount,
+                             date:        Date.current)
       end
 
       it "updates the subcategory snapshot amount assigned" do
@@ -94,8 +102,10 @@ describe AssignCategory do
                                            amount:      2000)
         )
 
-        described_class.call(budget: budget, subcategory: subcategory, amount: amount,
-                             date: Date.current)
+        described_class.call(budget:      budget,
+                             subcategory: subcategory,
+                             amount:      amount,
+                             date:        Date.current)
       end
 
       it "leaves the subcategory snapshot amount assigned unchanged" do
