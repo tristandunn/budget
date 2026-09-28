@@ -51,6 +51,18 @@ describe "Assigning to a subcategory", :js do
     end
   end
 
+  context "when the amount is invalid" do
+    before do
+      create_snapshots_for(Date.current.beginning_of_month)
+      visit budget_path(budget)
+      assign_amount("-")
+    end
+
+    it "re-renders the inline editor without replacing the page" do
+      expect(page).to have_field("assignment_form_amount", with: "0.00").and(have_css("#available_to_assign"))
+    end
+  end
+
   private
 
   # Open the inline assignment editor for the unassigned subcategory row and
