@@ -308,10 +308,10 @@ describe BudgetSnapshot do
     context "with a snapshot that is snoozed" do
       before do
         create(:category_snapshot,
+               :snoozed,
                budget:   budget,
                category: subcategory,
-               date:     Date.current.beginning_of_month,
-               metadata: { "snoozed" => true })
+               date:     Date.current.beginning_of_month)
       end
 
       it { is_expected.to be(true) }
@@ -324,10 +324,10 @@ describe BudgetSnapshot do
 
       before do
         create(:category_snapshot,
+               :snoozed,
                budget:   budget,
                category: subcategory,
-               date:     Date.current.beginning_of_month,
-               metadata: { "snoozed" => true })
+               date:     Date.current.beginning_of_month)
       end
 
       it { is_expected.to be(true) }
@@ -338,10 +338,10 @@ describe BudgetSnapshot do
 
       before do
         create(:category_snapshot,
+               :snoozed,
                budget:   budget,
                category: subcategory,
-               date:     Date.current.beginning_of_month,
-               metadata: { "snoozed" => true })
+               date:     Date.current.beginning_of_month)
       end
 
       it { is_expected.to be(false) }
@@ -655,11 +655,11 @@ describe BudgetSnapshot do
     context "with a monthly_spending target that is snoozed for the displayed month" do
       before do
         create(:category_snapshot,
+               :snoozed,
                budget:          budget,
                category:        subcategory,
                amount_assigned: subcategory.target_amount - 1,
                amount_used:     0,
-               metadata:        { "snoozed" => true },
                date:            Date.current.beginning_of_month)
       end
 

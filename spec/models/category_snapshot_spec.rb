@@ -53,6 +53,30 @@ describe CategorySnapshot do
     it { is_expected.to eq(67) }
   end
 
+  describe "#snooze!" do
+    subject(:snooze) { category_snapshot.snooze! }
+
+    let(:category_snapshot) { create(:category_snapshot, metadata: { "other" => "value" }) }
+
+    it "marks the snapshot as snoozed" do
+      expect { snooze }.to change { category_snapshot.reload.snoozed? }.from(false).to(true)
+    end
+
+    it "preserves other metadata" do
+      snooze
+
+      expect(category_snapshot.reload.metadata).to include("other" => "value")
+    end
+
+    context "when the snapshot is new" do
+      let(:category_snapshot) { build(:category_snapshot) }
+
+      it "persists the snapshot" do
+        expect { snooze }.to change(category_snapshot, :persisted?).from(false).to(true)
+      end
+    end
+  end
+
   describe "#snoozed?" do
     subject { category_snapshot.snoozed? }
 
@@ -72,6 +96,22 @@ describe CategorySnapshot do
       let(:category_snapshot) { build(:category_snapshot, metadata: { "snoozed" => true }) }
 
       it { is_expected.to be(true) }
+    end
+  end
+
+  describe "#unsnooze!" do
+    subject(:unsnooze) { category_snapshot.unsnooze! }
+
+    let(:category_snapshot) { create(:category_snapshot, metadata: { "other" => "value", "snoozed" => true }) }
+
+    it "clears the snoozed state" do
+      expect { unsnooze }.to change { category_snapshot.reload.snoozed? }.from(true).to(false)
+    end
+
+    it "preserves other metadata" do
+      unsnooze
+
+      expect(category_snapshot.reload.metadata).to eq("other" => "value")
     end
   end
 end

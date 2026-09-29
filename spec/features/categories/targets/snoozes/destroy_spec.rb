@@ -10,10 +10,10 @@ describe "Category target unsnoozing", :mobile do
 
   before do
     create(:category_snapshot,
+           :snoozed,
            budget:   budget,
            category: subcategory,
-           date:     Date.current.beginning_of_month,
-           metadata: { "snoozed" => true })
+           date:     Date.current.beginning_of_month)
 
     sign_in_for(budget)
     visit budget_path(budget)

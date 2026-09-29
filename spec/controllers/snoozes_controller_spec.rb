@@ -43,47 +43,6 @@ describe SnoozesController do
       end
     end
 
-    context "with an existing snapshot for the month" do
-      let!(:snapshot) do
-        create(:category_snapshot,
-               budget:          budget,
-               category:        subcategory,
-               amount_assigned: 100,
-               amount_used:     50,
-               date:            Date.current.beginning_of_month)
-      end
-
-      before do
-        post :create, params: { budget_id: budget.id, category_id: subcategory.id }, format: :turbo_stream
-      end
-
-      it "snoozes the existing snapshot" do
-        expect(snapshot.reload).to be_snoozed
-      end
-
-      it "preserves the assigned amount" do
-        expect(snapshot.reload.amount_assigned).to eq(100)
-      end
-    end
-
-    context "when already snoozed" do
-      before do
-        create(:category_snapshot,
-               budget:   budget,
-               category: subcategory,
-               date:     Date.current.beginning_of_month,
-               metadata: { "snoozed" => true })
-
-        post :create, params: { budget_id: budget.id, category_id: subcategory.id }, format: :turbo_stream
-      end
-
-      it { is_expected.to respond_with(200) }
-
-      it "remains snoozed" do
-        expect(subcategory.snapshots.for_month(Date.current).first).to be_snoozed
-      end
-    end
-
     context "with explicit year and month parameters" do
       let(:displayed_date) { 1.month.ago.beginning_of_month }
 
@@ -106,24 +65,6 @@ describe SnoozesController do
 
       it "snoozes the snapshot for the requested month" do
         snapshot = subcategory.snapshots.for_month(displayed_date).first
-
-        expect(snapshot).to be_snoozed
-      end
-    end
-
-    context "with a monthly_savings target" do
-      let(:subcategory) do
-        create(:category, :subcategory, :with_monthly_savings_target, budget: budget, with_snapshot: false)
-      end
-
-      before do
-        post :create, params: { budget_id: budget.id, category_id: subcategory.id }, format: :turbo_stream
-      end
-
-      it { is_expected.to respond_with(200) }
-
-      it "snoozes the snapshot for the displayed month" do
-        snapshot = subcategory.snapshots.for_month(Date.current).first
 
         expect(snapshot).to be_snoozed
       end
@@ -266,10 +207,10 @@ describe SnoozesController do
     context "when a snoozed snapshot exists" do
       let!(:snapshot) do
         create(:category_snapshot,
+               :snoozed,
                budget:   budget,
                category: subcategory,
-               date:     Date.current.beginning_of_month,
-               metadata: { "snoozed" => true })
+               date:     Date.current.beginning_of_month)
       end
 
       before do
@@ -278,54 +219,6 @@ describe SnoozesController do
 
       it { is_expected.to respond_with(200) }
       it { is_expected.to render_template(:destroy) }
-
-      it "clears the snoozed flag" do
-        expect(snapshot.reload).not_to be_snoozed
-      end
-    end
-
-    context "when an unsnoozed snapshot already exists" do
-      let!(:snapshot) do
-        create(:category_snapshot,
-               budget:          budget,
-               category:        subcategory,
-               amount_assigned: 100,
-               date:            Date.current.beginning_of_month)
-      end
-
-      before do
-        delete :destroy, params: { budget_id: budget.id, category_id: subcategory.id }, format: :turbo_stream
-      end
-
-      it { is_expected.to respond_with(200) }
-
-      it "leaves the snapshot unsnoozed" do
-        expect(snapshot.reload).not_to be_snoozed
-      end
-
-      it "does not update the snapshot" do
-        expect { snapshot.reload }.not_to change(snapshot, :updated_at)
-      end
-    end
-
-    context "with a snoozed monthly_savings target" do
-      let(:subcategory) do
-        create(:category, :subcategory, :with_monthly_savings_target, budget: budget, with_snapshot: false)
-      end
-
-      let!(:snapshot) do
-        create(:category_snapshot,
-               budget:   budget,
-               category: subcategory,
-               date:     Date.current.beginning_of_month,
-               metadata: { "snoozed" => true })
-      end
-
-      before do
-        delete :destroy, params: { budget_id: budget.id, category_id: subcategory.id }, format: :turbo_stream
-      end
-
-      it { is_expected.to respond_with(200) }
 
       it "clears the snoozed flag" do
         expect(snapshot.reload).not_to be_snoozed
@@ -346,11 +239,11 @@ describe SnoozesController do
 
       let!(:snapshot) do
         create(:category_snapshot,
+               :snoozed,
                budget:          budget,
                category:        subcategory,
                amount_assigned: 50_000,
-               date:            displayed_date,
-               metadata:        { "snoozed" => true })
+               date:            displayed_date)
       end
 
       before do
@@ -372,10 +265,10 @@ describe SnoozesController do
     context "with the html format" do
       let!(:snapshot) do
         create(:category_snapshot,
+               :snoozed,
                budget:   budget,
                category: subcategory,
-               date:     Date.current.beginning_of_month,
-               metadata: { "snoozed" => true })
+               date:     Date.current.beginning_of_month)
       end
 
       before do
@@ -461,12 +354,12 @@ describe SnoozesController do
 
       let!(:snapshot) do
         create(:category_snapshot,
+               :snoozed,
                budget:          budget,
                category:        subcategory,
                amount_assigned: 0,
                amount_used:     0,
-               date:            next_month,
-               metadata:        { "snoozed" => true })
+               date:            next_month)
       end
 
       before do

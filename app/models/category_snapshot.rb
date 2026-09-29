@@ -19,10 +19,24 @@ class CategorySnapshot < ApplicationRecord
     amount_assigned - amount_used
   end
 
+  # Snooze the target for the snapshot's month.
+  #
+  # @return [void]
+  def snooze!
+    update!(metadata: metadata.merge("snoozed" => true))
+  end
+
   # Return whether the target for the snapshot's month has been snoozed.
   #
   # @return [Boolean] Whether the snapshot is snoozed.
   def snoozed?
     metadata["snoozed"] == true
+  end
+
+  # Unsnooze the target for the snapshot's month.
+  #
+  # @return [void]
+  def unsnooze!
+    update!(metadata: metadata.except("snoozed"))
   end
 end
