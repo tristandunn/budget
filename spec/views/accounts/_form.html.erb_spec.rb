@@ -101,6 +101,10 @@ describe "accounts/_form.html.erb" do
     it "renders the delete button" do
       expect(html).to have_button(t("accounts.form.delete"))
     end
+
+    it "renders the type radios" do
+      expect(html).to have_field("account_form[credit]", type: "radio", count: 2, visible: :all)
+    end
   end
 
   context "with a persisted account that has transactions" do
@@ -116,6 +120,10 @@ describe "accounts/_form.html.erb" do
 
     it "does not render the delete button" do
       expect(html).to have_no_button(t("accounts.form.delete"))
+    end
+
+    it "does not render the type radios" do
+      expect(html).to have_no_field("account_form[credit]", type: "radio", visible: :all)
     end
   end
 
