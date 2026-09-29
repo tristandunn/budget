@@ -145,9 +145,6 @@ en:
     attributes:
       budget:
         name: "Name"
-      user:
-        email: "E-mail Address"
-        password: "Password"
     errors:
       models:
         transaction:
