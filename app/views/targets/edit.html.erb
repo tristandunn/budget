@@ -1,7 +1,7 @@
 <%= turbo_frame_tag "category_target_dialog", class: "flex flex-col h-full" do %>
   <header class="relative p-4">
     <h2 id="category_target_dialog_title" class="text-lg font-semibold text-center">
-      <%= @category.target_type? ? t(".edit_title") : t(".create_title") %>
+      <%= @category.target_type_in_database.present? ? t(".edit_title") : t(".create_title") %>
     </h2>
 
     <button type="button" data-action="dialog#close" class="absolute top-4 left-4 text-sm">

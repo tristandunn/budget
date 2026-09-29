@@ -25,6 +25,10 @@ describe "targets/_amount_field.html.erb" do
     )
   end
 
+  it "requires an amount containing a nonzero digit" do
+    expect(html).to have_css("input#target_form_target_amount_input[pattern='.*[1-9].*']")
+  end
+
   it "renders the given placeholder" do
     expect(html).to have_field("target_form_target_amount_input", placeholder: placeholder)
   end

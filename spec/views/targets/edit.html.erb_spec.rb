@@ -73,6 +73,16 @@ describe "targets/edit.html.erb" do
     end
   end
 
+  context "when a first save failed after the target type was assigned" do
+    before do
+      subcategory.target_type = "monthly_spending"
+    end
+
+    it "renders the create title" do
+      expect(html).to have_css("h2", text: t("targets.edit.create_title"))
+    end
+  end
+
   context "when the category has a target" do
     let(:subcategory) { build_stubbed(:category, :subcategory, :with_monthly_spending_target) }
 
