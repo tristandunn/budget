@@ -9,7 +9,7 @@ class SnoozesController < ApplicationController
     @category        = category
     @budget_snapshot = budget_snapshot
 
-    category_snapshot.update!(metadata: category_snapshot.metadata.merge("snoozed" => true))
+    category_snapshot.snooze!
 
     respond_to do |format|
       format.html do
@@ -25,7 +25,7 @@ class SnoozesController < ApplicationController
     @category        = category
     @budget_snapshot = budget_snapshot
 
-    category_snapshot.update!(metadata: category_snapshot.metadata.except("snoozed"))
+    category_snapshot.unsnooze!
 
     respond_to do |format|
       format.html do
