@@ -38,6 +38,26 @@ describe "Category target creation" do
     end
   end
 
+  context "when on a desktop browser with a zero amount", :js do
+    before do
+      check(subcategory.name)
+
+      wait_for(have_css("#category_panel", text: subcategory.name)) do
+        within("#category_panel") { click_on t("categories.show.target.desktop.create") }
+      end
+    end
+
+    it "blocks submission of the form" do
+      within "#category_panel" do
+        fill_in t("activemodel.attributes.target_form.target_amount_input"), with: "0"
+        click_on t("targets.edit.submit")
+
+        expect(page).to have_css("#target_form_target_amount_input:invalid")
+          .and(have_field(t("activemodel.attributes.target_form.target_amount_input"), with: "$0"))
+      end
+    end
+  end
+
   context "when on a mobile browser", :mobile do
     before do
       click_on subcategory.name
@@ -51,6 +71,21 @@ describe "Category target creation" do
       click_on subcategory.name
 
       expect(page).to have_link(t("categories.show.target.edit"))
+    end
+  end
+
+  context "when on a mobile browser with a zero amount", :js, :mobile do
+    before do
+      click_on subcategory.name
+      click_on t("categories.show.target.create")
+    end
+
+    it "blocks submission and stays on the create form" do
+      fill_in t("activemodel.attributes.target_form.target_amount_input"), with: "0"
+      click_on t("targets.edit.submit")
+
+      expect(page).to have_css("#target_form_target_amount_input:invalid")
+        .and(have_field(t("activemodel.attributes.target_form.target_amount_input"), with: "$0"))
     end
   end
 end
