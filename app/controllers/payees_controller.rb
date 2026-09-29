@@ -24,7 +24,7 @@ class PayeesController < ApplicationController
       if request.format.turbo_stream?
         @payees = current_budget.payees.order(:name)
       else
-        redirect_to budget_payees_path(current_budget)
+        redirect_to budget_payees_path(current_budget), status: :see_other
       end
     else
       render :edit, status: :unprocessable_content, formats: [:html]

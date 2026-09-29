@@ -25,7 +25,7 @@ class BudgetsController < ApplicationController
 
     if @budget.update(budget_parameters)
       unless request.format.turbo_stream?
-        redirect_to budget_path(@budget)
+        redirect_to budget_path(@budget), status: :see_other
       end
     else
       render :edit, status: :unprocessable_content, formats: [:html]

@@ -21,7 +21,7 @@ class TargetsController < ApplicationController
 
       respond_to do |format|
         format.html do
-          redirect_to displayed_budget_path
+          redirect_to displayed_budget_path, status: :see_other
         end
         format.turbo_stream
       end
@@ -41,7 +41,7 @@ class TargetsController < ApplicationController
 
     respond_to do |format|
       format.html do
-        redirect_to displayed_budget_path
+        redirect_to displayed_budget_path, status: :see_other
       end
       format.turbo_stream
     end

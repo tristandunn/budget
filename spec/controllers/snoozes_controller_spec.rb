@@ -170,6 +170,8 @@ describe SnoozesController do
           month_budget_url(budget, month: Date.current.month, year: Date.current.year)
         )
       end
+
+      it { is_expected.to respond_with(:see_other) }
     end
 
     context "with an out-of-range month parameter" do
@@ -251,6 +253,8 @@ describe SnoozesController do
           month_budget_url(budget, month: next_month.month, year: next_month.year)
         )
       end
+
+      it { is_expected.to respond_with(:see_other) }
     end
   end
 
@@ -393,6 +397,8 @@ describe SnoozesController do
           month_budget_url(budget, month: Date.current.month, year: Date.current.year)
         )
       end
+
+      it { is_expected.to respond_with(:see_other) }
     end
 
     context "with an out-of-range month parameter" do
@@ -482,6 +488,8 @@ describe SnoozesController do
           month_budget_url(budget, month: next_month.month, year: next_month.year)
         )
       end
+
+      it { is_expected.to respond_with(:see_other) }
     end
   end
 end

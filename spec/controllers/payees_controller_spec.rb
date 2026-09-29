@@ -77,6 +77,7 @@ describe PayeesController do
       end
 
       it { is_expected.to redirect_to(budget_payees_path(budget)) }
+      it { is_expected.to respond_with(:see_other) }
 
       it "initializes the form with the payee and parameters" do
         expect(PayeeForm).to have_received(:new).with(payee: payee, name: "New Name")

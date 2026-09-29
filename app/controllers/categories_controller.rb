@@ -38,7 +38,7 @@ class CategoriesController < ApplicationController
       @previous_budget_snapshot = previous_budget_snapshot
 
       unless request.format.turbo_stream?
-        redirect_to budget_path(current_budget)
+        redirect_to budget_path(current_budget), status: :see_other
       end
     else
       render :edit, status: :unprocessable_content, formats: [:html]

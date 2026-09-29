@@ -172,6 +172,8 @@ describe CategoriesController do
       it "redirects to the budget" do
         expect(response).to redirect_to(budget_url(budget))
       end
+
+      it { is_expected.to respond_with(:see_other) }
     end
 
     context "when valid with the turbo_stream format" do
