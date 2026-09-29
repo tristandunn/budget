@@ -220,6 +220,7 @@ describe BudgetsController do
       end
 
       it { is_expected.to redirect_to(budget_url(budget)) }
+      it { is_expected.to respond_with(:see_other) }
 
       it "renames the budget" do
         expect(budget.reload.name).to eq("New Name")
@@ -253,6 +254,7 @@ describe BudgetsController do
       end
 
       it { is_expected.to redirect_to(budget_url(budget)) }
+      it { is_expected.to respond_with(:see_other) }
 
       it "stores the time zone in the settings" do
         expect(budget.reload.settings.time_zone).to eq("Eastern Time (US & Canada)")
@@ -283,6 +285,7 @@ describe BudgetsController do
       end
 
       it { is_expected.to redirect_to(budget_url(budget)) }
+      it { is_expected.to respond_with(:see_other) }
 
       it "does not store the time zone" do
         expect(budget.reload.settings.time_zone).to be_nil

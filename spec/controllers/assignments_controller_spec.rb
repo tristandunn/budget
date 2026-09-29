@@ -126,6 +126,8 @@ describe AssignmentsController do
           month_budget_url(budget, month: Date.current.month, year: Date.current.year)
         )
       end
+
+      it { is_expected.to respond_with(:see_other) }
     end
 
     context "when valid with the turbo_stream format" do
@@ -174,6 +176,8 @@ describe AssignmentsController do
           month_budget_url(budget, month: date.month, year: date.year)
         )
       end
+
+      it { is_expected.to respond_with(:see_other) }
 
       it "initializes the form with the parsed date" do
         expect(AssignmentForm).to have_received(:new)

@@ -113,6 +113,8 @@ describe TargetsController do
           month_budget_url(budget, month: Date.current.month, year: Date.current.year)
         )
       end
+
+      it { is_expected.to respond_with(:see_other) }
     end
 
     context "when valid with the turbo_stream format" do
@@ -199,6 +201,8 @@ describe TargetsController do
           month_budget_url(budget, month: requested_date.month, year: requested_date.year)
         )
       end
+
+      it { is_expected.to respond_with(:see_other) }
     end
 
     context "when invalid with the html format" do
@@ -365,6 +369,8 @@ describe TargetsController do
           month_budget_url(budget, month: requested_date.month, year: requested_date.year)
         )
       end
+
+      it { is_expected.to respond_with(:see_other) }
     end
 
     context "with the html format" do
@@ -381,6 +387,8 @@ describe TargetsController do
           month_budget_url(budget, month: Date.current.month, year: Date.current.year)
         )
       end
+
+      it { is_expected.to respond_with(:see_other) }
     end
 
     context "with a category belonging to a different budget" do

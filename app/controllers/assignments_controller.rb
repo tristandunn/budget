@@ -20,7 +20,7 @@ class AssignmentsController < ApplicationController
       @budget_snapshot = budget_snapshot
 
       respond_to do |format|
-        format.html { redirect_to displayed_budget_path }
+        format.html { redirect_to displayed_budget_path, status: :see_other }
         format.turbo_stream
       end
     else
