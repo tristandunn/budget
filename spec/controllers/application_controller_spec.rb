@@ -7,6 +7,10 @@ describe ApplicationController do
     def index
       render plain: Time.zone.name
     end
+
+    def create
+      render plain: "created"
+    end
   end
 
   it { is_expected.to be_a(ActionController::Base) }
@@ -63,6 +67,42 @@ describe ApplicationController do
       it "raises an ActiveRecord::RecordNotFound error" do
         expect { get :index, params: { budget_id: budget.id } }
           .to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+  end
+
+  describe "#invalid_authenticity_token" do
+    around do |example|
+      original = ActionController::Base.allow_forgery_protection
+
+      ActionController::Base.allow_forgery_protection = true
+
+      example.run
+    ensure
+      ActionController::Base.allow_forgery_protection = original
+    end
+
+    context "when signed out" do
+      subject { response }
+
+      before do
+        post :create
+      end
+
+      it { is_expected.to redirect_to(new_session_url) }
+      it { is_expected.to have_http_status(:see_other) }
+    end
+
+    context "when signed in" do
+      let(:budget) { create(:budget) }
+
+      before do
+        sign_in_for(budget)
+      end
+
+      it "raises an ActionController::InvalidAuthenticityToken error" do
+        expect { post :create, params: { budget_id: budget.id } }
+          .to raise_error(ActionController::InvalidAuthenticityToken)
       end
     end
   end
