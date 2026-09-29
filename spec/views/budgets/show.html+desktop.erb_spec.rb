@@ -117,6 +117,10 @@ describe "budgets/show.html+desktop.erb" do
     )
   end
 
+  it "does not render the category dialog" do
+    expect(html).to have_no_css("#category_dialog", visible: :all)
+  end
+
   context "when on the current month" do
     it "renders the month and year as plain text" do
       expect(html).to have_no_link(
