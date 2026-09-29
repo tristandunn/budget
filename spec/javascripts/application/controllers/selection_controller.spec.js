@@ -294,6 +294,33 @@ describe("SelectionController", () => {
     });
   });
 
+  describe("#categoryTargetConnected", () => {
+    it("marks a replaced category indeterminate when some subcategories are checked", () => {
+      const replacement = category("10");
+
+      alpha.checked = true;
+      instance.categoryTargets = [replacement];
+
+      instance.categoryTargetConnected(replacement);
+
+      expect(replacement.checked).to.eq(false);
+      expect(replacement.indeterminate).to.eq(true);
+    });
+
+    it("checks a replaced category when all of its subcategories are checked", () => {
+      const replacement = category("10");
+
+      alpha.checked = true;
+      beta.checked  = true;
+      instance.categoryTargets = [replacement];
+
+      instance.categoryTargetConnected(replacement);
+
+      expect(replacement.checked).to.eq(true);
+      expect(replacement.indeterminate).to.eq(false);
+    });
+  });
+
   describe("#edit", () => {
     const rowWithAssignment = (box) => {
       const row  = rowFor(box),

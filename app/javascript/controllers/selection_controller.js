@@ -27,6 +27,10 @@ export default class extends Controller {
     document.removeEventListener("keydown", this.#boundClearOnEscape);
   }
 
+  categoryTargetConnected() {
+    this.#syncSelectionStates();
+  }
+
   subcategoryTargetConnected(box) {
     if (!box.checked && this.selectedIdsValue.includes(box.dataset.subcategoryId)) {
       box.checked = true;
