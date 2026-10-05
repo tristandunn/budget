@@ -4,14 +4,12 @@ require "rails_helper"
 
 describe "shared/_progress_pie.html.erb" do
   subject(:html) do
-    render(
-      locals:  {
-        progress:  progress,
-        title:     "Halfway there",
-        css_class: "size-8"
-      },
-      partial: "shared/progress_pie"
-    )
+    render partial: "shared/progress_pie",
+           locals:  {
+             progress:  progress,
+             title:     "Halfway there",
+             css_class: "size-8"
+           }
 
     rendered
   end

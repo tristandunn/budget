@@ -4,14 +4,12 @@ require "rails_helper"
 
 describe "categories/_category_header.html+desktop.erb" do
   subject(:html) do
-    render(
-      locals:   {
-        budget_snapshot: budget_snapshot,
-        category:        category
-      },
-      partial:  "categories/category_header",
-      variants: [:desktop]
-    )
+    render partial:  "categories/category_header",
+           variants: [:desktop],
+           locals:   {
+             budget_snapshot: budget_snapshot,
+             category:        category
+           }
 
     rendered
   end

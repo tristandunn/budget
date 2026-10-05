@@ -4,8 +4,7 @@ require "rails_helper"
 
 describe "accounts/transactions/_actions.html.erb" do
   subject(:html) do
-    render partial: "accounts/transactions/actions",
-           locals:  { account: account, budget: budget }
+    render partial: "accounts/transactions/actions", locals: { account: account, budget: budget }
 
     rendered
   end
@@ -83,8 +82,7 @@ describe "accounts/transactions/_actions.html.erb" do
 
   context "when reconcile is disabled" do
     subject(:html) do
-      render partial: "accounts/transactions/actions",
-             locals:  { account: account, budget: budget, reconcile: false }
+      render partial: "accounts/transactions/actions", locals: { account: account, budget: budget, reconcile: false }
 
       rendered
     end

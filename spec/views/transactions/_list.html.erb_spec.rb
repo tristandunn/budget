@@ -4,13 +4,14 @@ require "rails_helper"
 
 describe "transactions/_list.html.erb" do
   subject(:html) do
-    render partial: "transactions/list", locals: {
-      context:                :transactions,
-      current_transactions:   current_transactions,
-      empty_message:          empty_message,
-      scheduled_id:           "account-all-scheduled",
-      scheduled_transactions: scheduled_transactions
-    }
+    render partial: "transactions/list",
+           locals:  {
+             context:                :transactions,
+             current_transactions:   current_transactions,
+             empty_message:          empty_message,
+             scheduled_id:           "account-all-scheduled",
+             scheduled_transactions: scheduled_transactions
+           }
 
     rendered
   end
@@ -92,13 +93,14 @@ describe "transactions/_list.html.erb" do
 
     context "when not showing accounts" do
       subject(:html) do
-        render partial: "transactions/list", locals: {
-          context:                :account,
-          current_transactions:   current_transactions,
-          empty_message:          empty_message,
-          scheduled_id:           "account-all-scheduled",
-          scheduled_transactions: scheduled_transactions
-        }
+        render partial: "transactions/list",
+               locals:  {
+                 context:                :account,
+                 current_transactions:   current_transactions,
+                 empty_message:          empty_message,
+                 scheduled_id:           "account-all-scheduled",
+                 scheduled_transactions: scheduled_transactions
+               }
 
         rendered
       end

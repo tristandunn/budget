@@ -4,13 +4,11 @@ require "rails_helper"
 
 describe "categories/_target_summary.html.erb" do
   subject(:html) do
-    render(
-      locals:  {
-        category:        subcategory,
-        budget_snapshot: budget_snapshot
-      },
-      partial: "categories/target_summary"
-    )
+    render partial: "categories/target_summary",
+           locals:  {
+             category:        subcategory,
+             budget_snapshot: budget_snapshot
+           }
 
     rendered
   end

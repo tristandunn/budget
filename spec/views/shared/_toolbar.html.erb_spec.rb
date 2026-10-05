@@ -4,8 +4,7 @@ require "rails_helper"
 
 describe "shared/_toolbar.html.erb" do
   subject(:html) do
-    render partial: "shared/toolbar",
-           locals:  { budget: budget, account_id: account_id }
+    render partial: "shared/toolbar", locals: { budget: budget, account_id: account_id }
 
     rendered
   end

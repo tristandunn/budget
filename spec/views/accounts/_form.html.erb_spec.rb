@@ -4,12 +4,13 @@ require "rails_helper"
 
 describe "accounts/_form.html.erb" do
   subject(:html) do
-    render partial: "accounts/form", locals: {
-      budget: budget,
-      form:   form,
-      method: method,
-      url:    url
-    }
+    render partial: "accounts/form",
+           locals:  {
+             budget: budget,
+             form:   form,
+             method: method,
+             url:    url
+           }
 
     rendered
   end

@@ -4,11 +4,12 @@ require "rails_helper"
 
 describe "accounts/_picker.html.erb" do
   subject(:html) do
-    render partial: "accounts/picker", locals: {
-      accounts:   accounts,
-      controller: picker_name,
-      selected:   selected
-    }
+    render partial: "accounts/picker",
+           locals:  {
+             accounts:   accounts,
+             controller: picker_name,
+             selected:   selected
+           }
 
     rendered
   end

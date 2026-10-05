@@ -4,8 +4,7 @@ require "rails_helper"
 
 describe "accounts/transactions/_reconcile.html.erb" do
   subject(:html) do
-    render partial: "accounts/transactions/reconcile",
-           locals:  { account: account, budget: budget }
+    render partial: "accounts/transactions/reconcile", locals: { account: account, budget: budget }
 
     rendered
   end

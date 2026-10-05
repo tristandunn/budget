@@ -4,13 +4,15 @@ require "rails_helper"
 
 describe "transactions/_list.html+desktop.erb" do
   subject(:html) do
-    render partial: "transactions/list", variants: [:desktop], locals: {
-      context:                context,
-      current_transactions:   current_transactions,
-      empty_message:          empty_message,
-      scheduled_id:           "account-all-scheduled",
-      scheduled_transactions: scheduled_transactions
-    }
+    render partial:  "transactions/list",
+           variants: [:desktop],
+           locals:   {
+             context:                context,
+             current_transactions:   current_transactions,
+             empty_message:          empty_message,
+             scheduled_id:           "account-all-scheduled",
+             scheduled_transactions: scheduled_transactions
+           }
 
     rendered
   end

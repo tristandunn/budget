@@ -4,11 +4,12 @@ require "rails_helper"
 
 describe "transactions/_scheduled_group.html.erb" do
   subject(:html) do
-    render partial: "transactions/scheduled_group", locals: {
-      context:      :transactions,
-      date:         date,
-      transactions: [transaction]
-    }
+    render partial: "transactions/scheduled_group",
+           locals:  {
+             context:      :transactions,
+             date:         date,
+             transactions: [transaction]
+           }
 
     rendered
   end
@@ -54,11 +55,12 @@ describe "transactions/_scheduled_group.html.erb" do
 
   context "when not showing accounts" do
     subject(:html) do
-      render partial: "transactions/scheduled_group", locals: {
-        context:      :account,
-        date:         date,
-        transactions: [transaction]
-      }
+      render partial: "transactions/scheduled_group",
+             locals:  {
+               context:      :account,
+               date:         date,
+               transactions: [transaction]
+             }
 
       rendered
     end

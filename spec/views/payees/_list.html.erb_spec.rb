@@ -4,10 +4,7 @@ require "rails_helper"
 
 describe "payees/_list.html.erb" do
   subject(:html) do
-    render(
-      locals:  { budget: budget, payees: payees },
-      partial: "payees/list"
-    )
+    render partial: "payees/list", locals: { budget: budget, payees: payees }
 
     rendered
   end
