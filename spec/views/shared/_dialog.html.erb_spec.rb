@@ -4,8 +4,7 @@ require "rails_helper"
 
 describe "shared/_dialog.html.erb" do
   subject(:html) do
-    render partial: "shared/dialog",
-           locals:  { id: id, dismissable: dismissable, floating: floating }
+    render partial: "shared/dialog", locals: { id: id, dismissable: dismissable, floating: floating }
 
     rendered
   end

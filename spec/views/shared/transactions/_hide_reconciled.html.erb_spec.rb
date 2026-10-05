@@ -4,8 +4,7 @@ require "rails_helper"
 
 describe "shared/transactions/_hide_reconciled.html.erb" do
   subject(:html) do
-    render partial: "shared/transactions/hide_reconciled",
-           locals:  { budget: budget }
+    render partial: "shared/transactions/hide_reconciled", locals: { budget: budget }
 
     rendered
   end

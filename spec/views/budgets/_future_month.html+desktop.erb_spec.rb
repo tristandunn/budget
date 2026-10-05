@@ -4,11 +4,7 @@ require "rails_helper"
 
 describe "budgets/_future_month.html+desktop.erb" do
   subject(:html) do
-    render(
-      locals:   { month_snapshot: month_snapshot },
-      partial:  "budgets/future_month",
-      variants: [:desktop]
-    )
+    render partial: "budgets/future_month", variants: [:desktop], locals: { month_snapshot: month_snapshot }
 
     rendered
   end

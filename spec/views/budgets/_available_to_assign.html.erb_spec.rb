@@ -4,7 +4,7 @@ require "rails_helper"
 
 describe "budgets/_available_to_assign.html.erb" do
   subject(:html) do
-    render(locals: { budget: budget }, partial: "budgets/available_to_assign")
+    render partial: "budgets/available_to_assign", locals: { budget: budget }
 
     rendered
   end

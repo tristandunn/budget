@@ -4,8 +4,7 @@ require "rails_helper"
 
 describe "transactions/_actions.html.erb" do
   subject(:html) do
-    render partial: "transactions/actions",
-           locals:  { budget: budget }
+    render partial: "transactions/actions", locals: { budget: budget }
 
     rendered
   end

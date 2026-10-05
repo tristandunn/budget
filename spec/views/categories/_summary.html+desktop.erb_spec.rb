@@ -4,11 +4,9 @@ require "rails_helper"
 
 describe "categories/_summary.html+desktop.erb" do
   subject(:html) do
-    render(
-      locals:   { summary: summary, budget_snapshot: budget_snapshot },
-      partial:  "categories/summary",
-      variants: [:desktop]
-    )
+    render partial:  "categories/summary",
+           variants: [:desktop],
+           locals:   { summary: summary, budget_snapshot: budget_snapshot }
 
     rendered
   end

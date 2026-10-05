@@ -4,15 +4,13 @@ require "rails_helper"
 
 describe "categories/_subcategory_row.html+desktop.erb" do
   subject(:html) do
-    render(
-      locals:   {
-        budget:          budget,
-        budget_snapshot: budget_snapshot,
-        subcategory:     subcategory
-      },
-      partial:  "categories/subcategory_row",
-      variants: [:desktop]
-    )
+    render partial:  "categories/subcategory_row",
+           variants: [:desktop],
+           locals:   {
+             budget:          budget,
+             budget_snapshot: budget_snapshot,
+             subcategory:     subcategory
+           }
 
     rendered
   end

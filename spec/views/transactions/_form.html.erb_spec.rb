@@ -4,11 +4,12 @@ require "rails_helper"
 
 describe "transactions/_form.html.erb" do
   subject(:html) do
-    render partial: "transactions/form", locals: {
-      form:   form,
-      method: :post,
-      url:    "/test"
-    }
+    render partial: "transactions/form",
+           locals:  {
+             form:   form,
+             method: :post,
+             url:    "/test"
+           }
 
     rendered
   end

@@ -4,14 +4,12 @@ require "rails_helper"
 
 describe "snoozes/_response.turbo_stream.erb" do
   subject(:html) do
-    render(
-      locals:  {
-        budget:          budget,
-        budget_snapshot: budget_snapshot,
-        category:        subcategory
-      },
-      partial: "snoozes/response"
-    )
+    render partial: "snoozes/response",
+           locals:  {
+             budget:          budget,
+             budget_snapshot: budget_snapshot,
+             category:        subcategory
+           }
 
     rendered
   end

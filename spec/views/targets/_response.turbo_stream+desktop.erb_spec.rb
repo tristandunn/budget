@@ -4,16 +4,14 @@ require "rails_helper"
 
 describe "targets/_response.turbo_stream+desktop.erb" do
   subject(:html) do
-    render(
-      locals:   {
-        budget:                   budget,
-        budget_snapshot:          budget_snapshot,
-        category:                 subcategory,
-        previous_budget_snapshot: previous_budget_snapshot
-      },
-      partial:  "targets/response",
-      variants: [:desktop]
-    )
+    render partial:  "targets/response",
+           variants: [:desktop],
+           locals:   {
+             budget:                   budget,
+             budget_snapshot:          budget_snapshot,
+             category:                 subcategory,
+             previous_budget_snapshot: previous_budget_snapshot
+           }
 
     rendered
   end
