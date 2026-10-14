@@ -14,9 +14,11 @@ describe "transactions/index.html+desktop.erb" do
   before do
     allow(budget).to receive_messages(balance: 7_500, cleared_balance: 5_000, uncleared_balance: 2_500)
 
-    stub_template("shared/_sidebar.html.erb"        => "SIDEBAR_PARTIAL")
-    stub_template("transactions/_actions.html.erb"  => "ACTIONS_PARTIAL")
-    stub_template("transactions/_list.html.erb"     => "LIST_PARTIAL")
+    stub_template(
+      "shared/_sidebar.html.erb"       => "SIDEBAR_PARTIAL",
+      "transactions/_actions.html.erb" => "ACTIONS_PARTIAL",
+      "transactions/_list.html.erb"    => "LIST_PARTIAL"
+    )
 
     assign :budget,                 budget
     assign :current_transactions,   []

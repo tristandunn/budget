@@ -13,11 +13,13 @@ describe "transactions/edit.html.erb" do
   let(:transaction) { build_stubbed(:transaction) }
 
   before do
-    stub_template("transactions/_form.html.erb" => "FORM_PARTIAL")
-    stub_template("transfers/_show.html.erb" => "TRANSFER_DETAILS_PARTIAL")
-    stub_template("transactions/_payee_picker.html.erb" => "PAYEE_PICKER_PARTIAL")
-    stub_template("transactions/_category_picker.html.erb" => "CATEGORY_PICKER_PARTIAL")
-    stub_template("accounts/_picker.html.erb" => "ACCOUNT_PICKER_PARTIAL")
+    stub_template(
+      "accounts/_picker.html.erb"              => "ACCOUNT_PICKER_PARTIAL",
+      "transactions/_category_picker.html.erb" => "CATEGORY_PICKER_PARTIAL",
+      "transactions/_form.html.erb"            => "FORM_PARTIAL",
+      "transactions/_payee_picker.html.erb"    => "PAYEE_PICKER_PARTIAL",
+      "transfers/_show.html.erb"               => "TRANSFER_DETAILS_PARTIAL"
+    )
 
     assign :form,        form
     assign :transaction, transaction

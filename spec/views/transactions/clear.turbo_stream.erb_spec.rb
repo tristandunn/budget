@@ -13,8 +13,10 @@ describe "transactions/clear.turbo_stream.erb" do
   let(:transaction) { build_stubbed(:transaction, :cleared) }
 
   before do
-    stub_template("transactions/_status_indicator.html.erb" => "STATUS_INDICATOR")
-    stub_template("accounts/transactions/_actions_bar.html.erb" => "ACTIONS_BAR")
+    stub_template(
+      "accounts/transactions/_actions_bar.html.erb" => "ACTIONS_BAR",
+      "transactions/_status_indicator.html.erb"     => "STATUS_INDICATOR"
+    )
 
     allow(view).to receive(:params).and_return(
       ActionController::Parameters.new(context: context)
