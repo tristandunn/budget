@@ -136,8 +136,10 @@ describe "transactions/_list.html.erb" do
     let(:transaction)            { build_stubbed(:transaction, :recurring) }
 
     before do
-      stub_template("transactions/_status_indicator.html.erb" => "STATUS_INDICATOR")
-      stub_template("transactions/_scheduled_group.html.erb" => "SCHEDULED_GROUP")
+      stub_template(
+        "transactions/_scheduled_group.html.erb"  => "SCHEDULED_GROUP",
+        "transactions/_status_indicator.html.erb" => "STATUS_INDICATOR"
+      )
     end
 
     it "renders the scheduled header" do

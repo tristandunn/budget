@@ -15,8 +15,10 @@ describe "accounts/transactions/_actions.html.erb" do
   before do
     allow(view).to receive(:account_reconciled_summary).with(account).and_return("RECONCILED_SUMMARY")
 
-    stub_template("shared/transactions/_hide_reconciled.html.erb" => "HIDE_RECONCILED_PARTIAL")
-    stub_template("accounts/transactions/_reconcile_confirmation.html.erb" => "RECONCILE_CONFIRMATION")
+    stub_template(
+      "accounts/transactions/_reconcile_confirmation.html.erb" => "RECONCILE_CONFIRMATION",
+      "shared/transactions/_hide_reconciled.html.erb"          => "HIDE_RECONCILED_PARTIAL"
+    )
   end
 
   it "renders a popover trigger button" do

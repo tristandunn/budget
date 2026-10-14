@@ -19,8 +19,10 @@ describe "snoozes/_response.turbo_stream.erb" do
   let(:subcategory)     { build_stubbed(:category, :subcategory) }
 
   before do
-    stub_template("categories/_target.html.erb"    => "TARGET_PARTIAL")
-    stub_template("categories/_available.html.erb" => "AVAILABLE_PARTIAL")
+    stub_template(
+      "categories/_available.html.erb" => "AVAILABLE_PARTIAL",
+      "categories/_target.html.erb"    => "TARGET_PARTIAL"
+    )
   end
 
   it "replaces the subcategory target section" do

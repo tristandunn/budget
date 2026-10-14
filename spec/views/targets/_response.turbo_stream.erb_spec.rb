@@ -21,8 +21,10 @@ describe "targets/_response.turbo_stream.erb" do
   let(:subcategory)              { build_stubbed(:category, :subcategory) }
 
   before do
-    stub_template("categories/_details.html.erb"   => "DETAILS_PARTIAL")
-    stub_template("categories/_available.html.erb" => "AVAILABLE_PARTIAL")
+    stub_template(
+      "categories/_available.html.erb" => "AVAILABLE_PARTIAL",
+      "categories/_details.html.erb"   => "DETAILS_PARTIAL"
+    )
   end
 
   it "updates the category dialog frame" do

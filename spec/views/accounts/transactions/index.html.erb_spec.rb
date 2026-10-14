@@ -15,9 +15,11 @@ describe "accounts/transactions/index.html.erb" do
   before do
     allow(account).to receive_messages(balance: 7_500, cleared_balance: 5_000, uncleared_balance: 2_500)
 
-    stub_template("accounts/transactions/_actions_bar.html.erb" => "ACTIONS_BAR_PARTIAL")
-    stub_template("shared/_toolbar.html.erb"                    => "TOOLBAR_PARTIAL")
-    stub_template("transactions/_list.html.erb"                 => "LIST_PARTIAL")
+    stub_template(
+      "accounts/transactions/_actions_bar.html.erb" => "ACTIONS_BAR_PARTIAL",
+      "shared/_toolbar.html.erb"                    => "TOOLBAR_PARTIAL",
+      "transactions/_list.html.erb"                 => "LIST_PARTIAL"
+    )
 
     assign :budget,                 budget
     assign :account,                account

@@ -13,10 +13,12 @@ describe "transactions/new.html.erb" do
   let(:form)   { TransactionForm.new(budget: budget) }
 
   before do
-    stub_template("transactions/_form.html.erb" => "FORM_PARTIAL")
-    stub_template("transactions/_payee_picker.html.erb" => "PAYEE_PICKER_PARTIAL")
-    stub_template("transactions/_category_picker.html.erb" => "CATEGORY_PICKER_PARTIAL")
-    stub_template("accounts/_picker.html.erb" => "ACCOUNT_PICKER_PARTIAL")
+    stub_template(
+      "accounts/_picker.html.erb"              => "ACCOUNT_PICKER_PARTIAL",
+      "transactions/_category_picker.html.erb" => "CATEGORY_PICKER_PARTIAL",
+      "transactions/_form.html.erb"            => "FORM_PARTIAL",
+      "transactions/_payee_picker.html.erb"    => "PAYEE_PICKER_PARTIAL"
+    )
 
     assign :form, form
   end

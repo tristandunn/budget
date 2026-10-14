@@ -13,10 +13,12 @@ describe "budgets/show.html.erb" do
   let(:subcategory)     { create(:category, :subcategory) }
 
   before do
-    stub_template("budgets/_available_to_assign.html.erb" => "AVAILABLE_TO_ASSIGN_PARTIAL")
-    stub_template("categories/_category_header.html.erb"  => "CATEGORY_HEADER_PARTIAL")
-    stub_template("categories/_subcategory_row.html.erb"  => "SUBCATEGORY_ROW_PARTIAL")
-    stub_template("shared/_toolbar.html.erb"              => "TOOLBAR_PARTIAL")
+    stub_template(
+      "budgets/_available_to_assign.html.erb" => "AVAILABLE_TO_ASSIGN_PARTIAL",
+      "categories/_category_header.html.erb"  => "CATEGORY_HEADER_PARTIAL",
+      "categories/_subcategory_row.html.erb"  => "SUBCATEGORY_ROW_PARTIAL",
+      "shared/_toolbar.html.erb"              => "TOOLBAR_PARTIAL"
+    )
 
     assign :budget,          subcategory.budget
     assign :budget_snapshot, budget_snapshot
