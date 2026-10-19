@@ -36,7 +36,7 @@ module RSpec
       # @param account [Account] The account to select.
       # @return [void]
       def fill_in_account_picker(controller, account)
-        field = find("[data-#{controller}-target='hiddenField']", visible: false)
+        field = find("[data-#{controller}-target='hiddenField']", visible: :hidden)
 
         if Capybara.current_driver == Capybara.javascript_driver
           page.execute_script("arguments[0].value = arguments[1]", field, account.id)

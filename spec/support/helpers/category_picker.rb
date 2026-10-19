@@ -9,7 +9,7 @@ module RSpec
       # @param category [Category] The subcategory to select.
       # @return [void]
       def fill_in_category(category)
-        field = find("[data-category-picker-target='hiddenField']", visible: false)
+        field = find("[data-category-picker-target='hiddenField']", visible: :hidden)
 
         if Capybara.current_driver == Capybara.javascript_driver
           page.execute_script("arguments[0].value = arguments[1]", field, category.id)

@@ -9,7 +9,7 @@ module RSpec
       # @param value [String, Symbol] The frequency value to select.
       # @return [void]
       def fill_in_frequency(value)
-        field = find("[data-frequency-picker-target='hiddenField']", visible: false)
+        field = find("[data-frequency-picker-target='hiddenField']", visible: :hidden)
 
         if Capybara.current_driver == Capybara.javascript_driver
           page.execute_script("arguments[0].value = arguments[1]", field, value.to_s)

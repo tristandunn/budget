@@ -9,7 +9,7 @@ module RSpec
       # @param name [String] The payee name to set.
       # @return [void]
       def fill_in_payee(name)
-        field = find("[data-payee-picker-target='hiddenField']", visible: false)
+        field = find("[data-payee-picker-target='hiddenField']", visible: :hidden)
 
         if Capybara.current_driver == Capybara.javascript_driver
           page.execute_script("arguments[0].value = arguments[1]", field, name)
