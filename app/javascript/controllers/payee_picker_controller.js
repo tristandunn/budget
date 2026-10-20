@@ -3,12 +3,15 @@ import PickerController from "controllers/picker_controller";
 /*
  * Inserts a "Create" option in the payee picker after each filter pass
  * whenever the query is non-empty and does not exactly match an existing
- * payee, allowing a new payee to be created inline.
+ * payee, allowing a new payee to be created inline. Payees with a word that
+ * starts with the query are listed before other matches.
  */
 export default class extends PickerController {
   static outlets = ["account-picker", "category-picker"];
 
   static targets = ["createPayeeTemplate"];
+
+  #originalOrder = new Map();
 
   /*
    * Fetch the defaults for the selected payee and apply them on the account
@@ -55,9 +58,12 @@ export default class extends PickerController {
   }
 
   /*
-   * Insert, update, or remove the Create option based on the current query.
+   * Order the payees by match quality, then insert, update, or remove the
+   * create option based on the current query.
    */
   afterFilter(query) {
+    this.#sortItems(query);
+
     const existing   = this.#existingCreateOption();
     const exactMatch = query.length > 0 && this.itemTargets.some((item) => {
       return item.dataset.label.toLowerCase() === query.toLowerCase();
@@ -101,6 +107,66 @@ export default class extends PickerController {
     if (list) {
       list.prepend(node);
     }
+  }
+
+  // Return 0 when a word in the item label starts with the query, otherwise 1.
+  #rank(item, query) {
+    return query.length > 0 && this.#startsWord(item.dataset.label, query)
+      ? 0
+      : 1;
+  }
+
+  /*
+   * Move payees with a word starting with the query ahead of the others,
+   * preserving the original order within each group. The original order is
+   * recorded on first use, before any reordering has happened. The DOM is
+   * only touched when the sorted order differs from the current order.
+   */
+  #sortItems(query) {
+    const current = this.itemTargets;
+    const needle  = query.toLowerCase();
+
+    for (const item of current) {
+      if (!this.#originalOrder.has(item)) {
+        this.#originalOrder.set(item, this.#originalOrder.size);
+      }
+    }
+
+    const ranks  = new Map(current.map((item) => {
+      return [item, this.#rank(item, needle)];
+    }));
+
+    const sorted = [...current].sort((first, second) => {
+      return ranks.get(first) - ranks.get(second) ||
+        this.#originalOrder.get(first) - this.#originalOrder.get(second);
+    });
+
+    const changed = sorted.some((item, index) => {
+      return item !== current[index];
+    });
+
+    if (changed) {
+      for (const item of sorted) {
+        item.parentElement.appendChild(item);
+      }
+    }
+  }
+
+  // Return whether any word in the label starts with the lowercase query.
+  #startsWord(label, query) {
+    const text = label.toLowerCase();
+
+    let index = text.indexOf(query);
+
+    while (index !== -1) {
+      if (index === 0 || !(/[\p{L}\p{N}]/u).test(text[index - 1])) {
+        return true;
+      }
+
+      index = text.indexOf(query, index + 1);
+    }
+
+    return false;
   }
 
   // Update an existing Create option node with the given query.
