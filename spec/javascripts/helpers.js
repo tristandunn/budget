@@ -14,3 +14,6 @@ global.window = new JSDOM("", {
 
 global.document     = global.window.document;
 global.localStorage = global.window.localStorage;
+
+// Parse the stylesheets so the first style lookup does not slow down tests.
+global.window.getComputedStyle(global.document.body);
