@@ -70,6 +70,74 @@ describe("PayeePickerController", () => {
   });
 
   describe("#afterFilter", () => {
+    describe("ordering", () => {
+      let jetstar, market, starMarket;
+
+      beforeEach(() => {
+        jetstar    = buildItem("Jetstar Japan");
+        market     = buildItem("Super Market");
+        starMarket = buildItem("Star Market");
+
+        list.replaceChildren(jetstar, market, starMarket);
+
+        Object.defineProperty(controller, "itemTargets", {
+          "configurable": true,
+          "get": () => {
+            return [...list.children].filter((child) => {
+              return child.dataset.payeePickerTarget === "item";
+            });
+          }
+        });
+      });
+
+      it("lists matches at the start of a word first", () => {
+        controller.afterFilter("star");
+
+        expect([...list.children]).to.deep.eq([list.querySelector("[data-create-option]"), starMarket, jetstar, market]);
+      });
+
+      it("matches a word in the middle of a label", () => {
+        controller.afterFilter("market");
+
+        expect([...list.children]).to.deep.eq([list.querySelector("[data-create-option]"), market, starMarket, jetstar]);
+      });
+
+      it("matches a later word when an earlier occurrence is mid-word", () => {
+        const jetstarStar = buildItem("Jetstar Star");
+
+        list.replaceChildren(jetstar, market, jetstarStar);
+
+        controller.afterFilter("star");
+
+        expect([...list.children]).to.deep.eq([list.querySelector("[data-create-option]"), jetstarStar, jetstar, market]);
+      });
+
+      it("treats punctuation as a word boundary", () => {
+        const cola = buildItem("Coca-Cola");
+
+        list.replaceChildren(jetstar, cola);
+
+        controller.afterFilter("cola");
+
+        expect([...list.children]).to.deep.eq([list.querySelector("[data-create-option]"), cola, jetstar]);
+      });
+
+      it("does not move items when the order is unchanged", () => {
+        const appendChild = sinon.spy(list, "appendChild");
+
+        controller.afterFilter("");
+
+        expect(appendChild).not.to.have.been.called;
+      });
+
+      it("restores the original order when the query is empty", () => {
+        controller.afterFilter("star");
+        controller.afterFilter("");
+
+        expect([...list.children]).to.deep.eq([jetstar, market, starMarket]);
+      });
+    });
+
     it("does nothing when the query is empty", () => {
       controller.afterFilter("");
 
