@@ -233,7 +233,7 @@ describe("PayeePickerController", () => {
   });
 
   describe("#select with a defaults URL", () => {
-    let accountPickerOutlet, categoryPickerOutlet;
+    let accountPickerOutlet, categoryPickerOutlet, memo;
 
     beforeEach(() => {
       accountPickerOutlet = {
@@ -246,7 +246,11 @@ describe("PayeePickerController", () => {
         "hiddenFieldTarget": { "value": "" }
       };
 
+      memo = document.createElement("input");
+
       alpha.dataset.defaultsUrl          = "/payees/1/defaults";
+      controller.hasMemoTarget           = true;
+      controller.memoTarget              = memo;
       controller.hasAccountPickerOutlet  = true;
       controller.accountPickerOutlet     = accountPickerOutlet;
       controller.hasCategoryPickerOutlet = true;
@@ -393,9 +397,76 @@ describe("PayeePickerController", () => {
       expect(categoryPickerOutlet.applyValue).not.to.have.been.called;
     });
 
-    it("does not fetch when both outlets are missing", async () => {
+    it("fills the memo when it is empty", async () => {
+      globalThis.fetch.resolves({
+        "json": () => {
+          return Promise.resolve({ "memo": "Coffee." });
+        },
+        "ok": true
+      });
+
+      await controller.select({ "currentTarget": alpha });
+
+      expect(memo.value).to.eq("Coffee.");
+    });
+
+    it("keeps an existing memo", async () => {
+      memo.value = "Latte";
+      globalThis.fetch.resolves({
+        "json": () => {
+          return Promise.resolve({ "memo": "Coffee." });
+        },
+        "ok": true
+      });
+
+      await controller.select({ "currentTarget": alpha });
+
+      expect(memo.value).to.eq("Latte");
+    });
+
+    it("leaves the memo empty when none is returned", async () => {
+      globalThis.fetch.resolves({
+        "json": () => {
+          return Promise.resolve({ "memo": "" });
+        },
+        "ok": true
+      });
+
+      await controller.select({ "currentTarget": alpha });
+
+      expect(memo.value).to.eq("");
+    });
+
+    it("fetches for the memo when only the memo field needs a value", async () => {
+      accountPickerOutlet.hiddenFieldTarget.value = "9";
+      controller.hasCategoryPickerOutlet          = false;
+      globalThis.fetch.resolves({
+        "json": () => {
+          return Promise.resolve({ "memo": "Coffee." });
+        },
+        "ok": true
+      });
+
+      await controller.select({ "currentTarget": alpha });
+
+      expect(globalThis.fetch).to.have.been.called;
+      expect(memo.value).to.eq("Coffee.");
+    });
+
+    it("does not fetch when every field is filled or missing", async () => {
+      accountPickerOutlet.hiddenFieldTarget.value = "9";
+      controller.hasCategoryPickerOutlet          = false;
+      memo.value                                  = "Latte";
+
+      await controller.select({ "currentTarget": alpha });
+
+      expect(globalThis.fetch).not.to.have.been.called;
+    });
+
+    it("does not fetch when both outlets and the memo field are missing", async () => {
       controller.hasAccountPickerOutlet  = false;
       controller.hasCategoryPickerOutlet = false;
+      controller.hasMemoTarget           = false;
 
       await controller.select({ "currentTarget": alpha });
 

@@ -180,44 +180,30 @@ describe PayeesController do
   describe "#defaults" do
     let(:payee) { create(:payee, budget: budget) }
 
-    context "when the payee has prior transactions in the budget" do
-      let(:account)     { create(:account, budget: budget) }
-      let(:subcategory) { create(:category, :subcategory, budget: budget) }
+    context "when the payee belongs to the budget" do
+      let(:defaults) do
+        {
+          account_id:                "1",
+          memo:                      "Coffee.",
+          subcategory_id:            "2",
+          suggested_subcategory_ids: ["2"]
+        }
+      end
 
       before do
-        create(:transaction,
-               budget:      budget,
-               payee:       payee,
-               account:     account,
-               subcategory: subcategory)
+        allow(FindPayeeDefaults).to receive(:call).and_return(defaults)
 
         get :defaults, params: { budget_id: budget.id, id: payee.id }
       end
 
       it { is_expected.to respond_with(:ok) }
 
-      it "returns the previous account, subcategory, and suggested subcategory IDs" do
-        expect(response.parsed_body).to eq(
-          "account_id"                => account.id.to_s,
-          "subcategory_id"            => subcategory.id.to_s,
-          "suggested_subcategory_ids" => [subcategory.id.to_s]
-        )
-      end
-    end
-
-    context "when the payee has no prior transactions" do
-      before do
-        get :defaults, params: { budget_id: budget.id, id: payee.id }
+      it "calls the defaults service with the payee" do
+        expect(FindPayeeDefaults).to have_received(:call).with(payee: payee)
       end
 
-      it { is_expected.to respond_with(:ok) }
-
-      it "returns empty IDs" do
-        expect(response.parsed_body).to eq(
-          "account_id"                => "",
-          "subcategory_id"            => "",
-          "suggested_subcategory_ids" => []
-        )
+      it "renders the defaults as JSON" do
+        expect(response.parsed_body).to eq(defaults.deep_stringify_keys)
       end
     end
 

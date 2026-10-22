@@ -9,7 +9,7 @@ import PickerController from "controllers/picker_controller";
 export default class extends PickerController {
   static outlets = ["account-picker", "category-picker"];
 
-  static targets = ["createPayeeTemplate"];
+  static targets = ["createPayeeTemplate", "memo"];
 
   #originalOrder = new Map();
 
@@ -17,11 +17,13 @@ export default class extends PickerController {
    * Fetch the defaults for the selected payee and apply them on the account
    * and category picker outlets: apply the previous account when the account
    * picker is empty, refresh the suggested group on the category picker, then
-   * apply the previous subcategory when the category picker is empty. Skips the
+   * apply the previous subcategory when the category picker is empty. Also fill
+   * the memo field with the payee's consistent memo when it is empty. Skips the
    * fetch only when there is nothing to do, meaning the account picker is
-   * already filled or absent and there is no category picker whose suggestions
-   * need refreshing. Re-checks emptiness after the fetch resolves so a value
-   * the user picked while the request was in flight is preserved.
+   * already filled or absent, the memo is filled or absent, and there is no
+   * category picker whose suggestions need refreshing. Re-checks emptiness
+   * after the fetch resolves so a value the user entered while the request was
+   * in flight is preserved.
    */
   async select(event) {
     super.select(event);
@@ -32,7 +34,7 @@ export default class extends PickerController {
       return;
     }
 
-    if (!this.#accountPickerEmpty() && !this.hasCategoryPickerOutlet) {
+    if (!this.#accountPickerEmpty() && !this.#memoEmpty() && !this.hasCategoryPickerOutlet) {
       return;
     }
 
@@ -54,6 +56,10 @@ export default class extends PickerController {
 
     if (data.subcategory_id && this.#categoryPickerEmpty()) {
       this.categoryPickerOutlet.applyValue(data.subcategory_id);
+    }
+
+    if (data.memo && this.#memoEmpty()) {
+      this.memoTarget.value = data.memo;
     }
   }
 
@@ -107,6 +113,11 @@ export default class extends PickerController {
     if (list) {
       list.prepend(node);
     }
+  }
+
+  // Return whether the memo field exists and has no value entered.
+  #memoEmpty() {
+    return this.hasMemoTarget && this.memoTarget.value === "";
   }
 
   // Return 0 when a word in the item label starts with the query, otherwise 1.

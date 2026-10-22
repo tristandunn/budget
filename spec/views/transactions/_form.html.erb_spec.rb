@@ -87,6 +87,27 @@ describe "transactions/_form.html.erb" do
     expect(html).to have_field("transaction_form_memo")
   end
 
+  it "targets the memo field from the payee picker" do
+    expect(html).to have_css("input#transaction_form_memo[data-payee-picker-target='memo']")
+  end
+
+  context "when updating a transaction" do
+    subject(:html) do
+      render partial: "transactions/form",
+             locals:  {
+               form:   form,
+               method: :patch,
+               url:    "/test"
+             }
+
+      rendered
+    end
+
+    it "does not target the memo field from the payee picker" do
+      expect(html).to have_css("input#transaction_form_memo:not([data-payee-picker-target])")
+    end
+  end
+
   context "when prepopulated from a transaction" do
     let(:form)        { TransactionForm.from(transaction: transaction) }
     let(:subcategory) { create(:category, :subcategory) }
