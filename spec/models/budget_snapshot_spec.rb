@@ -170,6 +170,29 @@ describe BudgetSnapshot do
       end
     end
 
+    context "when a target is snoozed for the month" do
+      subject(:budget_snapshot) do
+        described_class.new(budget, month: next_month.month.to_s, year: next_month.year.to_s)
+      end
+
+      let(:next_month) { 1.month.from_now.beginning_of_month }
+
+      before do
+        target = create(:category, :subcategory, :with_monthly_spending_target, budget:        budget,
+                                                                                with_snapshot: false)
+
+        create(:category_snapshot, :snoozed, budget:          budget,
+                                             category:        target,
+                                             date:            next_month,
+                                             amount_assigned: 50_00,
+                                             amount_used:     0)
+      end
+
+      it "counts the target as fully funded" do
+        expect(budget_snapshot.funded_percentage).to eq(100)
+      end
+    end
+
     context "when a future month would be covered by the current month's balance" do
       subject(:budget_snapshot) do
         described_class.new(budget, month: next_month.month.to_s, year: next_month.year.to_s)
