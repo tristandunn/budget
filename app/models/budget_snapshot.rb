@@ -49,7 +49,7 @@ class BudgetSnapshot
 
   # Return the percentage funded for the displayed month across the budget's
   # monthly targets, clamped between 0 and 100, or zero when there are no
-  # monthly targets.
+  # monthly targets. A snoozed target counts as fully funded.
   #
   # @return [Integer] The funded percentage, between 0 and 100.
   def funded_percentage
@@ -57,7 +57,11 @@ class BudgetSnapshot
 
     if total_target.positive?
       funded = monthly_target_categories.sum do |category|
-        [target_progress_for(category).funded_amount, category.target_amount].min
+        if snoozed?(category)
+          category.target_amount
+        else
+          [target_progress_for(category).funded_amount, category.target_amount].min
+        end
       end
 
       (funded * 100 / total_target).clamp(0, 100)
