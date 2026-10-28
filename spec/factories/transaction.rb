@@ -24,6 +24,11 @@ FactoryBot.define do
       status    { :upcoming }
     end
 
+    trait :transfer do
+      subcategory   { nil }
+      transfer_pair { association(:transaction, budget: budget) }
+    end
+
     trait :upcoming do
       date   { 1.month.from_now.to_date }
       status { :upcoming }

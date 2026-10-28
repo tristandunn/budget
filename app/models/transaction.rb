@@ -21,8 +21,9 @@ class Transaction < ApplicationRecord
        validate: { allow_nil: true }
   enum :status, { pending: 0, cleared: 1, reconciled: 2, upcoming: 3 }, validate: true
 
-  validates :amount, presence: true, numericality: { only_integer: true, other_than: 0 }
-  validates :date,   presence: true
+  validates :amount,      presence: true, numericality: { only_integer: true, other_than: 0 }
+  validates :date,        presence: true
+  validates :subcategory, presence: true, unless: -> { transfer? || transfer_pair }
 
   validate :validate_subcategory
 

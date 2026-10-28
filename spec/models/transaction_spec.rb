@@ -19,7 +19,7 @@ describe Transaction do
         .class_name("Category")
         .with_foreign_key(:category_id)
         .inverse_of(:transactions)
-        .optional
+        .without_validating_presence
     end
 
     it { is_expected.to belong_to(:transfer_pair).class_name("Transaction").optional }
@@ -35,6 +35,13 @@ describe Transaction do
     it { is_expected.not_to allow_value(0).for(:amount) }
 
     it { is_expected.to validate_presence_of(:date) }
+    it { is_expected.to validate_presence_of(:subcategory) }
+
+    context "when a transfer" do
+      subject(:transaction) { create(:transaction, :transfer) }
+
+      it { is_expected.to allow_value(nil).for(:subcategory) }
+    end
 
     it "defines and validates a status enum" do
       expect(transaction).to define_enum_for(:status)
@@ -350,12 +357,6 @@ describe Transaction do
           t("activerecord.errors.models.transaction.attributes.subcategory.not_a_subcategory")
         )
       end
-    end
-
-    context "when nil" do
-      let(:subcategory) { nil }
-
-      it { is_expected.to be_valid }
     end
   end
 
