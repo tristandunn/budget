@@ -86,16 +86,26 @@ module Transactions
       end
     end
 
+    # Find the existing payee matching the form's payee name.
+    #
+    # The lookup is skipped when the name is blank, as on a new transaction.
+    #
+    # @return [Payee] When the form's payee name matches an existing payee.
+    # @return [nil] When the payee name is blank or unknown.
+    def suggested_payee
+      @suggested_payee ||= if form.payee.present?
+                             form.budget.payees.by_name(form.payee).first
+                           end
+    end
+
     # Return the form payee's most-used subcategories, in suggestion order.
     #
     # @return [Array<Category>] The suggested subcategories, or an empty array.
     def suggested_subcategories
-      payee = form.budget.payees.by_name(form.payee).first
-
-      if payee
+      if suggested_payee
         subcategories = categories.flat_map(&:subcategories).index_by(&:id)
 
-        payee.suggested_subcategory_ids.map do |id|
+        suggested_payee.suggested_subcategory_ids.map do |id|
           subcategories.fetch(id)
         end
       else

@@ -132,9 +132,17 @@ describe Transactions::CategoryPicker do
       end
 
       it "does not include a suggested group when the payee is blank" do
-        expect(described_class.new(form: form).groups.map(&:name)).not_to include(
+        expect(groups.map(&:name)).not_to include(
           I18n.t("transactions.category_picker.suggested")
         )
+      end
+
+      it "does not look up payees when the payee is blank" do
+        allow(budget).to receive(:payees).and_call_original
+
+        groups
+
+        expect(budget).not_to have_received(:payees)
       end
 
       it "does not include a suggested group when the payee does not match an existing payee" do
