@@ -35,12 +35,12 @@ class CreateTransfer
   def call
     ActiveRecord::Base.transaction do
       outflow = build_outflow
+      inflow  = build_inflow
+
+      outflow.transfer_pair = inflow
+      inflow.transfer_pair  = outflow
+
       outflow.save!
-
-      inflow = build_inflow
-      inflow.save!
-
-      link_pair(outflow, inflow)
 
       from_account.increment!(:balance, -amount.cents)
       to_account.increment!(:balance,    amount.cents)
@@ -79,16 +79,6 @@ class CreateTransfer
       memo:    memo,
       payee:   payee_for(:to, to_account)
     )
-  end
-
-  # Link the two transactions to each other via `transfer_pair_id`.
-  #
-  # @param outflow [Transaction] The source-side transaction.
-  # @param inflow [Transaction] The destination-side transaction.
-  # @return [void]
-  def link_pair(outflow, inflow)
-    outflow.update!(transfer_pair: inflow)
-    inflow.update!(transfer_pair: outflow)
   end
 
   # Find or create the payee for a transfer counterpart account.
