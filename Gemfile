@@ -4,7 +4,7 @@ ruby   "4.0.9"
 source "https://rubygems.org"
 
 gem "bcrypt",            "3.1.22"
-gem "bootsnap",          "1.26.0", require: false
+gem "bootsnap",          "1.26.1", require: false
 gem "browser",           "6.2.0"
 gem "importmap-rails",   "2.2.3"
 gem "json",              "3.1.0"
@@ -17,9 +17,9 @@ gem "rails",             "8.1.4"
 gem "solid_cable",       "4.1.0"
 gem "solid_cache",       "1.0.10"
 gem "solid_queue",       "1.7.0"
-gem "sqlite3",           "2.10.1"
+gem "sqlite3",           "2.10.2"
 gem "stimulus-rails",    "1.3.4"
-gem "tailwindcss-rails", "4.6.0"
+gem "tailwindcss-rails", "4.7.0"
 gem "thruster",          "0.1.27", require: false
 gem "turbo-rails",       "2.0.23"
 
@@ -44,7 +44,7 @@ group :development do
   gem "rubocop-rspec_rails", "2.33.0", require: false
   gem "rubocop-vibe",        "0.6.0",  require: false
   gem "web-console",         "4.3.0"
-  gem "yard-lint",           "1.12.0", require: false
+  gem "yard-lint",           "1.13.0", require: false
 end
 
 group :test do
