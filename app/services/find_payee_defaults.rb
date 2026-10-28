@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class FindPayeeDefaults
-  MEMO_SAMPLE_SIZE = 3
+  LATEST_COUNT = 3
 
   # Initialize the service.
   #
@@ -45,19 +45,30 @@ class FindPayeeDefaults
   # @return [String] The consistently used memo.
   # @return [nil] When the memos differ, are blank, or there are too few transactions.
   def consistent_memo
-    memos = recent_transactions.limit(MEMO_SAMPLE_SIZE).pluck(:memo)
+    memos = latest_transactions.map(&:memo)
 
     if consistent_memo?(memos)
       memos.first.presence
     end
   end
 
-  # Return whether the memos fill the sample and are all the same.
+  # Return whether `LATEST_COUNT` memos were found and they are all the same.
   #
   # @param memos [Array<String, nil>] The memos of the most recent transactions.
-  # @return [Boolean] Whether enough memos were sampled and they match.
+  # @return [Boolean] Whether enough memos were loaded and they match.
   def consistent_memo?(memos)
-    memos.size == MEMO_SAMPLE_SIZE && memos.uniq.one?
+    memos.size == LATEST_COUNT && memos.uniq.one?
+  end
+
+  # Return the latest transactions, loaded with only the columns needed.
+  #
+  # @return [Array<Transaction>] The most recent transactions for the payee.
+  def latest_transactions
+    @latest_transactions ||= payee.transactions
+                                  .reorder(date: :desc, id: :desc)
+                                  .limit(LATEST_COUNT)
+                                  .select(:account_id, :category_id, :memo)
+                                  .to_a
   end
 
   # Return the account ID from the most recent transaction for the payee.
@@ -65,22 +76,15 @@ class FindPayeeDefaults
   # @return [Integer] The most recent account ID.
   # @return [nil] When the payee has no transactions.
   def previous_account_id
-    recent_transactions.pick(:account_id)
+    latest_transactions.first&.account_id
   end
 
-  # Return the subcategory ID from the most recent categorized transaction for
-  # the payee.
+  # Return the subcategory ID from the most recent categorized transaction among
+  # the latest transactions.
   #
   # @return [Integer] The most recent subcategory ID.
-  # @return [nil] When the payee has no categorized transactions.
+  # @return [nil] When none of the latest transactions are categorized.
   def previous_subcategory_id
-    recent_transactions.where.not(category_id: nil).pick(:category_id)
-  end
-
-  # Return the payee's transactions, most recent first.
-  #
-  # @return [ActiveRecord::Relation] The transactions ordered by date and ID.
-  def recent_transactions
-    payee.transactions.reorder(date: :desc, id: :desc)
+    latest_transactions.filter_map(&:category_id).first
   end
 end
