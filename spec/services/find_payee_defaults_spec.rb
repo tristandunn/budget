@@ -95,7 +95,7 @@ describe FindPayeeDefaults do
 
     describe "subcategory_id" do
       it "is blank when the payee's only transactions have no subcategory" do
-        create(:transaction, budget: budget, payee: payee, subcategory: nil)
+        create(:transaction, :transfer, budget: budget, payee: payee)
 
         expect(defaults[:subcategory_id]).to eq("")
       end
@@ -124,7 +124,7 @@ describe FindPayeeDefaults do
         categorized = create(:category, :subcategory, budget: budget)
 
         create(:transaction, budget: budget, payee: payee, subcategory: categorized, date: 5.days.ago)
-        create(:transaction, budget: budget, payee: payee, subcategory: nil, date: 1.day.ago)
+        create(:transaction, :transfer, budget: budget, payee: payee, date: 1.day.ago)
 
         expect(defaults[:subcategory_id]).to eq(categorized.id.to_s)
       end

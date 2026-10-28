@@ -155,7 +155,7 @@ describe Transactions::CategoryPicker do
 
       it "does not include a suggested group when the matched payee has no categorized transactions" do
         payee = create(:payee, budget: budget)
-        create(:transaction, budget: budget, payee: payee, subcategory: nil)
+        create(:transaction, :transfer, budget: budget, payee: payee)
         form = TransactionForm.new(budget: budget, payee: payee.name)
 
         expect(described_class.new(form: form).groups.map(&:name)).not_to include(

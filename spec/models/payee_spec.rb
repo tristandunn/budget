@@ -73,7 +73,7 @@ describe Payee do
     let(:payee)  { create(:payee, budget: budget) }
 
     it "returns an empty array when the payee has no categorized transactions" do
-      create(:transaction, budget: budget, payee: payee, subcategory: nil)
+      create(:transaction, :transfer, budget: budget, payee: payee)
 
       expect(payee.suggested_subcategory_ids).to eq([])
     end
@@ -86,7 +86,7 @@ describe Payee do
       3.times { create(:transaction, budget: budget, payee: payee, subcategory: common) }
       2.times { create(:transaction, budget: budget, payee: payee, subcategory: less_common) }
       create(:transaction, budget: budget, payee: payee, subcategory: rare)
-      create(:transaction, budget: budget, payee: payee, subcategory: nil)
+      create(:transaction, :transfer, budget: budget, payee: payee)
 
       expect(payee.suggested_subcategory_ids).to eq([common.id, less_common.id, rare.id])
     end
