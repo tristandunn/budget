@@ -10,6 +10,7 @@
             data:            {
               action:              "click->payee-picker#select",
               defaults_url:        defaults_budget_payee_path(form.budget, payee),
+              hidden_payee:        payee.hidden?,
               label:               payee.name,
               payee_picker_target: "item",
               value:               payee.name

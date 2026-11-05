@@ -50,6 +50,22 @@
           </div>
         </div>
       </div>
+
+      <div
+        role="radiogroup"
+        aria-label="<%= t(".visibility") %>"
+        class="flex w-full gap-1 p-1 mt-4 rounded-xl bg-taupe-200"
+      >
+        <%= f.radio_button :hidden, "false", class: "peer/show sr-only" %>
+
+        <%= f.label :hidden_false, t(".show"),
+                    class: "flex-1 rounded-lg p-3 text-center text-base font-medium text-taupe-500 transition peer-checked/show:bg-white peer-checked/show:text-taupe-800 peer-checked/show:shadow peer-focus-visible/show:ring-2 peer-focus-visible/show:ring-taupe-500" %>
+
+        <%= f.radio_button :hidden, "true", class: "peer/hide sr-only" %>
+
+        <%= f.label :hidden_true, t(".hide"),
+                    class: "flex-1 rounded-lg p-3 text-center text-base font-medium text-taupe-500 transition peer-checked/hide:bg-white peer-checked/hide:text-taupe-800 peer-checked/hide:shadow peer-focus-visible/hide:ring-2 peer-focus-visible/hide:ring-taupe-500" %>
+      </div>
     <% end %>
   </div>
 <% end %>

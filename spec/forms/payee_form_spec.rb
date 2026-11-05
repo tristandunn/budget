@@ -10,9 +10,9 @@ describe PayeeForm, type: :form do
   describe ".from" do
     subject { described_class.from(payee: payee) }
 
-    let(:payee) { build(:payee, name: "Coffee") }
+    let(:payee) { build(:payee, hidden: true, name: "Coffee") }
 
-    it { is_expected.to have_attributes(payee: payee, name: "Coffee") }
+    it { is_expected.to have_attributes(payee: payee, hidden: true, name: "Coffee") }
   end
 
   describe "#update" do
@@ -22,7 +22,7 @@ describe PayeeForm, type: :form do
     let(:payee)  { create(:payee, budget: budget, name: "Old Name") }
 
     context "when renaming to a unique name" do
-      let(:form) { described_class.new(payee: payee, name: "New Name") }
+      let(:form) { described_class.new(payee: payee, hidden: "0", name: "New Name") }
 
       it { is_expected.to be(true) }
 
@@ -33,8 +33,44 @@ describe PayeeForm, type: :form do
       end
     end
 
+    context "when hiding the payee" do
+      let(:form) { described_class.new(payee: payee, hidden: "1", name: "Old Name") }
+
+      it { is_expected.to be(true) }
+
+      it "hides the payee" do
+        update
+
+        expect(payee.reload).to be_hidden
+      end
+    end
+
+    context "when showing a hidden payee" do
+      let(:form) { described_class.new(payee: payee, hidden: "0", name: "Old Name") }
+
+      before do
+        payee.update!(hidden: true)
+      end
+
+      it "shows the payee" do
+        update
+
+        expect(payee.reload).not_to be_hidden
+      end
+    end
+
+    context "when renaming and hiding the payee" do
+      let(:form) { described_class.new(payee: payee, hidden: "1", name: "New Name") }
+
+      it "renames and hides the payee" do
+        update
+
+        expect(payee.reload).to have_attributes(hidden: true, name: "New Name")
+      end
+    end
+
     context "when renaming to a blank name" do
-      let(:form) { described_class.new(payee: payee, name: "") }
+      let(:form) { described_class.new(payee: payee, hidden: "0", name: "") }
 
       it { is_expected.to be_nil }
 
@@ -53,7 +89,7 @@ describe PayeeForm, type: :form do
 
     context "when renaming to a name matching another payee" do
       let(:existing) { create(:payee, budget: budget, name: "Target") }
-      let(:form)     { described_class.new(payee: payee, name: "Target") }
+      let(:form)     { described_class.new(payee: payee, hidden: "0", name: "Target") }
 
       let!(:transaction) { create(:transaction, budget: budget, payee: payee) }
 
@@ -92,9 +128,19 @@ describe PayeeForm, type: :form do
       end
     end
 
+    context "when hiding and renaming to a name matching another payee" do
+      let!(:existing) { create(:payee, budget: budget, name: "Target") }
+
+      let(:form) { described_class.new(payee: payee, hidden: "1", name: "Target") }
+
+      it "does not hide the existing payee" do
+        expect { update }.not_to(change { existing.reload.hidden })
+      end
+    end
+
     context "when renaming to a name matching another payee only in case" do
       let(:existing) { create(:payee, budget: budget, name: "Target") }
-      let(:form)     { described_class.new(payee: payee, name: existing.name.downcase) }
+      let(:form)     { described_class.new(payee: payee, hidden: "0", name: existing.name.downcase) }
 
       let!(:transaction) { create(:transaction, budget: budget, payee: payee) }
 
@@ -114,7 +160,7 @@ describe PayeeForm, type: :form do
     end
 
     context "when renaming to a name matching another payee in a different budget" do
-      let(:form)         { described_class.new(payee: payee, name: "Shared") }
+      let(:form)         { described_class.new(payee: payee, hidden: "0", name: "Shared") }
       let(:other_budget) { create(:budget) }
 
       before do
@@ -131,7 +177,7 @@ describe PayeeForm, type: :form do
     end
 
     context "when the name is unchanged" do
-      let(:form) { described_class.new(payee: payee, name: "Old Name") }
+      let(:form) { described_class.new(payee: payee, hidden: "0", name: "Old Name") }
 
       it { is_expected.to be(true) }
 
@@ -143,7 +189,7 @@ describe PayeeForm, type: :form do
     end
 
     context "when changing only the case of the payee's own name" do
-      let(:form) { described_class.new(payee: payee, name: "old name") }
+      let(:form) { described_class.new(payee: payee, hidden: "0", name: "old name") }
 
       it { is_expected.to be(true) }
 

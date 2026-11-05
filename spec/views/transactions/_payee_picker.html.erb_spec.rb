@@ -45,6 +45,18 @@ describe "transactions/_payee_picker.html.erb" do
     end
   end
 
+  it "does not mark visible payees as hidden" do
+    expect(html).to have_no_css("li[data-payee-picker-target='item'][data-hidden-payee='true']")
+  end
+
+  context "with a hidden payee" do
+    let(:payees) { [build_stubbed(:payee, budget: budget, hidden: true, name: "Alpha")] }
+
+    it "marks the item as a hidden payee" do
+      expect(html).to have_css("li[data-payee-picker-target='item'][data-label='Alpha'][data-hidden-payee='true']")
+    end
+  end
+
   it "renders the create payee template" do
     expect(html).to have_css(
       "template[data-payee-picker-target='createPayeeTemplate']",

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class PayeeForm < BaseForm
-  attr_accessor :name, :payee
+  attr_accessor :hidden, :name, :payee
 
   validate :validate_payee
 
@@ -10,23 +10,25 @@ class PayeeForm < BaseForm
   # @param payee [Payee] The payee to prepopulate from.
   # @return [PayeeForm] The prepopulated form.
   def self.from(payee:)
-    new(payee: payee, name: payee.name)
+    new(payee: payee, hidden: payee.hidden, name: payee.name)
   end
 
-  # Attempt to rename or merge the payee if the form is valid.
+  # Attempt to rename, hide, or merge the payee if the form is valid.
   #
   # When the new name matches another payee in the same budget, merge the
   # payees by reassigning the renamed payee's transactions and destroying it.
-  # Otherwise, rename the payee in place.
+  # The duplicate payee keeps its own visibility, so the submitted hidden value
+  # is ignored. Otherwise, rename the payee in place and update whether it is
+  # hidden from the transaction payee picker.
   #
   # @return [Payee] The destroyed payee when it was merged into the duplicate payee.
-  # @return [Boolean] Whether the rename succeeded.
+  # @return [Boolean] Whether the rename or visibility change succeeded.
   # @return [nil] When the form is invalid.
   def update
     if duplicate_payee
       payee.merge_into(duplicate_payee)
     else
-      payee.assign_attributes(name: name)
+      payee.assign_attributes(hidden: hidden, name: name)
 
       if valid?
         payee.save!
