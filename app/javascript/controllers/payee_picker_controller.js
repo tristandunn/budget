@@ -45,22 +45,22 @@ export default class extends PickerController {
       return;
     }
 
-    const data = await response.json();
+    const defaults = await response.json();
 
-    if (data.account_id && this.#accountPickerEmpty()) {
-      this.accountPickerOutlet.applyValue(data.account_id);
+    if (defaults.account_id && this.#accountPickerEmpty()) {
+      this.accountPickerOutlet.applyValue(defaults.account_id);
     }
 
     if (this.hasCategoryPickerOutlet) {
-      this.categoryPickerOutlet.applySuggestions(data.suggested_subcategory_ids || []);
+      this.categoryPickerOutlet.applySuggestions(defaults.suggested_subcategory_ids || []);
     }
 
-    if (data.subcategory_id && this.#categoryPickerEmpty()) {
-      this.categoryPickerOutlet.applyValue(data.subcategory_id);
+    if (defaults.subcategory_id && this.#categoryPickerEmpty()) {
+      this.categoryPickerOutlet.applyValue(defaults.subcategory_id);
     }
 
-    if (data.memo && this.#memoEmpty()) {
-      this.memoTarget.value = data.memo;
+    if (defaults.memo && this.#memoEmpty()) {
+      this.memoTarget.value = defaults.memo;
     }
   }
 
@@ -72,15 +72,15 @@ export default class extends PickerController {
     this.#sortItems(query);
     this.#toggleHiddenPayees(query);
 
-    const existing   = this.#existingCreateOption();
+    const existingOption = this.#existingCreateOption();
     const exactMatch = query.length > 0 && this.itemTargets.some((item) => {
       return item.dataset.label.toLowerCase() === query.toLowerCase();
     });
 
     if (query.length === 0 || exactMatch) {
-      existing?.remove();
-    } else if (existing) {
-      this.#updateCreateOption(existing, query);
+      existingOption?.remove();
+    } else if (existingOption) {
+      this.#updateCreateOption(existingOption, query);
     } else {
       this.#insertCreateOption(query);
     }
@@ -105,15 +105,15 @@ export default class extends PickerController {
 
   // Insert a Create option for the given query at the top of the first list.
   #insertCreateOption(query) {
-    const node = this.createPayeeTemplateTarget.content.firstElementChild.cloneNode(true);
+    const option = this.createPayeeTemplateTarget.content.firstElementChild.cloneNode(true);
 
-    node.dataset.createOption = "";
-    this.#updateCreateOption(node, query);
+    option.dataset.createOption = "";
+    this.#updateCreateOption(option, query);
 
     const list = this.pickerTarget.querySelector("ul");
 
     if (list) {
-      list.prepend(node);
+      list.prepend(option);
     }
   }
 
@@ -137,7 +137,7 @@ export default class extends PickerController {
    */
   #sortItems(query) {
     const current = this.itemTargets;
-    const needle  = query.toLowerCase();
+    const name    = query.toLowerCase();
 
     for (const item of current) {
       if (!this.#originalOrder.has(item)) {
@@ -146,7 +146,7 @@ export default class extends PickerController {
     }
 
     const ranks  = new Map(current.map((item) => {
-      return [item, this.#rank(item, needle)];
+      return [item, this.#rank(item, name)];
     }));
 
     const sorted = [...current].sort((first, second) => {
@@ -193,10 +193,10 @@ export default class extends PickerController {
     }
   }
 
-  // Update an existing Create option node with the given query.
-  #updateCreateOption(node, query) {
-    node.dataset.value = query;
-    node.dataset.label = query;
-    node.querySelector("[data-role='label']").textContent = `Create "${query}" Payee`;
+  // Update an existing Create option with the given query.
+  #updateCreateOption(option, query) {
+    option.dataset.value = query;
+    option.dataset.label = query;
+    option.querySelector("[data-role='label']").textContent = `Create "${query}" Payee`;
   }
 }

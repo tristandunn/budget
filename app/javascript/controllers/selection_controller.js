@@ -31,9 +31,9 @@ export default class extends Controller {
     this.#syncSelectionStates();
   }
 
-  subcategoryTargetConnected(box) {
-    if (!box.checked && this.selectedIdsValue.includes(box.dataset.subcategoryId)) {
-      box.checked = true;
+  subcategoryTargetConnected(checkbox) {
+    if (!checkbox.checked && this.selectedIdsValue.includes(checkbox.dataset.subcategoryId)) {
+      checkbox.checked = true;
 
       this.#highlightRows();
       this.#syncSelectionStates();
@@ -49,21 +49,21 @@ export default class extends Controller {
   }
 
   selectRow(event) {
-    const row = event.target.closest("tr"),
-          box = row?.querySelector("[data-selection-target='subcategory']");
+    const row         = event.target.closest("tr"),
+          rowCheckbox = row?.querySelector("[data-selection-target='subcategory']");
 
-    if (!box) {
+    if (!rowCheckbox) {
       return;
     }
 
     const ids = this.#selectedIds();
 
-    if (ids.length === 1 && ids[0] === box.dataset.subcategoryId) {
+    if (ids.length === 1 && ids[0] === rowCheckbox.dataset.subcategoryId) {
       return;
     }
 
-    this.subcategoryTargets.forEach((target) => {
-      target.checked = target === box;
+    this.subcategoryTargets.forEach((checkbox) => {
+      checkbox.checked = checkbox === rowCheckbox;
     });
 
     this.toggle();
@@ -77,8 +77,8 @@ export default class extends Controller {
   toggleAll(event) {
     const checked = event.target.checked;
 
-    this.subcategoryTargets.forEach((box) => {
-      box.checked = checked;
+    this.subcategoryTargets.forEach((checkbox) => {
+      checkbox.checked = checked;
     });
 
     this.#syncSelectionStates();
@@ -89,10 +89,10 @@ export default class extends Controller {
     const categoryId = event.target.dataset.categoryId,
           checked    = event.target.checked;
 
-    this.subcategoryTargets.filter((box) => {
-      return box.dataset.categoryId === categoryId;
-    }).forEach((box) => {
-      box.checked = checked;
+    this.subcategoryTargets.filter((checkbox) => {
+      return checkbox.dataset.categoryId === categoryId;
+    }).forEach((checkbox) => {
+      checkbox.checked = checked;
     });
 
     this.#syncSelectionStates();
@@ -112,8 +112,8 @@ export default class extends Controller {
   }
 
   #clearSelection() {
-    this.subcategoryTargets.forEach((box) => {
-      box.checked = false;
+    this.subcategoryTargets.forEach((checkbox) => {
+      checkbox.checked = false;
     });
 
     this.#syncSelectionStates();
@@ -121,11 +121,11 @@ export default class extends Controller {
   }
 
   #detailUrl(id) {
-    const box = this.subcategoryTargets.find((box) => {
-      return box.dataset.subcategoryId === id;
+    const checkbox = this.subcategoryTargets.find((candidate) => {
+      return candidate.dataset.subcategoryId === id;
     });
 
-    return box.dataset.detailUrl;
+    return checkbox.dataset.detailUrl;
   }
 
   #hidePanel() {
@@ -134,16 +134,16 @@ export default class extends Controller {
   }
 
   #highlightRows() {
-    this.subcategoryTargets.forEach((box) => {
-      box.closest("tr")?.toggleAttribute("data-selected", box.checked);
+    this.subcategoryTargets.forEach((checkbox) => {
+      checkbox.closest("tr")?.toggleAttribute("data-selected", checkbox.checked);
     });
   }
 
   #selectedIds() {
-    return this.subcategoryTargets.filter((box) => {
-      return box.checked;
-    }).map((box) => {
-      return box.dataset.subcategoryId;
+    return this.subcategoryTargets.filter((checkbox) => {
+      return checkbox.checked;
+    }).map((checkbox) => {
+      return checkbox.dataset.subcategoryId;
     });
   }
 
@@ -163,26 +163,26 @@ export default class extends Controller {
   }
 
   #syncAllState() {
-    const boxes = this.subcategoryTargets;
-    const checkedCount = boxes.filter((box) => {
-      return box.checked;
+    const checkboxes   = this.subcategoryTargets;
+    const checkedCount = checkboxes.filter((checkbox) => {
+      return checkbox.checked;
     }).length;
 
-    this.allTarget.checked       = boxes.length > 0 && checkedCount === boxes.length;
-    this.allTarget.indeterminate = checkedCount > 0 && checkedCount < boxes.length;
+    this.allTarget.checked       = checkboxes.length > 0 && checkedCount === checkboxes.length;
+    this.allTarget.indeterminate = checkedCount > 0 && checkedCount < checkboxes.length;
   }
 
   #syncCategoryStates() {
     this.categoryTargets.forEach((category) => {
-      const boxes = this.subcategoryTargets.filter((box) => {
-        return box.dataset.categoryId === category.dataset.categoryId;
+      const checkboxes = this.subcategoryTargets.filter((checkbox) => {
+        return checkbox.dataset.categoryId === category.dataset.categoryId;
       });
-      const checkedCount = boxes.filter((box) => {
-        return box.checked;
+      const checkedCount = checkboxes.filter((checkbox) => {
+        return checkbox.checked;
       }).length;
 
-      category.checked       = boxes.length > 0 && checkedCount === boxes.length;
-      category.indeterminate = checkedCount > 0 && checkedCount < boxes.length;
+      category.checked       = checkboxes.length > 0 && checkedCount === checkboxes.length;
+      category.indeterminate = checkedCount > 0 && checkedCount < checkboxes.length;
     });
   }
 
