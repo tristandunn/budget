@@ -14,6 +14,13 @@ class Payee < ApplicationRecord
 
   scope :by_name, ->(name) { where("LOWER(name) = LOWER(?)", name.to_s.strip) }
 
+  # Exclude payees used by transfer transactions.
+  #
+  # @return [ActiveRecord::Relation] The payees not used by any transfer.
+  def self.without_transfers
+    where.not(id: Transaction.transfer.select(:payee_id))
+  end
+
   # Reassign this payee's transactions to another payee and destroy
   # this payee.
   #

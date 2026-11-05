@@ -134,6 +134,20 @@ describe Transaction do
     end
   end
 
+  describe ".transfer" do
+    it "includes both halves of a transfer" do
+      transaction = create(:transaction, :transfer)
+
+      expect(described_class.transfer).to contain_exactly(transaction, transaction.transfer_pair)
+    end
+
+    it "excludes a transaction without a transfer pair" do
+      transaction = create(:transaction)
+
+      expect(described_class.transfer).not_to include(transaction)
+    end
+  end
+
   describe "#copyable_attributes" do
     it "returns the attributes to copy when creating a new occurrence" do
       transaction = create(:transaction)

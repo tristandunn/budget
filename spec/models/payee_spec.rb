@@ -36,6 +36,22 @@ describe Payee do
     end
   end
 
+  describe ".without_transfers" do
+    let(:budget) { create(:budget) }
+
+    it "excludes a payee used by a transfer transaction" do
+      transfer = create(:transaction, :transfer, budget: budget)
+
+      expect(budget.payees.without_transfers).not_to include(transfer.payee, transfer.transfer_pair.payee)
+    end
+
+    it "includes a payee used only by regular transactions" do
+      transaction = create(:transaction, budget: budget)
+
+      expect(budget.payees.without_transfers).to contain_exactly(transaction.payee)
+    end
+  end
+
   describe "#merge_into" do
     subject(:merge_into) { payee.merge_into(other) }
 

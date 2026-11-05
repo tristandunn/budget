@@ -33,6 +33,7 @@ class Transaction < ApplicationRecord
 
   scope :activation_due, -> { upcoming.where(date: ..Date.current) }
   scope :recent,         -> { where(date: 30.days.ago.to_date..) }
+  scope :transfer,       -> { where.not(transfer_pair_id: nil) }
 
   # Return whether this transaction may be cleared or uncleared. Only pending
   # and cleared transactions may be toggled, and upcoming and reconciled
