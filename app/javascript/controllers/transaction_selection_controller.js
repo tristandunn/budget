@@ -19,7 +19,7 @@ export default class extends Controller {
 
   /*
    * Reconcile on connect rather than trusting the markup. A Turbo snapshot
-   * clone carries the checked boxes and the loaded frame, but not the
+   * clone carries the checked checkboxes and the loaded frame, but not the
    * select-all checkbox's indeterminate state, so a restored partial
    * selection reads as unchecked.
    */
@@ -42,8 +42,8 @@ export default class extends Controller {
   toggleAll(event) {
     const checked = event.target.checked;
 
-    this.#visibleBoxes().forEach((box) => {
-      box.checked = checked;
+    this.#visibleCheckboxes().forEach((checkbox) => {
+      checkbox.checked = checked;
     });
 
     this.#sync();
@@ -62,24 +62,24 @@ export default class extends Controller {
   }
 
   #clearSelection() {
-    this.transactionTargets.forEach((box) => {
-      box.checked = false;
+    this.transactionTargets.forEach((checkbox) => {
+      checkbox.checked = false;
     });
 
     this.#sync();
   }
 
   #highlightRows() {
-    this.transactionTargets.forEach((box) => {
-      box.closest("tr")?.toggleAttribute("data-selected", box.checked);
+    this.transactionTargets.forEach((checkbox) => {
+      checkbox.closest("tr")?.toggleAttribute("data-selected", checkbox.checked);
     });
   }
 
   #selectedIds() {
-    return this.transactionTargets.filter((box) => {
-      return box.checked;
-    }).map((box) => {
-      return box.value;
+    return this.transactionTargets.filter((checkbox) => {
+      return checkbox.checked;
+    }).map((checkbox) => {
+      return checkbox.value;
     });
   }
 
@@ -107,11 +107,11 @@ export default class extends Controller {
    */
   #syncAllState() {
     if (this.hasAllTarget) {
-      const boxes        = this.#visibleBoxes(),
-            checkedCount = boxes.filter((box) => {
-              return box.checked;
+      const checkboxes   = this.#visibleCheckboxes(),
+            checkedCount = checkboxes.filter((checkbox) => {
+              return checkbox.checked;
             }).length,
-            allChecked   = boxes.length > 0 && checkedCount === boxes.length;
+            allChecked   = checkboxes.length > 0 && checkedCount === checkboxes.length;
 
       this.allTarget.checked       = allChecked;
       this.allTarget.indeterminate = !allChecked && this.#selectedIds().length > 0;
@@ -132,15 +132,15 @@ export default class extends Controller {
   }
 
   /*
-   * Return the boxes the user can actually see. Rows in a collapsed group stay
-   * in the document, so select-all would otherwise reach rows that are not on
-   * screen.
+   * Return the checkboxes the user can actually see. Rows in a collapsed group
+   * stay in the document, so select-all would otherwise reach rows that are not
+   * on screen.
    */
-  #visibleBoxes() {
+  #visibleCheckboxes() {
     const collapsed = new Set(this.element.querySelectorAll(COLLAPSED_ROWS));
 
-    return this.transactionTargets.filter((box) => {
-      return !collapsed.has(box);
+    return this.transactionTargets.filter((checkbox) => {
+      return !collapsed.has(checkbox);
     });
   }
 }

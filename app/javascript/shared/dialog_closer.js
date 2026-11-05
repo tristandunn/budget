@@ -47,7 +47,7 @@ export default class DialogCloser {
 
   /*
    * Run startClose to trigger the slide-out, then run onClosed exactly once
-   * when the element's own transition ends, is cancelled, or the fallback timer
+   * when the element's own transition ends, is cancelled, or the fallbackTimer timer
    * fires. Transition events bubbling up from descendants are ignored so an
    * inner transition cannot tear the element down mid-animation. Returns a
    * teardown function that cancels the pending close without running onClosed.
@@ -57,7 +57,7 @@ export default class DialogCloser {
       element.removeEventListener("transitionend", onTransition);
       element.removeEventListener("transitioncancel", onTransition);
 
-      window.clearTimeout(fallback);
+      window.clearTimeout(fallbackTimer);
     };
 
     const finishClosing = () => {
@@ -75,7 +75,7 @@ export default class DialogCloser {
     element.addEventListener("transitionend", onTransition);
     element.addEventListener("transitioncancel", onTransition);
 
-    const fallback = window.setTimeout(finishClosing, CLOSE_FALLBACK_DELAY);
+    const fallbackTimer = window.setTimeout(finishClosing, CLOSE_FALLBACK_DELAY);
 
     void element.offsetHeight;
 

@@ -15,15 +15,15 @@ export default class extends PickerController {
   applySuggestions(ids) {
     this.#existingSuggestedGroup()?.remove();
 
-    const sources = this.#categoryItemsByValue();
-    const items   = ids.filter((id) => {
-      return sources.has(id);
+    const categoryItems  = this.#categoryItemsByValue();
+    const suggestedItems = ids.filter((id) => {
+      return categoryItems.has(id);
     }).map((id) => {
-      return sources.get(id);
+      return categoryItems.get(id);
     });
 
-    if (items.length > 0) {
-      this.groupsTarget.prepend(this.#buildSuggestedGroup(items));
+    if (suggestedItems.length > 0) {
+      this.groupsTarget.prepend(this.#buildSuggestedGroup(suggestedItems));
     }
   }
 
