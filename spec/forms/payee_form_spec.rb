@@ -176,6 +176,29 @@ describe PayeeForm, type: :form do
       end
     end
 
+    context "when renaming to a name matching a transfer payee" do
+      let(:form)     { described_class.new(payee: payee, hidden: "0", name: "Transfer to Savings") }
+      let(:transfer) { create(:transaction, :transfer, budget: budget) }
+
+      before do
+        transfer.payee.update!(name: "Transfer to Savings")
+
+        payee
+      end
+
+      it { is_expected.to be_nil }
+
+      it "does not destroy the payee" do
+        expect { update }.not_to(change(Payee, :count))
+      end
+
+      it "merges validation errors into the form" do
+        update
+
+        expect(form.errors[:name]).to be_present
+      end
+    end
+
     context "when the name is unchanged" do
       let(:form) { described_class.new(payee: payee, hidden: "0", name: "Old Name") }
 

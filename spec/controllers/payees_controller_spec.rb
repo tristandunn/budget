@@ -12,54 +12,84 @@ describe PayeesController do
   it { is_expected.to be_a(ApplicationController) }
 
   describe "#index" do
-    let!(:apple) { create(:payee, budget: budget, name: "Apple") }
-    let!(:zebra) { create(:payee, budget: budget, name: "Zebra") }
+    context "when the budget has only regular payees" do
+      let!(:apple) { create(:payee, budget: budget, name: "Apple") }
+      let!(:zebra) { create(:payee, budget: budget, name: "Zebra") }
 
-    before do
-      create(:payee, name: "Other Budget Payee")
+      before do
+        create(:payee, name: "Other Budget Payee")
 
-      get :index, params: { budget_id: budget.id }
+        get :index, params: { budget_id: budget.id }
+      end
+
+      it { is_expected.to respond_with(:ok) }
+      it { is_expected.to render_template(:index) }
+
+      it "assigns the budget" do
+        expect(assigns(:budget)).to eq(budget)
+      end
+
+      it "assigns the budget's payees ordered by name" do
+        expect(assigns(:payees)).to eq([apple, zebra])
+      end
     end
 
-    it { is_expected.to respond_with(:ok) }
-    it { is_expected.to render_template(:index) }
+    context "when the budget has a transfer payee" do
+      let(:regular)  { create(:payee, budget: budget, name: "Apple") }
+      let(:transfer) { create(:transaction, :transfer, budget: budget) }
 
-    it "assigns the budget" do
-      expect(assigns(:budget)).to eq(budget)
-    end
+      before do
+        regular
+        transfer
 
-    it "assigns the budget's payees ordered by name" do
-      expect(assigns(:payees)).to eq([apple, zebra])
+        get :index, params: { budget_id: budget.id }
+      end
+
+      it "excludes the transfer payees" do
+        expect(assigns(:payees)).to eq([regular])
+      end
     end
   end
 
   describe "#edit" do
-    let(:form)   { instance_double(PayeeForm) }
-    let(:payee)  { create(:payee, budget: budget) }
+    context "when the payee is a regular payee" do
+      let(:form)   { instance_double(PayeeForm) }
+      let(:payee)  { create(:payee, budget: budget) }
 
-    before do
-      allow(PayeeForm).to receive(:from).and_return(form)
+      before do
+        allow(PayeeForm).to receive(:from).and_return(form)
 
-      get :edit, params: { budget_id: budget.id, id: payee.id }
+        get :edit, params: { budget_id: budget.id, id: payee.id }
+      end
+
+      it { is_expected.to respond_with(:ok) }
+      it { is_expected.to render_template(:edit) }
+
+      it "assigns the budget" do
+        expect(assigns(:budget)).to eq(budget)
+      end
+
+      it "assigns the payee" do
+        expect(assigns(:payee)).to eq(payee)
+      end
+
+      it "initializes the form from the payee" do
+        expect(PayeeForm).to have_received(:from).with(payee: payee)
+      end
+
+      it "assigns the form" do
+        expect(assigns(:form)).to eq(form)
+      end
     end
 
-    it { is_expected.to respond_with(:ok) }
-    it { is_expected.to render_template(:edit) }
+    context "when the payee is a transfer payee" do
+      let(:transfer) { create(:transaction, :transfer, budget: budget) }
 
-    it "assigns the budget" do
-      expect(assigns(:budget)).to eq(budget)
-    end
-
-    it "assigns the payee" do
-      expect(assigns(:payee)).to eq(payee)
-    end
-
-    it "initializes the form from the payee" do
-      expect(PayeeForm).to have_received(:from).with(payee: payee)
-    end
-
-    it "assigns the form" do
-      expect(assigns(:form)).to eq(form)
+      it "raises a record not found error" do
+        expect do
+          get :edit, params: { budget_id: budget.id, id: transfer.payee.id }
+        end.to raise_error(ActiveRecord::RecordNotFound)
+      end
     end
   end
 
@@ -164,6 +194,17 @@ describe PayeesController do
       it { is_expected.to render_template(:edit) }
     end
 
+    context "when the payee is a transfer payee" do
+      let(:transfer) { create(:transaction, :transfer, budget: budget) }
+
+      it "raises a record not found error" do
+        expect do
+          patch :update, params: { budget_id: budget.id, id: transfer.payee.id,
+                                   payee_form: { hidden: "true", name: "Renamed" } }
+        end.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
     context "when the payee belongs to a different budget" do
       let(:other_budget) { create(:budget) }
       let(:other_payee)  { create(:payee, budget: other_budget) }
@@ -204,6 +245,16 @@ describe PayeesController do
 
       it "renders the defaults as JSON" do
         expect(response.parsed_body).to eq(defaults.deep_stringify_keys)
+      end
+    end
+
+    context "when the payee is a transfer payee" do
+      let(:transfer) { create(:transaction, :transfer, budget: budget) }
+
+      it "raises a record not found error" do
+        expect do
+          get :defaults, params: { budget_id: budget.id, id: transfer.payee.id }
+        end.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
 

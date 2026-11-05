@@ -4,7 +4,7 @@ class PayeesController < ApplicationController
   # Render the list of payees in the budget.
   def index
     @budget = current_budget
-    @payees = current_budget.payees.order(:name)
+    @payees = payees
   end
 
   # Render the payee edit form.
@@ -23,7 +23,7 @@ class PayeesController < ApplicationController
 
     if @form.update
       if request.format.turbo_stream?
-        @payees = current_budget.payees.order(:name)
+        @payees = payees
       else
         redirect_to budget_payees_path(current_budget), status: :see_other
       end
@@ -48,10 +48,18 @@ class PayeesController < ApplicationController
     params.expect(payee_form: %i(hidden name)).to_h.symbolize_keys
   end
 
-  # Return the payee for the given `id` parameter, scoped to the budget.
+  # Return the payee for the given `id` parameter, scoped to the budget and
+  # excluding transfer payees, which are managed by the transfers themselves.
   #
   # @return [Payee] The requested payee.
   def payee
-    @payee ||= current_budget.payees.find(params.expect(:id))
+    @payee ||= payees.find(params.expect(:id))
+  end
+
+  # Return the budget's payees ordered by name, excluding transfer payees.
+  #
+  # @return [ActiveRecord::Relation] The payees that can be managed.
+  def payees
+    current_budget.payees.without_transfers.order(:name)
   end
 end

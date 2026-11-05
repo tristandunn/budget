@@ -15,11 +15,13 @@ class PayeeForm < BaseForm
 
   # Attempt to rename, hide, or merge the payee if the form is valid.
   #
-  # When the new name matches another payee in the same budget, merge the
-  # payees by reassigning the renamed payee's transactions and destroying it.
-  # The duplicate payee keeps its own visibility, so the submitted hidden value
-  # is ignored. Otherwise, rename the payee in place and update whether it is
-  # hidden from the transaction payee picker.
+  # When the new name matches another non-transfer payee in the same budget,
+  # merge the payees by reassigning the renamed payee's transactions and
+  # destroying it. The duplicate payee keeps its own visibility, so the
+  # submitted hidden value is ignored. Otherwise, rename the payee in place and
+  # update whether it is hidden from the transaction payee picker. A name that
+  # matches a transfer payee is invalid, since a payee cannot be merged into a
+  # transfer payee.
   #
   # @return [Payee] The destroyed payee when it was merged into the duplicate payee.
   # @return [Boolean] Whether the rename or visibility change succeeded.
@@ -40,11 +42,13 @@ class PayeeForm < BaseForm
 
   # Return the other payee in the budget that already has the requested name.
   #
+  # Transfer payees are excluded so that a payee cannot be merged into one.
+  #
   # @return [Payee] The other payee with a matching name.
   # @return [nil] When no other payee has a matching name.
   def duplicate_payee
     @duplicate_payee ||= if name.present?
-                           payee.budget.payees.where.not(id: payee.id).by_name(name).first
+                           payee.budget.payees.without_transfers.where.not(id: payee.id).by_name(name).first
                          end
   end
 
