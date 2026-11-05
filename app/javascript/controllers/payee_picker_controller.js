@@ -4,7 +4,8 @@ import PickerController from "controllers/picker_controller";
  * Inserts a "Create" option in the payee picker after each filter pass
  * whenever the query is non-empty and does not exactly match an existing
  * payee, allowing a new payee to be created inline. Payees with a word that
- * starts with the query are listed before other matches.
+ * starts with the query are listed before other matches. Hidden payees are
+ * listed only when the query exactly matches their name.
  */
 export default class extends PickerController {
   static outlets = ["account-picker", "category-picker"];
@@ -69,6 +70,7 @@ export default class extends PickerController {
    */
   afterFilter(query) {
     this.#sortItems(query);
+    this.#toggleHiddenPayees(query);
 
     const existing   = this.#existingCreateOption();
     const exactMatch = query.length > 0 && this.itemTargets.some((item) => {
@@ -178,6 +180,17 @@ export default class extends PickerController {
     }
 
     return false;
+  }
+
+  // Show a hidden payee only when its label exactly matches the query.
+  #toggleHiddenPayees(query) {
+    const name = query.toLowerCase();
+
+    for (const item of this.itemTargets) {
+      if (item.dataset.hiddenPayee === "true") {
+        item.classList.toggle("hidden", item.dataset.label.toLowerCase() !== name);
+      }
+    }
   }
 
   // Update an existing Create option node with the given query.

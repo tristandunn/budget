@@ -73,14 +73,14 @@ describe PayeesController do
         allow(PayeeForm).to receive(:new).and_return(form)
 
         patch :update, params: { budget_id: budget.id, id: payee.id,
-                                 payee_form: { name: "New Name" } }
+                                 payee_form: { hidden: "1", name: "New Name" } }
       end
 
       it { is_expected.to redirect_to(budget_payees_path(budget)) }
       it { is_expected.to respond_with(:see_other) }
 
       it "initializes the form with the payee and parameters" do
-        expect(PayeeForm).to have_received(:new).with(payee: payee, name: "New Name")
+        expect(PayeeForm).to have_received(:new).with(payee: payee, hidden: "1", name: "New Name")
       end
 
       it "updates the payee" do

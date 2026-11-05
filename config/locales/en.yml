@@ -282,11 +282,15 @@ en:
     edit:
       cancel: "Cancel"
       enter_name: "Enter a name"
+      hide: "Hide"
+      show: "Show"
       submit: "Save"
-      title: "Rename Payee"
+      title: "Edit Payee"
+      visibility: "Payee list visibility"
     index:
       done: "Done"
       empty: "No payees yet."
+      hidden: "Hidden"
       no_matches: "No payees match your search."
       search: "Find a payee"
       title: "Payees"

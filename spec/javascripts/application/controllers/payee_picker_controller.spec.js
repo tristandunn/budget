@@ -138,6 +138,51 @@ describe("PayeePickerController", () => {
       });
     });
 
+    describe("hidden payees", () => {
+      let gamma;
+
+      beforeEach(() => {
+        gamma = buildItem("Gamma");
+        gamma.dataset.hiddenPayee = "true";
+
+        list.appendChild(gamma);
+
+        controller.itemTargets = [alpha, beta, gamma];
+      });
+
+      it("hides a hidden payee when the query is empty", () => {
+        controller.afterFilter("");
+
+        expect(gamma.classList.contains("hidden")).to.be.true;
+      });
+
+      it("hides a hidden payee when the query only partially matches", () => {
+        controller.afterFilter("gam");
+
+        expect(gamma.classList.contains("hidden")).to.be.true;
+      });
+
+      it("shows a hidden payee when the query exactly matches ignoring case", () => {
+        gamma.classList.add("hidden");
+
+        controller.afterFilter("gamma");
+
+        expect(gamma.classList.contains("hidden")).to.be.false;
+      });
+
+      it("does not offer to create a payee for an exact match", () => {
+        controller.afterFilter("gamma");
+
+        expect(list.querySelector("[data-create-option]")).to.be.null;
+      });
+
+      it("leaves a visible payee unchanged", () => {
+        controller.afterFilter("alp");
+
+        expect(alpha.classList.contains("hidden")).to.be.false;
+      });
+    });
+
     it("does nothing when the query is empty", () => {
       controller.afterFilter("");
 

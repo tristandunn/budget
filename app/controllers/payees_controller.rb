@@ -7,14 +7,15 @@ class PayeesController < ApplicationController
     @payees = current_budget.payees.order(:name)
   end
 
-  # Render the payee rename form.
+  # Render the payee edit form.
   def edit
     @budget = current_budget
     @payee  = payee
     @form   = PayeeForm.from(payee: payee)
   end
 
-  # Update the payee, renaming it or merging it into an existing payee.
+  # Update the payee, renaming or hiding it, or merging it into an
+  # existing payee.
   def update
     @budget = current_budget
     @payee  = payee
@@ -44,7 +45,7 @@ class PayeesController < ApplicationController
   #
   # @return [Hash] The permitted parameters for the form.
   def form_parameters
-    params.expect(payee_form: %i(name)).to_h.symbolize_keys
+    params.expect(payee_form: %i(hidden name)).to_h.symbolize_keys
   end
 
   # Return the payee for the given `id` parameter, scoped to the budget.

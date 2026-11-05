@@ -23,10 +23,23 @@ describe "payees/_list.html.erb" do
       expect(html).to have_css("a[data-turbo-frame='payee_rename_dialog']", text: payee.name)
     end
 
+    it "does not mark the payee as hidden" do
+      expect(html).to have_no_text(t("payees.index.hidden"))
+    end
+
     it "exposes the payee name for the search filter" do
       expect(html).to have_css(
         "li[data-label='#{payee.name}'][data-payee-manager-target='item']"
       )
+    end
+  end
+
+  context "with a hidden payee" do
+    let(:payee)  { build_stubbed(:payee, budget: budget, hidden: true) }
+    let(:payees) { [payee] }
+
+    it "marks the payee as hidden" do
+      expect(html).to have_link(href: edit_budget_payee_path(budget, payee), text: t("payees.index.hidden"))
     end
   end
 

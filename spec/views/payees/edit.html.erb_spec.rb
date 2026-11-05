@@ -27,6 +27,36 @@ describe "payees/edit.html.erb" do
     expect(html).to have_field("payee_form_name", with: payee.name)
   end
 
+  it "renders the visibility radio group" do
+    expect(html).to have_css("[role='radiogroup'][aria-label='#{t("payees.edit.visibility")}']")
+  end
+
+  it "renders the show option checked" do
+    expect(html).to have_checked_field("payee_form_hidden_false", visible: :all)
+  end
+
+  it "renders the hide option unchecked" do
+    expect(html).to have_unchecked_field("payee_form_hidden_true", visible: :all)
+  end
+
+  it "renders labels for the show and hide options" do
+    expect(html).to have_css(
+      "label[for='payee_form_hidden_false']", text: t("payees.edit.show")
+    ).and have_css("label[for='payee_form_hidden_true']", text: t("payees.edit.hide"))
+  end
+
+  context "with a hidden payee" do
+    let(:payee) { build_stubbed(:payee, hidden: true) }
+
+    it "renders the hide option checked" do
+      expect(html).to have_checked_field("payee_form_hidden_true", visible: :all)
+    end
+
+    it "renders the show option unchecked" do
+      expect(html).to have_unchecked_field("payee_form_hidden_false", visible: :all)
+    end
+  end
+
   it "renders a submit button targeting the payee form" do
     expect(html).to have_css(
       "button[type='submit'][form='payee_form']",
