@@ -4,7 +4,7 @@ FactoryBot.define do
   factory :category do
     budget
 
-    sequence(:name) { |n| "Category #{n}" }
+    sequence(:name) { |number| "Category #{number}" }
 
     transient do
       with_snapshot { true }

@@ -63,6 +63,20 @@ module BudgetHelper
     class_names("h-5 w-5", "text-taupe-300 pointer-events-none" => disabled)
   end
 
+  # Return the CSS classes for a subcategory amount in the picker.
+  #
+  # @param amount [Integer] The amount in cents.
+  # @return [String] The CSS classes for the given amount.
+  def picker_amount_class(amount)
+    if amount.zero?
+      "text-gray-400"
+    elsif amount.negative?
+      "text-gray-900"
+    else
+      "text-green-600"
+    end
+  end
+
   # Return the CSS class for a progress icon, signaling lime when fully funded
   # and yellow when underfunded. Accepts any progress-like object that responds
   # to `funded?`, such as a month {BudgetSnapshot} or a {TargetProgress}.
@@ -87,20 +101,6 @@ module BudgetHelper
       t("categories.show.target.funded_label")
     else
       t("categories.show.target.percent_funded", percentage: progress.funded_percentage)
-    end
-  end
-
-  # Return the CSS classes for a subcategory amount in the picker.
-  #
-  # @param amount [Integer] The amount in cents.
-  # @return [String] The CSS classes for the given amount.
-  def picker_amount_class(amount)
-    if amount.zero?
-      "text-gray-400"
-    elsif amount.negative?
-      "text-gray-900"
-    else
-      "text-green-600"
     end
   end
 

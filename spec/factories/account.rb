@@ -4,7 +4,7 @@ FactoryBot.define do
   factory :account do
     budget
 
-    sequence(:name) { |n| "Account #{n}" }
+    sequence(:name) { |number| "Account #{number}" }
 
     balance { Faker::Number.number(digits: 5) }
     credit  { false }
