@@ -40,8 +40,48 @@
     <% end %>
   </td>
 
-  <td class="py-2 px-4 text-sm text-right whitespace-nowrap">
-    <%= number_to_money(-budget_snapshot.snapshot_for(subcategory.id).amount_used) %>
+  <td
+    class="relative py-2 px-4 text-sm text-right whitespace-nowrap"
+    data-action="turbo:frame-load->anchored-popover#show"
+    data-controller="anchored-popover"
+  >
+    <%= link_to number_to_money(-budget_snapshot.snapshot_for(subcategory.id).amount_used),
+                activity_budget_category_path(budget, subcategory,
+                                              year:  budget_snapshot.date.year,
+                                              month: budget_snapshot.date.month),
+                class: "text-inherit hover:text-indigo-600",
+                aria:  { expanded: false },
+                data:  {
+                  action:                  "anchored-popover#activate",
+                  anchored_popover_target: "trigger",
+                  turbo_frame:             dom_id(subcategory, :activity),
+                  turbo_prefetch:          false
+                } %>
+
+    <div
+      class="
+        group absolute top-full right-2 z-20 mt-2 hidden w-[30rem] rounded-lg border
+        border-taupe-200 bg-white text-left font-normal shadow-xl
+        data-[placement=above]:top-auto data-[placement=above]:bottom-full
+        data-[placement=above]:mt-0 data-[placement=above]:mb-2
+      "
+      data-anchored-popover-target="menu"
+    >
+      <span
+        aria-hidden="true"
+        class="
+          absolute -top-1.5 right-6 size-3 rotate-45 border-t border-l border-taupe-200
+          bg-taupe-100 group-data-[placement=above]:top-auto
+          group-data-[placement=above]:-bottom-1.5 group-data-[placement=above]:border-t-0
+          group-data-[placement=above]:border-l-0 group-data-[placement=above]:border-r
+          group-data-[placement=above]:border-b group-data-[placement=above]:bg-white
+        "
+      ></span>
+
+      <div class="overflow-hidden rounded-lg">
+        <%= turbo_frame_tag dom_id(subcategory, :activity) %>
+      </div>
+    </div>
   </td>
 
   <td class="py-2 px-4 text-sm text-right whitespace-nowrap">

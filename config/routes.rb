@@ -15,6 +15,9 @@ Rails.application.routes.draw do
       collection do
         get :summary
       end
+      member do
+        get :activity
+      end
       resource :assignment, only: %i(edit update)
       resource :snooze, only: %i(create destroy)
       resource :target, only: %i(edit update destroy)

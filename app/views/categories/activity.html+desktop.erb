@@ -1,0 +1,60 @@
+<%= turbo_frame_tag dom_id(@category, :activity) do %>
+  <div class="max-h-56 overflow-y-auto">
+    <table class="w-full table-fixed text-xs">
+      <caption class="sr-only">
+        <%= t(".caption", name: @category.name, month: l(@budget_snapshot.date, format: :month_and_year)) %>
+      </caption>
+
+      <colgroup>
+        <col class="w-24">
+        <col>
+        <col>
+        <col class="w-24">
+      </colgroup>
+
+      <thead
+        class="
+          sticky top-0 bg-taupe-100 text-[0.625rem] font-semibold tracking-wide text-taupe-600
+          uppercase
+        "
+      >
+        <tr>
+          <th scope="col" class="py-2 pl-4 pr-2 text-left"><%= t(".date") %></th>
+          <th scope="col" class="py-2 px-2 text-left"><%= t(".payee") %></th>
+          <th scope="col" class="py-2 px-2 text-left"><%= t(".memo") %></th>
+          <th scope="col" class="py-2 pl-2 pr-4 text-right"><%= t(".amount") %></th>
+        </tr>
+      </thead>
+
+      <tbody class="divide-y divide-taupe-200">
+        <% if @transactions.empty? %>
+          <tr>
+            <td colspan="4" class="px-4 py-6 text-center text-taupe-600">
+              <%= t(".empty") %>
+            </td>
+          </tr>
+        <% else %>
+          <% @transactions.each do |transaction| %>
+            <tr>
+              <td class="py-2 pl-4 pr-2 whitespace-nowrap tabular-nums text-taupe-600">
+                <%= l(transaction.date, format: :numeric) %>
+              </td>
+
+              <td class="py-2 px-2 truncate">
+                <%= transaction.payee.name %>
+              </td>
+
+              <td class="py-2 px-2 truncate text-taupe-600">
+                <%= transaction.memo %>
+              </td>
+
+              <td class="py-2 pl-2 pr-4 text-right whitespace-nowrap tabular-nums">
+                <%= number_to_money(transaction.amount) %>
+              </td>
+            </tr>
+          <% end %>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>
