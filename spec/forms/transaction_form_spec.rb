@@ -731,6 +731,14 @@ describe TransactionForm, type: :form do
 
       it { is_expected.to be(true) }
 
+      it "applies the form attributes before posting the transaction" do
+        allow(PostRecurringTransaction).to receive(:call) do |transaction:|
+          transaction.slice(:amount, :date, :memo)
+        end
+
+        expect(update).to eq("amount" => 2500, "date" => Date.current, "memo" => "A memo")
+      end
+
       it "updates the transaction with the form attributes" do
         update
 
