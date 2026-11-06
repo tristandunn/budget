@@ -19,6 +19,39 @@ describe("PopoverController", () => {
     instance.disconnect();
   });
 
+  describe("#close", () => {
+    beforeEach(() => {
+      instance.open();
+    });
+
+    it("hides the menu", () => {
+      instance.close();
+
+      expect(menu.classList.contains("hidden")).to.eq(true);
+    });
+
+    it("stops closing on outside clicks", () => {
+      instance.close();
+      menu.classList.remove("hidden");
+
+      document.dispatchEvent(new window.Event("click"));
+
+      expect(menu.classList.contains("hidden")).to.eq(false);
+    });
+  });
+
+  describe("#closed", () => {
+    it("is true when the menu is hidden", () => {
+      expect(instance.closed).to.eq(true);
+    });
+
+    it("is false when the menu is visible", () => {
+      menu.classList.remove("hidden");
+
+      expect(instance.closed).to.eq(false);
+    });
+  });
+
   describe("#connect", () => {
     it("closes the menu before the page is cached", () => {
       menu.classList.remove("hidden");
@@ -74,6 +107,15 @@ describe("PopoverController", () => {
     });
   });
 
+  describe("#dismiss", () => {
+    it("closes the menu", () => {
+      instance.open();
+      instance.dismiss();
+
+      expect(menu.classList.contains("hidden")).to.eq(true);
+    });
+  });
+
   describe("#keep", () => {
     it("stops the click from reaching the outside click listener", () => {
       const event = new window.Event("click");
@@ -83,6 +125,22 @@ describe("PopoverController", () => {
       instance.keep(event);
 
       expect(event.stopPropagation.calledOnce).to.eq(true);
+    });
+  });
+
+  describe("#open", () => {
+    it("shows the menu", () => {
+      instance.open();
+
+      expect(menu.classList.contains("hidden")).to.eq(false);
+    });
+
+    it("closes the menu on the next outside click", () => {
+      instance.open();
+
+      document.dispatchEvent(new window.Event("click"));
+
+      expect(menu.classList.contains("hidden")).to.eq(true);
     });
   });
 

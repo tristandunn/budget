@@ -1,6 +1,17 @@
 # frozen_string_literal: true
 
 class CategoriesController < ApplicationController
+  # Render the transactions that make up the category activity for the month.
+  def activity
+    @category        = category
+    @budget_snapshot = budget_snapshot
+    @transactions    = current_budget.transactions
+                                     .where(subcategory: category, date: budget_snapshot.date.all_month)
+                                     .where.not(status: :upcoming)
+                                     .includes(:payee)
+                                     .reorder(date: :desc, created_at: :desc)
+  end
+
   # Render the category details.
   def show
     @budget          = current_budget

@@ -23,6 +23,18 @@ describe "categories/_subcategory_row.html+desktop.erb" do
     stub_template("categories/_available.html.erb" => "AVAILABLE_PARTIAL")
   end
 
+  it "links the activity amount to the category transactions in a popover frame" do
+    expect(html).to have_link(
+      href: activity_budget_category_path(budget, subcategory,
+                                          year:  budget_snapshot.date.year,
+                                          month: budget_snapshot.date.month)
+    ).and have_css("[data-anchored-popover-target=menu] turbo-frame##{dom_id(subcategory, :activity)}")
+  end
+
+  it "marks the activity link as a collapsed popup trigger" do
+    expect(html).to have_css("a[aria-expanded=false][data-anchored-popover-target=trigger]")
+  end
+
   it "identifies the row so it can be targeted by turbo streams" do
     expect(html).to have_css("tr##{dom_id(subcategory, :row)}")
   end
