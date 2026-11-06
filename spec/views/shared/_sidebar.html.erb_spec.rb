@@ -93,6 +93,21 @@ describe "shared/_sidebar.html.erb" do
     )
   end
 
+  it "renders the account settings link in the menu targeting the account settings dialog frame" do
+    expect(html).to have_css(
+      "[data-popover-target='menu'] a#edit-user[href='#{edit_user_path}']" \
+      "[data-turbo-frame='user_settings_dialog']",
+      text: t("users.edit.title")
+    )
+  end
+
+  it "renders the account settings dialog" do
+    expect(html).to have_css(
+      "dialog.floating-dialog#user_settings_dialog_modal turbo-frame#user_settings_dialog",
+      visible: :all
+    )
+  end
+
   it "renders the budget settings dialog" do
     expect(html).to have_css(
       "dialog.floating-dialog#budget_settings_dialog_modal turbo-frame#budget_settings_dialog",

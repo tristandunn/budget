@@ -1,0 +1,7 @@
+<%= turbo_stream.replace "sidebar_user_email" do %>
+  <span id="sidebar_user_email" class="block truncate text-xs text-indigo-300"><%= @user.email %></span>
+<% end %>
+
+<%= turbo_stream.update "user_settings_dialog" do %>
+  <div data-controller="dialog-dismisser"></div>
+<% end %>

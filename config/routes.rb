@@ -41,6 +41,7 @@ Rails.application.routes.draw do
   end
 
   resource :session, only: %i(new create destroy)
+  resource :user, only: %i(edit update)
 
   get "/health", to: "health#index"
   get "/manifest", to:          "rails/pwa#manifest",

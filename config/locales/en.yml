@@ -145,6 +145,8 @@ en:
     attributes:
       budget:
         name: "Name"
+      user:
+        email: "E-mail Address"
     errors:
       models:
         transaction:
@@ -344,3 +346,10 @@ en:
   sidebar:
     all_accounts: "All Accounts"
     open_budget: "Open Budget"
+
+  users:
+    edit:
+      cancel: "Cancel"
+      close: "Close"
+      submit: "Save"
+      title: "Account"
