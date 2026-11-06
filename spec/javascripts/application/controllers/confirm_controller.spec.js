@@ -17,7 +17,6 @@ describe("ConfirmController", () => {
 
   afterEach(() => {
     instance.disconnect();
-    element.remove();
   });
 
   describe("#connect", () => {

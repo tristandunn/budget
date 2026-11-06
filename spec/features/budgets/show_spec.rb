@@ -66,6 +66,9 @@ describe "Budget" do
     end
 
     context "when navigating months with the arrow keys", :js do
+      let(:budget)      { subcategory.budget }
+      let(:subcategory) { create(:category, :subcategory) }
+
       before do
         sign_in_for(budget)
         visit budget_path(budget)
@@ -83,6 +86,12 @@ describe "Budget" do
         wait_for(have_text(I18n.l(1.month.from_now.to_date, format: :month_and_year))) do
           find("body").send_keys(:arrow_left)
         end
+
+        expect(page).to have_text(I18n.l(Date.current, format: :month_and_year))
+      end
+
+      it "does not navigate while a form field has focus" do
+        find("input[data-selection-target='subcategory']").send_keys(:arrow_right)
 
         expect(page).to have_text(I18n.l(Date.current, format: :month_and_year))
       end

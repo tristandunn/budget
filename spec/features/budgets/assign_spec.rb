@@ -11,6 +11,24 @@ describe "Assigning to a subcategory", :js do
     sign_in_for(budget)
   end
 
+  context "when blurring the assignment input" do
+    before do
+      create_snapshots_for(Date.current.beginning_of_month)
+      visit budget_path(budget)
+      assign_amount("250.00", key: :tab)
+    end
+
+    it "submits the assignment" do
+      within("tr", text: subcategory.name) do
+        expect(page).to have_text("$250.00")
+      end
+    end
+
+    it "updates the available to assign amount" do
+      expect(page).to have_css("#available_to_assign", text: "$750.00")
+    end
+  end
+
   context "when on the current month" do
     before do
       create_snapshots_for(Date.current.beginning_of_month)
@@ -19,11 +37,13 @@ describe "Assigning to a subcategory", :js do
     end
 
     it "updates the assigned amount" do
-      expect(page).to have_text("$250.00")
+      within("tr", text: subcategory.name) do
+        expect(page).to have_text("$250.00")
+      end
     end
 
     it "updates the available to assign amount" do
-      expect(page).to have_text("$750.00")
+      expect(page).to have_css("#available_to_assign", text: "$750.00")
     end
   end
 
@@ -43,11 +63,13 @@ describe "Assigning to a subcategory", :js do
     end
 
     it "updates the assigned amount" do
-      expect(page).to have_text("$250.00")
+      within("tr", text: subcategory.name) do
+        expect(page).to have_text("$250.00")
+      end
     end
 
     it "updates the available to assign amount" do
-      expect(page).to have_text("$750.00")
+      expect(page).to have_css("#available_to_assign", text: "$750.00")
     end
   end
 
@@ -69,11 +91,12 @@ describe "Assigning to a subcategory", :js do
   # submit the given amount.
   #
   # @param amount [String, Integer] The amount to assign.
+  # @param key [Symbol] The key to send to submit the amount.
   # @return [void]
-  def assign_amount(amount)
+  def assign_amount(amount, key: :return)
     find("tbody td a", text: "$0.00").click
     fill_in "assignment_form_amount", with: amount
-    find_by_id("assignment_form_amount").native.send_keys(:return)
+    find_by_id("assignment_form_amount").native.send_keys(key)
   end
 
   # Create a snapshot of the parent category for a month.

@@ -66,6 +66,45 @@ describe "Transfer", :mobile do
     end
   end
 
+  context "when selecting an account through the picker", :js do
+    before do
+      create(:account, budget: budget, name: "Savings")
+
+      visit budget_account_transactions_path(budget, credit_card)
+
+      find("button[aria-label='#{t("transactions.index.actions")}']").click
+      click_on t("accounts.transactions.actions.record_payment")
+    end
+
+    it "creates a transfer between the accounts chosen in the pickers" do
+      select_in_picker("from-account-picker", "Savings")
+      fill_in TransferForm.human_attribute_name(:amount), with: "50.00"
+      click_on t("transfers.new.submit")
+
+      within("li", text: t("transfers.payee.from", account: "Savings")) do
+        expect(page).to have_text("$50.00")
+      end
+    end
+
+    it "keeps the dialog open and the entered amount when submitting without an account" do
+      fill_in TransferForm.human_attribute_name(:amount), with: "50.00"
+      click_on t("transfers.new.submit")
+
+      expect(page).to have_css("dialog#transaction_dialog_modal[open]", visible: :all)
+        .and(have_field(TransferForm.human_attribute_name(:amount), with: "$50.00"))
+    end
+
+    it "returns to the form when dismissing a picker" do
+      open_picker("from-account-picker")
+
+      within "[data-from-account-picker-target='picker']" do
+        click_on t("shared.picker.back")
+      end
+
+      expect(page).to have_no_css("[data-from-account-picker-target='picker'].open")
+    end
+  end
+
   context "when clicking a transfer row" do
     before do
       CreateTransfer.call(
