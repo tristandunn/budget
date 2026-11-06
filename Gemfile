@@ -24,7 +24,7 @@ gem "thruster",          "0.1.27", require: false
 gem "turbo-rails",       "2.0.23"
 
 group :development, :test do
-  gem "rspec-rails", "8.0.4"
+  gem "rspec-rails", "8.1.0"
 end
 
 group :development do
@@ -42,7 +42,7 @@ group :development do
   gem "rubocop-rake",        "0.7.1",  require: false
   gem "rubocop-rspec",       "3.10.2", require: false
   gem "rubocop-rspec_rails", "2.33.0", require: false
-  gem "rubocop-vibe",        "0.6.0",  require: false
+  gem "rubocop-vibe",        "0.7.0",  require: false
   gem "web-console",         "4.3.0"
   gem "yard-lint",           "1.13.1", require: false
 end

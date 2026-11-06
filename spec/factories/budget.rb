@@ -4,7 +4,7 @@ FactoryBot.define do
   factory :budget do
     users { [user] }
 
-    sequence(:name) { |n| "Budget #{n}" }
+    sequence(:name) { |number| "Budget #{number}" }
 
     transient do
       user { association(:user) }

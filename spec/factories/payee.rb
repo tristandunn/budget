@@ -4,6 +4,6 @@ FactoryBot.define do
   factory :payee do
     budget
 
-    sequence(:name) { |n| "Payee #{n}" }
+    sequence(:name) { |number| "Payee #{number}" }
   end
 end
