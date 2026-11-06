@@ -67,6 +67,16 @@ describe Middleware::Backdoor do
     end
   end
 
+  context "with nested user parameters" do
+    let(:env) { Rack::MockRequest.env_for("", params: { user: { email: "a@example.com" } }) }
+
+    it "does not update the session" do
+      call
+
+      expect(env["rack.session"]).to be_nil
+    end
+  end
+
   context "without user parameters" do
     let(:env) { Rack::MockRequest.env_for("", params: { test: 4 }) }
 

@@ -13,6 +13,9 @@ module Middleware
 
     # Translate the `user` parameter into a session.
     #
+    # Only a scalar value is translated, so a nested `user` parameter submitted
+    # by a form is ignored.
+    #
     # On the sign-in path, return a no-content response so the feature test
     # sign-in helper can set the session cookie without rendering anything or
     # following the redirect `SessionsController` would issue for an
@@ -28,7 +31,7 @@ module Middleware
     def call(env)
       request = Rack::Request.new(env)
 
-      if request.params.key?("user")
+      if request.params["user"].is_a?(String)
         request.session[:user_id] = request.params["user"].to_i
 
         if request.path == SIGN_IN_PATH
