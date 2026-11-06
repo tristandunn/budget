@@ -55,6 +55,15 @@ describe("PopoverController", () => {
       ).to.eq(true);
     });
 
+    it("unbinds the keydown listener it bound", () => {
+      expect(
+        document.removeEventListener.calledWith(
+          "keydown",
+          boundFor("keydown")
+        )
+      ).to.eq(true);
+    });
+
     it("unbinds the before-cache listener it bound", () => {
       expect(
         document.removeEventListener.calledWith(
@@ -62,6 +71,18 @@ describe("PopoverController", () => {
           boundFor("turbo:before-cache")
         )
       ).to.eq(true);
+    });
+  });
+
+  describe("#keep", () => {
+    it("stops the click from reaching the outside click listener", () => {
+      const event = new window.Event("click");
+
+      sinon.spy(event, "stopPropagation");
+
+      instance.keep(event);
+
+      expect(event.stopPropagation.calledOnce).to.eq(true);
     });
   });
 
@@ -98,6 +119,26 @@ describe("PopoverController", () => {
         document.dispatchEvent(new window.Event("click"));
 
         expect(menu.classList.contains("hidden")).to.eq(true);
+      });
+
+      it("closes the menu when pressing Escape", () => {
+        instance.toggle(event);
+
+        document.dispatchEvent(new window.KeyboardEvent("keydown", {
+          "key": "Escape"
+        }));
+
+        expect(menu.classList.contains("hidden")).to.eq(true);
+      });
+
+      it("keeps the menu open when pressing another key", () => {
+        instance.toggle(event);
+
+        document.dispatchEvent(new window.KeyboardEvent("keydown", {
+          "key": "Enter"
+        }));
+
+        expect(menu.classList.contains("hidden")).to.eq(false);
       });
     });
   });

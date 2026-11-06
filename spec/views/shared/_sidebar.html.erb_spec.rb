@@ -40,15 +40,36 @@ describe "shared/_sidebar.html.erb" do
     expect(html).to have_no_css("[data-popover-target='menu'] a[href='#{budget_path(budget)}']")
   end
 
+  it "does not render the open budget item when the user belongs to a single budget" do
+    expect(html).to have_no_css("#open-budget").and(have_no_css("#budget-list"))
+  end
+
   context "when the user belongs to more than one budget" do
+    it "renders the open budget item in the menu" do
+      create(:budget, user: user)
+
+      expect(html).to have_css(
+        "[data-popover-target='menu'] button#open-budget[aria-controls='budget-list'][aria-haspopup='true']",
+        text: t("sidebar.open_budget")
+      )
+    end
+
+    it "renders the budget flyout hidden by default" do
+      create(:budget, user: user)
+
+      expect(html).to have_css("#open-budget + #budget-list.hidden", visible: :all)
+    end
+
     it "lists each budget in the menu linking to its budget page" do
       other_budget = create(:budget, user: user)
 
       expect(html).to have_css(
-        "[data-popover-target='menu'] a[href='#{budget_path(budget)}']", text: budget.name
+        "#budget-list a[href='#{budget_path(budget)}']", text:    budget.name,
+                                                         visible: :all
       ).and(
         have_css(
-          "[data-popover-target='menu'] a[href='#{budget_path(other_budget)}']", text: other_budget.name
+          "#budget-list a[href='#{budget_path(other_budget)}']", text:    other_budget.name,
+                                                                 visible: :all
         )
       )
     end
@@ -57,9 +78,9 @@ describe "shared/_sidebar.html.erb" do
       other_budget = create(:budget, user: user)
 
       expect(html).to have_css(
-        "[data-popover-target='menu'] a[href='#{budget_path(budget)}'][aria-current='true']"
+        "#budget-list a[href='#{budget_path(budget)}'][aria-current='true']", visible: :all
       ).and(
-        have_no_css("[data-popover-target='menu'] a[href='#{budget_path(other_budget)}'][aria-current]")
+        have_no_css("#budget-list a[href='#{budget_path(other_budget)}'][aria-current]", visible: :all)
       )
     end
   end

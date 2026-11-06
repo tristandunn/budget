@@ -76,10 +76,18 @@
       "
     >
       <% if sidebar_budgets.many? %>
-        <% sidebar_budgets.each do |sidebar_budget| %>
-          <%= link_to budget_path(sidebar_budget),
-                      aria:  { current: (sidebar_budget == budget ? "true" : nil) },
-                      class: "flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-left text-sm text-taupe-800 no-underline hover:bg-taupe-200" do %>
+        <div class="group/budgets relative">
+          <button
+            id="open-budget"
+            type="button"
+            aria-controls="budget-list"
+            aria-haspopup="true"
+            data-action="popover#keep"
+            class="
+              flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-left
+              text-sm text-taupe-800 hover:bg-taupe-200 group-hover/budgets:bg-taupe-200
+            "
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 16 16"
@@ -88,27 +96,68 @@
               aria-hidden="true"
             >
               <path
-                d="M4.75 0a.75.75 0 0 1 .75.75V2h5V.75a.75.75 0 0 1 1.5 0V2h1.25c.966 0 1.75.784 1.75 1.75v10.5A1.75 1.75 0 0 1 13.25 16H2.75A1.75 1.75 0 0 1 1 14.25V3.75C1 2.784 1.784 2 2.75 2H4V.75A.75.75 0 0 1 4.75 0ZM2.5 7.5v6.75c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25V7.5Zm10.75-4H2.75a.25.25 0 0 0-.25.25V6h11V3.75a.25.25 0 0 0-.25-.25Z"
+                d="M1.75 1A1.75 1.75 0 0 0 0 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0 0 16 13.25v-8.5A1.75 1.75 0 0 0 14.25 3H7.5a.25.25 0 0 1-.2-.1l-.9-1.2C6.07 1.26 5.55 1 5 1H1.75Z"
               />
             </svg>
 
-            <span class="min-w-0 flex-1 truncate"><%= sidebar_budget.name %></span>
+            <span class="min-w-0 flex-1 truncate"><%= t("sidebar.open_budget") %></span>
 
-            <% if sidebar_budget == budget %>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 16 16"
-                class="h-4 w-4 shrink-0 text-taupe-800"
-                fill="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
-                />
-              </svg>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 16 16"
+              class="h-4 w-4 shrink-0 text-taupe-800"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                d="M6.22 3.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L9.94 8 6.22 4.28a.75.75 0 0 1 0-1.06Z"
+              />
+            </svg>
+          </button>
+
+          <div
+            id="budget-list"
+            class="
+              absolute top-0 left-full z-30 hidden min-w-48 flex-col gap-1 rounded-lg border
+              border-taupe-200 bg-white p-1 shadow-lg group-focus-within/budgets:flex
+              group-hover/budgets:flex
+            "
+          >
+            <% sidebar_budgets.each do |sidebar_budget| %>
+              <%= link_to budget_path(sidebar_budget),
+                          aria:  { current: (sidebar_budget == budget ? "true" : nil) },
+                          class: "flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-left text-sm text-taupe-800 no-underline hover:bg-taupe-200" do %>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 16 16"
+                  class="h-4 w-4 shrink-0 text-taupe-800"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M4.75 0a.75.75 0 0 1 .75.75V2h5V.75a.75.75 0 0 1 1.5 0V2h1.25c.966 0 1.75.784 1.75 1.75v10.5A1.75 1.75 0 0 1 13.25 16H2.75A1.75 1.75 0 0 1 1 14.25V3.75C1 2.784 1.784 2 2.75 2H4V.75A.75.75 0 0 1 4.75 0ZM2.5 7.5v6.75c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25V7.5Zm10.75-4H2.75a.25.25 0 0 0-.25.25V6h11V3.75a.25.25 0 0 0-.25-.25Z"
+                  />
+                </svg>
+
+                <span class="min-w-0 flex-1 truncate"><%= sidebar_budget.name %></span>
+
+                <% if sidebar_budget == budget %>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 16 16"
+                    class="h-4 w-4 shrink-0 text-taupe-800"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                    />
+                  </svg>
+                <% end %>
+              <% end %>
             <% end %>
-          <% end %>
-        <% end %>
+          </div>
+        </div>
         <div class="my-1 border-t border-taupe-200"></div>
       <% end %>
 
