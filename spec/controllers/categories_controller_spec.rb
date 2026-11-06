@@ -283,6 +283,87 @@ describe CategoriesController do
     end
   end
 
+  describe "#activity" do
+    let(:subcategory) { create(:category, :subcategory, budget: budget, with_snapshot: false) }
+
+    context "without transactions" do
+      before do
+        get :activity, params: { budget_id: budget.id, id: subcategory.id }
+      end
+
+      it { is_expected.to respond_with(200) }
+      it { is_expected.to render_template(:activity) }
+
+      it "assigns the category" do
+        expect(assigns(:category)).to eq(subcategory)
+      end
+
+      it "assigns the budget snapshot for the current month" do
+        expect(assigns(:budget_snapshot)).to have_attributes(date: Date.current.beginning_of_month)
+      end
+
+      it "assigns no transactions" do
+        expect(assigns(:transactions)).to be_empty
+      end
+    end
+
+    context "with transactions" do
+      before do
+        create(:transaction, budget: budget, date: Date.current.beginning_of_month, subcategory: subcategory)
+        create(:transaction, budget: budget, date: Date.current.beginning_of_month + 1, subcategory: subcategory)
+        create(:transaction, budget: budget, date: 1.month.ago.to_date, subcategory: subcategory)
+        create(:transaction, :upcoming, budget: budget, date: Date.current.end_of_month, subcategory: subcategory)
+        create(:transaction, budget: budget, date: Date.current.beginning_of_month)
+
+        get :activity, params: { budget_id: budget.id, id: subcategory.id }
+      end
+
+      it "assigns the posted transactions for the month with the newest first" do
+        expect(assigns(:transactions).map(&:date)).to eq(
+          [Date.current.beginning_of_month + 1, Date.current.beginning_of_month]
+        )
+      end
+    end
+
+    context "with a month and year" do
+      let(:requested_date) { 1.month.from_now.beginning_of_month.to_date }
+
+      before do
+        create(:transaction, budget: budget, date: requested_date, subcategory: subcategory)
+        create(:transaction, budget: budget, date: Date.current, subcategory: subcategory)
+
+        get :activity, params: {
+          budget_id: budget.id,
+          id:        subcategory.id,
+          month:     requested_date.month,
+          year:      requested_date.year
+        }
+      end
+
+      it "assigns the transactions for the requested month" do
+        expect(assigns(:transactions).map(&:date)).to eq([requested_date])
+      end
+    end
+
+    context "with an inflow category" do
+      let(:inflow) { create(:category, :inflow_subcategory, budget: budget) }
+
+      it "raises an ActiveRecord::RecordNotFound error" do
+        expect { get :activity, params: { budget_id: budget.id, id: inflow.id } }
+          .to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    context "with a category belonging to a different budget" do
+      let(:other_subcategory) { create(:category, :subcategory) }
+
+      it "raises an ActiveRecord::RecordNotFound error" do
+        expect { get :activity, params: { budget_id: budget.id, id: other_subcategory.id } }
+          .to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+  end
+
   describe "#summary" do
     let(:subcategories) { create_list(:category, 2, :subcategory, budget: budget, with_snapshot: false) }
     let(:summary)       { instance_double(CategorySummary) }

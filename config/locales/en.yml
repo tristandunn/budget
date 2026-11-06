@@ -65,6 +65,13 @@ en:
         reconciled_never: "Never reconciled."
 
   categories:
+    activity:
+      amount: "Amount"
+      caption: "%{name} transactions for %{month}"
+      date: "Date"
+      empty: "No transactions this month."
+      memo: "Memo"
+      payee: "Payee"
     category_header:
       assigned: "Assigned"
       available: "Available"
