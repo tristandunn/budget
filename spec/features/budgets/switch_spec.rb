@@ -13,6 +13,7 @@ describe "Budget switching", :js do
 
   it "switches to another budget from the budget menu" do
     find("button[aria-label='#{t("budgets.show.menu")}']").click
+    find_by_id("open-budget").click
     click_on other_budget.name
 
     expect(page).to have_current_path(budget_path(other_budget))
