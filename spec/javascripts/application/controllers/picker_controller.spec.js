@@ -95,8 +95,6 @@ describe("PickerController", () => {
 
       expect(search.value).to.eq("");
       expect(document.activeElement).to.eq(search);
-
-      document.body.removeChild(search);
     });
 
     it("forces a reflow before adding the open class", () => {
@@ -130,8 +128,6 @@ describe("PickerController", () => {
 
       expect(search.value).to.eq("old query");
       expect(document.activeElement).not.to.eq(search);
-
-      document.body.removeChild(search);
     });
   });
 

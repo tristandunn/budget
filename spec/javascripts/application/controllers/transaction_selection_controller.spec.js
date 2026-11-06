@@ -65,7 +65,6 @@ describe("TransactionSelectionController", () => {
 
   afterEach(() => {
     instance.disconnect();
-    element.remove();
   });
 
   describe("#connect", () => {
@@ -351,8 +350,6 @@ describe("TransactionSelectionController", () => {
       document.dispatchEvent(new window.KeyboardEvent("keydown", { "key": "Escape" }));
 
       expect(alpha.checked).to.eq(true);
-
-      dialog.remove();
     });
   });
 });

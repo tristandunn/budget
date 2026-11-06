@@ -55,6 +55,30 @@ describe "Transaction" do
     expect(page).to have_text(t("transactions.list.scheduled")).and(have_text("Test Payee"))
   end
 
+  it "keeps the dialog open and the entered amount when required pickers are empty", :js do
+    fill_in t("activemodel.attributes.transaction_form.amount"), with: -100
+    click_on t("transactions.new.submit")
+
+    expect(page).to have_css("dialog#transaction_dialog_modal[open]", visible: :all)
+      .and(have_field(t("activemodel.attributes.transaction_form.amount"), with: "-$100"))
+  end
+
+  it "keeps the dialog open when the amount is zero", :js do
+    fill_in_amount_payee_and_category(subcategory: subcategory, amount: "0")
+    click_on t("transactions.new.submit")
+
+    expect(page).to have_css("dialog#transaction_dialog_modal[open]", visible: :all)
+  end
+
+  it "creates a transaction using the pickers", :js do
+    fill_in_amount_payee_and_category(subcategory: subcategory)
+    select_in_picker("account-picker", account.name)
+    select_in_picker("frequency-picker", t("transactions.frequency.labels.monthly"))
+    click_on t("transactions.new.submit")
+
+    expect(page).to have_text(t("transactions.list.scheduled")).and(have_text("Test Payee"))
+  end
+
   it "posts a recurring transaction with a new payee" do
     fill_in_frequency(:monthly)
     fill_in_transaction_and_submit(account: account, subcategory: subcategory)
@@ -67,6 +91,17 @@ describe "Transaction" do
 
   protected
 
+  # Fill in the amount, payee, and category fields of the new transaction form.
+  #
+  # @param subcategory [Category] The subcategory to select.
+  # @param amount [String, Integer] The amount to enter.
+  # @return [void]
+  def fill_in_amount_payee_and_category(subcategory:, amount: -100)
+    fill_in t("activemodel.attributes.transaction_form.amount"), with: amount
+    fill_in_payee("Test Payee")
+    fill_in_category(subcategory)
+  end
+
   # Fill in the new transaction form with a test payee and submit it.
   #
   # @param account [Account] The account to select.
@@ -74,9 +109,7 @@ describe "Transaction" do
   # @param amount [Integer] The amount to enter.
   # @return [void]
   def fill_in_transaction_and_submit(account:, subcategory:, amount: -100)
-    fill_in t("activemodel.attributes.transaction_form.amount"), with: amount
-    fill_in_payee("Test Payee")
-    fill_in_category(subcategory)
+    fill_in_amount_payee_and_category(subcategory: subcategory, amount: amount)
     fill_in_account(account)
     click_on t("transactions.new.submit")
   end
