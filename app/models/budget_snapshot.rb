@@ -80,6 +80,16 @@ class BudgetSnapshot
     end
   end
 
+  # Return the available amount carried in from prior months for the category,
+  # summed across every snapshot before the displayed month. For a top-level
+  # category, sum the rolled-over amounts of its subcategories.
+  #
+  # @param category [Category] The category or category group.
+  # @return [Integer] The rolled-over amount in cents.
+  def rollover_for(category)
+    available_for(category) - amount_for(category, snapshots.transform_values(&:amount_remaining))
+  end
+
   # Return the category snapshot for the given category ID, initializing a new
   # one if none exists.
   #
@@ -103,13 +113,11 @@ class BudgetSnapshot
   # @param category [Category] The category to evaluate.
   # @return [TargetProgress] The target progress for the category.
   def target_progress_for(category)
-    snapshot = snapshot_for(category.id)
-
     TargetProgress.new(
       category:     category,
       future_month: future_month?,
-      rollover:     rollover_for(category, snapshot),
-      snapshot:     snapshot
+      rollover:     rollover_for(category),
+      snapshot:     snapshot_for(category.id)
     )
   end
 
@@ -242,17 +250,6 @@ class BudgetSnapshot
   # @return [ActiveRecord::Relation] The categories with a monthly target.
   def monthly_target_categories
     @monthly_target_categories ||= budget.subcategories.with_monthly_target
-  end
-
-  # Return the available amount carried in from prior months for the category,
-  # derived from the cumulative balance through the displayed month minus the
-  # displayed month's own remaining amount.
-  #
-  # @param category [Category] The category to evaluate.
-  # @param snapshot [CategorySnapshot] The displayed-month snapshot.
-  # @return [Integer] The rolled-over amount in cents.
-  def rollover_for(category, snapshot)
-    (available_amounts_by_category[category.id] || 0) - snapshot.amount_remaining
   end
 
   # Return the budget snapshot month, which owns the displayed month and the

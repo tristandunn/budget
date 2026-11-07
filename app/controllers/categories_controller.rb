@@ -3,10 +3,9 @@
 class CategoriesController < ApplicationController
   # Render the category details.
   def show
-    @budget                   = current_budget
-    @category                 = category
-    @budget_snapshot          = budget_snapshot
-    @previous_budget_snapshot = previous_budget_snapshot
+    @budget          = current_budget
+    @budget_snapshot = budget_snapshot
+    @category        = category
   end
 
   # Render the summary for the selected subcategories.
@@ -14,9 +13,8 @@ class CategoriesController < ApplicationController
     @budget_snapshot = budget_snapshot
     @summary         = CategorySummary.new(
       current_budget,
-      budget_snapshot:          @budget_snapshot,
-      ids:                      params.expect(ids: []),
-      previous_budget_snapshot: previous_budget_snapshot
+      budget_snapshot: @budget_snapshot,
+      ids:             params.expect(ids: [])
     )
   end
 
@@ -34,8 +32,7 @@ class CategoriesController < ApplicationController
     @form     = CategoryForm.new(category: category, **form_parameters)
 
     if @form.update
-      @budget_snapshot          = budget_snapshot
-      @previous_budget_snapshot = previous_budget_snapshot
+      @budget_snapshot = budget_snapshot
 
       unless request.format.turbo_stream?
         redirect_to budget_path(current_budget), status: :see_other
@@ -73,19 +70,5 @@ class CategoriesController < ApplicationController
   # @return [Hash] The permitted parameters for the form.
   def form_parameters
     params.expect(category_form: %i(name)).to_h.symbolize_keys
-  end
-
-  # Return the budget snapshot for the month preceding the displayed month.
-  #
-  # @return [BudgetSnapshot] The previous budget snapshot.
-  # @return [nil] When the displayed month is the first month.
-  def previous_budget_snapshot
-    unless budget_snapshot.first_month?
-      @previous_budget_snapshot ||= BudgetSnapshot.new(
-        current_budget,
-        month: budget_snapshot.previous_date.month,
-        year:  budget_snapshot.previous_date.year
-      )
-    end
   end
 end

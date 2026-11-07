@@ -1,4 +1,4 @@
-<%# locals: (budget:, category:, budget_snapshot:, previous_budget_snapshot:) %>
+<%# locals: (budget:, category:, budget_snapshot:) %>
 <div class="self-center py-6 px-8 mx-auto w-full max-w-lg">
   <section>
     <h3 class="px-4 mb-2 text-sm font-medium text-taupe-600 uppercase tracking-wide">
@@ -8,7 +8,7 @@
     <div class="bg-white rounded-xl divide-y divide-taupe-200">
       <div class="flex items-center justify-between px-4 py-3">
         <span><%= t("categories.show.rollover") %></span>
-        <span><%= number_to_money(previous_budget_snapshot&.available_for(category) || 0) %></span>
+        <span><%= number_to_money budget_snapshot.rollover_for(category) %></span>
       </div>
 
       <div class="flex items-center justify-between px-4 py-3">

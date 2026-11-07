@@ -1,10 +1,9 @@
-<%# locals: (budget:, category:, budget_snapshot:, previous_budget_snapshot:) %>
+<%# locals: (budget:, category:, budget_snapshot:) %>
 <%= turbo_stream.update "category_dialog" do %>
   <%= render "categories/details",
-             budget:                   budget,
-             category:                 category,
-             budget_snapshot:          budget_snapshot,
-             previous_budget_snapshot: previous_budget_snapshot %>
+             budget:          budget,
+             category:        category,
+             budget_snapshot: budget_snapshot %>
 <% end %>
 
 <%= turbo_stream.replace dom_id(category, :available) do %>

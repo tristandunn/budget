@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-describe "snoozes/_response.turbo_stream.erb" do
+describe "categories/_target_and_available.turbo_stream.erb" do
   subject(:html) do
-    render partial: "snoozes/response",
+    render partial: "categories/target_and_available",
            locals:  {
              budget:          budget,
              budget_snapshot: budget_snapshot,

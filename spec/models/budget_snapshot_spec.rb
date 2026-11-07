@@ -280,6 +280,92 @@ describe BudgetSnapshot do
     end
   end
 
+  describe "#rollover_for" do
+    subject(:rollover_for) { instance.rollover_for(subcategory) }
+
+    let(:date)        { Date.current.beginning_of_month }
+    let(:instance)    { described_class.new(budget) }
+    let(:subcategory) { create(:category, :subcategory, budget: budget, with_snapshot: false) }
+
+    context "with a single snapshot for the displayed month" do
+      before do
+        create(:category_snapshot, budget: budget, category: subcategory, amount_assigned: 200, amount_used: 150)
+      end
+
+      it "returns zero" do
+        expect(rollover_for).to eq(0)
+      end
+    end
+
+    context "with snapshots across multiple months" do
+      before do
+        create(:category_snapshot, budget: budget, category: subcategory, amount_assigned: 100, amount_used: 70)
+        create(:category_snapshot, budget:          budget,
+                                   category:        subcategory,
+                                   amount_assigned: 200,
+                                   amount_used:     250,
+                                   date:            date.prev_month)
+      end
+
+      it "excludes the displayed month's own remaining amount" do
+        expect(rollover_for).to eq(-50)
+      end
+    end
+
+    context "with a snapshot in a future month" do
+      before do
+        create(:category_snapshot, budget:          budget,
+                                   category:        subcategory,
+                                   amount_assigned: 100,
+                                   amount_used:     20,
+                                   date:            date.prev_month)
+        create(:category_snapshot, budget:          budget,
+                                   category:        subcategory,
+                                   amount_assigned: 500,
+                                   date:            date.next_month.next_month)
+      end
+
+      it "excludes snapshots after the displayed month" do
+        expect(rollover_for).to eq(80)
+      end
+    end
+
+    context "with a group category" do
+      subject(:rollover_for) { instance.rollover_for(parent) }
+
+      let(:parent) { create(:category, budget: budget, with_snapshot: false) }
+
+      before do
+        first_subcategory  = create(:category, budget: budget, parent: parent, with_snapshot: false)
+        second_subcategory = create(:category, budget: budget, parent: parent, with_snapshot: false)
+
+        create(:category_snapshot, budget: budget, category: first_subcategory, amount_assigned: 50, amount_used: 10)
+        create(:category_snapshot, budget: budget, category: second_subcategory, amount_assigned: 20, amount_used: 5)
+        create(:category_snapshot, budget: budget, category: parent, amount_assigned: 999, amount_used: 999)
+        create(:category_snapshot, budget:          budget,
+                                   category:        first_subcategory,
+                                   amount_assigned: 100,
+                                   amount_used:     40,
+                                   date:            date.prev_month)
+        create(:category_snapshot, budget:          budget,
+                                   category:        second_subcategory,
+                                   amount_assigned: 300,
+                                   amount_used:     150,
+                                   date:            date.prev_month)
+      end
+
+      it "sums the rolled-over amounts of its subcategories and ignores its own snapshot" do
+        expect(rollover_for).to eq(210)
+      end
+    end
+
+    context "without snapshots" do
+      it "returns zero" do
+        expect(rollover_for).to eq(0)
+      end
+    end
+  end
+
   describe "#snapshot_for" do
     subject(:budget_snapshot) { described_class.new(budget) }
 
