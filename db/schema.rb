@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_07_160000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_07_163932) do
   create_table "accounts", force: :cascade do |t|
     t.integer "balance", default: 0, null: false
     t.integer "budget_id", null: false
@@ -90,9 +90,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_07_160000) do
     t.index ["account_id", "date", "created_at"], name: "index_transactions_on_account_id_and_date_and_created_at"
     t.index ["account_id", "status"], name: "index_transactions_on_account_id_and_status"
     t.index ["budget_id", "date", "created_at"], name: "index_transactions_on_budget_id_and_date_and_created_at"
-    t.index ["category_id"], name: "index_transactions_on_category_id"
+    t.index ["budget_id", "status", "date"], name: "index_transactions_on_budget_id_and_status_and_date"
+    t.index ["category_id", "status", "date"], name: "index_transactions_on_category_id_and_status_and_date"
     t.index ["payee_id", "date", "category_id"], name: "index_transactions_on_payee_id_and_date_and_category_id"
-    t.index ["status", "date"], name: "index_transactions_on_status_and_date"
     t.index ["transfer_pair_id"], name: "index_transactions_on_transfer_pair_id"
   end
 
