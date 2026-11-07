@@ -8,12 +8,10 @@ class CategorySummary
   # @param budget [Budget] The budget owning the selected subcategories.
   # @param budget_snapshot [BudgetSnapshot] The snapshot for the displayed month.
   # @param ids [Array<Integer, String>] The IDs of the selected subcategories.
-  # @param previous_budget_snapshot [BudgetSnapshot, nil] The previous month's snapshot.
-  def initialize(budget, budget_snapshot:, ids:, previous_budget_snapshot:)
-    @budget                   = budget
-    @ids                      = ids
-    @budget_snapshot          = budget_snapshot
-    @previous_budget_snapshot = previous_budget_snapshot
+  def initialize(budget, budget_snapshot:, ids:)
+    @budget          = budget
+    @budget_snapshot = budget_snapshot
+    @ids             = ids
   end
 
   # Return the activity this month across the selection.
@@ -57,12 +55,12 @@ class CategorySummary
     categories.map(&:name).sort
   end
 
-  # Return the amount left over from the previous month across the selection.
+  # Return the amount carried in from prior months across the selection.
   #
   # @return [Integer] The summed rollover amount.
   def rollover
     categories.sum do |category|
-      @previous_budget_snapshot&.available_for(category) || 0
+      @budget_snapshot.rollover_for(category)
     end
   end
 end

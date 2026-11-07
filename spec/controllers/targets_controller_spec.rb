@@ -168,10 +168,6 @@ describe TargetsController do
       it "assigns the budget snapshot for the requested month" do
         expect(assigns(:budget_snapshot)).to have_attributes(date: requested_date)
       end
-
-      it "assigns the previous budget snapshot for the preceding month" do
-        expect(assigns(:previous_budget_snapshot)).to have_attributes(date: requested_date.prev_month)
-      end
     end
 
     context "when valid with the html format and a month and year" do
@@ -275,7 +271,7 @@ describe TargetsController do
       create(:category, :subcategory, budget: budget, target_type: :monthly_spending, target_amount: 200_00)
     end
 
-    context "without a previous month" do
+    context "without a month and year" do
       before do
         delete :destroy, params: { budget_id: budget.id, category_id: subcategory.id }, format: :turbo_stream
       end
@@ -302,26 +298,6 @@ describe TargetsController do
       it "assigns the budget snapshot for the current month" do
         expect(assigns(:budget_snapshot)).to have_attributes(date: Date.current.beginning_of_month)
       end
-
-      it "assigns no previous budget snapshot" do
-        expect(assigns(:previous_budget_snapshot)).to be_nil
-      end
-    end
-
-    context "with a previous month" do
-      before do
-        create(:category_snapshot,
-               budget:          budget,
-               category:        subcategory,
-               amount_assigned: 50_000,
-               date:            1.month.ago.beginning_of_month)
-
-        delete :destroy, params: { budget_id: budget.id, category_id: subcategory.id }, format: :turbo_stream
-      end
-
-      it "assigns the previous budget snapshot for the preceding month" do
-        expect(assigns(:previous_budget_snapshot)).to have_attributes(date: Date.current.prev_month.beginning_of_month)
-      end
     end
 
     context "with a month and year" do
@@ -342,10 +318,6 @@ describe TargetsController do
 
       it "assigns the budget snapshot for the requested month" do
         expect(assigns(:budget_snapshot)).to have_attributes(date: requested_date)
-      end
-
-      it "assigns the previous budget snapshot for the preceding month" do
-        expect(assigns(:previous_budget_snapshot)).to have_attributes(date: requested_date.prev_month)
       end
     end
 

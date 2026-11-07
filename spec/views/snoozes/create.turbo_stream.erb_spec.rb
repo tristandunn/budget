@@ -14,14 +14,14 @@ describe "snoozes/create.turbo_stream.erb" do
   let(:subcategory)     { build_stubbed(:category, :subcategory) }
 
   before do
-    stub_template("snoozes/_response.turbo_stream.erb" => "RESPONSE_PARTIAL")
+    stub_template("categories/_target_and_available.turbo_stream.erb" => "TARGET_AND_AVAILABLE_PARTIAL")
 
     assign :budget,          budget
     assign :category,        subcategory
     assign :budget_snapshot, budget_snapshot
   end
 
-  it "renders the response partial" do
-    expect(html).to include("RESPONSE_PARTIAL")
+  it "renders the target and available partial" do
+    expect(html).to include("TARGET_AND_AVAILABLE_PARTIAL")
   end
 end

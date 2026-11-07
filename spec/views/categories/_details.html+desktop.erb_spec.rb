@@ -7,23 +7,22 @@ describe "categories/_details.html+desktop.erb" do
     render partial:  "categories/details",
            variants: [:desktop],
            locals:   {
-             budget:                   subcategory.budget,
-             category:                 subcategory,
-             budget_snapshot:          budget_snapshot,
-             previous_budget_snapshot: previous_budget_snapshot
+             budget:          subcategory.budget,
+             category:        subcategory,
+             budget_snapshot: budget_snapshot
            }
 
     rendered
   end
 
-  let(:previous_budget_snapshot) { instance_double(BudgetSnapshot, available_for: 20_000) }
-  let(:snapshot)                 { CategorySnapshot.new(amount_assigned: 40_000, amount_used: 10_000) }
-  let(:subcategory)              { build_stubbed(:category, :subcategory) }
+  let(:snapshot)    { CategorySnapshot.new(amount_assigned: 40_000, amount_used: 10_000) }
+  let(:subcategory) { build_stubbed(:category, :subcategory) }
 
   let(:budget_snapshot) do
     instance_double(BudgetSnapshot,
                     snapshot_for:              snapshot,
                     available_for:             50_000,
+                    rollover_for:              20_000,
                     date:                      Date.current,
                     upcoming_transactions_for: upcoming_transactions)
   end
@@ -131,13 +130,5 @@ describe "categories/_details.html+desktop.erb" do
 
   it "renders the target partial" do
     expect(html).to include("TARGET_PARTIAL")
-  end
-
-  context "without a previous budget snapshot" do
-    let(:previous_budget_snapshot) { nil }
-
-    it "renders a zero rollover amount" do
-      expect(html).to have_css("div", normalize_ws: true, text: "#{t("categories.show.rollover")} $0.00")
-    end
   end
 end
