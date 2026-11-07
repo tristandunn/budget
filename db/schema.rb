@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_03_000000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_07_141546) do
   create_table "accounts", force: :cascade do |t|
     t.integer "balance", default: 0, null: false
     t.integer "budget_id", null: false
@@ -72,7 +72,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_03_000000) do
     t.datetime "updated_at", null: false
     t.boolean "hidden", default: false, null: false
     t.index ["budget_id", "name"], name: "index_payees_on_budget_id_and_name", unique: true
-    t.index ["budget_id"], name: "index_payees_on_budget_id"
   end
 
   create_table "transactions", force: :cascade do |t|
