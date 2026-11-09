@@ -11,7 +11,7 @@ describe "budgets/_future_month.html+desktop.erb" do
 
   let(:budget)         { create(:budget) }
   let(:month)          { 1.month.from_now.beginning_of_month }
-  let(:month_snapshot) { BudgetSnapshot.new(budget, month: month.month, year: month.year) }
+  let(:month_snapshot) { BudgetSnapshot.new(budget, date: month.to_date) }
   let(:parent)         { create(:category, budget: budget, with_snapshot: false) }
 
   let(:subcategory) do

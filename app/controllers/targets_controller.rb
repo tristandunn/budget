@@ -50,7 +50,7 @@ class TargetsController < ApplicationController
   #
   # @return [BudgetSnapshot] The current budget snapshot.
   def budget_snapshot
-    @budget_snapshot ||= BudgetSnapshot.new(current_budget, month: params[:month], year: params[:year])
+    @budget_snapshot ||= BudgetSnapshot.new(current_budget, date: date)
   end
 
   # Return the category for the given `category_id` parameter.
@@ -58,6 +58,14 @@ class TargetsController < ApplicationController
   # @return [Category] The requested category.
   def category
     @category ||= current_budget.subcategories.find(params.expect(:category_id))
+  end
+
+  # Return the date for the `year` and `month` parameters.
+  #
+  # @return [Date] The first day of the requested month.
+  # @return [nil] When the parameters are missing or do not form a month.
+  def date
+    @date ||= BudgetSnapshotDate.parse(params[:year], params[:month])
   end
 
   # Return the budget path for the displayed month.

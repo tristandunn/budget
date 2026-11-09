@@ -41,7 +41,7 @@ class SnoozesController < ApplicationController
   #
   # @return [BudgetSnapshot] The current budget snapshot.
   def budget_snapshot
-    @budget_snapshot ||= BudgetSnapshot.new(current_budget, month: date.month, year: date.year)
+    @budget_snapshot ||= BudgetSnapshot.new(current_budget, date: date)
   end
 
   # Return the category for the given `category_id` parameter, scoped to
