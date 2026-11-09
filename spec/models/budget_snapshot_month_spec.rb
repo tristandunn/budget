@@ -3,290 +3,248 @@
 require "rails_helper"
 
 describe BudgetSnapshotMonth do
-  let(:budget) { create(:budget) }
+  subject(:snapshot_month) { described_class.new(budget, date) }
 
-  describe "#current_month?" do
-    context "when on the current month" do
-      subject { described_class.new(budget) }
+  let(:budget)   { create(:budget) }
+  let(:category) { create(:category, budget: budget, with_snapshot: false) }
+  let(:date)     { Date.current.beginning_of_month }
 
-      it { is_expected.to be_current_month }
+  describe "#available_amounts" do
+    before do
+      create(:category_snapshot, budget:          budget,
+                                 category:        category,
+                                 amount_assigned: 300,
+                                 amount_used:     320,
+                                 date:            date.prev_month)
+      create(:category_snapshot, budget:          budget,
+                                 category:        category,
+                                 amount_assigned: 200,
+                                 amount_used:     150,
+                                 date:            date)
+      create(:category_snapshot, budget:          budget,
+                                 category:        category,
+                                 amount_assigned: 100,
+                                 amount_used:     0,
+                                 date:            date.next_month)
     end
 
-    context "when not on the current month" do
-      subject do
-        described_class.new(budget, month: next_month.month.to_s, year: next_month.year.to_s)
+    it "sums the assigned minus used through the month" do
+      expect(snapshot_month.available_amounts).to eq(category.id => 30)
+    end
+
+    context "with preloaded amounts" do
+      subject(:snapshot_month) { described_class.new(budget, date, available_amounts: amounts) }
+
+      let(:amounts) { { category.id => 1_000 } }
+
+      it "returns the preloaded amounts" do
+        expect(snapshot_month.available_amounts).to be(amounts)
       end
-
-      let(:next_month) { 1.month.from_now.beginning_of_month }
-
-      it { is_expected.not_to be_current_month }
     end
   end
 
   describe "#date" do
-    context "without year and month parameters" do
-      subject(:budget_snapshot_month) { described_class.new(budget) }
-
-      it "defaults to the current month" do
-        expect(budget_snapshot_month.date).to eq(Date.current.beginning_of_month)
-      end
-
-      it "does not build the snapshot range" do
-        allow(budget).to receive(:category_snapshots).and_call_original
-
-        budget_snapshot_month.date
-
-        expect(budget).not_to have_received(:category_snapshots)
-      end
-    end
-
-    context "with valid year and month parameters" do
-      subject(:budget_snapshot_month) do
-        described_class.new(budget, month: next_month.month.to_s, year: next_month.year.to_s)
-      end
-
-      let(:next_month) { 1.month.from_now.beginning_of_month }
-
-      it "returns the parsed date" do
-        expect(budget_snapshot_month.date).to eq(next_month)
-      end
-    end
-
-    context "with an invalid month parameter" do
-      subject(:budget_snapshot_month) { described_class.new(budget, month: "invalid", year: "2026") }
-
-      it "defaults to the current month" do
-        expect(budget_snapshot_month.date).to eq(Date.current.beginning_of_month)
-      end
-    end
-
-    context "with a date before the snapshot range" do
-      subject(:budget_snapshot_month) { described_class.new(budget, month: "1", year: 5.years.ago.year.to_s) }
-
-      it "clamps to the first month" do
-        expect(budget_snapshot_month.date).to eq(budget_snapshot_month.snapshot_range.first)
-      end
-    end
-
-    context "with a date after the snapshot range" do
-      subject(:budget_snapshot_month) { described_class.new(budget, month: "1", year: 5.years.from_now.year.to_s) }
-
-      it "clamps to the last month" do
-        expect(budget_snapshot_month.date).to eq(budget_snapshot_month.snapshot_range.last)
-      end
+    it "returns the month it covers" do
+      expect(snapshot_month.date).to eq(date)
     end
   end
 
-  describe "#first_month?" do
-    context "when on the first month of the range" do
-      subject(:budget_snapshot_month) { described_class.new(budget) }
-
-      it { is_expected.to be_first_month }
-    end
-
-    context "when not on the first month of the range" do
-      subject(:budget_snapshot_month) do
-        described_class.new(budget, month: next_month.month.to_s, year: next_month.year.to_s)
-      end
-
-      let(:next_month) { 1.month.from_now.beginning_of_month }
-
-      it { is_expected.not_to be_first_month }
-    end
-  end
-
-  describe "#future_month?" do
-    context "when on a month after the current month" do
-      subject(:budget_snapshot_month) do
-        described_class.new(budget, month: next_month.month.to_s, year: next_month.year.to_s)
-      end
-
-      let(:next_month) { 1.month.from_now.beginning_of_month }
-
-      it { is_expected.to be_future_month }
-    end
-
-    context "when on the current month" do
-      subject(:budget_snapshot_month) { described_class.new(budget) }
-
-      it { is_expected.not_to be_future_month }
-    end
-
-    context "when on a month before the current month" do
-      subject(:budget_snapshot_month) do
-        described_class.new(budget, month: previous_month.month.to_s, year: previous_month.year.to_s)
-      end
-
-      let(:previous_month) { 1.month.ago.beginning_of_month }
-
+  describe "#future_months" do
+    context "with several assigned future months" do
       before do
-        create(:category_snapshot, budget: budget, date: previous_month)
+        (1..7).each do |offset|
+          create(:category_snapshot, budget:          budget,
+                                     category:        category,
+                                     amount_assigned: 100,
+                                     date:            date.advance(months: offset))
+        end
       end
 
-      it { is_expected.not_to be_future_month }
-    end
-  end
-
-  describe "#last_month?" do
-    context "when on the last month of the range" do
-      subject(:budget_snapshot_month) do
-        described_class.new(budget, month: next_month.month.to_s, year: next_month.year.to_s)
-      end
-
-      let(:next_month) { 1.month.from_now.beginning_of_month }
-
-      it { is_expected.to be_last_month }
-    end
-
-    context "when not on the last month of the range" do
-      subject(:budget_snapshot_month) { described_class.new(budget) }
-
-      it { is_expected.not_to be_last_month }
-    end
-  end
-
-  describe "#next_date" do
-    context "when on the last month" do
-      subject(:budget_snapshot_month) do
-        described_class.new(budget, month: next_month.month.to_s, year: next_month.year.to_s)
-      end
-
-      let(:next_month) { 1.month.from_now.beginning_of_month }
-
-      it "returns the current date" do
-        expect(budget_snapshot_month.next_date).to eq(budget_snapshot_month.date)
-      end
-    end
-
-    context "when not on the last month" do
-      subject(:budget_snapshot_month) { described_class.new(budget) }
-
-      it "returns the next month" do
-        expect(budget_snapshot_month.next_date).to eq(budget_snapshot_month.date.next_month)
-      end
-    end
-  end
-
-  describe "#previous_date" do
-    context "when on the first month" do
-      subject(:budget_snapshot_month) { described_class.new(budget) }
-
-      it "returns the current date" do
-        expect(budget_snapshot_month.previous_date).to eq(budget_snapshot_month.date)
-      end
-    end
-
-    context "when not on the first month" do
-      subject(:budget_snapshot_month) do
-        described_class.new(budget, month: next_month.month.to_s, year: next_month.year.to_s)
-      end
-
-      let(:next_month) { 1.month.from_now.beginning_of_month }
-
-      it "returns the previous month" do
-        expect(budget_snapshot_month.previous_date).to eq(budget_snapshot_month.date.prev_month)
-      end
-    end
-  end
-
-  describe "#snapshot_range" do
-    subject(:snapshot_range) { described_class.new(budget).snapshot_range }
-
-    context "without snapshots" do
-      it "returns the current month to the next month" do
-        expect(snapshot_range).to eq(Date.current.beginning_of_month..1.month.from_now.beginning_of_month)
-      end
-    end
-
-    context "with past snapshots" do
-      before do
-        create(:category_snapshot, budget: budget, date: 3.months.ago.beginning_of_month)
-      end
-
-      it "returns the earliest snapshot month to the next month" do
-        expect(snapshot_range).to eq(3.months.ago.beginning_of_month..1.month.from_now.beginning_of_month)
-      end
-    end
-
-    context "with future snapshots" do
-      before do
-        create(:category_snapshot, budget: budget, date: Date.current.beginning_of_month)
-        create(:category_snapshot, budget: budget, date: 2.months.from_now.beginning_of_month)
-      end
-
-      it "returns the current month to one month past the latest future snapshot" do
-        expect(snapshot_range).to eq(Date.current.beginning_of_month..3.months.from_now.beginning_of_month)
-      end
-    end
-
-    context "with past and future snapshots" do
-      before do
-        create(:category_snapshot, budget: budget, date: 3.months.ago.beginning_of_month)
-        create(:category_snapshot, budget: budget, date: 2.months.from_now.beginning_of_month)
-      end
-
-      it "returns the full range" do
-        expect(snapshot_range).to eq(3.months.ago.beginning_of_month..3.months.from_now.beginning_of_month)
-      end
-    end
-
-    context "with zeroed out past snapshots" do
-      before do
-        create(
-          :category_snapshot,
-          amount_assigned: 0,
-          amount_used:     0,
-          budget:          budget,
-          date:            3.months.ago.beginning_of_month
+      it "returns the months capped at the limit, ordered from the nearest" do
+        expect(snapshot_month.future_months.map(&:date)).to eq(
+          (1..described_class::FUTURE_MONTH_LIMIT).map { |offset| date.advance(months: offset) }
         )
       end
 
-      it "includes the month of the zeroed out snapshot" do
-        expect(snapshot_range).to eq(3.months.ago.beginning_of_month..1.month.from_now.beginning_of_month)
+      it "loads the snapshots for each month" do
+        expect(snapshot_month.future_months.first.snapshots.keys).to eq([category.id])
+      end
+
+      it "shares the monthly target categories" do
+        categories = snapshot_month.future_months.first.monthly_target_categories
+
+        expect(categories).to be(snapshot_month.monthly_target_categories)
+      end
+
+      it "memoizes the months" do
+        months = snapshot_month.future_months
+
+        expect(snapshot_month.future_months).to be(months)
       end
     end
 
-    context "with zeroed out future snapshots" do
+    context "with several categories assigned in the same future month" do
+      let(:other_category) { create(:category, budget: budget, with_snapshot: false) }
+
       before do
-        create(
-          :category_snapshot,
-          amount_assigned: 0,
-          amount_used:     0,
-          budget:          budget,
-          date:            2.months.from_now.beginning_of_month
+        [category, other_category].each do |assigned_category|
+          create(:category_snapshot, budget:          budget,
+                                     category:        assigned_category,
+                                     amount_assigned: 100,
+                                     date:            date.next_month)
+        end
+      end
+
+      it "returns the month only once" do
+        expect(snapshot_month.future_months.map(&:date)).to eq([date.next_month])
+      end
+    end
+
+    context "with a future month that has no assignments" do
+      before do
+        create(:category_snapshot, budget:          budget,
+                                   category:        category,
+                                   amount_assigned: 0,
+                                   date:            date.next_month)
+      end
+
+      it "excludes the unassigned month" do
+        expect(snapshot_month.future_months).to be_empty
+      end
+    end
+
+    context "without any future months" do
+      it "returns nothing" do
+        expect(snapshot_month.future_months).to be_empty
+      end
+    end
+
+    context "with a future month that only has spending" do
+      before do
+        create(:category_snapshot, budget:          budget,
+                                   category:        category,
+                                   amount_assigned: 100,
+                                   amount_used:     20,
+                                   date:            date)
+        create(:category_snapshot, budget:          budget,
+                                   category:        category,
+                                   amount_assigned: 0,
+                                   amount_used:     30,
+                                   date:            date.next_month)
+        create(:category_snapshot, budget:          budget,
+                                   category:        category,
+                                   amount_assigned: 50,
+                                   amount_used:     5,
+                                   date:            date.advance(months: 2))
+      end
+
+      it "carries the spending forward into the later month" do
+        expect(snapshot_month.future_months.first.available_amounts).to eq(category.id => 95)
+      end
+
+      it "matches the amounts loaded for the month on its own" do
+        future_month = snapshot_month.future_months.last
+
+        expect(future_month.available_amounts).to eq(
+          described_class.new(budget, future_month.date).available_amounts
         )
       end
+    end
 
-      it "excludes the month of the zeroed out snapshot" do
-        expect(snapshot_range).to eq(Date.current.beginning_of_month..1.month.from_now.beginning_of_month)
+    context "with a category that skips a future month" do
+      let(:other_subcategory) { create(:category, budget: budget, parent: category, with_snapshot: false) }
+      let(:subcategory)       { create(:category, budget: budget, parent: category, with_snapshot: false) }
+
+      before do
+        create(:category_snapshot, budget:          budget,
+                                   category:        subcategory,
+                                   amount_assigned: 250,
+                                   amount_used:     0,
+                                   date:            date)
+        create(:category_snapshot, budget:          budget,
+                                   category:        other_subcategory,
+                                   amount_assigned: 100,
+                                   date:            date.next_month)
+        create(:category_snapshot, budget:          budget,
+                                   category:        subcategory,
+                                   amount_assigned: 50,
+                                   amount_used:     0,
+                                   date:            date.advance(months: 2))
+      end
+
+      it "carries the amount through the skipped month" do
+        amounts = snapshot_month.future_months.map do |future_month|
+          future_month.available_amounts[subcategory.id]
+        end
+
+        expect(amounts).to eq([250, 300])
       end
     end
 
-    context "with a future snapshot that only has spending" do
+    context "with a category that first appears in a future month" do
+      let(:other_subcategory) { create(:category, budget: budget, parent: category, with_snapshot: false) }
+      let(:subcategory)       { create(:category, budget: budget, parent: category, with_snapshot: false) }
+
       before do
-        create(
-          :category_snapshot,
-          amount_assigned: 0,
-          amount_used:     100,
-          budget:          budget,
-          date:            2.months.from_now.beginning_of_month
-        )
+        create(:category_snapshot, budget:          budget,
+                                   category:        subcategory,
+                                   amount_assigned: 100,
+                                   amount_used:     0,
+                                   date:            date)
+        create(:category_snapshot, budget:          budget,
+                                   category:        other_subcategory,
+                                   amount_assigned: 300,
+                                   amount_used:     50,
+                                   date:            date.next_month)
       end
 
-      it "returns the current month to one month past the latest spending" do
-        expect(snapshot_range).to eq(Date.current.beginning_of_month..3.months.from_now.beginning_of_month)
+      it "adds the category to the amounts" do
+        expect(snapshot_month.future_months.first.available_amounts).to eq(subcategory.id       => 100,
+                                                                           other_subcategory.id => 250)
       end
     end
+  end
 
-    context "with a provided range" do
-      before do
-        create(:category_snapshot, budget: budget, date: 3.months.ago.beginning_of_month)
+  describe "#monthly_target_categories" do
+    let!(:target_category) do
+      create(:category, :subcategory, :with_monthly_spending_target, budget: budget, with_snapshot: false)
+    end
+
+    it "returns the subcategories with a monthly target" do
+      expect(snapshot_month.monthly_target_categories).to eq([target_category])
+    end
+
+    context "with preloaded categories" do
+      subject(:snapshot_month) { described_class.new(budget, date, monthly_target_categories: categories) }
+
+      let(:categories) { [] }
+
+      it "returns the preloaded categories" do
+        expect(snapshot_month.monthly_target_categories).to be(categories)
       end
+    end
+  end
 
-      it "returns the provided range without computing one" do
-        range = Date.current.beginning_of_month..1.month.from_now.beginning_of_month
+  describe "#snapshots" do
+    let!(:snapshot) do
+      create(:category_snapshot, budget: budget, category: category, date: date)
+    end
 
-        expect(described_class.new(budget, snapshot_range: range).snapshot_range).to eq(range)
+    before do
+      create(:category_snapshot, budget: budget, category: category, date: date.next_month)
+    end
+
+    it "indexes the month's snapshots by category ID" do
+      expect(snapshot_month.snapshots).to eq(category.id => snapshot)
+    end
+
+    context "with preloaded snapshots" do
+      subject(:snapshot_month) { described_class.new(budget, date, snapshots: snapshots) }
+
+      let(:snapshots) { {} }
+
+      it "returns the preloaded snapshots" do
+        expect(snapshot_month.snapshots).to be(snapshots)
       end
     end
   end

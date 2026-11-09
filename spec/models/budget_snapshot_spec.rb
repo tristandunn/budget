@@ -8,59 +8,34 @@ describe BudgetSnapshot do
   describe "class" do
     subject { described_class.new(budget) }
 
-    it { is_expected.to delegate_method(:current_month?).to(:snapshot_month) }
-    it { is_expected.to delegate_method(:date).to(:snapshot_month) }
-    it { is_expected.to delegate_method(:first_month?).to(:snapshot_month) }
-    it { is_expected.to delegate_method(:future_month?).to(:snapshot_month) }
-    it { is_expected.to delegate_method(:last_month?).to(:snapshot_month) }
-    it { is_expected.to delegate_method(:next_date).to(:snapshot_month) }
-    it { is_expected.to delegate_method(:previous_date).to(:snapshot_month) }
-    it { is_expected.to delegate_method(:snapshot_range).to(:snapshot_month) }
+    it { is_expected.to delegate_method(:current_month?).to(:snapshot_date) }
+    it { is_expected.to delegate_method(:date).to(:snapshot_date) }
+    it { is_expected.to delegate_method(:first_month?).to(:snapshot_date) }
+    it { is_expected.to delegate_method(:future_month?).to(:snapshot_date) }
+    it { is_expected.to delegate_method(:last_month?).to(:snapshot_date) }
+    it { is_expected.to delegate_method(:next_date).to(:snapshot_date) }
+    it { is_expected.to delegate_method(:previous_date).to(:snapshot_date) }
+    it { is_expected.to delegate_method(:snapshot_range).to(:snapshot_date) }
   end
 
   describe "#available_for" do
     subject(:available_for) { instance.available_for(subcategory) }
 
-    let(:date)        { Date.current.beginning_of_month }
-    let(:instance)    { described_class.new(budget) }
-    let(:subcategory) { create(:category, :subcategory, budget: budget, with_snapshot: false) }
+    let(:available_amounts) { {} }
+    let(:instance)          { described_class.new(budget) }
+    let(:subcategory)       { create(:category, :subcategory, budget: budget, with_snapshot: false) }
 
-    context "with a single snapshot" do
-      before do
-        create(:category_snapshot, budget: budget, category: subcategory, amount_assigned: 200, amount_used: 150)
-      end
+    before do
+      allow(BudgetSnapshotMonth).to receive(:new)
+        .with(budget, Date.current.beginning_of_month)
+        .and_return(instance_double(BudgetSnapshotMonth, available_amounts: available_amounts))
+    end
 
-      it "returns the difference between assigned and used" do
+    context "with an available amount for the category" do
+      let(:available_amounts) { { subcategory.id => 50 } }
+
+      it "returns the available amount" do
         expect(available_for).to eq(50)
-      end
-    end
-
-    context "with snapshots across multiple months" do
-      before do
-        create(:category_snapshot, budget: budget, category: subcategory, amount_assigned: 100, amount_used: 70)
-        create(:category_snapshot, budget:          budget,
-                                   category:        subcategory,
-                                   date:            date.prev_month,
-                                   amount_assigned: 200,
-                                   amount_used:     250)
-      end
-
-      it "sums all snapshots through the displayed month" do
-        expect(available_for).to eq(-20)
-      end
-    end
-
-    context "with a snapshot in a future month" do
-      before do
-        create(:category_snapshot, budget: budget, category: subcategory, amount_assigned: 100, amount_used: 20)
-        create(:category_snapshot, budget:          budget,
-                                   category:        subcategory,
-                                   date:            date.next_month.next_month,
-                                   amount_assigned: 500)
-      end
-
-      it "excludes snapshots after the displayed month" do
-        expect(available_for).to eq(80)
       end
     end
 
@@ -69,21 +44,19 @@ describe BudgetSnapshot do
 
       let(:parent) { create(:category, budget: budget, with_snapshot: false) }
 
-      before do
+      let(:available_amounts) do
         first_subcategory  = create(:category, budget: budget, parent: parent, with_snapshot: false)
         second_subcategory = create(:category, budget: budget, parent: parent, with_snapshot: false)
 
-        create(:category_snapshot, budget: budget, category: first_subcategory, amount_assigned: 100, amount_used: 40)
-        create(:category_snapshot, budget: budget, category: second_subcategory, amount_assigned: 300, amount_used: 150)
-        create(:category_snapshot, budget: budget, category: parent, amount_assigned: 999, amount_used: 999)
+        { first_subcategory.id => 60, second_subcategory.id => 150, parent.id => 999 }
       end
 
-      it "sums the available amounts of its subcategories and ignores its own snapshot" do
+      it "sums the available amounts of its subcategories and ignores its own amount" do
         expect(available_for).to eq(210)
       end
     end
 
-    context "without snapshots" do
+    context "without an available amount" do
       it "returns zero" do
         expect(available_for).to eq(0)
       end
@@ -172,7 +145,7 @@ describe BudgetSnapshot do
 
     context "when a target is snoozed for the month" do
       subject(:budget_snapshot) do
-        described_class.new(budget, month: next_month.month.to_s, year: next_month.year.to_s)
+        described_class.new(budget, date: next_month)
       end
 
       let(:next_month) { 1.month.from_now.beginning_of_month }
@@ -195,7 +168,7 @@ describe BudgetSnapshot do
 
     context "when a future month would be covered by the current month's balance" do
       subject(:budget_snapshot) do
-        described_class.new(budget, month: next_month.month.to_s, year: next_month.year.to_s)
+        described_class.new(budget, date: next_month)
       end
 
       let(:next_month) { 1.month.from_now.beginning_of_month }
@@ -214,69 +187,34 @@ describe BudgetSnapshot do
   end
 
   describe "#future_months" do
-    subject(:budget_snapshot) { described_class.new(budget) }
-
-    let(:category) { create(:category, budget: budget, with_snapshot: false) }
-
-    context "with several assigned future months" do
-      before do
-        create(:category_snapshot, budget:          budget,
-                                   category:        category,
-                                   date:            Date.current.beginning_of_month,
-                                   amount_assigned: 100)
-
-        (1..7).each do |offset|
-          create(:category_snapshot, budget:          budget,
-                                     category:        category,
-                                     date:            offset.months.from_now.beginning_of_month,
-                                     amount_assigned: 100)
-        end
-      end
-
-      it "returns up to six future months ordered from the nearest" do
-        expect(budget_snapshot.future_months.map(&:date)).to eq(
-          (1..6).map { |offset| offset.months.from_now.beginning_of_month }
-        )
-      end
+    subject(:budget_snapshot) do
+      described_class.new(budget, snapshot_range: 1.year.ago.beginning_of_month..future_date)
     end
 
-    context "with a future month that has no assignments" do
-      before do
-        create(:category_snapshot, budget:          budget,
-                                   category:        category,
-                                   date:            Date.current.beginning_of_month,
-                                   amount_assigned: 100)
-        create(:category_snapshot, budget:          budget,
-                                   category:        category,
-                                   date:            1.month.from_now.beginning_of_month,
-                                   amount_assigned: 0)
-      end
+    let(:future_date)    { 1.month.from_now.beginning_of_month }
+    let(:snapshot_month) { instance_double(BudgetSnapshotMonth, future_months: [future_month]) }
+    let(:subcategory)    { create(:category, :subcategory, budget: budget, with_snapshot: false) }
 
-      it "excludes the unassigned month" do
-        expect(budget_snapshot.future_months).to be_empty
-      end
+    let(:future_month) do
+      instance_double(BudgetSnapshotMonth, available_amounts: { subcategory.id => 25 }, date: future_date)
     end
 
-    context "with multiple categories assigned in the same future month" do
-      let(:other_category) { create(:category, budget: budget, with_snapshot: false) }
+    before do
+      allow(BudgetSnapshotMonth).to receive(:new)
+        .with(budget, Date.current.beginning_of_month)
+        .and_return(snapshot_month)
+    end
 
-      before do
-        create(:category_snapshot, budget:          budget,
-                                   category:        category,
-                                   date:            Date.current.beginning_of_month,
-                                   amount_assigned: 100)
+    it "returns a snapshot for each future month" do
+      expect(budget_snapshot.future_months.map(&:date)).to eq([future_date])
+    end
 
-        [category, other_category].each do |assigned_category|
-          create(:category_snapshot, budget:          budget,
-                                     category:        assigned_category,
-                                     date:            1.month.from_now.beginning_of_month,
-                                     amount_assigned: 100)
-        end
-      end
+    it "hands each snapshot the values loaded for its month" do
+      expect(budget_snapshot.future_months.first.available_for(subcategory)).to eq(25)
+    end
 
-      it "returns the month only once" do
-        expect(budget_snapshot.future_months.size).to eq(1)
-      end
+    it "shares the navigable range of months" do
+      expect(budget_snapshot.future_months.first.snapshot_range).to eq(budget_snapshot.snapshot_range)
     end
   end
 
@@ -503,7 +441,7 @@ describe BudgetSnapshot do
 
     context "with a future month" do
       let(:instance) do
-        described_class.new(budget, month: next_month.month.to_s, year: next_month.year.to_s)
+        described_class.new(budget, date: next_month)
       end
 
       let(:next_month)  { 1.month.from_now.beginning_of_month }
@@ -796,7 +734,7 @@ describe BudgetSnapshot do
 
     context "with a positive rollover into a future month with nothing assigned" do
       let(:instance) do
-        described_class.new(budget, month: next_month.month.to_s, year: next_month.year.to_s)
+        described_class.new(budget, date: next_month)
       end
 
       let(:next_month) { 1.month.from_now.beginning_of_month }
@@ -899,7 +837,7 @@ describe BudgetSnapshot do
 
     context "with an upcoming transaction before a future displayed month" do
       subject(:upcoming_for) do
-        described_class.new(budget, month: month.month, snapshot_range: date..month, year: month.year)
+        described_class.new(budget, date: month, snapshot_range: date..month)
                        .upcoming_for(subcategory)
       end
 

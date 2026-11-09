@@ -61,7 +61,15 @@ class BudgetsController < ApplicationController
   #
   # @return [BudgetSnapshot] The current budget snapshot.
   def current_budget_snapshot
-    @current_budget_snapshot ||= BudgetSnapshot.new(current_budget, month: params[:month], year: params[:year])
+    @current_budget_snapshot ||= BudgetSnapshot.new(current_budget, date: date)
+  end
+
+  # Return the date for the `year` and `month` parameters.
+  #
+  # @return [Date] The first day of the requested month.
+  # @return [nil] When the parameters are missing or do not form a month.
+  def date
+    @date ||= BudgetSnapshotDate.parse(params[:year], params[:month])
   end
 
   # Return whether the request supplied a year and month that did not

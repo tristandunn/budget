@@ -145,11 +145,7 @@ describe "budgets/show.html+desktop.erb" do
     let(:next_month) { 1.month.from_now.beginning_of_month }
 
     let(:budget_snapshot) do
-      BudgetSnapshot.new(
-        subcategory.budget,
-        month: next_month.month.to_s,
-        year:  next_month.year.to_s
-      )
+      BudgetSnapshot.new(subcategory.budget, date: next_month.to_date)
     end
 
     it "enables the previous month link" do

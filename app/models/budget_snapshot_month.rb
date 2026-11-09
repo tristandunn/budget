@@ -1,124 +1,137 @@
 # frozen_string_literal: true
 
 class BudgetSnapshotMonth
-  # Initialize the budget snapshot month.
+  FUTURE_MONTH_LIMIT = 6
+
+  attr_reader :date
+
+  # Initialize the loaded values for one month of a budget.
   #
-  # The displayed month falls back to the current month when the year and
-  # month are missing or do not parse.
+  # Snapshot dates are always the first day of a month, which every writer
+  # guarantees, so a month is identified by its date alone. Preloaded values
+  # are supplied when a month is loaded as part of a set, which is how future
+  # months are built, so the set costs a handful of queries in total.
   #
-  # @param budget [Budget] The budget whose months are navigable.
-  # @param month [Integer, String, nil] The month to display.
-  # @param snapshot_range [Range<Date>, nil] The known range of navigable months, which avoids a query when supplied.
-  # @param year [Integer, String, nil] The year to display.
-  def initialize(budget, month: nil, snapshot_range: nil, year: nil)
-    @budget         = budget
-    @month          = month
-    @snapshot_range = snapshot_range
-    @year           = year
+  # @param budget [Budget] The budget the values belong to.
+  # @param date [Date] The first day of the month the values cover.
+  # @param available_amounts [Hash{Integer => Integer}, nil] The preloaded available amounts by category ID.
+  # @param monthly_target_categories [Enumerable<Category>, nil] The preloaded categories with a monthly target.
+  # @param snapshots [Hash{Integer => CategorySnapshot}, nil] The preloaded snapshots by category ID.
+  def initialize(budget, date, available_amounts: nil, monthly_target_categories: nil, snapshots: nil)
+    @available_amounts         = available_amounts
+    @budget                    = budget
+    @date                      = date
+    @monthly_target_categories = monthly_target_categories
+    @snapshots                 = snapshots
   end
 
-  # Return whether this snapshot is for the current month.
+  # Return a hash keyed by category ID of the available amount (assigned minus
+  # used) summed across every snapshot up to and including this month.
   #
-  # @return [Boolean] Whether this snapshot is for the current month.
-  def current_month?
-    date == current_month
+  # @return [Hash{Integer => Integer}] The available amount by category ID.
+  def available_amounts
+    @available_amounts ||= budget.category_snapshots
+                                 .where(date: ..date)
+                                 .group(:category_id)
+                                 .sum("amount_assigned - amount_used")
   end
 
-  # Return the date for this budget snapshot.
+  # Return the values for the future months that have assignments, capped at
+  # `FUTURE_MONTH_LIMIT` and ordered from the nearest month. Each month is
+  # handed the values loaded for it here, so the whole set is loaded together.
   #
-  # The current month is always inside `snapshot_range`, so clamping it is a
-  # no-op and the range is left unqueried in that case.
-  #
-  # @return [Date] The date for this budget snapshot.
-  def date
-    @date ||= if parsed_date == current_month
-                current_month
-              else
-                parsed_date.clamp(snapshot_range.first, snapshot_range.last)
-              end
-  end
-
-  # Return whether this is the first month in the navigable range.
-  #
-  # @return [Boolean] Whether this is the first month in the navigable range.
-  def first_month?
-    date <= snapshot_range.first
-  end
-
-  # Return whether this snapshot is for a month after the current month.
-  #
-  # @return [Boolean] Whether this snapshot is for a future month.
-  def future_month?
-    date > current_month
-  end
-
-  # Return whether this is the last month in the navigable range.
-  #
-  # @return [Boolean] Whether this is the last month in the navigable range.
-  def last_month?
-    date >= snapshot_range.last
-  end
-
-  # Return the next navigable date, or this month's date when this is the
-  # last month.
-  #
-  # @return [Date] The next navigable date, or this month's date when this is the last month.
-  def next_date
-    if last_month?
-      date
-    else
-      date.next_month
+  # @return [Array<BudgetSnapshotMonth>] The loaded values for each future month.
+  def future_months
+    @future_months ||= future_month_dates.map do |future_date|
+      self.class.new(
+        budget,
+        future_date,
+        available_amounts:         cumulative_available_amounts.fetch(future_date),
+        monthly_target_categories: monthly_target_categories,
+        snapshots:                 future_snapshots_by_date.fetch(future_date)
+      )
     end
   end
 
-  # Return the previous navigable date, or this month's date when this is
-  # the first month.
+  # Return the subcategories that have a monthly funding target.
   #
-  # @return [Date] The previous navigable date, or this month's date when this is the first month.
-  def previous_date
-    if first_month?
-      date
-    else
-      date.prev_month
-    end
+  # @return [Enumerable<Category>] The categories with a monthly target.
+  def monthly_target_categories
+    @monthly_target_categories ||= budget.subcategories.with_monthly_target
   end
 
-  # Return the range of navigable months for this budget, always covering the
-  # current month.
+  # Return this month's category snapshots, indexed by category ID.
   #
-  # Any past snapshot extends the lower bound. The upper bound is always one
-  # month past the latest month with activity, or one month past the current
-  # month when that is later, so `last_month?` and `next_date` allow
-  # navigating a single month into the future.
-  #
-  # @return [Range<Date>] The range of navigable months for this budget.
-  def snapshot_range
-    @snapshot_range ||= begin
-      snapshots = budget.category_snapshots
-      earliest  = [snapshots.minimum(:date), current_month].compact.min
-      latest    = [snapshots.with_activity.maximum(:date), current_month].compact.max.next_month
-
-      earliest..latest
-    end
+  # @return [Hash{Integer => CategorySnapshot}] The snapshots indexed by category ID.
+  def snapshots
+    @snapshots ||= budget.category_snapshots.for_month(date).index_by(&:category_id)
   end
 
   private
 
-  attr_reader :budget, :month, :year
+  attr_reader :budget
 
-  # Return the beginning of the current month.
+  # Return the available amounts by category ID for each month with snapshots
+  # after this one through the last future month, accumulated forward from
+  # this month's amounts. A month without assignments is accumulated too,
+  # since a month can carry spending forward without being a future month of
+  # its own.
   #
-  # @return [Date] The first day of the current month.
-  def current_month
-    @current_month ||= Date.current.beginning_of_month
+  # @return [Hash{Date => Hash{Integer => Integer}}] The available amounts by category ID, by month.
+  def cumulative_available_amounts
+    @cumulative_available_amounts ||= begin
+      amounts = {}
+      running = available_amounts
+
+      future_snapshots_by_date.keys.sort.each do |month_date|
+        running = running.merge(remaining_amounts_for(month_date)) do |_category_id, total, remaining|
+          total + remaining
+        end
+
+        amounts[month_date] = running
+      end
+
+      amounts
+    end
   end
 
-  # Parse the year and month parameters, falling back to the current month.
+  # Return the dates of the future months that have assignments, capped at
+  # `FUTURE_MONTH_LIMIT` and ordered from the nearest month.
   #
-  # @return [Date] The parsed date, or the current month if parsing fails.
-  def parsed_date
-    @parsed_date ||= Date.new(year.to_i, month.to_i)
-  rescue Date::Error
-    @parsed_date = current_month
+  # @return [Array<Date>] The first day of each future month with an assignment.
+  def future_month_dates
+    @future_month_dates ||= budget.category_snapshots
+                                  .where(date: date.next_month..)
+                                  .where.not(amount_assigned: 0)
+                                  .order(:date)
+                                  .distinct
+                                  .limit(FUTURE_MONTH_LIMIT)
+                                  .pluck(:date)
+  end
+
+  # Return every category snapshot from the month after this one through the
+  # last future month, loaded in a single query.
+  #
+  # @return [Array<CategorySnapshot>] The snapshots dated after this month, through the last future month.
+  def future_snapshots
+    budget.category_snapshots.where(date: date.next_month..future_month_dates.last).to_a
+  end
+
+  # Return the future category snapshots indexed by category ID and grouped
+  # by month.
+  #
+  # @return [Hash{Date => Hash{Integer => CategorySnapshot}}] The snapshots by category ID, by month.
+  def future_snapshots_by_date
+    @future_snapshots_by_date ||= future_snapshots.group_by(&:date).transform_values do |month_snapshots|
+      month_snapshots.index_by(&:category_id)
+    end
+  end
+
+  # Return the remaining amount by category ID for the given future month.
+  #
+  # @param month_date [Date] The month to return the amounts for.
+  # @return [Hash{Integer => Integer}] The remaining amount by category ID.
+  def remaining_amounts_for(month_date)
+    future_snapshots_by_date.fetch(month_date).transform_values(&:amount_remaining)
   end
 end

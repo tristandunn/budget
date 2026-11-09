@@ -46,16 +46,14 @@ class AssignmentsController < ApplicationController
   #
   # @return [BudgetSnapshot] The current budget snapshot.
   def budget_snapshot
-    @budget_snapshot ||= BudgetSnapshot.new(current_budget, month: date.month, year: date.year)
+    @budget_snapshot ||= BudgetSnapshot.new(current_budget, date: date)
   end
 
-  # Parse the year and month parameters, falling back to the current month.
+  # Return the requested date, falling back to the current month.
   #
-  # @return [Date] The parsed date, or the current month if parsing fails.
+  # @return [Date] The requested date, or the current month if it is unusable.
   def date
-    @date ||= Date.new(params.expect(:year).to_i, params.expect(:month).to_i)
-  rescue ActionController::ParameterMissing, Date::Error
-    @date = Date.current.beginning_of_month
+    @date ||= BudgetSnapshotDate.parse(params[:year], params[:month]) || Date.current.beginning_of_month
   end
 
   # Return the budget path for the displayed month.
