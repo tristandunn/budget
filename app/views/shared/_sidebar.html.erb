@@ -7,8 +7,6 @@
 
 <%= render "shared/dialog", id: "budget_settings_dialog", dismissable: true, floating: true %>
 
-<%= render "shared/dialog", id: "user_settings_dialog", dismissable: true, floating: true %>
-
 <aside class="flex w-72 shrink-0 flex-col bg-indigo-950 text-indigo-100">
   <div data-controller="popover" class="relative flex shrink-0 items-center gap-4 px-5 py-4">
     <button
@@ -40,7 +38,7 @@
         </svg>
       </span>
 
-      <span id="sidebar_user_email" class="block truncate text-xs text-indigo-300"><%= Current.user.email %></span>
+      <span class="block truncate text-xs text-indigo-300"><%= Current.user.email %></span>
     </button>
 
     <%= link_to new_budget_transaction_path(budget, account_id: account_id),
@@ -208,9 +206,7 @@
 
       <div class="my-1 border-t border-taupe-200"></div>
 
-      <%= link_to edit_user_path,
-                  id:    "edit-user",
-                  data:  { turbo_frame: "user_settings_dialog" },
+      <%= link_to account_path,
                   class: "flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-left text-sm text-taupe-800 no-underline hover:bg-taupe-200" do %>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -224,7 +220,7 @@
           />
         </svg>
 
-        <%= t("users.edit.title") %>
+        <%= t("users.account") %>
       <% end %>
 
       <%= button_to session_path,

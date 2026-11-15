@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
+  layout "user"
+
   skip_before_action :current_budget
 
-  # Render the user settings form.
-  def edit
+  # Render the user settings.
+  def show
     @user = Current.user
   end
 
@@ -13,11 +15,9 @@ class UsersController < ApplicationController
     @user = Current.user
 
     if @user.update(user_parameters)
-      unless request.format.turbo_stream?
-        redirect_back_or_to root_path, status: :see_other
-      end
+      redirect_to account_path, notice: t(".success"), status: :see_other
     else
-      render :edit, status: :unprocessable_content, formats: [:html]
+      render :show, status: :unprocessable_content, formats: [:html]
     end
   end
 

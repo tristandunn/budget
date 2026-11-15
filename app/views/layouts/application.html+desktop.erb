@@ -26,6 +26,6 @@
   </head>
 
   <body class="h-dvh overflow-hidden bg-taupe-50 text-black">
-    <%= yield %>
+    <%= content_for?(:content) ? content_for(:content) : yield %>
   </body>
 </html>
