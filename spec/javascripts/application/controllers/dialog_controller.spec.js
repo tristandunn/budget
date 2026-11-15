@@ -39,8 +39,7 @@ describe("DialogController", () => {
   });
 
   it("does not call showModal when the dialog is already open", () => {
-    Object.defineProperty(dialog, "open", { "configurable": true,
-      "value": true });
+    Object.defineProperty(dialog, "open", { "configurable": true, "value": true });
 
     controller.open();
 

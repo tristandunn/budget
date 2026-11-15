@@ -3,17 +3,12 @@ import AnchoredPopoverController from "@app/controllers/anchored_popover_control
 describe("AnchoredPopoverController", () => {
   let element, instance, menu, trigger;
 
-  const anchor = { "bottom": 120,
-    "top": 100 };
-  const lowAnchor = { "bottom": 620,
-    "top": 600 };
+  const anchor = { "bottom": 120, "top": 100 };
+  const lowAnchor = { "bottom": 620, "top": 600 };
 
-  const fits = { "bottom": 300,
-    "left": 300 };
-  const overflowsBottom = { "bottom": 900,
-    "left": 300 };
-  const overflowsLeft = { "bottom": 300,
-    "left": 100 };
+  const fits = { "bottom": 300, "left": 300 };
+  const overflowsBottom = { "bottom": 900, "left": 300 };
+  const overflowsLeft = { "bottom": 300, "left": 100 };
 
   const layOut = (menuRect, anchorRect = anchor) => {
     sinon.stub(element, "getBoundingClientRect").returns(anchorRect);
