@@ -27,9 +27,9 @@ describe("MonthNavigationController", () => {
 
   describe("#disconnect", () => {
     const boundFor = (type) => {
-      return document.addEventListener.
-        getCalls().
-        find((call) => {
+      return document.addEventListener
+        .getCalls()
+        .find((call) => {
           return call.args[0] === type;
         }).args[1];
     };
@@ -98,8 +98,7 @@ describe("MonthNavigationController", () => {
     ["altKey", "ctrlKey", "metaKey"].forEach((modifier) => {
       it(`clicks neither link for ${modifier}`, () => {
         document.dispatchEvent(
-          new window.KeyboardEvent("keydown", { "key": "ArrowLeft",
-            [modifier]: true })
+          new window.KeyboardEvent("keydown", { "key": "ArrowLeft", [modifier]: true })
         );
 
         expect(previous.click.called).to.eq(false);
@@ -115,8 +114,7 @@ describe("MonthNavigationController", () => {
         element.appendChild(field);
 
         field.dispatchEvent(
-          new window.KeyboardEvent("keydown", { "bubbles": true,
-            "key": "ArrowLeft" })
+          new window.KeyboardEvent("keydown", { "bubbles": true, "key": "ArrowLeft" })
         );
 
         expect(previous.click.called).to.eq(false);
@@ -132,8 +130,7 @@ describe("MonthNavigationController", () => {
       element.appendChild(editable);
 
       editable.dispatchEvent(
-        new window.KeyboardEvent("keydown", { "bubbles": true,
-          "key": "ArrowLeft" })
+        new window.KeyboardEvent("keydown", { "bubbles": true, "key": "ArrowLeft" })
       );
 
       expect(previous.click.called).to.eq(false);

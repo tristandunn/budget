@@ -371,8 +371,7 @@ describe("PayeePickerController", () => {
       categoryPickerOutlet.hiddenFieldTarget.value = "7";
       globalThis.fetch.resolves({
         "json": () => {
-          return Promise.resolve({ "subcategory_id": "42",
-            "suggested_subcategory_ids": ["42"] });
+          return Promise.resolve({ "subcategory_id": "42", "suggested_subcategory_ids": ["42"] });
         },
         "ok": true
       });

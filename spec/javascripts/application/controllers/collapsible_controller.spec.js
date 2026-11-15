@@ -143,8 +143,8 @@ describe("CollapsibleController", () => {
     it("only persists the toggled identifier", () => {
       firstInstance.toggle();
 
-      expect(JSON.parse(localStorage.getItem("budget:collapsed-sections"))).
-        to.deep.eq(["account-1-scheduled"]);
+      expect(JSON.parse(localStorage.getItem("budget:collapsed-sections")))
+        .to.deep.eq(["account-1-scheduled"]);
     });
 
     it("does not collapse a section with a different identifier", () => {

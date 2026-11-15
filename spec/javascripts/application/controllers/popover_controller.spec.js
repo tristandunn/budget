@@ -64,9 +64,9 @@ describe("PopoverController", () => {
 
   describe("#disconnect", () => {
     const boundFor = (type) => {
-      return document.addEventListener.
-        getCalls().
-        find((call) => {
+      return document.addEventListener
+        .getCalls()
+        .find((call) => {
           return call.args[0] === type;
         }).args[1];
     };

@@ -327,8 +327,7 @@ describe("PickerController", () => {
     it("updates the hidden field, display, and colors", () => {
       controller.select({
         "currentTarget": {
-          "dataset": { "label": "Alpha",
-            "value": "1" }
+          "dataset": { "label": "Alpha", "value": "1" }
         }
       });
 
@@ -343,8 +342,7 @@ describe("PickerController", () => {
     it("hides the picker", () => {
       controller.select({
         "currentTarget": {
-          "dataset": { "label": "Alpha",
-            "value": "1" }
+          "dataset": { "label": "Alpha", "value": "1" }
         }
       });
 
@@ -396,8 +394,7 @@ describe("PickerController", () => {
 
       controller.select({
         "currentTarget": {
-          "dataset": { "label": "Alpha",
-            "value": "1" }
+          "dataset": { "label": "Alpha", "value": "1" }
         }
       });
 

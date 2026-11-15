@@ -925,8 +925,7 @@ describe("AmountController", () => {
 
       instance.connect();
 
-      form.dispatchEvent(new window.Event("submit", { "bubbles": true,
-        "cancelable": true }));
+      form.dispatchEvent(new window.Event("submit", { "bubbles": true, "cancelable": true }));
 
       expect(element.value).to.eq("-$1,234.56");
     });

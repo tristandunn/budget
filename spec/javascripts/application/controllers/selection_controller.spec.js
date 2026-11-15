@@ -334,8 +334,7 @@ describe("SelectionController", () => {
       row.appendChild(name);
       row.appendChild(cell);
 
-      return { link,
-        name };
+      return { link, name };
     };
 
     it("clicks the assignment link in the row", () => {
@@ -517,9 +516,9 @@ describe("SelectionController", () => {
 
   describe("#disconnect", () => {
     const boundFor = (type) => {
-      return document.addEventListener.
-        getCalls().
-        find((call) => {
+      return document.addEventListener
+        .getCalls()
+        .find((call) => {
           return call.args[0] === type;
         }).args[1];
     };
