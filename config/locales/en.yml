@@ -355,8 +355,12 @@ en:
     open_budget: "Open Budget"
 
   users:
-    edit:
-      cancel: "Cancel"
-      close: "Close"
+    account: "Account"
+    layout:
+      back: "Back to budget"
+      navigation: "Account settings"
+    settings: "Settings"
+    show:
       submit: "Save"
-      title: "Account"
+    update:
+      success: "Your account was updated."

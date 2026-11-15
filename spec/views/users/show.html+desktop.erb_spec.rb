@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-describe "users/edit.html+desktop.erb" do
+describe "users/show.html+desktop.erb" do
   subject(:html) do
-    render template: "users/edit", formats: [:html], variants: [:desktop]
+    render template: "users/show", formats: [:html], variants: [:desktop]
 
     rendered
   end
@@ -15,23 +15,15 @@ describe "users/edit.html+desktop.erb" do
     assign :user, user
   end
 
-  it "renders the account settings dialog turbo frame" do
-    expect(html).to have_css("turbo-frame#user_settings_dialog")
-  end
+  it "sets the page title" do
+    html
 
-  it "renders the account settings title" do
-    expect(html).to have_css("#user_settings_dialog_title", text: t("users.edit.title"))
-  end
-
-  it "renders a close button bound to the dialog controller" do
-    expect(html).to have_css(
-      "button[data-action='dialog#close'][aria-label='#{t("users.edit.close")}']"
-    )
+    expect(view.content_for(:title)).to eq(t("users.settings"))
   end
 
   it "submits the form as a PATCH to the user path" do
     expect(html).to have_css(
-      "form[action='#{user_path}'] input[name='_method'][value='patch']",
+      "form[action='#{account_path}'] input[name='_method'][value='patch']",
       visible: :hidden
     )
   end
@@ -44,12 +36,8 @@ describe "users/edit.html+desktop.erb" do
     expect(html).to have_css("input#user_email[required][maxlength='#{User::MAXIMUM_EMAIL_LENGTH}']")
   end
 
-  it "renders the cancel button bound to the dialog controller" do
-    expect(html).to have_css("button[data-action='dialog#close']", text: t("users.edit.cancel"))
-  end
-
   it "renders the submit button" do
-    expect(html).to have_button(t("users.edit.submit"))
+    expect(html).to have_button(t("users.show.submit"))
   end
 
   it "does not render an error message" do
