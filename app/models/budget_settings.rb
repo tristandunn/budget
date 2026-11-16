@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Settings
+class BudgetSettings
   # Initialize the settings.
   #
   # @param budget [Budget] The budget whose settings to manage.

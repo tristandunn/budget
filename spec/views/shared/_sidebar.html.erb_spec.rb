@@ -96,7 +96,7 @@ describe "shared/_sidebar.html.erb" do
   it "renders the account settings link in the menu" do
     expect(html).to have_css(
       "[data-popover-target='menu'] a[href='#{account_path}']",
-      text: t("users.account")
+      text: t("settings.navigation.account")
     )
   end
 

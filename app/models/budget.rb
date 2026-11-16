@@ -46,9 +46,9 @@ class Budget < ApplicationRecord
 
   # Return the settings for this budget.
   #
-  # @return [Settings] The budget settings.
+  # @return [BudgetSettings] The budget settings.
   def settings
-    @settings ||= Settings.new(self)
+    @settings ||= BudgetSettings.new(self)
   end
 
   # Return the combined sum of pending transaction amounts.

@@ -1,4 +1,4 @@
-<% content_for :title, t("users.password") %>
+<% content_for :title, t("settings.navigation.password") %>
 
 <section class="mt-8 border-t border-taupe-200 pt-8">
   <%= form_with model:  @form,
@@ -88,7 +88,7 @@
     </div>
 
     <div class="mt-5 flex justify-end">
-      <%= f.submit t("passwords.show.submit"),
+      <%= f.submit t("settings.passwords.show.submit"),
                    class: "
                      px-3 py-1.5 text-sm font-medium text-white bg-indigo-600 rounded-lg cursor-pointer
                      hover:bg-indigo-700 focus-visible:outline-none focus-visible:ring-2

@@ -20,25 +20,25 @@
             />
           </svg>
 
-          <%= t("users.layout.back") %>
+          <%= t("settings.navigation.back") %>
         <% end %>
       </div>
 
-      <nav aria-label="<%= t("users.layout.navigation") %>" class="flex-1 overflow-y-auto px-3">
+      <nav aria-label="<%= t("settings.navigation.label") %>" class="flex-1 overflow-y-auto px-3">
         <h2 class="px-3 pb-2 text-xs uppercase tracking-wide text-indigo-300">
-          <%= t("users.account") %>
+          <%= t("settings.navigation.account") %>
         </h2>
 
         <ul class="space-y-1">
           <li>
-            <%= link_to t("users.settings"),
+            <%= link_to t("settings.navigation.settings"),
                         account_path,
                         aria:  { current: (current_page?(account_path) ? "page" : nil) },
                         class: class_names(sidebar_item_class(active: current_page?(account_path)), "text-sm") %>
           </li>
 
           <li>
-            <%= link_to t("users.password"),
+            <%= link_to t("settings.navigation.password"),
                         account_password_path,
                         aria:  { current: (current_page?(account_password_path) ? "page" : nil) },
                         class: class_names(sidebar_item_class(active: current_page?(account_password_path)), "text-sm") %>

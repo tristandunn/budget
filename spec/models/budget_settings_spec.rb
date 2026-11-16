@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe Settings do
+describe BudgetSettings do
   subject(:settings) { described_class.new(budget) }
 
   let(:budget) { create(:budget) }

@@ -364,20 +364,20 @@ en:
     all_accounts: "All Accounts"
     open_budget: "Open Budget"
 
-  passwords:
-    show:
-      submit: "Change Password"
-    update:
-      success: "Your password was changed."
-
-  users:
-    account: "Account"
-    layout:
+  settings:
+    accounts:
+      show:
+        submit: "Save"
+      update:
+        success: "Your account was updated."
+    navigation:
+      account: "Account"
       back: "Back to budget"
-      navigation: "Account settings"
-    password: "Password"
-    settings: "Settings"
-    show:
-      submit: "Save"
-    update:
-      success: "Your account was updated."
+      label: "Account settings"
+      password: "Password"
+      settings: "Settings"
+    passwords:
+      show:
+        submit: "Change Password"
+      update:
+        success: "Your password was changed."

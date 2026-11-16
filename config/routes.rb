@@ -44,8 +44,10 @@ Rails.application.routes.draw do
   end
 
   resource :session, only: %i(new create destroy)
-  resource :account, only: %i(show update), controller: "users" do
-    resource :password, only: %i(show update)
+  scope module: :settings do
+    resource :account, only: %i(show update) do
+      resource :password, only: %i(show update)
+    end
   end
 
   get "/health", to: "health#index"
