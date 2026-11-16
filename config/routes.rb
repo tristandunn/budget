@@ -44,7 +44,9 @@ Rails.application.routes.draw do
   end
 
   resource :session, only: %i(new create destroy)
-  resource :account, only: %i(show update), controller: "users"
+  resource :account, only: %i(show update), controller: "users" do
+    resource :password, only: %i(show update)
+  end
 
   get "/health", to: "health#index"
   get "/manifest", to:          "rails/pwa#manifest",

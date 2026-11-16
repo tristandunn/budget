@@ -167,6 +167,10 @@ en:
         name: "Name"
       category_form:
         name: "Name"
+      password_form:
+        current_password: "Current Password"
+        password: "New Password"
+        password_confirmation: "New Password Confirmation"
       payee_form:
         name: "Name"
       session_form:
@@ -198,6 +202,12 @@ en:
           attributes:
             name:
               reserved: "is reserved"
+        password_form:
+          attributes:
+            current_password:
+              incorrect: "is incorrect"
+            password_confirmation:
+              confirmation: "does not match"
         session_form:
           attributes:
             email:
@@ -354,11 +364,18 @@ en:
     all_accounts: "All Accounts"
     open_budget: "Open Budget"
 
+  passwords:
+    show:
+      submit: "Change Password"
+    update:
+      success: "Your password was changed."
+
   users:
     account: "Account"
     layout:
       back: "Back to budget"
       navigation: "Account settings"
+    password: "Password"
     settings: "Settings"
     show:
       submit: "Save"

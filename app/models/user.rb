@@ -3,6 +3,7 @@
 class User < ApplicationRecord
   EMAIL_MATCHER           = /\A[^@\s]+@(?:[-a-z0-9]+\.)+[a-z]{2,}\z/
   MAXIMUM_EMAIL_LENGTH    = 255
+  MAXIMUM_PASSWORD_LENGTH = ActiveModel::SecurePassword::MAX_PASSWORD_LENGTH_ALLOWED
   MINIMUM_PASSWORD_LENGTH = 8
 
   has_many :memberships, dependent: :destroy

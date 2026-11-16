@@ -45,6 +45,7 @@ describe "layouts/user.html+desktop.erb" do
   context "when on the settings page" do
     before do
       allow(view).to receive(:current_page?).with(account_path).and_return(true)
+      allow(view).to receive(:current_page?).with(account_password_path).and_return(false)
     end
 
     it "marks the settings link as the current page" do
@@ -55,10 +56,25 @@ describe "layouts/user.html+desktop.erb" do
   context "when on another page" do
     before do
       allow(view).to receive(:current_page?).with(account_path).and_return(false)
+      allow(view).to receive(:current_page?).with(account_password_path).and_return(false)
     end
 
-    it "does not mark the settings link as the current page" do
+    it "does not mark any link as the current page" do
       expect(html).to have_no_css("nav a[aria-current]")
+    end
+  end
+
+  context "when on the password page" do
+    before do
+      allow(view).to receive(:current_page?).with(account_path).and_return(false)
+      allow(view).to receive(:current_page?).with(account_password_path).and_return(true)
+    end
+
+    it "marks the password link as the current page" do
+      expect(html).to have_css(
+        "nav a[href='#{account_password_path}'][aria-current='page']",
+        text: t("users.password")
+      )
     end
   end
 
