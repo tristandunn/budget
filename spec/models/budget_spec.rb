@@ -104,10 +104,10 @@ describe Budget do
     subject { budget.settings }
 
     let(:budget)   { build(:budget) }
-    let(:settings) { instance_double(Settings) }
+    let(:settings) { instance_double(BudgetSettings) }
 
     before do
-      allow(Settings).to receive(:new).with(budget).and_return(settings)
+      allow(BudgetSettings).to receive(:new).with(budget).and_return(settings)
     end
 
     it { is_expected.to eq(settings) }

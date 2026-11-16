@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-describe "users/show.html+desktop.erb" do
+describe "settings/accounts/show.html+desktop.erb" do
   subject(:html) do
-    render template: "users/show", formats: [:html], variants: [:desktop]
+    render template: "settings/accounts/show", formats: [:html], variants: [:desktop]
 
     rendered
   end
@@ -18,7 +18,7 @@ describe "users/show.html+desktop.erb" do
   it "sets the page title" do
     html
 
-    expect(view.content_for(:title)).to eq(t("users.settings"))
+    expect(view.content_for(:title)).to eq(t("settings.navigation.settings"))
   end
 
   it "submits the form as a PATCH to the user path" do
@@ -37,7 +37,7 @@ describe "users/show.html+desktop.erb" do
   end
 
   it "renders the submit button" do
-    expect(html).to have_button(t("users.show.submit"))
+    expect(html).to have_button(t("settings.accounts.show.submit"))
   end
 
   it "does not render an error message" do

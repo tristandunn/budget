@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-describe "passwords/show.html+desktop.erb" do
+describe "settings/passwords/show.html+desktop.erb" do
   subject(:html) do
-    render template: "passwords/show", formats: [:html], variants: [:desktop]
+    render template: "settings/passwords/show", formats: [:html], variants: [:desktop]
 
     rendered
   end
@@ -18,7 +18,7 @@ describe "passwords/show.html+desktop.erb" do
   it "sets the page title" do
     html
 
-    expect(view.content_for(:title)).to eq(t("users.password"))
+    expect(view.content_for(:title)).to eq(t("settings.navigation.password"))
   end
 
   it "submits the form as a PATCH to the password path" do
@@ -46,7 +46,7 @@ describe "passwords/show.html+desktop.erb" do
   end
 
   it "renders the submit button" do
-    expect(html).to have_button(t("passwords.show.submit"))
+    expect(html).to have_button(t("settings.passwords.show.submit"))
   end
 
   it "does not render an error message" do

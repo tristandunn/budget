@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-describe "layouts/user.html+desktop.erb" do
+describe "layouts/settings.html+desktop.erb" do
   subject(:html) do
-    render template: "layouts/user", formats: [:html], variants: [:desktop]
+    render template: "layouts/settings", formats: [:html], variants: [:desktop]
 
     rendered
   end
@@ -31,11 +31,11 @@ describe "layouts/user.html+desktop.erb" do
   end
 
   it "renders a link back to the budget" do
-    expect(html).to have_css("aside a[href='#{root_path}']", text: t("users.layout.back"))
+    expect(html).to have_css("aside a[href='#{root_path}']", text: t("settings.navigation.back"))
   end
 
   it "renders the section navigation" do
-    expect(html).to have_css("nav[aria-label='#{t("users.layout.navigation")}']")
+    expect(html).to have_css("nav[aria-label='#{t("settings.navigation.label")}']")
   end
 
   it "does not render a notice without a flash notice" do
@@ -49,7 +49,8 @@ describe "layouts/user.html+desktop.erb" do
     end
 
     it "marks the settings link as the current page" do
-      expect(html).to have_css("nav a[href='#{account_path}'][aria-current='page']", text: t("users.settings"))
+      expect(html).to have_css("nav a[href='#{account_path}'][aria-current='page']",
+                               text: t("settings.navigation.settings"))
     end
   end
 
@@ -73,18 +74,18 @@ describe "layouts/user.html+desktop.erb" do
     it "marks the password link as the current page" do
       expect(html).to have_css(
         "nav a[href='#{account_password_path}'][aria-current='page']",
-        text: t("users.password")
+        text: t("settings.navigation.password")
       )
     end
   end
 
   context "when there is a flash notice" do
     before do
-      flash[:notice] = t("users.update.success")
+      flash[:notice] = t("settings.accounts.update.success")
     end
 
     it "renders the notice" do
-      expect(html).to have_css("[role='status']", text: t("users.update.success"))
+      expect(html).to have_css("[role='status']", text: t("settings.accounts.update.success"))
     end
   end
 end

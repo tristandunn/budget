@@ -2,7 +2,9 @@
 
 require "rails_helper"
 
-describe PasswordsController do
+describe Settings::PasswordsController do
+  it { is_expected.to be_a(Settings::BaseController) }
+
   describe "#show" do
     context "when signed in" do
       let(:user) { create(:user) }
@@ -51,7 +53,7 @@ describe PasswordsController do
       end
 
       it { is_expected.to redirect_to(account_password_url) }
-      it { is_expected.to set_flash[:notice].to(t("passwords.update.success")) }
+      it { is_expected.to set_flash[:notice].to(t("settings.passwords.update.success")) }
 
       it "changes the password" do
         expect(user.reload.authenticate("new-password")).to be_truthy

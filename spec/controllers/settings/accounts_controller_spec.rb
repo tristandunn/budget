@@ -2,7 +2,9 @@
 
 require "rails_helper"
 
-describe UsersController do
+describe Settings::AccountsController do
+  it { is_expected.to be_a(Settings::BaseController) }
+
   describe "#show" do
     context "when signed in" do
       let(:user) { create(:user) }
@@ -42,7 +44,7 @@ describe UsersController do
 
       it { is_expected.to respond_with(:see_other) }
       it { is_expected.to redirect_to(account_url) }
-      it { is_expected.to set_flash[:notice].to(t("users.update.success")) }
+      it { is_expected.to set_flash[:notice].to(t("settings.accounts.update.success")) }
 
       it "changes the e-mail" do
         expect(user.reload.email).to eq("new@example.com")
