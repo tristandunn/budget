@@ -5,6 +5,8 @@ class PasswordsController < ApplicationController
 
   skip_before_action :current_budget
 
+  rate_limit to: 3, within: 1.hour, only: :update, by: -> { Current.user.id }
+
   # Render the change password form.
   def show
     @form = PasswordForm.new(user: Current.user)
