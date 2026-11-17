@@ -5,17 +5,21 @@ require "rails_helper"
 describe Middleware::Backdoor do
   subject(:call) { described_class.new(app).call(env) }
 
-  let(:app) { instance_spy(Proc, call: [200, {}, "OK"]) }
+  let(:app)    { instance_spy(Proc, call: [200, {}, "OK"]) }
+  let(:env)    { ActionDispatch::TestRequest.create(Rack::MockRequest.env_for(path, params: params)).env }
+  let(:params) { { user: user.id, other: 2 } }
+  let(:path)   { "/" }
+  let(:user)   { create(:user) }
 
   context "with user parameters" do
-    let(:env) do
-      Rack::MockRequest.env_for("", params: { user: 1, other: 2 })
+    it "creates a session for the user" do
+      expect { call }.to change { user.sessions.count }.by(1)
     end
 
-    it "updates the session to include the parameter values" do
+    it "sets the signed session token cookie" do
       call
 
-      expect(env["rack.session"]).to eq(user_id: 1)
+      expect(ActionDispatch::Request.new(env).cookie_jar.signed[:session_token]).to eq(user.sessions.last.token)
     end
 
     it "removes the user parameter from the query string" do
@@ -23,15 +27,18 @@ describe Middleware::Backdoor do
 
       expect(env["QUERY_STRING"]).to eq("other=2")
     end
+
+    it "calls the underlying app" do
+      expect(call).to eq([200, {}, "OK"])
+    end
   end
 
   context "with user parameters on the sign-in path" do
-    let(:env) { Rack::MockRequest.env_for(described_class::SIGN_IN_PATH, params: { user: 1 }) }
+    let(:params) { { user: user.id } }
+    let(:path)   { described_class::SIGN_IN_PATH }
 
-    it "updates the session to include the user ID" do
-      call
-
-      expect(env["rack.session"]).to eq(user_id: 1)
+    it "creates a session for the user" do
+      expect { call }.to change { user.sessions.count }.by(1)
     end
 
     it "returns a no-content response" do
@@ -46,14 +53,12 @@ describe Middleware::Backdoor do
   end
 
   context "with user parameters via POST to the sign-in path" do
-    let(:env) do
-      Rack::MockRequest.env_for(described_class::SIGN_IN_PATH, method: "POST", params: { user: 1 })
-    end
+    let(:env)    { ActionDispatch::TestRequest.create(Rack::MockRequest.env_for(path, method: "POST", params: params)).env }
+    let(:params) { { user: user.id } }
+    let(:path)   { described_class::SIGN_IN_PATH }
 
-    it "updates the session to include the user ID" do
-      call
-
-      expect(env["rack.session"]).to eq(user_id: 1)
+    it "creates a session for the user" do
+      expect { call }.to change { user.sessions.count }.by(1)
     end
 
     it "returns a no-content response" do
@@ -68,22 +73,18 @@ describe Middleware::Backdoor do
   end
 
   context "with nested user parameters" do
-    let(:env) { Rack::MockRequest.env_for("", params: { user: { email: "a@example.com" } }) }
+    let(:params) { { user: { email: "a@example.com" } } }
 
-    it "does not update the session" do
-      call
-
-      expect(env["rack.session"]).to be_nil
+    it "does not create a session" do
+      expect { call }.not_to change(Session, :count)
     end
   end
 
   context "without user parameters" do
-    let(:env) { Rack::MockRequest.env_for("", params: { test: 4 }) }
+    let(:params) { { test: 4 } }
 
-    it "does not update the session" do
-      call
-
-      expect(env["rack.session"]).to be_nil
+    it "does not create a session" do
+      expect { call }.not_to change(Session, :count)
     end
 
     it "does not change the query string" do

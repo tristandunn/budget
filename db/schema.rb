@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_07_163932) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_10_024817) do
   create_table "accounts", force: :cascade do |t|
     t.integer "balance", default: 0, null: false
     t.integer "budget_id", null: false
@@ -74,6 +74,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_07_163932) do
     t.index ["budget_id", "name"], name: "index_payees_on_budget_id_and_name", unique: true
   end
 
+  create_table "sessions", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "token", limit: 255, null: false
+    t.string "ip_address", limit: 45
+    t.string "user_agent", limit: 1024
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["token"], name: "index_sessions_on_token", unique: true
+    t.index ["user_id"], name: "index_sessions_on_user_id"
+  end
+
   create_table "transactions", force: :cascade do |t|
     t.integer "account_id", null: false
     t.integer "amount", null: false
@@ -111,6 +122,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_07_163932) do
   add_foreign_key "memberships", "budgets"
   add_foreign_key "memberships", "users"
   add_foreign_key "payees", "budgets"
+  add_foreign_key "sessions", "users"
   add_foreign_key "transactions", "accounts"
   add_foreign_key "transactions", "budgets"
   add_foreign_key "transactions", "categories"

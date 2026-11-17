@@ -1,0 +1,21 @@
+<% content_for :title, t("settings.navigation.sessions") %>
+
+<ul class="mt-8 divide-y divide-taupe-200 border-y border-taupe-200">
+  <% @sessions.each do |record| %>
+    <li class="py-4">
+      <div>
+        <p class="truncate text-sm font-medium text-taupe-800">
+          <%= device_description(record.user_agent) %>
+        </p>
+
+        <p class="mt-1 text-xs text-taupe-600">
+          <%= l(record.created_at.to_date, format: :full_date) %> &middot;
+          <%= record.ip_address.presence || t("settings.sessions.index.unknown_location") %>
+          <% if record == Current.session %>
+            <span class="font-medium text-indigo-700">(<%= t("settings.sessions.index.current") %>)</span>
+          <% end %>
+        </p>
+      </div>
+    </li>
+  <% end %>
+</ul>

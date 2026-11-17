@@ -23,12 +23,12 @@ module RSpec
       module Controller
         include Shared
 
-        # Sign in as the given user by setting the session identifier directly.
+        # Sign in as the given user by setting the session token cookie directly.
         #
         # @param user [User] The user to sign in as.
         # @return [void]
         def sign_in_as(user)
-          session[:user_id] = user.id
+          cookies.signed[:session_token] = user.sessions.create!.token
         end
       end
 

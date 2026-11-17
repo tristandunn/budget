@@ -43,6 +43,13 @@
                         aria:  { current: (current_page?(account_password_path) ? "page" : nil) },
                         class: class_names(sidebar_item_class(active: current_page?(account_password_path)), "text-sm") %>
           </li>
+
+          <li>
+            <%= link_to t("settings.navigation.sessions"),
+                        account_sessions_path,
+                        aria:  { current: (current_page?(account_sessions_path) ? "page" : nil) },
+                        class: class_names(sidebar_item_class(active: current_page?(account_sessions_path)), "text-sm") %>
+          </li>
         </ul>
       </nav>
     </aside>

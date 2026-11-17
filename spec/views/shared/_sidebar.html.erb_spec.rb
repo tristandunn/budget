@@ -16,7 +16,7 @@ describe "shared/_sidebar.html.erb" do
   let(:user)               { create(:user, email: "person@example.com") }
 
   before do
-    Current.user = user
+    Current.session = build_stubbed(:session, user: user)
 
     view.extend(SidebarHelper)
   end

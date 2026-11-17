@@ -40,8 +40,15 @@ describe SessionsController do
         }
       end
 
-      it { is_expected.to set_session[:user_id].to(user.id) }
       it { is_expected.to redirect_to(root_url) }
+
+      it "creates a session for the user" do
+        expect(user.sessions.count).to eq(1)
+      end
+
+      it "stores the session token in a signed cookie" do
+        expect(cookies.signed[:session_token]).to eq(user.sessions.first.token)
+      end
     end
 
     context "when not created successfully" do
@@ -62,6 +69,10 @@ describe SessionsController do
       it { is_expected.to respond_with(:unprocessable_content) }
       it { is_expected.to render_template(:new) }
       it { is_expected.not_to set_session[:user_id] }
+
+      it "does not create a session" do
+        expect(Session.count).to eq(0)
+      end
 
       it "initializes the form with the provided parameters" do
         expect(SessionForm).to have_received(:new).with(email: email, password: "invalid")

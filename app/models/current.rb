@@ -2,7 +2,9 @@
 
 class Current < ActiveSupport::CurrentAttributes
   attribute :budget
-  attribute :user
+  attribute :session
+
+  delegate :user, to: :session, allow_nil: true
 
   resets do
     Time.zone = nil
