@@ -46,6 +46,8 @@ describe Settings::PasswordsController do
     end
 
     context "when valid" do
+      let!(:other_session) { create(:session, user: user) }
+
       before do
         sign_in_as(user)
 
@@ -58,9 +60,15 @@ describe Settings::PasswordsController do
       it "changes the password" do
         expect(user.reload.authenticate("new-password")).to be_truthy
       end
+
+      it "revokes the other sessions" do
+        expect(Session).not_to exist(other_session.id)
+      end
     end
 
     context "when the current password is incorrect" do
+      let!(:other_session) { create(:session, user: user) }
+
       before do
         sign_in_as(user)
 
@@ -72,6 +80,10 @@ describe Settings::PasswordsController do
 
       it "does not change the password" do
         expect(user.reload.authenticate("old-password")).to be_truthy
+      end
+
+      it "keeps the other sessions" do
+        expect(Session).to exist(other_session.id)
       end
     end
 

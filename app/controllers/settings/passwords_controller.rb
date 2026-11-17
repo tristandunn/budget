@@ -11,7 +11,7 @@ module Settings
 
     # Change the current user's password from form parameters.
     def update
-      @form = PasswordForm.new(user: Current.user, **form_parameters)
+      @form = PasswordForm.new(session: Current.session, user: Current.user, **form_parameters)
 
       if @form.save
         redirect_to account_password_path, notice: t(".success"), status: :see_other

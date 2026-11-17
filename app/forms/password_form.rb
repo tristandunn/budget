@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class PasswordForm < BaseForm
-  attr_accessor :current_password, :password, :password_confirmation, :user
+  attr_accessor :current_password, :password, :password_confirmation, :session, :user
 
   validates :current_password, presence: true
   validates :password,         presence:     true,
@@ -12,12 +12,16 @@ class PasswordForm < BaseForm
   validate :validate_current_password
   validate :validate_password_length
 
-  # Update the user's password when the form is valid.
+  # Update the user's password and revoke their other sessions.
   #
   # @return [Boolean] Whether the password was changed.
   def save
     if valid?
-      user.update(password: password, password_confirmation: password_confirmation)
+      User.transaction do
+        user.update!(password: password, password_confirmation: password_confirmation)
+
+        session.revoke_others
+      end
     end
   end
 
