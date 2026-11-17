@@ -42,8 +42,9 @@ describe "settings/sessions/index.html+desktop.erb" do
     expect(html).to have_css("li:first-child", text: t("settings.sessions.index.current"))
   end
 
-  it "does not mark other sessions" do
-    expect(html).to have_no_css("li:last-child", text: t("settings.sessions.index.current"))
+  it "renders a revoke button for other sessions" do
+    expect(html).to have_css("li:last-child form[action='#{account_session_path(other_session)}'] button",
+                             text: t("settings.sessions.index.revoke.submit"))
   end
 
   it "renders a placeholder when the device is unknown" do
@@ -52,5 +53,13 @@ describe "settings/sessions/index.html+desktop.erb" do
 
   it "renders a placeholder when the location is unknown" do
     expect(html).to have_css("li:last-child", text: t("settings.sessions.index.unknown_location"))
+  end
+
+  it "does not mark other sessions" do
+    expect(html).to have_no_css("li:last-child", text: t("settings.sessions.index.current"))
+  end
+
+  it "does not render a revoke button for the current session" do
+    expect(html).to have_no_css("li:first-child button")
   end
 end

@@ -18,4 +18,15 @@ describe "Sessions" do
     expect(page).to have_css("main li", count: 2)
       .and(have_css("main li", text: t("settings.sessions.index.current"), count: 1))
   end
+
+  it "revokes another session", :js do
+    create(:session, user: user)
+
+    visit account_sessions_path
+
+    accept_confirm { click_button t("settings.sessions.index.revoke.submit") }
+
+    expect(page).to have_text(t("settings.sessions.destroy.success"))
+      .and(have_css("main li", count: 1))
+  end
 end
