@@ -26,7 +26,7 @@ jobs:
           COVERAGE: true
           RAILS_ENV: test
           SE_AVOID_STATS: true
-        run: bin/rails db:test:prepare ruby:test
+        run: bin/rails ruby:test
 
   JavaScript:
     runs-on: ubuntu-latest
