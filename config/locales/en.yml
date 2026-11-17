@@ -383,8 +383,13 @@ en:
       update:
         success: "Your password was changed."
     sessions:
+      destroy:
+        success: "The session was revoked."
       index:
         current: "Current session."
         device: "%{browser} on %{platform}"
+        revoke:
+          confirmation: "Are you sure you want to revoke this session?"
+          submit: "Revoke"
         unknown_device: "Unknown Device"
         unknown_location: "Unknown IP"
