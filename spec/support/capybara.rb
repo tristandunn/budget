@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "capybara"
+require "selenium-webdriver"
 
 Capybara.server = :puma, { Silent: true }
 Capybara.javascript_driver = :selenium_chrome_headless_reduced_motion
@@ -31,3 +32,5 @@ RSpec.configure do |config|
     end
   end
 end
+
+Selenium::WebDriver.logger.level = :error
