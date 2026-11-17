@@ -11,7 +11,7 @@ module Middleware
       @app = app
     end
 
-    # Translate the `user` parameter into a session.
+    # Translate the `user` parameter into a database session and cookie.
     #
     # Only a scalar value is translated, so a nested `user` parameter submitted
     # by a form is ignored.
@@ -29,10 +29,10 @@ module Middleware
     # @param env [Hash] The request environment.
     # @return [Array] The Rack response.
     def call(env)
-      request = Rack::Request.new(env)
+      request = ActionDispatch::Request.new(env)
 
       if request.params["user"].is_a?(String)
-        request.session[:user_id] = request.params["user"].to_i
+        sign_in(request, request.params["user"].to_i)
 
         if request.path == SIGN_IN_PATH
           return [204, {}, []]
@@ -44,6 +44,19 @@ module Middleware
       end
 
       @app.call(env)
+    end
+
+    private
+
+    # Create a session for the user and store its token in a signed cookie.
+    #
+    # @param request [ActionDispatch::Request] The current request.
+    # @param user_id [Integer] The ID of the user to sign in.
+    # @return [void]
+    def sign_in(request, user_id)
+      Session.create!(user_id: user_id).tap do |session|
+        request.cookie_jar.signed.permanent[:session_token] = session.token
+      end
     end
   end
 end

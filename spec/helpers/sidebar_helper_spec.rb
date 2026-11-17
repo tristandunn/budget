@@ -56,7 +56,7 @@ describe SidebarHelper do
     let(:user) { create(:user) }
 
     before do
-      Current.user = user
+      Current.session = build_stubbed(:session, user: user)
     end
 
     it "returns the user's budgets ordered by name" do

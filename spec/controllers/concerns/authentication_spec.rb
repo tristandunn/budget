@@ -69,31 +69,61 @@ describe Authentication do
   describe "#resume_session" do
     subject(:resume_session) { instance.resume_session }
 
-    let(:user) { build_stubbed(:user) }
+    let(:jar) { ActionDispatch::TestRequest.create.cookie_jar }
 
     before do
-      allow(instance).to receive(:user_from_session).and_return(user)
+      allow(instance).to receive(:cookies).and_return(jar)
     end
 
-    it "assigns Current.user" do
-      resume_session
-
-      expect(Current.user).to eq(user)
-    end
-
-    context "with a user already assigned" do
-      let(:existing_user) { build_stubbed(:user) }
+    context "with a token for a session" do
+      let(:record) { create(:session) }
 
       before do
-        Current.user = existing_user
+        jar.signed[:session_token] = record.token
       end
 
-      it { is_expected.to eq(existing_user) }
+      it { is_expected.to eq(record) }
 
-      it "does not re-fetch the user" do
+      it "assigns Current.session" do
         resume_session
 
-        expect(instance).not_to have_received(:user_from_session)
+        expect(Current.session).to eq(record)
+      end
+
+      it "keeps the cookie" do
+        resume_session
+
+        expect(jar.signed[:session_token]).to eq(record.token)
+      end
+    end
+
+    context "with a token matching no session" do
+      before do
+        jar.signed[:session_token] = "missing"
+      end
+
+      it { is_expected.to be_nil }
+    end
+
+    context "with no token" do
+      it { is_expected.to be_nil }
+    end
+
+    context "with a session already assigned" do
+      let(:existing_session) { build_stubbed(:session) }
+
+      before do
+        Current.session = existing_session
+
+        allow(Session).to receive(:includes)
+      end
+
+      it { is_expected.to eq(existing_session) }
+
+      it "does not look up the session" do
+        resume_session
+
+        expect(Session).not_to have_received(:includes)
       end
     end
   end
@@ -147,115 +177,85 @@ describe Authentication do
   end
 
   describe "#start_new_session_for" do
-    let(:session) { {} }
-    let(:user)    { build_stubbed(:user) }
+    let(:jar)        { ActionDispatch::TestRequest.create.cookie_jar }
+    let(:user)       { create(:user) }
+    let(:user_agent) { "Browser" }
 
     before do
       allow(instance).to receive(:reset_session)
-      allow(instance).to receive(:session).and_return(session)
+      allow(instance).to receive_messages(
+        cookies: jar,
+        request: instance_double(ActionDispatch::Request, remote_ip: "127.0.0.1", user_agent: user_agent)
+      )
 
       instance.start_new_session_for(user)
     end
 
-    it "assigns Current.user" do
-      expect(Current.user).to eq(user)
+    it "assigns Current.session" do
+      expect(Current.session).to eq(user.sessions.first)
     end
 
     it "resets the session" do
       expect(instance).to have_received(:reset_session)
     end
 
-    it "stores the user ID in the session" do
-      expect(session[:user_id]).to eq(user.id)
+    it "creates a session record for the user" do
+      expect(user.sessions.count).to eq(1)
+    end
+
+    it "records the IP address and user agent" do
+      expect(user.sessions.first).to have_attributes(ip_address: "127.0.0.1", user_agent: "Browser")
+    end
+
+    it "stores the token in a signed cookie" do
+      expect(jar.signed[:session_token]).to eq(user.sessions.first.token)
+    end
+
+    context "without a user agent" do
+      let(:user_agent) { nil }
+
+      it "records no user agent" do
+        expect(user.sessions.first.user_agent).to be_nil
+      end
+    end
+
+    context "with a user agent longer than the column" do
+      let(:user_agent) { "a" * 2000 }
+
+      it "truncates the user agent" do
+        expect(user.sessions.first.user_agent.length).to eq(1024)
+      end
     end
   end
 
   describe "#terminate_session" do
-    let(:user) { build_stubbed(:user) }
+    let(:jar)    { ActionDispatch::TestRequest.create.cookie_jar }
+    let(:record) { create(:session, user: user) }
+    let(:user)   { create(:user) }
 
     before do
-      Current.user = user
+      jar.signed[:session_token] = record.token
 
       allow(instance).to receive(:reset_session)
+      allow(instance).to receive(:cookies).and_return(jar)
 
       instance.terminate_session
     end
 
-    it "clears Current.user" do
-      expect(Current.user).to be_nil
+    it "clears Current.session" do
+      expect(Current.session).to be_nil
     end
 
     it "resets the session" do
       expect(instance).to have_received(:reset_session)
     end
-  end
 
-  describe "#user_from_session" do
-    context "with a user ID in the session matching a user" do
-      let(:session) { { user_id: user.id } }
-      let(:user)    { build_stubbed(:user) }
-
-      before do
-        allow(instance).to receive(:session).and_return(session)
-
-        allow(User).to receive(:find_by).and_return(user)
-      end
-
-      it "attempts to find the user" do
-        instance.user_from_session
-
-        expect(User).to have_received(:find_by).with(id: session[:user_id])
-      end
-
-      it "returns the user" do
-        expect(instance.user_from_session).to eq(user)
-      end
-
-      it "leaves the user ID in the session" do
-        instance.user_from_session
-
-        expect(session[:user_id]).to eq(user.id)
-      end
+    it "destroys the session record" do
+      expect(Session.exists?(record.id)).to be(false)
     end
 
-    context "with a user ID in the session not matching a user" do
-      let(:session) { { user_id: 123 } }
-
-      before do
-        allow(instance).to receive(:session).and_return(session)
-
-        allow(User).to receive(:find_by).and_return(nil)
-      end
-
-      it "removes the user ID from the session" do
-        instance.user_from_session
-
-        expect(session).not_to have_key(:user_id)
-      end
-
-      it "returns nil" do
-        expect(instance.user_from_session).to be_nil
-      end
-    end
-
-    context "with no user ID in the session" do
-      let(:session) { {} }
-
-      before do
-        allow(instance).to receive(:session).and_return(session)
-
-        allow(User).to receive(:find_by)
-      end
-
-      it "does not attempt to find the user" do
-        instance.user_from_session
-
-        expect(User).not_to have_received(:find_by)
-      end
-
-      it "returns nil" do
-        expect(instance.user_from_session).to be_nil
-      end
+    it "removes the cookie" do
+      expect(jar[:session_token]).to be_nil
     end
   end
 end

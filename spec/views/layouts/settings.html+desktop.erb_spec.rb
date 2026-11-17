@@ -46,6 +46,7 @@ describe "layouts/settings.html+desktop.erb" do
     before do
       allow(view).to receive(:current_page?).with(account_path).and_return(true)
       allow(view).to receive(:current_page?).with(account_password_path).and_return(false)
+      allow(view).to receive(:current_page?).with(account_sessions_path).and_return(false)
     end
 
     it "marks the settings link as the current page" do
@@ -54,21 +55,11 @@ describe "layouts/settings.html+desktop.erb" do
     end
   end
 
-  context "when on another page" do
-    before do
-      allow(view).to receive(:current_page?).with(account_path).and_return(false)
-      allow(view).to receive(:current_page?).with(account_password_path).and_return(false)
-    end
-
-    it "does not mark any link as the current page" do
-      expect(html).to have_no_css("nav a[aria-current]")
-    end
-  end
-
   context "when on the password page" do
     before do
       allow(view).to receive(:current_page?).with(account_path).and_return(false)
       allow(view).to receive(:current_page?).with(account_password_path).and_return(true)
+      allow(view).to receive(:current_page?).with(account_sessions_path).and_return(false)
     end
 
     it "marks the password link as the current page" do
@@ -76,6 +67,33 @@ describe "layouts/settings.html+desktop.erb" do
         "nav a[href='#{account_password_path}'][aria-current='page']",
         text: t("settings.navigation.password")
       )
+    end
+  end
+
+  context "when on the sessions page" do
+    before do
+      allow(view).to receive(:current_page?).with(account_path).and_return(false)
+      allow(view).to receive(:current_page?).with(account_password_path).and_return(false)
+      allow(view).to receive(:current_page?).with(account_sessions_path).and_return(true)
+    end
+
+    it "marks the sessions link as the current page" do
+      expect(html).to have_css(
+        "nav a[href='#{account_sessions_path}'][aria-current='page']",
+        text: t("settings.navigation.sessions")
+      )
+    end
+  end
+
+  context "when on another page" do
+    before do
+      allow(view).to receive(:current_page?).with(account_path).and_return(false)
+      allow(view).to receive(:current_page?).with(account_password_path).and_return(false)
+      allow(view).to receive(:current_page?).with(account_sessions_path).and_return(false)
+    end
+
+    it "does not mark any link as the current page" do
+      expect(html).to have_no_css("nav a[aria-current]")
     end
   end
 

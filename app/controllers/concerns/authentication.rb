@@ -3,6 +3,8 @@
 module Authentication
   extend ActiveSupport::Concern
 
+  SESSION_COOKIE = :session_token
+
   included do
     helper_method :signed_in?,
                   :signed_out?
@@ -26,12 +28,12 @@ module Authentication
     resume_session || access_denied
   end
 
-  # Attempt to set the current user from the session.
+  # Attempt to set the current session and user from the token cookie.
   #
-  # @return [User] The user when one was found in the session.
-  # @return [nil] When no user ID is in the session or the user cannot be found.
+  # @return [Session] The session when one matches the token cookie.
+  # @return [nil] When there is no token cookie or no session matches it.
   def resume_session
-    Current.user ||= user_from_session
+    Current.session ||= session_from_cookie
   end
 
   # Return whether a user is signed in.
@@ -48,40 +50,52 @@ module Authentication
     !signed_in?
   end
 
-  # Set the current user and persist their ID to a fresh session.
+  # Set the current session and start a new database-backed session for them.
   #
   # @param user [User] The user to start the session for.
   # @return [void]
   def start_new_session_for(user)
-    Current.user = user
-
     reset_session
 
-    session[:user_id] = user.id
+    user.sessions.create!(
+      ip_address: request.remote_ip,
+      user_agent: request.user_agent&.first(1024)
+    ).tap do |record|
+      Current.session = record
+
+      cookies.signed.permanent[SESSION_COOKIE] = {
+        value:     record.token,
+        httponly:  true,
+        same_site: :lax
+      }
+    end
   end
 
-  # Clear the current user and reset the session.
+  # Destroy the current database session, clear it from the current attributes,
+  # and reset the cookie session.
   #
   # @return [void]
   def terminate_session
-    Current.user = nil
+    resume_session&.destroy
+
+    Current.session = nil
+
+    cookies.delete(SESSION_COOKIE)
 
     reset_session
   end
 
-  # Attempt to find a user from the user ID in the session.
+  private
+
+  # Find the session record for the token cookie.
   #
-  # Also remove the user ID from the session when no matching user exists.
-  #
-  # @return [User] The user when one was found for the session's user ID.
-  # @return [nil] When no user ID is in the session or no user matches it.
-  def user_from_session
-    if session[:user_id].present?
-      User.find_by(id: session[:user_id]).tap do |user|
-        if user.nil?
-          session.delete(:user_id)
-        end
-      end
+  # @return [Session] The session when one matches the token.
+  # @return [nil] When there is no token or no session matches it.
+  def session_from_cookie
+    token = cookies.signed[SESSION_COOKIE]
+
+    if token.present?
+      Session.includes(:user).find_by(token: token)
     end
   end
 end

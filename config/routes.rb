@@ -46,7 +46,8 @@ Rails.application.routes.draw do
   resource :session, only: %i(new create destroy)
   scope module: :settings do
     resource :account, only: %i(show update) do
-      resource :password, only: %i(show update)
+      resource  :password, only: %i(show update)
+      resources :sessions, only: :index
     end
   end
 
