@@ -3,19 +3,21 @@
 require "rails_helper"
 
 describe PasswordForm, type: :form do
+  subject(:form) do
+    described_class.new(
+      current_password:      current_password,
+      password:              new_password,
+      password_confirmation: confirmation,
+      session:               session,
+      user:                  user
+    )
+  end
+
   let(:confirmation)     { new_password }
   let(:current_password) { "old-password" }
   let(:new_password)     { "new-password" }
+  let(:session)          { create(:session, user: user) }
   let(:user)             { create(:user, password: "old-password") }
-
-  let(:attributes) do
-    {
-      user:                  user,
-      current_password:      current_password,
-      password:              new_password,
-      password_confirmation: confirmation
-    }
-  end
 
   describe "class" do
     it "inherits from the base form" do
@@ -24,8 +26,6 @@ describe PasswordForm, type: :form do
   end
 
   describe "#save" do
-    subject(:form) { described_class.new(**attributes) }
-
     it "changes the password" do
       form.save
 
@@ -33,7 +33,21 @@ describe PasswordForm, type: :form do
     end
 
     it "returns true" do
-      expect(form.save).to be(true)
+      expect(form.save).to be_truthy
+    end
+
+    it "revokes the other sessions" do
+      other = create(:session, user: user)
+
+      form.save
+
+      expect(Session).not_to exist(other.id)
+    end
+
+    it "keeps the current session" do
+      form.save
+
+      expect(Session).to exist(session.id)
     end
 
     context "when invalid" do
@@ -48,12 +62,30 @@ describe PasswordForm, type: :form do
 
         expect(user.reload.authenticate("old-password")).to be_truthy
       end
+
+      it "keeps the other sessions" do
+        other = create(:session, user: user)
+
+        form.save
+
+        expect(Session).to exist(other.id)
+      end
+    end
+
+    context "when revoking the other sessions fails" do
+      before do
+        allow(session).to receive(:revoke_others).and_raise(ActiveRecord::StatementInvalid)
+
+        suppress(ActiveRecord::StatementInvalid) { form.save }
+      end
+
+      it "does not change the password" do
+        expect(user.reload.authenticate("old-password")).to be_truthy
+      end
     end
   end
 
   describe "#valid?" do
-    subject(:form) { described_class.new(**attributes) }
-
     it { is_expected.to be_valid }
 
     context "with an incorrect current password" do
