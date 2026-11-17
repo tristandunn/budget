@@ -11,7 +11,7 @@ gem "json",              "3.1.0"
 gem "litestream",        "0.16.1"
 gem "money",             "7.1.1"
 gem "propshaft",         "1.3.2"
-gem "puma",              "8.1.1"
+gem "puma",              "8.1.2"
 gem "rack-timeout",      "0.7.0"
 gem "rails",             "8.1.4.1"
 gem "solid_cable",       "4.1.0"
@@ -20,7 +20,7 @@ gem "solid_queue",       "1.7.2"
 gem "sqlite3",           "2.10.2"
 gem "stimulus-rails",    "1.3.4"
 gem "tailwindcss-rails", "4.7.0"
-gem "thruster",          "0.1.27", require: false
+gem "thruster",          "0.1.28", require: false
 gem "turbo-rails",       "2.0.23"
 
 group :development, :test do
@@ -42,7 +42,7 @@ group :development do
   gem "rubocop-rake",        "0.7.1",  require: false
   gem "rubocop-rspec",       "3.10.2", require: false
   gem "rubocop-rspec_rails", "2.33.0", require: false
-  gem "rubocop-vibe",        "0.7.1",  require: false
+  gem "rubocop-vibe",        "0.8.0",  require: false
   gem "web-console",         "4.3.0"
   gem "yard-lint",           "1.13.1", require: false
 end
