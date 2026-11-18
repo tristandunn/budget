@@ -8,4 +8,6 @@ describe Settings::SessionsController, type: :routing do
   it do
     expect(described_class).to route(:delete, "/account/sessions/1").to(action: :destroy, id: 1)
   end
+
+  it { expect(described_class).to route(:delete, "/account/sessions").to(action: :destroy) }
 end

@@ -87,4 +87,42 @@ describe Settings::SessionsController do
       it { is_expected.to redirect_to(new_session_url) }
     end
   end
+
+  describe "#destroy without an ID" do
+    let(:user) { create(:user) }
+
+    context "when signed in" do
+      let!(:other_session) { create(:session, user: user) }
+      let!(:stranger)      { create(:session) }
+
+      before do
+        sign_in_as(user)
+
+        delete :destroy
+      end
+
+      it { is_expected.to redirect_to(account_sessions_path) }
+      it { is_expected.to set_flash[:notice].to(t("settings.sessions.destroy.success_others")) }
+
+      it "destroys the other sessions of the user" do
+        expect(Session.exists?(other_session.id)).to be(false)
+      end
+
+      it "does not destroy the current session" do
+        expect(user.sessions.count).to eq(1)
+      end
+
+      it "does not destroy sessions of other users" do
+        expect(Session.exists?(stranger.id)).to be(true)
+      end
+    end
+
+    context "when signed out" do
+      before do
+        delete :destroy
+      end
+
+      it { is_expected.to redirect_to(new_session_url) }
+    end
+  end
 end

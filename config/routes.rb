@@ -48,6 +48,8 @@ Rails.application.routes.draw do
     resource :account, only: %i(show update) do
       resource  :password, only: %i(show update)
       resources :sessions, only: %i(index destroy)
+
+      delete "sessions", to: "sessions#destroy"
     end
   end
 

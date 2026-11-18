@@ -23,10 +23,19 @@ describe "Sessions" do
     create(:session, user: user)
 
     visit account_sessions_path
-
     accept_confirm { click_button t("settings.sessions.index.revoke.submit") }
 
     expect(page).to have_text(t("settings.sessions.destroy.success"))
+      .and(have_css("main li", count: 1))
+  end
+
+  it "revokes all other sessions", :js do
+    create_list(:session, 2, user: user)
+
+    visit account_sessions_path
+    accept_confirm { click_button t("settings.sessions.index.revoke_others.submit") }
+
+    expect(page).to have_text(t("settings.sessions.destroy.success_others"))
       .and(have_css("main li", count: 1))
   end
 end
