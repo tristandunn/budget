@@ -385,11 +385,15 @@ en:
     sessions:
       destroy:
         success: "The session was revoked."
+        success_others: "All other sessions were revoked."
       index:
         current: "Current session."
         device: "%{browser} on %{platform}"
         revoke:
           confirmation: "Are you sure you want to revoke this session?"
           submit: "Revoke"
+        revoke_others:
+          confirmation: "Are you sure you want to revoke all other sessions?"
+          submit: "Revoke All Other Sessions"
         unknown_device: "Unknown Device"
         unknown_location: "Unknown IP"
