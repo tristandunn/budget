@@ -9,10 +9,12 @@
         </p>
 
         <p class="mt-1 text-xs text-taupe-600">
-          <%= l(record.created_at.to_date, format: :full_date) %> &middot;
           <%= record.ip_address.presence || t("settings.sessions.index.unknown_location") %>
+          &middot;
           <% if record == Current.session %>
-            <span class="font-medium text-indigo-700">(<%= t("settings.sessions.index.current") %>)</span>
+            <span class="font-medium text-indigo-700"><%= t("settings.sessions.index.current") %></span>
+          <% else %>
+            <%= t("settings.sessions.index.last_active", date: record.updated_at.to_date.to_fs(:full_date_ordinal)) %>
           <% end %>
         </p>
       </div>

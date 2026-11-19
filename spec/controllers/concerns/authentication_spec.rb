@@ -76,7 +76,7 @@ describe Authentication do
     end
 
     context "with a token for a session" do
-      let(:record) { create(:session) }
+      let(:record) { create(:session, updated_at: 2.days.ago) }
 
       before do
         jar.signed[:session_token] = record.token
@@ -90,10 +90,30 @@ describe Authentication do
         expect(Current.session).to eq(record)
       end
 
+      it "touches a session last updated over an hour ago" do
+        freeze_time do
+          resume_session
+
+          expect(record.reload.updated_at).to eq(Time.current)
+        end
+      end
+
       it "keeps the cookie" do
         resume_session
 
         expect(jar.signed[:session_token]).to eq(record.token)
+      end
+    end
+
+    context "with a token for a recently updated session" do
+      let(:record) { create(:session, updated_at: 5.minutes.ago) }
+
+      before do
+        jar.signed[:session_token] = record.token
+      end
+
+      it "does not touch the session" do
+        expect { resume_session }.not_to(change { record.reload.updated_at })
       end
     end
 

@@ -11,7 +11,7 @@ describe "settings/sessions/index.html+desktop.erb" do
 
   let(:agent)           { "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:160.0) Gecko/20100101 Firefox/160.0" }
   let(:current_session) { create(:session, user_agent: agent) }
-  let(:date)            { I18n.l(current_session.created_at.to_date, format: :full_date) }
+  let(:date)            { current_session.updated_at.to_date.to_fs(:full_date_ordinal) }
   let(:other_session)   { create(:session, user: current_session.user, ip_address: nil, user_agent: nil) }
 
   before do
@@ -34,8 +34,8 @@ describe "settings/sessions/index.html+desktop.erb" do
     expect(html).to have_css("li:first-child", text: current_session.ip_address)
   end
 
-  it "renders the created date of a session" do
-    expect(html).to have_css("li:first-child", text: date)
+  it "renders the last active date of another session" do
+    expect(html).to have_css("li:last-child", text: t("settings.sessions.index.last_active", date: date))
   end
 
   it "marks the current session" do
@@ -66,6 +66,10 @@ describe "settings/sessions/index.html+desktop.erb" do
 
   it "does not render a revoke button for the current session" do
     expect(html).to have_no_css("li:first-child button")
+  end
+
+  it "does not render the last active date of the current session" do
+    expect(html).to have_no_css("li:first-child", text: t("settings.sessions.index.last_active", date: date))
   end
 
   context "without other sessions" do
