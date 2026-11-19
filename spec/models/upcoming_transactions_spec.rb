@@ -8,7 +8,7 @@ describe UpcomingTransactions do
   let(:subcategory) { create(:category, :subcategory, budget: budget, with_snapshot: false) }
 
   let(:budget_snapshot) do
-    instance_double(BudgetSnapshot, available_for: 50_000, date: date)
+    instance_double(BudgetSnapshot, available_for: 50_000, date: date, upcoming_for: 0)
   end
 
   let(:upcoming_transactions) do
@@ -34,44 +34,23 @@ describe UpcomingTransactions do
   describe "#available_after" do
     subject { upcoming_transactions.available_after }
 
-    context "with upcoming transactions for the month" do
+    context "with a cumulative upcoming outflow" do
       before do
-        create(:transaction, :upcoming, budget:      budget,
-                                        subcategory: subcategory,
-                                        amount:      -5_000,
-                                        date:        date)
-      end
-
-      it { is_expected.to eq(45_000) }
-    end
-
-    context "with an upcoming refund for the month" do
-      before do
-        create(:transaction, :upcoming, budget:      budget,
-                                        subcategory: subcategory,
-                                        amount:      5_000,
-                                        date:        date)
-      end
-
-      it { is_expected.to eq(55_000) }
-    end
-
-    context "with upcoming transactions for the month and an earlier one awaiting activation" do
-      before do
-        create(:transaction, :upcoming, budget:      budget,
-                                        subcategory: subcategory,
-                                        amount:      -5_000,
-                                        date:        date.prev_month)
-        create(:transaction, :upcoming, budget:      budget,
-                                        subcategory: subcategory,
-                                        amount:      -2_000,
-                                        date:        date)
+        allow(budget_snapshot).to receive(:upcoming_for).and_return(-7_000)
       end
 
       it { is_expected.to eq(43_000) }
     end
 
-    context "without upcoming transactions for the month" do
+    context "with a cumulative upcoming refund" do
+      before do
+        allow(budget_snapshot).to receive(:upcoming_for).and_return(5_000)
+      end
+
+      it { is_expected.to eq(55_000) }
+    end
+
+    context "without upcoming transactions" do
       it { is_expected.to eq(50_000) }
     end
   end
@@ -101,7 +80,7 @@ describe UpcomingTransactions do
         create(:transaction, :upcoming, budget: budget, subcategory: subcategory, date: date.prev_month)
       end
 
-      it { is_expected.to eq(1) }
+      it { is_expected.to eq(0) }
     end
 
     context "with transactions in another status" do
@@ -145,7 +124,7 @@ describe UpcomingTransactions do
       it { is_expected.to eq(-5_000) }
     end
 
-    context "with upcoming transactions for the month and an earlier one awaiting activation" do
+    context "with upcoming transactions for the month and one in an earlier month" do
       before do
         create(:transaction, :upcoming, budget:      budget,
                                         subcategory: subcategory,
@@ -157,7 +136,7 @@ describe UpcomingTransactions do
                                         date:        date)
       end
 
-      it { is_expected.to eq(-6_000) }
+      it { is_expected.to eq(-2_000) }
     end
 
     context "without upcoming transactions for the month" do
