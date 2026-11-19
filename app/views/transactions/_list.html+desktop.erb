@@ -9,7 +9,7 @@
       <% end %>
 
       <col class="w-28">
-      <col class="w-[18%]">
+      <col class="w-[14%]">
       <col>
       <col class="w-[18%]">
       <col class="w-32">
@@ -34,7 +34,10 @@
         <% if context == :transactions %>
           <th
             scope="col"
-            class="truncate p-2 font-medium shadow-[inset_0_-1px_0_var(--color-taupe-300)]"
+            class="
+              truncate p-2 font-medium
+              shadow-[inset_0_-1px_0_var(--color-taupe-300),inset_-1px_0_0_var(--color-taupe-300)]
+            "
           >
             <%= t(".columns.account") %>
           </th>
