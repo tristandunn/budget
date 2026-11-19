@@ -67,16 +67,30 @@ class Transaction < ApplicationRecord
   # Return the date for the next recurring occurrence.
   #
   # @param frequency [String, Symbol, nil] The frequency to advance by, defaulting to the transaction's frequency.
+  # @param from [Date] The date to advance, defaulting to the transaction's date.
   # @return [Date] The next recurring date.
   # @return [nil] When the frequency is blank or unrecognized.
-  def next_recurring_date(frequency: self.frequency)
+  def next_recurring_date(frequency: self.frequency, from: date)
     case frequency.to_s
-    when "daily"            then date.advance(days: 1)
-    when "weekly"           then date.advance(weeks: 1)
-    when "every_other_week" then date.advance(weeks: 2)
-    when "monthly"          then date.advance(months: 1)
-    when "yearly"           then date.advance(years: 1)
+    when "daily"            then from.advance(days: 1)
+    when "weekly"           then from.advance(weeks: 1)
+    when "every_other_week" then from.advance(weeks: 2)
+    when "monthly"          then from.advance(months: 1)
+    when "yearly"           then from.advance(years: 1)
     end
+  end
+
+  # Return the dates of the transaction and its projected recurring
+  # occurrences that fall within the given range. Only the next occurrence of
+  # a recurring transaction is stored, so each later one is projected the same
+  # way posting creates it.
+  #
+  # @param within [Range<Date>] The dates to include, which must have an end.
+  # @return [Array<Date>] The occurrence dates.
+  def occurrence_dates(within:)
+    Enumerator.produce(date) { |current| next_recurring_date(from: current) }
+              .take_while { |current| current && current <= within.end }
+              .select { |current| within.cover?(current) }
   end
 
   # Return whether the transaction has a frequency and a future date. This is

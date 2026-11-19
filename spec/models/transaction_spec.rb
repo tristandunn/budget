@@ -221,6 +221,45 @@ describe Transaction do
     end
   end
 
+  describe "#occurrence_dates" do
+    subject { transaction.occurrence_dates(within: within) }
+
+    let(:frequency)   { :monthly }
+    let(:transaction) { build(:transaction, date: Date.new(2026, 1, 15), frequency: frequency) }
+
+    context "with a range covering several occurrences" do
+      let(:within) { Date.new(2026, 1, 1)..Date.new(2026, 3, 31) }
+
+      it { is_expected.to eq([Date.new(2026, 1, 15), Date.new(2026, 2, 15), Date.new(2026, 3, 15)]) }
+    end
+
+    context "with a range starting after the first occurrence" do
+      let(:within) { Date.new(2026, 3, 1)..Date.new(2026, 3, 31) }
+
+      it { is_expected.to eq([Date.new(2026, 3, 15)]) }
+    end
+
+    context "with a beginless range" do
+      let(:within) { ..Date.new(2026, 2, 28) }
+
+      it { is_expected.to eq([Date.new(2026, 1, 15), Date.new(2026, 2, 15)]) }
+    end
+
+    context "without a frequency" do
+      let(:frequency) { nil }
+      let(:within)    { Date.new(2026, 1, 1)..Date.new(2026, 3, 31) }
+
+      it { is_expected.to eq([Date.new(2026, 1, 15)]) }
+    end
+
+    context "without a frequency and dated before the range" do
+      let(:frequency) { nil }
+      let(:within)    { Date.new(2026, 2, 1)..Date.new(2026, 3, 31) }
+
+      it { is_expected.to be_empty }
+    end
+  end
+
   describe "#next_recurring_date" do
     subject { transaction.next_recurring_date }
 
@@ -260,6 +299,14 @@ describe Transaction do
       let(:frequency) { nil }
 
       it { is_expected.to be_nil }
+    end
+
+    context "with a provided date" do
+      it "advances the provided date instead of the transaction's date" do
+        transaction = build(:transaction, date: Date.new(2026, 3, 15), frequency: :monthly)
+
+        expect(transaction.next_recurring_date(from: Date.new(2026, 6, 1))).to eq(Date.new(2026, 7, 1))
+      end
     end
 
     context "with a provided frequency" do
