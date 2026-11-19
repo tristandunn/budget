@@ -249,15 +249,21 @@ class BudgetSnapshot
   end
 
   # Return a hash keyed by category ID of the summed amount of the upcoming
-  # transactions dated on or before the end of the displayed month.
+  # transactions dated on or before the end of the displayed month, including
+  # projected recurring occurrences.
   #
   # @return [Hash{Integer => Integer}] The upcoming amount by category ID.
   def upcoming_amounts_by_category
-    @upcoming_amounts_by_category ||= budget.transactions
-                                            .upcoming
-                                            .where(date: ..date.end_of_month)
-                                            .reorder(nil)
-                                            .group(:category_id)
-                                            .sum(:amount)
+    @upcoming_amounts_by_category ||=
+      budget.transactions
+            .upcoming
+            .where(date: ..date.end_of_month)
+            .group_by(&:category_id)
+            .transform_values do |transactions|
+              transactions.sum do |transaction|
+                transaction.amount *
+                  transaction.occurrence_dates(within: ..date.end_of_month).size
+              end
+            end
   end
 end

@@ -58,6 +58,17 @@ describe UpcomingTransactions do
   describe "#count" do
     subject { upcoming_transactions.count }
 
+    context "with a recurring transaction first dated before the month" do
+      before do
+        create(:transaction, :upcoming, budget:      budget,
+                                        frequency:   :monthly,
+                                        subcategory: subcategory,
+                                        date:        date.prev_month(2).change(day: 15))
+      end
+
+      it { is_expected.to eq(1) }
+    end
+
     context "with upcoming transactions for the month" do
       before do
         create(:transaction, :upcoming, budget: budget, subcategory: subcategory, date: date)
@@ -108,6 +119,18 @@ describe UpcomingTransactions do
 
   describe "#total" do
     subject { upcoming_transactions.total }
+
+    context "with a recurring transaction first dated before the month" do
+      before do
+        create(:transaction, :upcoming, amount:      -5_000,
+                                        budget:      budget,
+                                        frequency:   :monthly,
+                                        subcategory: subcategory,
+                                        date:        date.prev_month.change(day: 15))
+      end
+
+      it { is_expected.to eq(-5_000) }
+    end
 
     context "with upcoming transactions for the month" do
       before do

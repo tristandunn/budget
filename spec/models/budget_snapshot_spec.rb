@@ -592,6 +592,18 @@ describe BudgetSnapshot do
       it { is_expected.to be(true) }
     end
 
+    context "with a recurring transaction projected into the displayed month" do
+      before do
+        create(:transaction, :upcoming, budget:      budget,
+                                        frequency:   :monthly,
+                                        subcategory: subcategory,
+                                        amount:      -30_00,
+                                        date:        date.prev_month)
+      end
+
+      it { is_expected.to be(true) }
+    end
+
     context "with an upcoming inflow" do
       before do
         create(:transaction, :upcoming, budget:      budget,

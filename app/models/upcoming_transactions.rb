@@ -50,15 +50,28 @@ class UpcomingTransactions
 
   attr_reader :budget_snapshot, :category
 
+  delegate :date, to: :budget_snapshot, private: true
+
   # Return the amounts of the category's upcoming transactions dated within
-  # the displayed month, loaded in a single query.
+  # the displayed month, including projected recurring occurrences.
   #
   # @return [Array<Integer>] The upcoming amounts in cents.
   def amounts
-    @amounts ||= category.transactions
-                         .upcoming
-                         .where(date: budget_snapshot.date.all_month)
-                         .reorder(nil)
-                         .pluck(:amount)
+    @amounts ||= current_or_recurring_transactions.flat_map do |transaction|
+      transaction.occurrence_dates(within: date.all_month).map do
+        transaction.amount
+      end
+    end
+  end
+
+  # Return the category's upcoming transactions that can affect the displayed
+  # month. Recurring transactions dated earlier are included so they can be
+  # projected forward, but an earlier one-time transaction is left out.
+  #
+  # @return [ActiveRecord::Relation<Transaction>] The upcoming transactions.
+  def current_or_recurring_transactions
+    upcoming = category.transactions.upcoming
+    upcoming.where(date: date.all_month)
+            .or(upcoming.where.not(frequency: nil).where(date: ..date.end_of_month))
   end
 end
