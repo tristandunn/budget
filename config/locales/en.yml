@@ -4,6 +4,7 @@ en:
   date:
     formats:
       full_date: "%B %-d, %Y"
+      full_date_ordinal: "%B {day}, %Y"
       full_month_and_year: "%B %Y"
       month: "%B"
       month_and_year: "%b %Y"
@@ -389,6 +390,7 @@ en:
       index:
         current: "Current session."
         device: "%{browser} on %{platform}"
+        last_active: "Last active on %{date}."
         revoke:
           confirmation: "Are you sure you want to revoke this session?"
           submit: "Revoke"

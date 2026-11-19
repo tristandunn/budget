@@ -95,7 +95,15 @@ module Authentication
     token = cookies.signed[SESSION_COOKIE]
 
     if token.present?
-      Session.includes(:user).find_by(token: token)
+      record = Session.includes(:user).find_by!(token: token)
+
+      if record.updated_at < 1.hour.ago
+        record.touch # rubocop:disable Rails/SkipsModelValidations
+      end
+
+      record
     end
+  rescue ActiveRecord::RecordNotFound
+    nil
   end
 end
