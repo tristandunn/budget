@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-ruby   "4.0.9"
+ruby   "4.0.10"
 source "https://rubygems.org"
 
 gem "bcrypt",            "3.1.22"
@@ -34,7 +34,7 @@ group :development do
   gem "kamal",               "2.12.0", require: false
   gem "listen",              "3.10.1"
   gem "rack-mini-profiler",  "5.0.0"
-  gem "rubocop",             "1.92.2", require: false
+  gem "rubocop",             "1.92.3", require: false
   gem "rubocop-capybara",    "3.1.0", require: false
   gem "rubocop-factory_bot", "2.28.0", require: false
   gem "rubocop-performance", "1.27.0", require: false
@@ -54,7 +54,7 @@ group :test do
   gem "parallel_matrix_formatter", "0.2.0"
   gem "parallel_tests",            "5.9.0"
   gem "rails-controller-testing",  "1.0.5"
-  gem "selenium-webdriver",        "4.52.0"
+  gem "selenium-webdriver",        "4.53.0"
   gem "shoulda-matchers",          "8.0.1"
   gem "simplecov-console",         "0.9.5", require: false
 end
