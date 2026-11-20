@@ -3,9 +3,10 @@
 class SettingsController < ApplicationController
   # Update budget settings.
   def update
-    current_budget.settings.update(settings_parameters)
+    budget = Current.budget
+    budget.settings.update(settings_parameters)
 
-    redirect_back_or_to budget_transactions_path(current_budget), status: :see_other
+    redirect_back_or_to budget_transactions_path(budget), status: :see_other
   end
 
   private

@@ -3,7 +3,7 @@
 class TargetsController < ApplicationController
   # Render the target edit form.
   def edit
-    @budget          = current_budget
+    @budget          = Current.budget
     @budget_snapshot = budget_snapshot
     @category        = category
     @form            = TargetForm.from(category: category)
@@ -11,7 +11,7 @@ class TargetsController < ApplicationController
 
   # Update the target on the category.
   def update
-    @budget          = current_budget
+    @budget          = Current.budget
     @budget_snapshot = budget_snapshot
     @category        = category
     @form            = TargetForm.new(category: category, **form_parameters)
@@ -30,7 +30,7 @@ class TargetsController < ApplicationController
 
   # Clear the target on the category.
   def destroy
-    @budget          = current_budget
+    @budget          = Current.budget
     @budget_snapshot = budget_snapshot
     @category        = category
 
@@ -50,14 +50,14 @@ class TargetsController < ApplicationController
   #
   # @return [BudgetSnapshot] The current budget snapshot.
   def budget_snapshot
-    @budget_snapshot ||= BudgetSnapshot.new(current_budget, date: date)
+    @budget_snapshot ||= BudgetSnapshot.new(Current.budget, date: date)
   end
 
   # Return the category for the given `category_id` parameter.
   #
   # @return [Category] The requested category.
   def category
-    @category ||= current_budget.subcategories.find(params.expect(:category_id))
+    @category ||= Current.budget.subcategories.find(params.expect(:category_id))
   end
 
   # Return the date for the `year` and `month` parameters.
@@ -72,7 +72,7 @@ class TargetsController < ApplicationController
   #
   # @return [String] The path to the budget for the displayed month.
   def displayed_budget_path
-    month_budget_path(current_budget, month: budget_snapshot.date.month, year: budget_snapshot.date.year)
+    month_budget_path(Current.budget, month: budget_snapshot.date.month, year: budget_snapshot.date.year)
   end
 
   # Return the permitted form parameters.

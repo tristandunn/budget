@@ -3,13 +3,13 @@
 class PayeesController < ApplicationController
   # Render the list of payees in the budget.
   def index
-    @budget = current_budget
+    @budget = Current.budget
     @payees = payees
   end
 
   # Render the payee edit form.
   def edit
-    @budget = current_budget
+    @budget = Current.budget
     @payee  = payee
     @form   = PayeeForm.from(payee: payee)
   end
@@ -17,7 +17,7 @@ class PayeesController < ApplicationController
   # Update the payee, renaming or hiding it, or merging it into an
   # existing payee.
   def update
-    @budget = current_budget
+    @budget = Current.budget
     @payee  = payee
     @form   = PayeeForm.new(payee: payee, **form_parameters)
 
@@ -25,7 +25,7 @@ class PayeesController < ApplicationController
       if request.format.turbo_stream?
         @payees = payees
       else
-        redirect_to budget_payees_path(current_budget), status: :see_other
+        redirect_to budget_payees_path(@budget), status: :see_other
       end
     else
       render :edit, status: :unprocessable_content, formats: [:html]
@@ -60,6 +60,6 @@ class PayeesController < ApplicationController
   #
   # @return [ActiveRecord::Relation] The payees that can be managed.
   def payees
-    current_budget.payees.without_transfers.order(:name)
+    Current.budget.payees.without_transfers.order(:name)
   end
 end

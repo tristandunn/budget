@@ -7,7 +7,7 @@ module Accounts
       # rubocop:disable-next Rails/SkipsModelValidations
       account.transactions.cleared.update_all(status: :reconciled, updated_at: Time.current)
 
-      redirect_to budget_account_transactions_path(current_budget, account), status: :see_other
+      redirect_to budget_account_transactions_path(Current.budget, account), status: :see_other
     end
 
     private
@@ -16,7 +16,7 @@ module Accounts
     #
     # @return [Account] The requested account.
     def account
-      @account ||= current_budget.accounts.find(params.expect(:account_id))
+      @account ||= Current.budget.accounts.find(params.expect(:account_id))
     end
   end
 end
