@@ -4,7 +4,7 @@ ruby   "4.0.10"
 source "https://rubygems.org"
 
 gem "bcrypt",            "3.1.22"
-gem "bootsnap",          "1.26.1", require: false
+gem "bootsnap",          "1.26.2", require: false
 gem "browser",           "6.2.0"
 gem "importmap-rails",   "2.2.3"
 gem "json",              "3.1.0"
