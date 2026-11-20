@@ -9,13 +9,13 @@ class TransactionsController < ApplicationController
 
   # Render all transactions grouped by date.
   def index
-    @budget = current_budget
+    @budget = Current.budget
     @scheduled_transactions, @current_transactions = filtered_transactions
   end
 
   # Render the new transaction form.
   def new
-    @form = TransactionForm.new(account: default_account, budget: current_budget)
+    @form = TransactionForm.new(account: default_account, budget: Current.budget)
 
     assign_form_collections
   end
@@ -93,7 +93,7 @@ class TransactionsController < ApplicationController
   # @return [nil] When no account is provided.
   def account
     if parameters[:account_id].present?
-      @account ||= current_budget.accounts.find(parameters[:account_id])
+      @account ||= Current.budget.accounts.find(parameters[:account_id])
     end
   end
 
@@ -101,8 +101,8 @@ class TransactionsController < ApplicationController
   #
   # @return [void]
   def assign_form_collections
-    @accounts        = current_budget.accounts.to_a
-    @payees          = current_budget.payees.order(:name).to_a
+    @accounts        = Current.budget.accounts.to_a
+    @payees          = Current.budget.payees.order(:name).to_a
     @category_picker = Transactions::CategoryPicker.new(form: @form)
   end
 
@@ -112,7 +112,7 @@ class TransactionsController < ApplicationController
   # @return [nil] When no account is provided.
   def default_account
     if params[:account_id].present?
-      current_budget.accounts.find(params.expect(:account_id))
+      Current.budget.accounts.find(params.expect(:account_id))
     end
   end
 
@@ -121,8 +121,8 @@ class TransactionsController < ApplicationController
   #
   # @return [Array(Array<Transaction>, Array<Transaction>)] The upcoming and current transactions.
   def filtered_transactions
-    transactions = current_budget.transactions.recent.includes(:account, :payee, subcategory: :parent)
-    transactions = transactions.where.not(status: :reconciled) if current_budget.settings.hide_reconciled?
+    transactions = Current.budget.transactions.recent.includes(:account, :payee, subcategory: :parent)
+    transactions = transactions.where.not(status: :reconciled) if Current.budget.settings.hide_reconciled?
     transactions.partition(&:upcoming?)
   end
 
@@ -175,7 +175,7 @@ class TransactionsController < ApplicationController
   #
   # @return [String] The URL to redirect to once the action succeeds.
   def return_location
-    session.delete(:return_to) || budget_transactions_path(current_budget)
+    session.delete(:return_to) || budget_transactions_path(Current.budget)
   end
 
   # Store the referrer in the session, ignoring locations on other hosts.
@@ -191,7 +191,7 @@ class TransactionsController < ApplicationController
   # @return [nil] When no subcategory is provided.
   def subcategory
     if parameters[:subcategory_id].present?
-      @subcategory ||= current_budget.subcategories.find(parameters[:subcategory_id])
+      @subcategory ||= Current.budget.subcategories.find(parameters[:subcategory_id])
     end
   end
 
@@ -199,9 +199,9 @@ class TransactionsController < ApplicationController
   #
   # @return [Transaction] The requested transaction.
   def transaction
-    @transaction ||= current_budget.transactions
-                                   .includes(:account, :payee, transfer_pair: :account)
-                                   .find(params.expect(:id))
+    @transaction ||= Current.budget.transactions
+                            .includes(:account, :payee, transfer_pair: :account)
+                            .find(params.expect(:id))
   end
 
   # Return the permitted parameters with the account, budget, and subcategory.
@@ -210,7 +210,7 @@ class TransactionsController < ApplicationController
   def transaction_parameters
     parameters.to_h.slice(:amount, :date, :frequency, :memo, :payee).merge(
       account:     account,
-      budget:      current_budget,
+      budget:      Current.budget,
       subcategory: subcategory
     )
   end

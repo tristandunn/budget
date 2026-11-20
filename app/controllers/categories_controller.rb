@@ -5,16 +5,16 @@ class CategoriesController < ApplicationController
   def activity
     @category        = category
     @budget_snapshot = budget_snapshot
-    @transactions    = current_budget.transactions
-                                     .where(subcategory: category, date: budget_snapshot.date.all_month)
-                                     .where.not(status: :upcoming)
-                                     .includes(:payee)
-                                     .reorder(date: :desc, created_at: :desc)
+    @transactions    = Current.budget.transactions
+                              .where(subcategory: category, date: budget_snapshot.date.all_month)
+                              .where.not(status: :upcoming)
+                              .includes(:payee)
+                              .reorder(date: :desc, created_at: :desc)
   end
 
   # Render the category details.
   def show
-    @budget          = current_budget
+    @budget          = Current.budget
     @budget_snapshot = budget_snapshot
     @category        = category
   end
@@ -23,7 +23,7 @@ class CategoriesController < ApplicationController
   def summary
     @budget_snapshot = budget_snapshot
     @summary         = CategorySummary.new(
-      current_budget,
+      Current.budget,
       budget_snapshot: @budget_snapshot,
       ids:             params.expect(ids: [])
     )
@@ -31,14 +31,14 @@ class CategoriesController < ApplicationController
 
   # Render the category edit form.
   def edit
-    @budget   = current_budget
+    @budget   = Current.budget
     @category = category
     @form     = CategoryForm.from(category: category)
   end
 
   # Update the category.
   def update
-    @budget   = current_budget
+    @budget   = Current.budget
     @category = category
     @form     = CategoryForm.new(category: category, **form_parameters)
 
@@ -46,7 +46,7 @@ class CategoriesController < ApplicationController
       @budget_snapshot = budget_snapshot
 
       unless request.format.turbo_stream?
-        redirect_to budget_path(current_budget), status: :see_other
+        redirect_to budget_path(Current.budget), status: :see_other
       end
     else
       render :edit, status: :unprocessable_content, formats: [:html]
@@ -59,7 +59,7 @@ class CategoriesController < ApplicationController
   #
   # @return [BudgetSnapshot] The current budget snapshot.
   def budget_snapshot
-    @budget_snapshot ||= BudgetSnapshot.new(current_budget, date: date)
+    @budget_snapshot ||= BudgetSnapshot.new(Current.budget, date: date)
   end
 
   # Return the category for the given `id` parameter.
@@ -69,7 +69,7 @@ class CategoriesController < ApplicationController
   # @return [Category] The requested category.
   # @raise [ActiveRecord::RecordNotFound] When the category is an inflow category.
   def category
-    @category ||= current_budget.subcategories.find(params.expect(:id)).tap do |record|
+    @category ||= Current.budget.subcategories.find(params.expect(:id)).tap do |record|
       if record.inflow?
         raise ActiveRecord::RecordNotFound
       end

@@ -5,7 +5,7 @@ class SnoozesController < ApplicationController
 
   # Snooze the monthly spending target for the displayed month.
   def create
-    @budget          = current_budget
+    @budget          = Current.budget
     @category        = category
     @budget_snapshot = budget_snapshot
 
@@ -21,7 +21,7 @@ class SnoozesController < ApplicationController
 
   # Unsnooze the monthly spending target for the displayed month.
   def destroy
-    @budget          = current_budget
+    @budget          = Current.budget
     @category        = category
     @budget_snapshot = budget_snapshot
 
@@ -41,7 +41,7 @@ class SnoozesController < ApplicationController
   #
   # @return [BudgetSnapshot] The current budget snapshot.
   def budget_snapshot
-    @budget_snapshot ||= BudgetSnapshot.new(current_budget, date: date)
+    @budget_snapshot ||= BudgetSnapshot.new(Current.budget, date: date)
   end
 
   # Return the category for the given `category_id` parameter, scoped to
@@ -49,9 +49,9 @@ class SnoozesController < ApplicationController
   #
   # @return [Category] The requested category.
   def category
-    @category ||= current_budget.subcategories
-                                .with_monthly_target
-                                .find(params.expect(:category_id))
+    @category ||= Current.budget.subcategories
+                         .with_monthly_target
+                         .find(params.expect(:category_id))
   end
 
   # Return the category snapshot for the displayed month, initializing one
@@ -60,7 +60,7 @@ class SnoozesController < ApplicationController
   # @return [CategorySnapshot] The category snapshot for the displayed month.
   def category_snapshot
     @category_snapshot ||= category.snapshots.find_or_initialize_by(
-      budget: current_budget,
+      budget: Current.budget,
       date:   budget_snapshot.date
     )
   end
@@ -83,7 +83,7 @@ class SnoozesController < ApplicationController
   #
   # @return [String] The path to the budget for the displayed month.
   def displayed_budget_path
-    month_budget_path(current_budget, month: budget_snapshot.date.month, year: budget_snapshot.date.year)
+    month_budget_path(Current.budget, month: budget_snapshot.date.month, year: budget_snapshot.date.year)
   end
 
   # Raise if the date is invalid.

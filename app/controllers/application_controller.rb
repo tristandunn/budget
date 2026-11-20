@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
   before_action :block_bots
   before_action :authenticate
   before_action :set_request_variant
-  before_action :current_budget
+  before_action :load_budget
 
   rescue_from ActionController::InvalidAuthenticityToken, with: :invalid_authenticity_token
 
@@ -25,15 +25,13 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  # Return the budget for the current request, resolved from route params.
+  # Find the budget for the current request, resolved from route parameters.
   #
   # @return [Budget] The budget for the request.
-  def current_budget
-    Current.budget ||= if request.variant.mobile?
-                         Current.user.budgets.find(params.expect(:budget_id))
-                       else
-                         Current.user.budgets.includes(:accounts).find(params.expect(:budget_id))
-                       end
+  def find_budget
+    scope = Current.user.budgets
+    scope = scope.includes(:accounts) if request.variant.desktop?
+    scope.find(params.expect(:budget_id))
   end
 
   # Deny access when signed out, otherwise re-raise the error.
@@ -50,6 +48,16 @@ class ApplicationController < ActionController::Base
       access_denied
     else
       raise error
+    end
+  end
+
+  # Load the budget for the current request and store it in the session as the
+  # last viewed budget.
+  #
+  # @return [void]
+  def load_budget
+    Current.budget = find_budget.tap do |budget|
+      session[:budget_id] = budget.id
     end
   end
 

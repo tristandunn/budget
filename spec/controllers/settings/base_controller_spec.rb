@@ -15,17 +15,17 @@ describe Settings::BaseController do
     expect(described_class._layout).to eq("settings")
   end
 
-  describe "#current_budget" do
+  describe "#load_budget" do
     before do
       sign_in_as(create(:user))
     end
 
     it "does not require a current budget" do
-      allow(controller).to receive(:current_budget)
+      allow(controller).to receive(:load_budget)
 
       get :index
 
-      expect(controller).not_to have_received(:current_budget)
+      expect(controller).not_to have_received(:load_budget)
     end
   end
 end

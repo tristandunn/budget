@@ -5,7 +5,7 @@ module Accounts
     # Render transactions for a single account grouped by date.
     def index
       @account = account
-      @budget  = current_budget
+      @budget  = Current.budget
       @scheduled_transactions, @current_transactions = filtered_transactions
     end
 
@@ -15,7 +15,7 @@ module Accounts
     #
     # @return [Account] The requested account.
     def account
-      @account ||= current_budget.accounts.find(params.expect(:account_id))
+      @account ||= Current.budget.accounts.find(params.expect(:account_id))
     end
 
     # Return transactions for the account, grouped by upcoming or not,
@@ -24,7 +24,7 @@ module Accounts
     # @return [Array(Array<Transaction>, Array<Transaction>)] The upcoming and current transactions.
     def filtered_transactions
       transactions = account.transactions.recent.includes(:budget, :payee, subcategory: :parent)
-      transactions = transactions.where.not(status: :reconciled) if current_budget.settings.hide_reconciled?
+      transactions = transactions.where.not(status: :reconciled) if Current.budget.settings.hide_reconciled?
       transactions.partition(&:upcoming?)
     end
   end

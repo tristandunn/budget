@@ -4,6 +4,6 @@ module Settings
   class BaseController < ApplicationController
     layout "settings"
 
-    skip_before_action :current_budget
+    skip_before_action :load_budget
   end
 end

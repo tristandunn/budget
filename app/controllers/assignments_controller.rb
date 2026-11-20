@@ -3,15 +3,15 @@
 class AssignmentsController < ApplicationController
   # Render the inline assignment edit form.
   def edit
-    @budget               = current_budget
+    @budget               = Current.budget
     @subcategory          = subcategory
     @subcategory_snapshot = subcategory_snapshot
-    @form                 = AssignmentForm.new(budget: current_budget, subcategory: subcategory, date: date)
+    @form                 = AssignmentForm.new(budget: @budget, subcategory: subcategory, date: date)
   end
 
   # Update the assignment for the subcategory.
   def update
-    @budget               = current_budget
+    @budget               = Current.budget
     @subcategory          = subcategory
     @subcategory_snapshot = subcategory_snapshot
     @form                 = AssignmentForm.new(assignment_parameters)
@@ -36,7 +36,7 @@ class AssignmentsController < ApplicationController
   def assignment_parameters
     {
       amount:      parameters[:amount],
-      budget:      current_budget,
+      budget:      Current.budget,
       date:        date,
       subcategory: subcategory
     }
@@ -46,7 +46,7 @@ class AssignmentsController < ApplicationController
   #
   # @return [BudgetSnapshot] The current budget snapshot.
   def budget_snapshot
-    @budget_snapshot ||= BudgetSnapshot.new(current_budget, date: date)
+    @budget_snapshot ||= BudgetSnapshot.new(Current.budget, date: date)
   end
 
   # Return the requested date, falling back to the current month.
@@ -60,7 +60,7 @@ class AssignmentsController < ApplicationController
   #
   # @return [String] The path to the budget for the displayed month.
   def displayed_budget_path
-    month_budget_path(current_budget, month: date.month, year: date.year)
+    month_budget_path(Current.budget, month: date.month, year: date.year)
   end
 
   # Return the permitted form parameters.
@@ -78,7 +78,7 @@ class AssignmentsController < ApplicationController
   # @return [Category] The requested subcategory.
   # @raise [ActiveRecord::RecordNotFound] When the parent is an inflow category.
   def subcategory
-    @subcategory ||= current_budget.subcategories.find(params.expect(:category_id)).tap do |record|
+    @subcategory ||= Current.budget.subcategories.find(params.expect(:category_id)).tap do |record|
       if record.parent.inflow?
         raise ActiveRecord::RecordNotFound
       end
@@ -89,6 +89,6 @@ class AssignmentsController < ApplicationController
   #
   # @return [CategorySnapshot] The snapshot for the current month.
   def subcategory_snapshot
-    @subcategory_snapshot ||= subcategory.snapshots.find_or_initialize_by(budget: current_budget, date: date)
+    @subcategory_snapshot ||= subcategory.snapshots.find_or_initialize_by(budget: Current.budget, date: date)
   end
 end

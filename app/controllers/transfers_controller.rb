@@ -4,9 +4,9 @@ class TransfersController < ApplicationController
   # Render the new transfer form.
   def new
     @accounts = accounts
-    @budget   = current_budget
+    @budget   = Current.budget
     @form     = TransferForm.new(
-      budget:       current_budget,
+      budget:       @budget,
       from_account: default_from_account,
       to_account:   default_to_account
     )
@@ -15,11 +15,11 @@ class TransfersController < ApplicationController
   # Create a transfer between two accounts.
   def create
     @accounts = accounts
-    @budget   = current_budget
+    @budget   = Current.budget
     @form     = TransferForm.new(transfer_parameters)
 
     if @form.save
-      redirect_to budget_account_transactions_path(current_budget, to_account), status: :see_other
+      redirect_to budget_account_transactions_path(@budget, to_account), status: :see_other
     else
       render :new, status: :unprocessable_content
     end
@@ -31,7 +31,7 @@ class TransfersController < ApplicationController
   #
   # @return [Array<Account>] The accounts for the current budget.
   def accounts
-    @accounts ||= current_budget.accounts.to_a
+    @accounts ||= Current.budget.accounts.to_a
   end
 
   # Return the default source account, which is the budget's only cash account.
@@ -98,7 +98,7 @@ class TransfersController < ApplicationController
   def transfer_parameters
     {
       amount:       parameters[:amount],
-      budget:       current_budget,
+      budget:       Current.budget,
       date:         parameters[:date],
       from_account: from_account,
       memo:         parameters[:memo],

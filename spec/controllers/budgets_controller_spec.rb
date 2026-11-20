@@ -16,6 +16,51 @@ describe BudgetsController do
       it { is_expected.to redirect_to(budget_path(budget)) }
     end
 
+    context "when signed in with a previously viewed budget" do
+      let(:user)          { create(:user) }
+      let(:viewed_budget) { create(:budget, user: user) }
+
+      before do
+        create(:budget, user: user)
+
+        sign_in_as(user)
+
+        session[:budget_id] = viewed_budget.id
+
+        get :index
+      end
+
+      it { is_expected.to redirect_to(budget_path(viewed_budget)) }
+    end
+
+    context "when signed in with a previously viewed budget that was deleted" do
+      let(:deleted_budget) { create(:budget) }
+
+      before do
+        sign_in_for(deleted_budget)
+
+        session[:budget_id] = deleted_budget.id
+
+        deleted_budget.destroy
+      end
+
+      it "raises an ActiveRecord::RecordNotFound error" do
+        expect { get :index }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    context "when signed in with a previously viewed budget belonging to another user" do
+      before do
+        sign_in
+
+        session[:budget_id] = create(:budget).id
+      end
+
+      it "raises an ActiveRecord::RecordNotFound error" do
+        expect { get :index }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
     context "when signed in without a budget" do
       before do
         sign_in

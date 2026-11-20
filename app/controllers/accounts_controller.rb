@@ -4,34 +4,35 @@ class AccountsController < ApplicationController
   # Render the accounts index on mobile or redirect to the transactions
   # list on desktop.
   def index
+    @budget = Current.budget
+
     if request.variant.mobile?
-      @budget          = current_budget
-      @cash_accounts   = current_budget.accounts.cash.load
-      @credit_accounts = current_budget.accounts.credit.load
+      @cash_accounts   = @budget.accounts.cash.load
+      @credit_accounts = @budget.accounts.credit.load
     else
-      redirect_to budget_transactions_path(current_budget)
+      redirect_to budget_transactions_path(@budget)
     end
   end
 
   # Render the new account form.
   def new
-    @budget = current_budget
-    @form   = AccountForm.new(budget: current_budget)
+    @budget = Current.budget
+    @form   = AccountForm.new(budget: @budget)
   end
 
   # Render the account edit form.
   def edit
-    @budget = current_budget
+    @budget = Current.budget
     @form   = AccountForm.from(account: account)
   end
 
   # Create a new account from form parameters.
   def create
-    @budget = current_budget
-    @form   = AccountForm.new(budget: current_budget, **form_parameters)
+    @budget = Current.budget
+    @form   = AccountForm.new(budget: @budget, **form_parameters)
 
     if @form.save
-      redirect_to budget_accounts_path(current_budget), status: :see_other
+      redirect_to budget_accounts_path(@budget), status: :see_other
     else
       render :new, status: :unprocessable_content
     end
@@ -39,11 +40,11 @@ class AccountsController < ApplicationController
 
   # Update the account from form parameters.
   def update
-    @budget = current_budget
-    @form   = AccountForm.new(account: account, budget: current_budget, **update_form_parameters)
+    @budget = Current.budget
+    @form   = AccountForm.new(account: account, budget: @budget, **update_form_parameters)
 
     if @form.update
-      redirect_to budget_account_transactions_path(current_budget, account), status: :see_other
+      redirect_to budget_account_transactions_path(@budget, account), status: :see_other
     else
       render :edit, status: :unprocessable_content
     end
@@ -53,11 +54,11 @@ class AccountsController < ApplicationController
   # redirect back to its transactions without deleting anything.
   def destroy
     if account.transactions.exists?
-      redirect_to budget_account_transactions_path(current_budget, account), status: :see_other
+      redirect_to budget_account_transactions_path(Current.budget, account), status: :see_other
     else
       account.destroy!
 
-      redirect_to budget_accounts_path(current_budget), status: :see_other
+      redirect_to budget_accounts_path(Current.budget), status: :see_other
     end
   end
 
@@ -67,7 +68,7 @@ class AccountsController < ApplicationController
   #
   # @return [Account] The requested account.
   def account
-    @account ||= current_budget.accounts.find(params.expect(:id))
+    @account ||= Current.budget.accounts.find(params.expect(:id))
   end
 
   # Return the permitted form parameters.
