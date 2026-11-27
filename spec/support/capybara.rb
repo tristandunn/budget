@@ -17,6 +17,11 @@ Capybara.register_driver :selenium_chrome_headless_reduced_motion do |app|
   # resetting sessions.
   driver.options[:options].browser_version = "157"
 
+  # The pinned Chrome is downloaded so a sandbox cannot be started.
+  if ENV["CI"]
+    driver.options[:options].add_argument("--no-sandbox")
+  end
+
   driver.options[:options].add_argument("--force-prefers-reduced-motion")
   driver.options[:options].add_argument("--window-size=1470,840")
   driver
