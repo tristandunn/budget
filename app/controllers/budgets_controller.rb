@@ -42,6 +42,12 @@ class BudgetsController < ApplicationController
     end
   end
 
+  # Render the list of budgets the user can switch to.
+  def switch
+    @budget  = Current.budget
+    @budgets = Current.user.budgets.order(:name)
+  end
+
   private
 
   delegate :date, to: :current_budget_snapshot, prefix: :snapshot

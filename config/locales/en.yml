@@ -148,6 +148,10 @@ en:
       select_all: "Select all categories"
       sign_out: "Sign Out"
       summary: "%{month}'s Summary"
+      switch_budget: "Switch Budget"
+    switch:
+      done: "Done"
+      title: "Switch Budget"
 
   activerecord:
     attributes:

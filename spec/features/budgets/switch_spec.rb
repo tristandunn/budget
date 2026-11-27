@@ -19,4 +19,14 @@ describe "Budget switching", :js do
     expect(page).to have_current_path(budget_path(other_budget))
       .and(have_css("#budget_title", text: other_budget.name))
   end
+
+  context "when on mobile", :mobile do
+    it "switches to another budget from the menu" do
+      find("button[aria-label='#{t("budgets.show.menu")}']").click
+      click_on t("budgets.show.switch_budget")
+      click_on other_budget.name
+
+      expect(page).to have_current_path(budget_path(other_budget))
+    end
+  end
 end
