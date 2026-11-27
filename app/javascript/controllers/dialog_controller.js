@@ -36,6 +36,15 @@ export default class extends Controller {
      */
     if (!dialog.open) {
       dialog.showModal();
+
+      /*
+       * Without an autofocus element, the browser focuses the first
+       * focusable element, such as a Done button, which iOS highlights.
+       * Blur it so nothing starts focused, leaving autofocus fields alone.
+       */
+      if (!dialog.querySelector("[autofocus]")) {
+        document.activeElement.blur();
+      }
     }
 
     /*

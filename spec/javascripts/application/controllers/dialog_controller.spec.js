@@ -38,6 +38,38 @@ describe("DialogController", () => {
     expect(dialog.classList.contains("open")).to.be.true;
   });
 
+  it("blurs the element the browser focuses when showing the dialog", () => {
+    const button = document.createElement("button");
+
+    document.body.appendChild(button);
+    button.focus();
+
+    sinon.spy(button, "blur");
+
+    controller.open();
+
+    button.remove();
+
+    expect(button.blur).to.have.been.calledOnce;
+  });
+
+  it("leaves focus alone when the dialog contains an autofocus element", () => {
+    const button = document.createElement("button");
+
+    document.body.appendChild(button);
+    button.focus();
+
+    sinon.spy(button, "blur");
+
+    dialog.querySelector("turbo-frame").innerHTML = "<input autofocus>";
+
+    controller.open();
+
+    button.remove();
+
+    expect(button.blur).not.to.have.been.called;
+  });
+
   it("does not call showModal when the dialog is already open", () => {
     Object.defineProperty(dialog, "open", { "configurable": true, "value": true });
 
