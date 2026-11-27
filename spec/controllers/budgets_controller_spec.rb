@@ -356,4 +356,43 @@ describe BudgetsController do
       it { is_expected.to redirect_to(new_session_url) }
     end
   end
+
+  describe "#switch" do
+    let(:budget) { create(:budget, name: "Zebra") }
+
+    context "when signed in with a budget belonging to the current user" do
+      let!(:first_budget)  { create(:budget, name: "Apple", users: budget.users) }
+      let!(:middle_budget) { create(:budget, name: "Mango", users: budget.users) }
+
+      before do
+        create(:budget, name: "Another User's Budget")
+
+        sign_in_for(budget)
+
+        get :switch, params: { id: budget.id }
+      end
+
+      it { is_expected.to respond_with(200) }
+      it { is_expected.to render_template(:switch) }
+
+      it "assigns the budget" do
+        expect(assigns(:budget)).to eq(budget)
+      end
+
+      it "assigns the user's budgets ordered by name, not creation" do
+        expect(assigns(:budgets)).to eq([first_budget, middle_budget, budget])
+      end
+    end
+
+    context "when signed in with a budget belonging to another user" do
+      before do
+        sign_in
+      end
+
+      it "raises an ActiveRecord::RecordNotFound error" do
+        expect { get :switch, params: { id: budget.id } }
+          .to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+  end
 end

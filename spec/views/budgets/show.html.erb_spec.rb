@@ -22,6 +22,8 @@ describe "budgets/show.html.erb" do
 
     assign :budget,          subcategory.budget
     assign :budget_snapshot, budget_snapshot
+
+    Current.session = build_stubbed(:session, user: subcategory.budget.users.first)
   end
 
   it "renders the header with the current month and year" do
@@ -111,6 +113,35 @@ describe "budgets/show.html.erb" do
 
   it "renders a divider between menu items" do
     expect(html).to have_css("[data-popover-target='menu'].divide-y")
+  end
+
+  it "renders the budget switch dialog" do
+    expect(html).to have_css("dialog#budget_switch_dialog_modal turbo-frame#budget_switch_dialog")
+  end
+
+  context "when the user belongs to a single budget" do
+    it "does not render the switch budget link" do
+      expect(html).to have_no_css("#switch-budget")
+    end
+  end
+
+  context "when the user belongs to more than one budget" do
+    before do
+      create(:budget, users: subcategory.budget.users)
+    end
+
+    it "renders the switch budget link in the menu" do
+      expect(html).to have_css(
+        "[data-popover-target='menu'] a#switch-budget[data-turbo-frame='budget_switch_dialog']",
+        text: t("budgets.show.switch_budget")
+      )
+    end
+
+    it "links to the budget switch page" do
+      expect(html).to have_link(
+        t("budgets.show.switch_budget"), href: switch_budget_path(subcategory.budget)
+      )
+    end
   end
 
   context "when on the current month" do

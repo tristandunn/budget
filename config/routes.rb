@@ -7,6 +7,10 @@ Rails.application.routes.draw do
                         constraints: { year: /\d{4}/, month: /\d{1,2}/ },
                         on:          :member
 
+    member do
+      get :switch
+    end
+
     resources :accounts, only: %i(index new create edit update destroy) do
       resources :transactions, only: %i(index), controller: "accounts/transactions"
       resource :reconciliation, only: %i(create), controller: "accounts/reconciliations"

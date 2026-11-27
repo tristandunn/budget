@@ -11,6 +11,8 @@
 
   <%= render "shared/dialog", id: "payee_rename_dialog", dismissable: true %>
 
+  <%= render "shared/dialog", id: "budget_switch_dialog", dismissable: true %>
+
   <header
     class="
       sticky top-0 z-10 grid grid-cols-3 items-center whitespace-nowrap border-b
@@ -103,6 +105,27 @@
           border-taupe-200 bg-white shadow-lg whitespace-nowrap divide-y divide-taupe-200
         "
       >
+        <% if sidebar_budgets.many? %>
+          <%= link_to switch_budget_path(@budget),
+                      id:    "switch-budget",
+                      data:  { turbo_frame: "budget_switch_dialog" },
+                      class: "flex w-full items-center justify-between gap-4 px-3 py-2 text-left text-sm text-taupe-800 no-underline" do %>
+            <%= t(".switch_budget") %>
+
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 16 16"
+              class="h-4 w-4 text-taupe-800"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                d="M1.75 1A1.75 1.75 0 0 0 0 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0 0 16 13.25v-8.5A1.75 1.75 0 0 0 14.25 3H7.5a.25.25 0 0 1-.2-.1l-.9-1.2C6.07 1.26 5.55 1 5 1H1.75Z"
+              />
+            </svg>
+          <% end %>
+        <% end %>
+
         <%= link_to budget_payees_path(@budget),
                     data:  { turbo_frame: "payees_dialog" },
                     class: "flex w-full items-center justify-between gap-4 px-3 py-2 text-left text-sm text-taupe-800 no-underline" do %>
